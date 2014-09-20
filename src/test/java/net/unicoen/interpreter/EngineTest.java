@@ -18,7 +18,11 @@ public class EngineTest {
 		/*
 		 * public class Main {
 		 *     public static void main(String[] args) {
-		 *         MyLib.printInt(1 + 2);
+		 *         if (true && false) {
+		 *             MyLib.printInt(1);
+		 *         } else {
+		 *             MyLib.printInt(1 + 2);
+		 *         }
 		 *     }
 		 * }
 		 */
@@ -37,13 +41,23 @@ public class EngineTest {
 								name = "args";
 							}
 						});
-						bodies = list(new UniMethodCall() {
-							{
-								receiver = ident("MyLib");
-								methodName = "printInt";
-								args = list(bin(lit(1), "+", lit(2)));
-							}
-						});
+						bodies = list(new UniIf() {{
+							cond = bin(lit(true), "&&", lit(false));
+							trueBlock = list(new UniMethodCall() {
+								{
+									receiver = ident("MyLib");
+									methodName = "printInt";
+									args = list(lit(1));
+								}
+							});
+							falseBlock = list(new UniMethodCall() {
+								{
+									receiver = ident("MyLib");
+									methodName = "printInt";
+									args = list(bin(lit(1), "+", lit(2)));
+								}
+							});
+						}});
 					}
 				});
 			}

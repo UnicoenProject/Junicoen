@@ -1,12 +1,15 @@
 package net.unicoen.interpreter;
 
 import java.io.PrintStream;
+import java.util.List;
 
 import net.unicoen.node.UniBinOp;
+import net.unicoen.node.UniBoolLiteral;
 import net.unicoen.node.UniClassDec;
 import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniFuncDec;
 import net.unicoen.node.UniIdent;
+import net.unicoen.node.UniIf;
 import net.unicoen.node.UniIntLiteral;
 import net.unicoen.node.UniMemberDec;
 import net.unicoen.node.UniMethodCall;
@@ -54,18 +57,25 @@ public class Engine {
 
 	private void execFunc(UniFuncDec fdec, Scope global) {
 		Scope funcScope = new Scope(global);
-		for (UniExpr expr : fdec.bodies) {
-			evalExpr(expr, funcScope);
-		}
+		// TODO: set argument to func scope
+		execExprMany(fdec.bodies, funcScope);
 	}
 
-	private Object evalExpr(UniExpr expr, Scope scope) {
+	private Object execExprMany(List<UniExpr> exprs, Scope scope) {
+		Object lastValue = null;
+		for (UniExpr expr : exprs) {
+			lastValue = execExpr(expr, scope);
+		}
+		return lastValue;
+	}
+
+	private Object execExpr(UniExpr expr, Scope scope) {
 		if (expr instanceof UniMethodCall) {
 			UniMethodCall mc = (UniMethodCall) expr;
-			Object receiver = evalExpr(mc.receiver, scope);
+			Object receiver = execExpr(mc.receiver, scope);
 			Object[] args = new Object[mc.args.size()];
 			for (int i = 0; i < args.length; i++) {
-				args[i] = evalExpr(mc.args.get(i), scope);
+				args[i] = execExpr(mc.args.get(i), scope);
 			}
 			return execMethodCall(receiver, mc.methodName, args);
 		}
@@ -75,9 +85,20 @@ public class Engine {
 		if (expr instanceof UniIntLiteral) {
 			return ((UniIntLiteral) expr).value;
 		}
+		if (expr instanceof UniBoolLiteral) {
+			return ((UniBoolLiteral) expr).value;
+		}
 		if (expr instanceof UniBinOp) {
-			UniBinOp bin = (UniBinOp)expr;
-			return execBinOp(bin.operator, evalExpr(bin.left, scope), evalExpr(bin.right, scope));
+			UniBinOp bin = (UniBinOp) expr;
+			return execBinOp(bin.operator, bin.left, bin.right, scope);
+		}
+		if (expr instanceof UniIf) {
+			UniIf ui = (UniIf) expr;
+			if (toBool(execExpr(ui.cond, scope))) {
+				return execExprMany(ui.trueBlock, new Scope(scope));
+			} else {
+				return execExprMany(ui.falseBlock, new Scope(scope));
+			}
 		}
 		throw new RuntimeException("Not support expr type: " + expr);
 	}
@@ -97,18 +118,23 @@ public class Engine {
 		throw new RuntimeException("Not support function type: " + func);
 	}
 
-	private Object execBinOp(String op, Object left, Object right) {
+	private Object execBinOp(String op, UniExpr left, UniExpr right, Scope scope) {
 		switch (op) {
 		case "+":
-			return toInt(left) + toInt(right);
+			return toInt(execExpr(left, scope)) + toInt(execExpr(right, scope));
 		case "-":
-			return toInt(left) - toInt(right);
+			return toInt(execExpr(left, scope)) - toInt(execExpr(right, scope));
 		case "*":
-			return toInt(left) * toInt(right);
+			return toInt(execExpr(left, scope)) * toInt(execExpr(right, scope));
 		case "/":
-			return toInt(left) / toInt(right);
+			return toInt(execExpr(left, scope)) / toInt(execExpr(right, scope));
 		case "%":
-			return toInt(left) % toInt(right);
+			return toInt(execExpr(left, scope)) % toInt(execExpr(right, scope));
+
+		case "&&":
+			return toBool(execExpr(left, scope)) && toBool(execExpr(right, scope));
+		case "||":
+			return toBool(execExpr(left, scope)) || toBool(execExpr(right, scope));
 		}
 		throw new RuntimeException("Unkown binary operator: " + op);
 	}
@@ -118,5 +144,12 @@ public class Engine {
 			return ((Integer) obj).intValue();
 		}
 		throw new RuntimeException("Cannot covert to integer: " + obj);
+	}
+
+	public static boolean toBool(Object obj) {
+		if (obj instanceof Boolean) {
+			return ((Boolean) obj).booleanValue();
+		}
+		throw new RuntimeException("Cannot covert to boolean: " + obj);
 	}
 }
