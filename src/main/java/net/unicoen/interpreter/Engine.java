@@ -2,6 +2,7 @@ package net.unicoen.interpreter;
 
 import java.io.PrintStream;
 
+import net.unicoen.node.UniBinOp;
 import net.unicoen.node.UniClassDec;
 import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniFuncDec;
@@ -74,6 +75,10 @@ public class Engine {
 		if (expr instanceof UniIntLiteral) {
 			return ((UniIntLiteral) expr).value;
 		}
+		if (expr instanceof UniBinOp) {
+			UniBinOp bin = (UniBinOp)expr;
+			return execBinOp(bin.operator, evalExpr(bin.left, scope), evalExpr(bin.right, scope));
+		}
 		throw new RuntimeException("Not support expr type: " + expr);
 	}
 
@@ -90,5 +95,28 @@ public class Engine {
 			return ((FunctionWithEngine) func).invoke(this, args);
 		}
 		throw new RuntimeException("Not support function type: " + func);
+	}
+
+	private Object execBinOp(String op, Object left, Object right) {
+		switch (op) {
+		case "+":
+			return toInt(left) + toInt(right);
+		case "-":
+			return toInt(left) - toInt(right);
+		case "*":
+			return toInt(left) * toInt(right);
+		case "/":
+			return toInt(left) / toInt(right);
+		case "%":
+			return toInt(left) % toInt(right);
+		}
+		throw new RuntimeException("Unkown binary operator: " + op);
+	}
+
+	public static int toInt(Object obj) {
+		if (obj instanceof Integer) {
+			return ((Integer) obj).intValue();
+		}
+		throw new RuntimeException("Cannot covert to integer: " + obj);
 	}
 }

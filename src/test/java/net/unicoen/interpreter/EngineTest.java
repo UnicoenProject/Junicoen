@@ -3,8 +3,6 @@ package net.unicoen.interpreter;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
 
 import net.unicoen.interpreter.Engine;
 import net.unicoen.node.*;
@@ -12,21 +10,15 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-public class EngineTest {
+import static net.unicoen.node.Builder.*;
 
-	private static <T> List<T> list(T... args) {
-		ArrayList<T> list = new ArrayList<>();
-		for (T item : args) {
-			list.add(item);
-		}
-		return list;
-	}
+public class EngineTest {
 
 	private UniClassDec mkClassDec() {
 		/*
 		 * public class Main {
 		 *     public static void main(String[] args) {
-		 *         MyLib.printInt(1);
+		 *         MyLib.printInt(1 + 2);
 		 *     }
 		 * }
 		 */
@@ -47,17 +39,9 @@ public class EngineTest {
 						});
 						bodies = list(new UniMethodCall() {
 							{
-								receiver = new UniIdent() {
-									{
-										name = "MyLib";
-									}
-								};
+								receiver = ident("MyLib");
 								methodName = "printInt";
-								args = list(new UniIntLiteral() {
-									{
-										value = 1;
-									}
-								});
+								args = list(bin(lit(1), "+", lit(2)));
 							}
 						});
 					}
@@ -75,7 +59,7 @@ public class EngineTest {
 		engine.execute(mkClassDec());
 		String output = baos.toString("UTF8");
 
-		String expect = "1" + System.lineSeparator();
+		String expect = "3" + System.lineSeparator();
 		assertEquals(expect, output);
 	}
 }
