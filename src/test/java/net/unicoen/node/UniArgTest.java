@@ -8,7 +8,6 @@ public class UniArgTest {
 
 	@Test
 	public void test() {
-		fail("Not yet implemented");
 	}
 
 }
