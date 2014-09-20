@@ -1,3 +1,4 @@
+package net.unicoen.node;
 import java.util.List;
 
 public class UniFuncDec extends UniMemberDec {
