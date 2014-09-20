@@ -1,4 +1,4 @@
-package net.unicoen.interpreter.test;
+package net.unicoen.interpreter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -24,8 +24,11 @@ public class EngineTest {
 
 	private UniClassDec mkClassDec() {
 		/*
-		 * public class Main { public static void main(String[] args) {
-		 * MyLib.printInt(1); } }
+		 * public class Main {
+		 *     public static void main(String[] args) {
+		 *         MyLib.printInt(1);
+		 *     }
+		 * }
 		 */
 		return new UniClassDec() {
 			{
