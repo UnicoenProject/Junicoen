@@ -23,6 +23,9 @@ public class EngineTest {
 		 *         } else {
 		 *             MyLib.printInt(1 + 2);
 		 *         }
+		 *         while (false) {
+		 *             1;
+		 *         }
 		 *     }
 		 * }
 		 */
@@ -41,7 +44,7 @@ public class EngineTest {
 								name = "args";
 							}
 						});
-						bodies = list(new UniIf() {{
+						body = list(new UniIf() {{
 							cond = bin(lit(true), "&&", lit(false));
 							trueBlock = list(new UniMethodCall() {
 								{
@@ -57,6 +60,9 @@ public class EngineTest {
 									args = list(bin(lit(1), "+", lit(2)));
 								}
 							});
+						}}, new UniWhile(){{
+							cond = lit(false);
+							body = list(lit(1));
 						}});
 					}
 				});

@@ -13,6 +13,7 @@ import net.unicoen.node.UniIf;
 import net.unicoen.node.UniIntLiteral;
 import net.unicoen.node.UniMemberDec;
 import net.unicoen.node.UniMethodCall;
+import net.unicoen.node.UniWhile;
 
 public class Engine {
 
@@ -58,7 +59,7 @@ public class Engine {
 	private void execFunc(UniFuncDec fdec, Scope global) {
 		Scope funcScope = new Scope(global);
 		// TODO: set argument to func scope
-		execExprMany(fdec.bodies, funcScope);
+		execExprMany(fdec.body, funcScope);
 	}
 
 	private Object execExprMany(List<UniExpr> exprs, Scope scope) {
@@ -99,6 +100,14 @@ public class Engine {
 			} else {
 				return execExprMany(ui.falseBlock, new Scope(scope));
 			}
+		}
+		if (expr instanceof UniWhile) {
+			UniWhile w = (UniWhile) expr;
+			Object lastEval = null;
+			while (toBool(execExpr(w.cond, scope))) {
+				lastEval = execExprMany(w.body, new Scope(scope));
+			}
+			return lastEval;
 		}
 		throw new RuntimeException("Not support expr type: " + expr);
 	}

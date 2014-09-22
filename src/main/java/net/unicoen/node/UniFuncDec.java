@@ -7,7 +7,7 @@ public class UniFuncDec extends UniMemberDec {
 	public List<String> modifiers;
 	public String returnType;
 	public List<UniArg> args;
-	public List<UniExpr> bodies;
+	public List<UniExpr> body;
 
 	@Override
 	public String toString() {
