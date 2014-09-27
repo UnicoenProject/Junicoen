@@ -9,11 +9,26 @@ import org.antlr.v4.runtime.ANTLRInputStream
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.tree.TerminalNodeImpl
+import java.io.FileInputStream
+import org.antlr.v4.runtime.UnbufferedCharStream
+import org.antlr.v4.runtime.CharStream
 
 class JavaMapper extends Java8BaseVisitor<UniNode> {
+	def parseFile(String path) {
+		val inputStream = new FileInputStream(path);
+		try {
+			parseCore(new ANTLRInputStream(inputStream));
+		} finally {
+			inputStream.close();
+		}
+	}
+
 	def parse(String code) {
-		val input = new ANTLRInputStream(code);
-		val lexer = new Java8Lexer(input);
+		parseCore(new ANTLRInputStream(code));
+	}
+
+	def parseCore(CharStream chars) {
+		val lexer = new Java8Lexer(chars);
 		val tokens = new CommonTokenStream(lexer);
 		val parser = new Java8Parser(tokens);
 		val tree = parser.compilationUnit(); // parse
@@ -38,7 +53,7 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		val maps = createMaps(ctx)
 		val ret = new UniClassDec()
 		ret.className = maps.get("Identifier").get(0) as String
-		return new UniClassDec();
+		return ret
 	}
 
 	override protected aggregateResult(UniNode aggregate, UniNode nextResult) {

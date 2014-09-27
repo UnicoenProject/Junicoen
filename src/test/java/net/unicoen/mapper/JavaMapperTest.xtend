@@ -11,5 +11,6 @@ class JavaMapperTest {
 		val mapper = new JavaMapper()
 		val node = mapper.parse("class A {}")
 		assertThat(node, instanceOf(typeof(UniClassDec)))
+		assertThat((node as UniClassDec).className, equalTo("A"))
 	}
 }
