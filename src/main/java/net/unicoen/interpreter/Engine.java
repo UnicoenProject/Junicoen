@@ -41,7 +41,7 @@ public class Engine {
 		UniFuncDec fdec = getEntryPoint(dec);
 		if (fdec != null) {
 			Scope global = Scope.createGlobal();
-			importStdLib(global);
+			StdLibLoader.initialize(global);
 			execFunc(fdec, global);
 		} else {
 			throw new RuntimeException("No entry point in " + dec);
@@ -52,26 +52,12 @@ public class Engine {
 		for (UniMemberDec m : dec.members) {
 			if (m instanceof UniFuncDec) {
 				UniFuncDec fdec = (UniFuncDec) m;
-				if ("main".equals(fdec.funcName)) {
+				if ("start".equals(fdec.funcName)) {
 					return fdec;
 				}
 			}
 		}
 		return null;
-	}
-
-	private void importStdLib(Scope global) {
-		{ // create mylib
-			Scope scope = Scope.createObject(global);
-			scope.setTop("printInt", new FunctionWithEngine() {
-				@Override
-				public Object invoke(Engine engine, Object[] args) {
-					engine.out.println(args[0]);
-					return null;
-				}
-			});
-			global.setTop("MyLib", scope);
-		}
 	}
 
 	private void execFunc(UniFuncDec fdec, Scope global) {
@@ -86,6 +72,10 @@ public class Engine {
 			lastValue = execExpr(expr, scope);
 		}
 		return lastValue;
+	}
+
+	public Object runCallMethod(Object instance, String methodName, Object[] args) {
+		throw new RuntimeException("Not support call method for: " + instance);
 	}
 
 	private Object execExpr(UniExpr expr, Scope scope) {
