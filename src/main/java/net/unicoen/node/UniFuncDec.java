@@ -2,7 +2,7 @@ package net.unicoen.node;
 
 import java.util.List;
 
-public class UniFuncDec extends UniMemberDec {
+public class UniFuncDec extends UniMemberDec implements UniNode {
 	public String funcName;
 	public List<String> modifiers;
 	public String returnType;

@@ -13,16 +13,34 @@ import net.unicoen.node.UniIf;
 import net.unicoen.node.UniIntLiteral;
 import net.unicoen.node.UniMemberDec;
 import net.unicoen.node.UniMethodCall;
+import net.unicoen.node.UniNode;
 import net.unicoen.node.UniWhile;
 
 public class Engine {
 
 	public PrintStream out = System.out;
+	public List<ExecutionListener> listeners;
+
+	private void firePreExec(UniNode node, Scope scope) {
+		if (listeners != null) {
+			for (ExecutionListener listener : listeners) {
+				listener.preExecute(node, scope);
+			}
+		}
+	}
+
+	private void firePostExec(UniNode node, Scope scope, Object value) {
+		if (listeners != null) {
+			for (ExecutionListener listener : listeners) {
+				listener.postExecute(node, scope, value);
+			}
+		}
+	}
 
 	public void execute(UniClassDec dec) {
 		UniFuncDec fdec = getEntryPoint(dec);
 		if (fdec != null) {
-			Scope global = new Scope();
+			Scope global = Scope.createGlobal();
 			importStdLib(global);
 			execFunc(fdec, global);
 		} else {
@@ -44,20 +62,20 @@ public class Engine {
 
 	private void importStdLib(Scope global) {
 		{ // create mylib
-			Scope scope = new Scope();
-			scope.set("printInt", new FunctionWithEngine() {
+			Scope scope = Scope.createObject(global);
+			scope.setTop("printInt", new FunctionWithEngine() {
 				@Override
 				public Object invoke(Engine engine, Object[] args) {
 					engine.out.println(args[0]);
 					return null;
 				}
 			});
-			global.set("MyLib", scope);
+			global.setTop("MyLib", scope);
 		}
 	}
 
 	private void execFunc(UniFuncDec fdec, Scope global) {
-		Scope funcScope = new Scope(global);
+		Scope funcScope = Scope.createLocal(global);
 		// TODO: set argument to func scope
 		execExprMany(fdec.body, funcScope);
 	}
@@ -71,6 +89,13 @@ public class Engine {
 	}
 
 	private Object execExpr(UniExpr expr, Scope scope) {
+		firePreExec(expr, scope);
+		Object value = _execExpr(expr, scope);
+		firePostExec(expr, scope, value);
+		return value;
+	}
+
+	private Object _execExpr(UniExpr expr, Scope scope) {
 		if (expr instanceof UniMethodCall) {
 			UniMethodCall mc = (UniMethodCall) expr;
 			Object receiver = execExpr(mc.receiver, scope);
@@ -96,16 +121,16 @@ public class Engine {
 		if (expr instanceof UniIf) {
 			UniIf ui = (UniIf) expr;
 			if (toBool(execExpr(ui.cond, scope))) {
-				return execExprMany(ui.trueBlock, new Scope(scope));
+				return execExprMany(ui.trueBlock, Scope.createLocal(scope));
 			} else {
-				return execExprMany(ui.falseBlock, new Scope(scope));
+				return execExprMany(ui.falseBlock, Scope.createLocal(scope));
 			}
 		}
 		if (expr instanceof UniWhile) {
 			UniWhile w = (UniWhile) expr;
 			Object lastEval = null;
 			while (toBool(execExpr(w.cond, scope))) {
-				lastEval = execExprMany(w.body, new Scope(scope));
+				lastEval = execExprMany(w.body, Scope.createLocal(scope));
 			}
 			return lastEval;
 		}

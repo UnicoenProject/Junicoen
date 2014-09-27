@@ -1,6 +1,6 @@
 package net.unicoen.node;
 
-public class UniIdent extends UniExpr {
+public class UniIdent extends UniExpr implements UniNode {
 	public String name;
 
 	@Override

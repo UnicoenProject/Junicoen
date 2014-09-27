@@ -44,26 +44,30 @@ public class EngineTest {
 								name = "args";
 							}
 						});
-						body = list(new UniIf() {{
-							cond = bin(lit(true), "&&", lit(false));
-							trueBlock = list(new UniMethodCall() {
-								{
-									receiver = ident("MyLib");
-									methodName = "printInt";
-									args = list(lit(1));
-								}
-							});
-							falseBlock = list(new UniMethodCall() {
-								{
-									receiver = ident("MyLib");
-									methodName = "printInt";
-									args = list(bin(lit(1), "+", lit(2)));
-								}
-							});
-						}}, new UniWhile(){{
-							cond = lit(false);
-							body = list(lit(1));
-						}});
+						body = list(new UniIf() {
+							{
+								cond = bin(lit(true), "&&", lit(false));
+								trueBlock = list(new UniMethodCall() {
+									{
+										receiver = ident("MyLib");
+										methodName = "printInt";
+										args = list(lit(1));
+									}
+								});
+								falseBlock = list(new UniMethodCall() {
+									{
+										receiver = ident("MyLib");
+										methodName = "printInt";
+										args = list(bin(lit(1), "+", lit(2)));
+									}
+								});
+							}
+						}, new UniWhile() {
+							{
+								cond = lit(false);
+								body = list(lit(1));
+							}
+						});
 					}
 				});
 			}
