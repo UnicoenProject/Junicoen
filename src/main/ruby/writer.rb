@@ -25,14 +25,14 @@ module Writer
             has_list = true
           end
         end
-        if set.size > 0
-          set.each do |node_type|
-            f.puts "import #{dsl.package}.#{node_type};"
-          end
-          f.puts
-        end
+        # if set.size > 0
+        #   set.each do |node_type|
+        #     f.puts "import #{dsl.package}.#{node_type};"
+        #   end
+        #   f.puts
+        # end
         if has_list
-          f.puts "java.utils.List;"
+          f.puts "import java.util.List;"
           f.puts
         end
         # === class dec
@@ -46,7 +46,17 @@ module Writer
             inherit = " extends #{p.name}"
           end
         end
-        f.puts "public class #{node.name}#{inherit} {"
+        is_concrete = true
+        type = "class"
+        case
+        when node.opt[:interface]
+          is_concrete = false
+          type = "interface"
+        when node.opt[:abstract]
+          is_concrete = false
+          type = "abstract class"
+        end
+        f.puts "public #{type} #{node.name}#{inherit} {"
 
         # -- member
         node.members.each do |name, type, opt|
@@ -54,13 +64,42 @@ module Writer
           f.puts "\tpublic #{t} #{name};"
         end
 
+        # -- ctor
+        if is_concrete
+          f.puts
+          f.puts "\tpublic #{node.name}() {"
+          f.puts "\t}"
+          f.puts
+          args = node.members.map do |name, type, opt|
+            t = opt[:list] ? "List<#{type}>" : type
+            "#{t} #{name}"
+          end.join(", ")
+          f.puts "\tpublic #{node.name}(#{args}) {"
+          node.members.map do |name, type, opt|
+            f.puts "\t\tthis.#{name} = #{name};"
+          end
+          f.puts "\t}"
+
+          # -- toString
+          names = node.members
+            .reject{ |name, type, opt| String === type || opt[:list] }
+            .map{ |name, type, opt| name }
+            .join(' + ", " + ')
+          c_name = node.name.sub(dsl.prefix, "")
+          f.puts
+          f.puts "\t@Override"
+          f.puts "\tpublic String toString() {"
+          if names.size > 0
+            f.puts %<\t\treturn "#{c_name}(" + #{names} + ")";>
+          else
+            f.puts %<\t\treturn "#{c_name}";>
+          end
+          f.puts "\t}"
+        end
+
         # -- close
         f.puts "}"
       end
     end
-  end
-
-  def write_clone(node)
-    
   end
 end

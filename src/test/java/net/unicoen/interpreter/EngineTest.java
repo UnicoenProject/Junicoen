@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import static net.unicoen.node.Builder.*;
+import static net.unicoen.node_helper.Builder.*;
 
 public class EngineTest {
 

@@ -2,14 +2,14 @@ require_relative 'dsl.rb'
 require_relative 'writer.rb'
 
 d = define_node do |x|
-  x.package = "net.unicoen.nodes"
+  x.package = "net.unicoen.node"
   x.prefix = "Uni"
 
   x.node "Node", interface: true, generics: :self do
 
     x.node "Expr", abstract: true, generics: :self do
       {
-        "Bool" => :bool,
+        "Bool" => :boolean,
         "Int" => :int,
         "String" => String
       }.each do |name, type|
@@ -55,6 +55,7 @@ d = define_node do |x|
       end
     end
     x.node "ClassDec" do |d|
+      d.mem "className", String
       d.mem "modifiers", String, list: true
       d.mem "members", "MemberDec", list: true
     end

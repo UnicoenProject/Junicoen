@@ -2,6 +2,11 @@ require 'pathname'
 
 java_src = "src/main/java"
 
+task :gen do
+  ENV['OUTDIR'] = java_src
+  load "src/main/ruby/nodes.rb"
+end
+
 task :format do
 
   eclipse_home = Pathname.new(ENV['HOME']) + "Applications/eclipse"

@@ -1,11 +1,19 @@
 package net.unicoen.node;
 
-public class UniArg implements UniNode {
+public class UniArg {
 	public String type;
 	public String name;
 
+	public UniArg() {
+	}
+
+	public UniArg(String type, String name) {
+		this.type = type;
+		this.name = name;
+	}
+
 	@Override
 	public String toString() {
-		return name + ": " + type;
+		return "Arg(" + type + ", " + name + ")";
 	}
 }

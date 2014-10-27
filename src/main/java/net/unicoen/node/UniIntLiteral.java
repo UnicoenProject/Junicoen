@@ -1,10 +1,17 @@
 package net.unicoen.node;
 
-public class UniIntLiteral extends UniExpr implements UniNode {
+public class UniIntLiteral extends UniExpr {
 	public int value;
+
+	public UniIntLiteral() {
+	}
+
+	public UniIntLiteral(int value) {
+		this.value = value;
+	}
 
 	@Override
 	public String toString() {
-		return "Lit(" + value + ")";
+		return "IntLiteral(" + value + ")";
 	}
 }

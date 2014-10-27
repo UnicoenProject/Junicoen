@@ -7,8 +7,17 @@ public class UniClassDec implements UniNode {
 	public List<String> modifiers;
 	public List<UniMemberDec> members;
 
+	public UniClassDec() {
+	}
+
+	public UniClassDec(String className, List<String> modifiers, List<UniMemberDec> members) {
+		this.className = className;
+		this.modifiers = modifiers;
+		this.members = members;
+	}
+
 	@Override
 	public String toString() {
-		return "class " + className;
+		return "ClassDec(" + className + ")";
 	}
 }
