@@ -2,6 +2,43 @@ require 'set'
 require 'fileutils'
 
 module Writer
+
+  class IndentWriter
+    def initialize(file)
+      @file = file
+      @indent = 0
+    end
+
+    def newline
+      @file.puts
+    end
+
+    def block(strs, &block)
+      indent
+      Array(strs).each{ |str| @file.print str }
+      @file.puts " {"
+      with_indent(&block)
+      indent
+      @file.puts "}"
+    end
+
+    def with_indent
+      @indent += 1
+      yield if block_given?
+    ensure
+      @indent -= 1
+    end
+
+    def <<(val)
+      indent
+      @file.puts val
+    end
+
+    def indent
+      @indent.times { @file.print "\t" }
+    end
+  end
+
   extend ::FileUtils
   module_function
 
@@ -11,10 +48,12 @@ module Writer
     mkdir_p pkg_dir
     dsl.nodes.each do |node|
       File.open(pkg_dir + "/" + node.name + ".java", "w") do |f|
-        # package
-        f.puts "package #{dsl.package};"
-        f.puts
-        # import
+        w = IndentWriter.new(f)
+
+        # -- package
+        w << "package #{dsl.package};"
+
+        # -- import
         set = Set.new
         has_list = false
         node.members.each do |name, type, opt|
@@ -25,87 +64,102 @@ module Writer
             has_list = true
           end
         end
-        # if set.size > 0
-        #   set.each do |node_type|
-        #     f.puts "import #{dsl.package}.#{node_type};"
-        #   end
-        #   f.puts
-        # end
         if has_list
-          f.puts "import java.util.List;"
-          f.puts
-        end
-        # === class dec
-        # -- open
-        inherit = ""
-        p = node.parents.first
-        if p
-          if p.opt[:interface]
-            inherit = " implements #{p.name}"
-          else
-            inherit = " extends #{p.name}"
-          end
-        end
-        is_concrete = true
-        type = "class"
-        case
-        when node.opt[:interface]
-          is_concrete = false
-          type = "interface"
-        when node.opt[:abstract]
-          is_concrete = false
-          type = "abstract class"
-        end
-        if doc = node.opt[:doc]
-          f.puts "/** #{doc} */"
-        end
-        f.puts "public #{type} #{node.name}#{inherit} {"
-
-        # -- member
-        node.members.each do |name, type, opt|
-          t = opt[:list] ? "List<#{type}>" : type
-          f.puts "\tpublic #{t} #{name};"
+          w.newline
+          w << "import java.util.List;"
         end
 
-        if is_concrete
-          # -- empty ctor
-          f.puts
-          f.puts "\tpublic #{node.name}() {"
-          f.puts "\t}"
+        # -- class declaration
+        w.newline
+        write_class_dec(dsl, node, w)
+      end
+    end
+  end
 
-          # -- ctor with values
-          if node.members.size > 0
-            f.puts
-            args = node.members.map do |name, type, opt|
-              t = opt[:list] ? "List<#{type}>" : type
-              "#{t} #{name}"
-            end.join(", ")
-            f.puts "\tpublic #{node.name}(#{args}) {"
-            node.members.map do |name, type, opt|
-              f.puts "\t\tthis.#{name} = #{name};"
-            end
-            f.puts "\t}"
-          end
+  def write_class_dec(dsl, node, w)
+    # -- write document comment
+    if doc = node.opt[:doc]
+      w << "/** #{doc} */"
+    end
+    inherit = ""
+    p = node.parents.first
+    if p
+      if p.opt[:interface]
+        inherit = " implements #{p.name}"
+      else
+        inherit = " extends #{p.name}"
+      end
+    end
+    is_concrete = true
+    type = "class"
+    case
+    when node.opt[:interface]
+      is_concrete = false
+      type = "interface"
+    when node.opt[:abstract]
+      is_concrete = false
+      type = "abstract class"
+    end
+    # dec class
+    w.block "public #{type} #{node.name}#{inherit}" do
+      # -- member
+      write_member(dsl, node, w)
+      if is_concrete
+        w.newline
+        write_ctor(dsl, node, w)
+        w.newline
+        write_to_string(dsl, node, w)
+      end
+    end
+  end
 
-          # -- toString
-          names = node.members
-            .reject{ |name, type, opt| String === type || opt[:list] }
-            .map{ |name, type, opt| name }
-            .join(' + ", " + ')
-          c_name = node.name.sub(dsl.prefix, "")
-          f.puts
-          f.puts "\t@Override"
-          f.puts "\tpublic String toString() {"
-          if names.size > 0
-            f.puts %<\t\treturn "#{c_name}(" + #{names} + ")";>
-          else
-            f.puts %<\t\treturn "#{c_name}";>
-          end
-          f.puts "\t}"
+  #
+  # メンバ変数を生成する
+  #
+  def write_member(dsl, node, w)
+    node.members.each do |name, type, opt|
+      t = opt[:list] ? "List<#{type}>" : type
+      w << "public #{t} #{name};"
+    end
+  end
+
+  #
+  # コンストラクタを生成します
+  #
+  def write_ctor(dsl, node, w)
+    w.block "public #{node.name}()"
+
+    # -- ctor with values
+    if node.members.size > 0
+      w.newline
+      args = node.members.map do |name, type, opt|
+        t = opt[:list] ? "List<#{type}>" : type
+        "#{t} #{name}"
+      end.join(", ")
+      w.block "public #{node.name}(#{args})" do
+        node.members.map do |name, type, opt|
+          w << "this.#{name} = #{name};"
         end
+      end
+    end
+  end
 
-        # -- close
-        f.puts "}"
+  #
+  # toString を生成します
+  #
+  def write_to_string(dsl, node, w)
+    names = node.members
+      .reject{ |name, type, opt| String === type || opt[:list] }
+      .map{ |name, type, opt| name }
+      .join(' + ", " + ')
+    c_name = node.name.sub(dsl.prefix, "")
+    
+    w << "@Override"
+    w.block "public String toString()" do
+      if names.size > 0
+        w << %[return "#{c_name}(" + #{names} + ")";]
+      else
+        w << %[return "#{c_name}";]
       end
     end
   end
