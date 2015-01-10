@@ -18,6 +18,7 @@ module Writer
       Array(strs).each{ |str| @file.print str }
       @file.puts " {"
       with_indent(&block)
+    ensure
       indent
       @file.puts "}"
     end
@@ -109,6 +110,8 @@ module Writer
         write_ctor(dsl, node, w)
         w.newline
         write_to_string(dsl, node, w)
+        w.newline
+        write_equals(dsl, node, w)
       end
     end
   end
@@ -160,6 +163,42 @@ module Writer
         w << %[return "#{c_name}(" + #{names} + ")";]
       else
         w << %[return "#{c_name}";]
+      end
+    end
+  end
+
+  #
+  # equals を生成します
+  #
+  def write_equals(dsl, node, w)
+    w << "@Override"
+    w.block "public boolean equals(Object obj)" do
+      if node.members.size == 0
+        w << "return obj != null && obj instanceof #{node.name};"
+        break
+      end
+      w << "if (obj == null || !(obj instanceof #{node.name})) return false;"
+      w << "#{node.name} that = (#{node.name})obj;"
+      exprs = node.members.map do |name, type, opt|
+        if /^[a-z]+/ =~ type.to_s
+          "this.#{name} == that.#{name}"
+        else
+          "(this.#{name} == null ? that.#{name} == null : this.#{name}.equals(that.#{name}))"
+        end
+      end
+      if exprs.size == 1
+        w << "return " + exprs.first + ";"
+        break
+      end
+      exprs.each_with_index do |expr, ix|
+        case
+        when ix == 0
+          w << "return #{expr}"
+        when ix == exprs.length - 1
+          w << "\t&& #{expr};"
+        else
+          w << "\t&& #{expr}"
+        end
       end
     end
   end

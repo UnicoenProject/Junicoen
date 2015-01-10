@@ -14,4 +14,11 @@ public class UniLongLiteral extends UniExpr {
 	public String toString() {
 		return "LongLiteral(" + value + ")";
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null || !(obj instanceof UniLongLiteral)) return false;
+		UniLongLiteral that = (UniLongLiteral)obj;
+		return this.value == that.value;
+	}
 }

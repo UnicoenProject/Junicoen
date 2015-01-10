@@ -14,4 +14,11 @@ public class UniDoubleLiteral extends UniExpr {
 	public String toString() {
 		return "DoubleLiteral(" + value + ")";
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null || !(obj instanceof UniDoubleLiteral)) return false;
+		UniDoubleLiteral that = (UniDoubleLiteral)obj;
+		return this.value == that.value;
+	}
 }

@@ -21,4 +21,13 @@ public class UniDecVar extends UniExpr {
 	public String toString() {
 		return "DecVar(" + type + ", " + name + ")";
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null || !(obj instanceof UniDecVar)) return false;
+		UniDecVar that = (UniDecVar)obj;
+		return (this.modifiers == null ? that.modifiers == null : this.modifiers.equals(that.modifiers))
+			&& (this.type == null ? that.type == null : this.type.equals(that.type))
+			&& (this.name == null ? that.name == null : this.name.equals(that.name));
+	}
 }

@@ -20,4 +20,13 @@ public class UniClassDec implements UniNode {
 	public String toString() {
 		return "ClassDec(" + className + ")";
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null || !(obj instanceof UniClassDec)) return false;
+		UniClassDec that = (UniClassDec)obj;
+		return (this.className == null ? that.className == null : this.className.equals(that.className))
+			&& (this.modifiers == null ? that.modifiers == null : this.modifiers.equals(that.modifiers))
+			&& (this.members == null ? that.members == null : this.members.equals(that.members));
+	}
 }

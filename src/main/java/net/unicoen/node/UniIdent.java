@@ -14,4 +14,11 @@ public class UniIdent extends UniExpr {
 	public String toString() {
 		return "Ident(" + name + ")";
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null || !(obj instanceof UniIdent)) return false;
+		UniIdent that = (UniIdent)obj;
+		return (this.name == null ? that.name == null : this.name.equals(that.name));
+	}
 }

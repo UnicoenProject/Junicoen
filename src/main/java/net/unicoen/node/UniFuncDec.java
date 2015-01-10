@@ -24,4 +24,15 @@ public class UniFuncDec extends UniMemberDec {
 	public String toString() {
 		return "FuncDec(" + funcName + ", " + returnType + ")";
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null || !(obj instanceof UniFuncDec)) return false;
+		UniFuncDec that = (UniFuncDec)obj;
+		return (this.funcName == null ? that.funcName == null : this.funcName.equals(that.funcName))
+			&& (this.modifiers == null ? that.modifiers == null : this.modifiers.equals(that.modifiers))
+			&& (this.returnType == null ? that.returnType == null : this.returnType.equals(that.returnType))
+			&& (this.args == null ? that.args == null : this.args.equals(that.args))
+			&& (this.block == null ? that.block == null : this.block.equals(that.block));
+	}
 }

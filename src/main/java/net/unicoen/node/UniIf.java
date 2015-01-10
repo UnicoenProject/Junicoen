@@ -18,4 +18,13 @@ public class UniIf extends UniExpr {
 	public String toString() {
 		return "If";
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null || !(obj instanceof UniIf)) return false;
+		UniIf that = (UniIf)obj;
+		return (this.cond == null ? that.cond == null : this.cond.equals(that.cond))
+			&& (this.trueBlock == null ? that.trueBlock == null : this.trueBlock.equals(that.trueBlock))
+			&& (this.falseBlock == null ? that.falseBlock == null : this.falseBlock.equals(that.falseBlock));
+	}
 }

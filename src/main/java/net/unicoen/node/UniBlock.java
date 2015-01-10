@@ -16,4 +16,11 @@ public class UniBlock extends UniExpr {
 	public String toString() {
 		return "Block";
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null || !(obj instanceof UniBlock)) return false;
+		UniBlock that = (UniBlock)obj;
+		return (this.body == null ? that.body == null : this.body.equals(that.body));
+	}
 }
