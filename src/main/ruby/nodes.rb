@@ -5,9 +5,9 @@ Dsl.define_node do |x|
   x.package = "net.unicoen.node"
   x.prefix = "Uni"
 
-  x.node "Node", interface: true, generics: :self do
+  x.node "Node", interface: true do
 
-    x.node "Expr", abstract: true, generics: :self do
+    x.node "Expr", abstract: true do
       #
       # Factor
       #
@@ -102,7 +102,7 @@ Dsl.define_node do |x|
       end
     end
 
-    x.node "MemberDec", abstract: true, generics: :self do
+    x.node "MemberDec", abstract: true do
       x.node "FuncDec" do |d|
         d.mem "funcName", String
         d.mem "modifiers", String, list: true
