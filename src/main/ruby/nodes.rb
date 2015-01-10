@@ -28,6 +28,10 @@ Dsl.define_node do |x|
       #
       # Expressions
       #
+      x.node "FieldAccess" do |d|
+        d.mem "receiver", "Expr"
+        d.mem "fieldName", String
+      end
       x.node "MethodCall", doc: '関数/メソッド呼び出し' do |d|
         d.mem "receiver", "Expr"
         d.mem "methodName", String
