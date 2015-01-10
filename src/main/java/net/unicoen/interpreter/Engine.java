@@ -21,13 +21,13 @@ import net.unicoen.node.UniDecVarWithValue;
 import net.unicoen.node.UniDoubleLiteral;
 import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniFor;
-import net.unicoen.node.UniFuncDec;
 import net.unicoen.node.UniIdent;
 import net.unicoen.node.UniIf;
 import net.unicoen.node.UniIntLiteral;
 import net.unicoen.node.UniLongLiteral;
 import net.unicoen.node.UniMemberDec;
 import net.unicoen.node.UniMethodCall;
+import net.unicoen.node.UniMethodDec;
 import net.unicoen.node.UniNode;
 import net.unicoen.node.UniReturn;
 import net.unicoen.node.UniStringLiteral;
@@ -114,7 +114,7 @@ public class Engine {
 	}
 
 	public Object execute(UniClassDec dec) {
-		UniFuncDec fdec = getEntryPoint(dec);
+		UniMethodDec fdec = getEntryPoint(dec);
 		if (fdec != null) {
 			Scope global = Scope.createGlobal();
 			StdLibLoader.initialize(global);
@@ -127,11 +127,11 @@ public class Engine {
 		}
 	}
 
-	private UniFuncDec getEntryPoint(UniClassDec dec) {
+	private UniMethodDec getEntryPoint(UniClassDec dec) {
 		for (UniMemberDec m : dec.members) {
-			if (m instanceof UniFuncDec) {
-				UniFuncDec fdec = (UniFuncDec) m;
-				if ("start".equals(fdec.funcName)) {
+			if (m instanceof UniMethodDec) {
+				UniMethodDec fdec = (UniMethodDec) m;
+				if ("start".equals(fdec.methodName)) {
 					return fdec;
 				}
 			}
@@ -139,7 +139,7 @@ public class Engine {
 		return null;
 	}
 
-	private Object execFunc(UniFuncDec fdec, Scope global) {
+	private Object execFunc(UniMethodDec fdec, Scope global) {
 		Scope funcScope = Scope.createLocal(global);
 		// TODO: set argument to func scope
 		try {

@@ -18,10 +18,10 @@ import net.unicoen.node.UniBlock;
 import net.unicoen.node.UniClassDec;
 import net.unicoen.node.UniDecVarWithValue;
 import net.unicoen.node.UniExpr;
-import net.unicoen.node.UniFuncDec;
 import net.unicoen.node.UniIdent;
 import net.unicoen.node.UniIf;
 import net.unicoen.node.UniMethodCall;
+import net.unicoen.node.UniMethodDec;
 import net.unicoen.node.UniUnaryOp;
 import net.unicoen.node.UniWhile;
 
@@ -48,9 +48,9 @@ public class EngineTest {
 		cDec.className = "Main";
 		cDec.modifiers = list("public");
 
-		UniFuncDec fDec = new UniFuncDec();
+		UniMethodDec fDec = new UniMethodDec();
 		{
-			fDec.funcName = "start";
+			fDec.methodName = "start";
 			fDec.modifiers = list("public", "static");
 			fDec.returnType = "void";
 			UniArg arg = new UniArg();

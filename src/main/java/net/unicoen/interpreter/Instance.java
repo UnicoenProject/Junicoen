@@ -1,7 +1,7 @@
 package net.unicoen.interpreter;
 
 import net.unicoen.node.UniClassDec;
-import net.unicoen.node.UniFuncDec;
+import net.unicoen.node.UniMethodDec;
 
 public class Instance {
 	public final Scope objectScope;
@@ -22,7 +22,7 @@ public class Instance {
 		return new Instance(Scope.createObject(global), dec);
 	}
 
-	public UniFuncDec findMethod(String name) {
+	public UniMethodDec findMethod(String name) {
 		throw new RuntimeException("未実装！");
 	}
 }

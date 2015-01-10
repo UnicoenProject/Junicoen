@@ -103,8 +103,8 @@ Dsl.define_node do |x|
     end
 
     x.node "MemberDec", abstract: true do
-      x.node "FuncDec" do |d|
-        d.mem "funcName", String
+      x.node "MethodDec" do |d|
+        d.mem "methodName", String
         d.mem "modifiers", String, list: true
         d.mem "returnType", String
         d.mem "args", "Arg", list: true
