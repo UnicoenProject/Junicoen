@@ -7,17 +7,17 @@ public class UniFuncDec extends UniMemberDec {
 	public List<String> modifiers;
 	public String returnType;
 	public List<UniArg> args;
-	public List<UniExpr> body;
+	public UniBlock block;
 
 	public UniFuncDec() {
 	}
 
-	public UniFuncDec(String funcName, List<String> modifiers, String returnType, List<UniArg> args, List<UniExpr> body) {
+	public UniFuncDec(String funcName, List<String> modifiers, String returnType, List<UniArg> args, UniBlock block) {
 		this.funcName = funcName;
 		this.modifiers = modifiers;
 		this.returnType = returnType;
 		this.args = args;
-		this.body = body;
+		this.block = block;
 	}
 
 	@Override

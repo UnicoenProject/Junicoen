@@ -1,5 +1,6 @@
 package net.unicoen.node;
 
+/** 二項式 */
 public class UniBinOp extends UniExpr {
 	public String operator;
 	public UniExpr left;

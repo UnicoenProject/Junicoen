@@ -1,9 +1,11 @@
 package net.unicoen.node_helper;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import net.unicoen.node.UniBinOp;
+import net.unicoen.node.UniBlock;
 import net.unicoen.node.UniBoolLiteral;
 import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniIdent;
@@ -18,6 +20,10 @@ public class Builder {
 			list.add(item);
 		}
 		return list;
+	}
+
+	public static UniBlock block(UniExpr... exprs) {
+		return new UniBlock(new ArrayList<>(Arrays.asList(exprs)));
 	}
 
 	public static UniIntLiteral lit(int value) {

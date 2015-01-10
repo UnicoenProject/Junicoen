@@ -2,6 +2,7 @@ package net.unicoen.node;
 
 import java.util.List;
 
+/** 関数/メソッド呼び出し */
 public class UniMethodCall extends UniExpr {
 	public UniExpr receiver;
 	public String methodName;

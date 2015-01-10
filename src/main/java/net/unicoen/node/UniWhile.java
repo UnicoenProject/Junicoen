@@ -1,17 +1,15 @@
 package net.unicoen.node;
 
-import java.util.List;
-
 public class UniWhile extends UniExpr {
 	public UniExpr cond;
-	public List<UniExpr> body;
+	public UniBlock block;
 
 	public UniWhile() {
 	}
 
-	public UniWhile(UniExpr cond, List<UniExpr> body) {
+	public UniWhile(UniExpr cond, UniBlock block) {
 		this.cond = cond;
-		this.body = body;
+		this.block = block;
 	}
 
 	@Override

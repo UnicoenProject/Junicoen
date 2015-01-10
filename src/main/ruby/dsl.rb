@@ -32,9 +32,15 @@ class Dsl
     inherits = parent.nil? ? [] : Array(parent) + @parents
     node = Node.new(prefix + name, inherits, opt, [])
     @parents.unshift(node)
-    NodeDsl.new(node, self).instance_eval(&block)
+    NodeDsl.new(node, self).instance_eval(&block) if block
     @parents.shift
     @nodes << node
+  end
+
+  #
+  # comment version of `node` method
+  #
+  def _node(*args)
   end
 
   def show
@@ -47,10 +53,14 @@ class Dsl
       puts "}"
     end
   end
-end
 
-def define_node(&block)
-  x = Dsl.new
-  x.instance_eval(&block)
-  x
+  def self.define_node(&block)
+    x = Dsl.new
+    x.instance_eval(&block)
+    @current = x
+  end
+
+  def self.current
+    @current
+  end
 end

@@ -10,10 +10,38 @@ import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.tree.TerminalNodeImpl
 import java.io.FileInputStream
-import org.antlr.v4.runtime.UnbufferedCharStream
 import org.antlr.v4.runtime.CharStream
+import net.unicoen.node.UniMemberDec
+import java.util.List
+import java.util.ArrayList
 
 class JavaMapper extends Java8BaseVisitor<UniNode> {
+
+	/**
+	 * Visitorでリストを返すために用意
+	 */
+	static class AggregatedNode implements UniNode {
+		public List<UniNode> list;
+
+		def List<UniNode> flatten() {
+			flattenTo(new ArrayList<UniNode>())
+		}
+
+		def List<UniNode> flattenTo(List<UniNode> dst) {
+			list.forEach [
+				if (it != null) {
+					switch it {
+						AggregatedNode:
+							it.flattenTo(dst)
+						default:
+							dst.add(it)
+					}
+				}
+			]
+			dst
+		}
+	}
+
 	def parseFile(String path) {
 		val inputStream = new FileInputStream(path);
 		try {
@@ -53,6 +81,7 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		val maps = createMaps(ctx)
 		val ret = new UniClassDec()
 		ret.className = maps.get("Identifier").get(0) as String
+		ret.members = (maps.get("classBody").get(0) as AggregatedNode).flatten.map[it as UniMemberDec]
 		return ret
 	}
 
@@ -62,5 +91,30 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		} else {
 			aggregate
 		}
+	}
+
+	override visitClassBody(Java8Parser.ClassBodyContext ctx) {
+		val maps = createMaps(ctx)
+		var ret = new AggregatedNode()
+		ret.list = maps.get("classBodyDeclaration").map[it as UniMemberDec]
+		ret
+	}
+
+	override public visitClassBodyDeclaration(Java8Parser.ClassBodyDeclarationContext ctx) {
+		val maps = createMaps(ctx)
+		val mems = maps.get("classMemberDeclaration")
+		if (mems.size() > 0) {
+			return mems.get(0) as UniNode
+		}
+		null
+	}
+	
+	override public visitClassMemberDeclaration(Java8Parser.ClassMemberDeclarationContext ctx) {
+		val maps = createMaps(ctx)
+		val mems = maps.get("methodDeclaration")
+		if (mems.size() > 0) {
+			return mems.get(0) as UniNode
+		}
+		null
 	}
 }
