@@ -1,19 +1,19 @@
 package net.unicoen.mapper
 
+import java.io.FileInputStream
+import java.util.ArrayList
+import java.util.List
 import net.unicoen.node.UniClassDec
+import net.unicoen.node.UniMemberDec
 import net.unicoen.node.UniNode
 import net.unicoen.parser.Java8BaseVisitor
 import net.unicoen.parser.Java8Lexer
 import net.unicoen.parser.Java8Parser
 import org.antlr.v4.runtime.ANTLRInputStream
+import org.antlr.v4.runtime.CharStream
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.tree.TerminalNodeImpl
-import java.io.FileInputStream
-import org.antlr.v4.runtime.CharStream
-import net.unicoen.node.UniMemberDec
-import java.util.List
-import java.util.ArrayList
 
 class JavaMapper extends Java8BaseVisitor<UniNode> {
 
@@ -108,7 +108,7 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		}
 		null
 	}
-	
+
 	override public visitClassMemberDeclaration(Java8Parser.ClassMemberDeclarationContext ctx) {
 		val maps = createMaps(ctx)
 		val mems = maps.get("methodDeclaration")

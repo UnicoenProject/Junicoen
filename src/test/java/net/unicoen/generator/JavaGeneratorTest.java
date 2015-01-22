@@ -1,7 +1,11 @@
 package net.unicoen.generator;
 
-import static net.unicoen.node_helper.Builder.*;
-import static org.junit.Assert.*;
+import static net.unicoen.node_helper.Builder.arg;
+import static net.unicoen.node_helper.Builder.block;
+import static net.unicoen.node_helper.Builder.ident;
+import static net.unicoen.node_helper.Builder.list;
+import static net.unicoen.node_helper.Builder.lit;
+import static org.junit.Assert.assertEquals;
 
 import java.util.regex.Pattern;
 

@@ -5,8 +5,8 @@ jdk:
 # Notify development list when needed
 notifications:
  recipients:
-   #- exkazuu@gmail.com
-   #- irxnjhtchlnrw@gmail.com
+   - exkazuu@gmail.com
+   - irxnjhtchlnrw@gmail.com
  email:
    on_success: change
    on_failure: always

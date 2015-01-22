@@ -1,7 +1,6 @@
 package net.unicoen.mapper
 
 import net.unicoen.node.UniClassDec
-import org.junit.Test
 
 import static org.hamcrest.Matchers.*
 import static org.junit.Assert.*
