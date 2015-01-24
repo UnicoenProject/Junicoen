@@ -3,6 +3,8 @@ require 'fileutils'
 
 module Writer
 
+  TRAVERSER_NAME = ['Traverser', 'traverse']
+
   class IndentWriter
     def initialize(file)
       @file = file
@@ -74,6 +76,9 @@ module Writer
         w.newline
         write_class_dec(dsl, node, w)
       end
+    end
+    File.open(pkg_dir + "/#{TRAVERSER_NAME[0]}.java", "w") do |f|
+      write_traverser(dsl, IndentWriter.new(f))
     end
   end
 
@@ -156,7 +161,7 @@ module Writer
       .map{ |name, type, opt| name }
       .join(' + ", " + ')
     c_name = node.name.sub(dsl.prefix, "")
-    
+
     w << "@Override"
     w.block "public String toString()" do
       if names.size > 0
@@ -198,6 +203,44 @@ module Writer
           w << "\t&& #{expr};"
         else
           w << "\t&& #{expr}"
+        end
+      end
+    end
+  end
+
+  def write_traverser(dsl, w)
+    no_prefix = ->(node){ node.name.sub(dsl.prefix, '') }
+    w << "package #{dsl.package};"
+    w.newline
+    w.block "public abstract class #{TRAVERSER_NAME[0]}" do
+      abst = []
+      conc = []
+      dsl.nodes.each do |node|
+        case
+        when node.opt[:interface]
+          # do nothing
+        when node.opt[:abstract]
+          abst << node
+        else
+          conc << node
+        end
+      end
+      # -- abst class
+      conc.sort_by(&:name)
+      w.newline
+      conc.each do |node|
+        w << "public abstract void #{TRAVERSER_NAME[1]}#{no_prefix[node]}(#{node.name} node);"
+      end
+      abst.each do |node|
+        w.newline
+        w.block "public final void #{TRAVERSER_NAME[1]}#{no_prefix[node]}(#{node.name} node)" do
+          dsl.nodes.each do |child|
+            next if child.parents.first != node
+            w.block "if (node instanceof #{child.name})" do
+              w << "#{TRAVERSER_NAME[1]}#{no_prefix[child]}((#{child.name})node);"
+            end
+          end
+          w << %{throw new RuntimeException("Unknown node: " + node);}
         end
       end
     end
