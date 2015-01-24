@@ -21,4 +21,9 @@ public class UniReturn extends UniExpr {
 		UniReturn that = (UniReturn)obj;
 		return (this.value == null ? that.value == null : this.value.equals(that.value));
 	}
+
+	@Override
+	public boolean isStatement() {
+		return false;
+	}
 }

@@ -27,4 +27,9 @@ public class UniIf extends UniExpr {
 			&& (this.trueBlock == null ? that.trueBlock == null : this.trueBlock.equals(that.trueBlock))
 			&& (this.falseBlock == null ? that.falseBlock == null : this.falseBlock.equals(that.falseBlock));
 	}
+
+	@Override
+	public boolean isStatement() {
+		return true;
+	}
 }

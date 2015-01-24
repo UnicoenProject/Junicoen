@@ -30,4 +30,9 @@ public class UniMethodCall extends UniExpr {
 			&& (this.methodName == null ? that.methodName == null : this.methodName.equals(that.methodName))
 			&& (this.args == null ? that.args == null : this.args.equals(that.args));
 	}
+
+	@Override
+	public boolean isStatement() {
+		return false;
+	}
 }

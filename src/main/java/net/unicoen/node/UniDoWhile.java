@@ -24,4 +24,9 @@ public class UniDoWhile extends UniExpr {
 		return (this.block == null ? that.block == null : this.block.equals(that.block))
 			&& (this.cond == null ? that.cond == null : this.cond.equals(that.cond));
 	}
+
+	@Override
+	public boolean isStatement() {
+		return true;
+	}
 }

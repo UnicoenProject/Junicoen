@@ -28,4 +28,9 @@ public class UniCondOp extends UniExpr {
 			&& (this.trueExpr == null ? that.trueExpr == null : this.trueExpr.equals(that.trueExpr))
 			&& (this.falseExpr == null ? that.falseExpr == null : this.falseExpr.equals(that.falseExpr));
 	}
+
+	@Override
+	public boolean isStatement() {
+		return false;
+	}
 }

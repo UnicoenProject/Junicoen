@@ -30,4 +30,9 @@ public class UniFor extends UniExpr {
 			&& (this.step == null ? that.step == null : this.step.equals(that.step))
 			&& (this.block == null ? that.block == null : this.block.equals(that.block));
 	}
+
+	@Override
+	public boolean isStatement() {
+		return true;
+	}
 }

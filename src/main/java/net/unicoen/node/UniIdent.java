@@ -21,4 +21,9 @@ public class UniIdent extends UniExpr {
 		UniIdent that = (UniIdent)obj;
 		return (this.name == null ? that.name == null : this.name.equals(that.name));
 	}
+
+	@Override
+	public boolean isStatement() {
+		return false;
+	}
 }

@@ -23,4 +23,9 @@ public class UniBlock extends UniExpr {
 		UniBlock that = (UniBlock)obj;
 		return (this.body == null ? that.body == null : this.body.equals(that.body));
 	}
+
+	@Override
+	public boolean isStatement() {
+		return true;
+	}
 }

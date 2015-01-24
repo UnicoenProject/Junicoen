@@ -28,4 +28,9 @@ public class UniBinOp extends UniExpr {
 			&& (this.left == null ? that.left == null : this.left.equals(that.left))
 			&& (this.right == null ? that.right == null : this.right.equals(that.right));
 	}
+
+	@Override
+	public boolean isStatement() {
+		return false;
+	}
 }

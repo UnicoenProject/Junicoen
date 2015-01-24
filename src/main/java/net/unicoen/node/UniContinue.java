@@ -14,4 +14,9 @@ public class UniContinue extends UniExpr {
 	public boolean equals(Object obj) {
 		return obj != null && obj instanceof UniContinue;
 	}
+
+	@Override
+	public boolean isStatement() {
+		return false;
+	}
 }

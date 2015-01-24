@@ -24,4 +24,9 @@ public class UniFieldAccess extends UniExpr {
 		return (this.receiver == null ? that.receiver == null : this.receiver.equals(that.receiver))
 			&& (this.fieldName == null ? that.fieldName == null : this.fieldName.equals(that.fieldName));
 	}
+
+	@Override
+	public boolean isStatement() {
+		return false;
+	}
 }

@@ -24,4 +24,9 @@ public class UniWhile extends UniExpr {
 		return (this.cond == null ? that.cond == null : this.cond.equals(that.cond))
 			&& (this.block == null ? that.block == null : this.block.equals(that.block));
 	}
+
+	@Override
+	public boolean isStatement() {
+		return true;
+	}
 }

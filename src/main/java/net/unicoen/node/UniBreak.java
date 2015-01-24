@@ -14,4 +14,9 @@ public class UniBreak extends UniExpr {
 	public boolean equals(Object obj) {
 		return obj != null && obj instanceof UniBreak;
 	}
+
+	@Override
+	public boolean isStatement() {
+		return false;
+	}
 }

@@ -25,4 +25,9 @@ public class UniUnaryOp extends UniExpr {
 		return (this.operator == null ? that.operator == null : this.operator.equals(that.operator))
 			&& (this.expr == null ? that.expr == null : this.expr.equals(that.expr));
 	}
+
+	@Override
+	public boolean isStatement() {
+		return false;
+	}
 }

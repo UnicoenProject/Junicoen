@@ -21,4 +21,9 @@ public class UniIntLiteral extends UniExpr {
 		UniIntLiteral that = (UniIntLiteral)obj;
 		return this.value == that.value;
 	}
+
+	@Override
+	public boolean isStatement() {
+		return false;
+	}
 }

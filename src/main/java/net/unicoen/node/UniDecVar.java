@@ -30,4 +30,9 @@ public class UniDecVar extends UniExpr {
 			&& (this.type == null ? that.type == null : this.type.equals(that.type))
 			&& (this.name == null ? that.name == null : this.name.equals(that.name));
 	}
+
+	@Override
+	public boolean isStatement() {
+		return true;
+	}
 }

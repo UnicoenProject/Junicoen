@@ -5,6 +5,16 @@ module Writer
 
   TRAVERSER_NAME = ['Traverser', 'traverse']
 
+  module StringExt
+    def camelize
+      gsub(/_(.)/){ $1.capitalize }
+    end
+    def pascalize
+      camelize.capitalize
+    end
+  end
+  String.include StringExt
+
   class IndentWriter
     def initialize(file)
       @file = file
@@ -117,6 +127,9 @@ module Writer
         write_to_string(dsl, node, w)
         w.newline
         write_equals(dsl, node, w)
+        write_conc_additional_member(dsl, node, w)
+      else
+        write_abst_additional_member(dsl, node, w)
       end
     end
   end
@@ -208,6 +221,32 @@ module Writer
     end
   end
 
+  def write_abst_additional_member(dsl, node, w)
+    node.opt.fetch(:member, {}).each do |name, type|
+      m_name = (/bool/i =~ type ? 'is' : 'get') + name.to_s.pascalize
+      if node.opt[:interface]
+        w << "public #{type} #{m_name}();"
+      else
+        w << "public abstract #{type} #{m_name}();"
+      end
+    end
+  end
+
+  def write_conc_additional_member(dsl, node, w)
+    node.parents.each do |parent|
+      parent.opt.fetch(:member, {}).each do |name, type|
+        m_name = (/bool/i =~ type ? 'is' : 'get') + name.to_s.pascalize
+        value = node.opt.fetch(name, default_value(type))
+
+        w.newline
+        w << "@Override" if parent.opt[:abstract]
+        w.block "public #{type} #{m_name}()" do
+          w << "return #{value};"
+        end
+      end
+    end
+  end
+
   def write_traverser(dsl, w)
     no_prefix = ->(node){ node.name.sub(dsl.prefix, '') }
     call_method = ->(node){ TRAVERSER_NAME[1] + no_prefix[node] }
@@ -244,6 +283,13 @@ module Writer
           w << %{throw new RuntimeException("Unknown node: " + node);}
         end
       end
+    end
+  end
+
+  def default_value(type)
+    case type
+    when /bool/
+      'false'
     end
   end
 end

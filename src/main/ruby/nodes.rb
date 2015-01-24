@@ -7,7 +7,7 @@ Dsl.define_node do |x|
 
   x.node "Node", interface: true do
 
-    x.node "Expr", abstract: true do
+    x.node "Expr", abstract: true, member: { statement: :boolean } do
       #
       # Factor
       #
@@ -54,7 +54,7 @@ Dsl.define_node do |x|
       #
       # Control flow
       #
-      x.node "Return" do |d|
+      x.node "Return", block: true do |d|
         d.mem "value", "Expr"
       end
       x.node "Break"
@@ -62,29 +62,29 @@ Dsl.define_node do |x|
       #
       # Block
       #
-      x.node "Block" do |d|
+      x.node "Block", statement: true do |d|
         d.mem "body", "Expr", list: true
       end
-      x.node "If" do |d|
+      x.node "If", statement: true do |d|
         d.mem "cond", "Expr"
         d.mem "trueBlock",  "Block"
         d.mem "falseBlock", "Block"
       end
-      x.node "For" do |d|
+      x.node "For", statement: true do |d|
         d.mem "init", "Expr"
         d.mem "cond", "Expr"
         d.mem "step", "Expr"
         d.mem "block", "Block"
       end
-      x.node "While" do |d|
+      x.node "While", statement: true do |d|
         d.mem "cond", "Expr"
         d.mem "block", "Block"
       end
-      x.node "DoWhile" do |d|
+      x.node "DoWhile", statement: true do |d|
         d.mem "block", "Block"
         d.mem "cond", "Expr"
       end
-      x._node "Try" do |d|
+      x._node "Try", statement: true do |d|
         d.mem "tryExpr", "Block"
         d.mem "tryBlock", "Block"
         d.mem "catchBlock", "Block"
@@ -93,12 +93,12 @@ Dsl.define_node do |x|
       #
       # Var Dec
       #
-      x.node "DecVar", doc: '変数宣言' do |d|
+      x.node "DecVar", statement: true, doc: '変数宣言' do |d|
         d.mem "modifiers", String, list: true
         d.mem "type", String
         d.mem "name", String
       end
-      x.node "DecVarWithValue", doc: '変数宣言＋代入' do |d|
+      x.node "DecVarWithValue", statement: true, doc: '変数宣言＋代入' do |d|
         d.mem "modifiers", String, list: true
         d.mem "type", String
         d.mem "name", String
