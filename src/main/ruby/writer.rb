@@ -278,6 +278,7 @@ module Writer
             next if child.parents.first != node
             w.block "if (node instanceof #{child.name})" do
               w << "#{call_method[child]}((#{child.name})node);"
+              w << "return;"
             end
           end
           w << %{throw new RuntimeException("Unknown node: " + node);}

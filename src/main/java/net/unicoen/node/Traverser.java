@@ -30,66 +30,87 @@ public abstract class Traverser {
 	public final void traverseExpr(UniExpr node) {
 		if (node instanceof UniBoolLiteral) {
 			traverseBoolLiteral((UniBoolLiteral)node);
+			return;
 		}
 		if (node instanceof UniIntLiteral) {
 			traverseIntLiteral((UniIntLiteral)node);
+			return;
 		}
 		if (node instanceof UniLongLiteral) {
 			traverseLongLiteral((UniLongLiteral)node);
+			return;
 		}
 		if (node instanceof UniDoubleLiteral) {
 			traverseDoubleLiteral((UniDoubleLiteral)node);
+			return;
 		}
 		if (node instanceof UniStringLiteral) {
 			traverseStringLiteral((UniStringLiteral)node);
+			return;
 		}
 		if (node instanceof UniIdent) {
 			traverseIdent((UniIdent)node);
+			return;
 		}
 		if (node instanceof UniFieldAccess) {
 			traverseFieldAccess((UniFieldAccess)node);
+			return;
 		}
 		if (node instanceof UniMethodCall) {
 			traverseMethodCall((UniMethodCall)node);
+			return;
 		}
 		if (node instanceof UniUnaryOp) {
 			traverseUnaryOp((UniUnaryOp)node);
+			return;
 		}
 		if (node instanceof UniBinOp) {
 			traverseBinOp((UniBinOp)node);
+			return;
 		}
 		if (node instanceof UniCondOp) {
 			traverseCondOp((UniCondOp)node);
+			return;
 		}
 		if (node instanceof UniReturn) {
 			traverseReturn((UniReturn)node);
+			return;
 		}
 		if (node instanceof UniBreak) {
 			traverseBreak((UniBreak)node);
+			return;
 		}
 		if (node instanceof UniContinue) {
 			traverseContinue((UniContinue)node);
+			return;
 		}
 		if (node instanceof UniBlock) {
 			traverseBlock((UniBlock)node);
+			return;
 		}
 		if (node instanceof UniIf) {
 			traverseIf((UniIf)node);
+			return;
 		}
 		if (node instanceof UniFor) {
 			traverseFor((UniFor)node);
+			return;
 		}
 		if (node instanceof UniWhile) {
 			traverseWhile((UniWhile)node);
+			return;
 		}
 		if (node instanceof UniDoWhile) {
 			traverseDoWhile((UniDoWhile)node);
+			return;
 		}
 		if (node instanceof UniDecVar) {
 			traverseDecVar((UniDecVar)node);
+			return;
 		}
 		if (node instanceof UniDecVarWithValue) {
 			traverseDecVarWithValue((UniDecVarWithValue)node);
+			return;
 		}
 		throw new RuntimeException("Unknown node: " + node);
 	}
@@ -97,6 +118,7 @@ public abstract class Traverser {
 	public final void traverseMemberDec(UniMemberDec node) {
 		if (node instanceof UniMethodDec) {
 			traverseMethodDec((UniMethodDec)node);
+			return;
 		}
 		throw new RuntimeException("Unknown node: " + node);
 	}
