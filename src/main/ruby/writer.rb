@@ -210,6 +210,7 @@ module Writer
 
   def write_traverser(dsl, w)
     no_prefix = ->(node){ node.name.sub(dsl.prefix, '') }
+    call_method = ->(node){ TRAVERSER_NAME[1] + no_prefix[node] }
     w << "package #{dsl.package};"
     w.newline
     w.block "public abstract class #{TRAVERSER_NAME[0]}" do
@@ -229,15 +230,15 @@ module Writer
       conc.sort_by(&:name)
       w.newline
       conc.each do |node|
-        w << "public abstract void #{TRAVERSER_NAME[1]}#{no_prefix[node]}(#{node.name} node);"
+        w << "public abstract void #{call_method[node]}(#{node.name} node);"
       end
       abst.each do |node|
         w.newline
-        w.block "public final void #{TRAVERSER_NAME[1]}#{no_prefix[node]}(#{node.name} node)" do
+        w.block "public final void #{call_method[node]}(#{node.name} node)" do
           dsl.nodes.each do |child|
             next if child.parents.first != node
             w.block "if (node instanceof #{child.name})" do
-              w << "#{TRAVERSER_NAME[1]}#{no_prefix[child]}((#{child.name})node);"
+              w << "#{call_method[child]}((#{child.name})node);"
             end
           end
           w << %{throw new RuntimeException("Unknown node: " + node);}
