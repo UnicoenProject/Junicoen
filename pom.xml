@@ -82,6 +82,7 @@
 				<executions>
 					<execution>
 						<id>antlr</id>
+						<phase>compile</phase>
 						<goals>
 							<goal>antlr4</goal>
 						</goals>
@@ -188,7 +189,7 @@
 				</executions>
 			</plugin>
 
-			<!-- Source code -->
+			<!-- Source code
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
@@ -201,7 +202,7 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin> -->
 
 			<!-- Javadoc -->
 			<plugin>
