@@ -47,20 +47,31 @@ public class JavaGeneratorTest {
 		assertEquals(normalize(cDecStr), normalize(code));
 	}
 
+	private void assertGen(String code, UniExpr expr) {
+		assertGen(new String[] { code }, new UniExpr[] { expr });
+	}
+
+	private void assertGen(String[] codes, UniExpr[] exprs) {
+		StringBuilder buff = new StringBuilder();
+		buff.append("public class Foo {\n");
+		buff.append("	public static void main (String[] args) {\n");
+		for (String line : codes) {
+			buff.append("\t\t" + line + "\n");
+		}
+		buff.append("	}\n");
+		buff.append("}\n");
+
+		UniMethodDec mDec = new UniMethodDec("main", list("public", "static"), "void", list(arg("String[]", "args")), block(exprs));
+		UniClassDec cDec = new UniClassDec("Foo", list("public"), list(mDec));
+
+		String code = JavaGenerator.generate(cDec);
+		assertEquals(buff.toString(), code);
+	}
+
 	@Test
 	public void genHelloWorld_with_indent() {
 		UniExpr body = new UniMethodCall(new UniFieldAccess(ident("System"), "out"), "println", list(lit("Hello, world")));
-		UniMethodDec mDec = new UniMethodDec("main", list("public", "static"), "void", list(arg("String[]", "args")), block(body));
-		UniClassDec cDec = new UniClassDec("Foo", list("public"), list(mDec));
-
-		String[] codes = {
-				"public class Foo {",
-				"	public static void main (String[] args) {",
-				"		System.out.println(\"Hello, world\");",
-				"	}",
-				"}"
-		};
-		String code = JavaGenerator.generate(cDec);
-		assertEquals(String.join("\n", codes) + "\n", code);
+		String code = "System.out.println(\"Hello, world\");";
+		assertGen(code, body);
 	}
 }
