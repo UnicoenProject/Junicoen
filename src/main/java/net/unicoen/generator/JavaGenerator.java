@@ -75,6 +75,41 @@ public class JavaGenerator extends Traverser {
 		printlnIndent(String.format(format, args));
 	}
 
+	private void genBlockInnerS(UniBlock block, String preStatement, Runnable afterBlock) {
+		genBlockInner(block, () ->{ print(preStatement); }, afterBlock);
+	}
+
+	private void genBlockInner(UniBlock block, Runnable beforeBlock, Runnable afterBlock) {
+		if (beforeBlock != null) {
+			printIndent();
+			beforeBlock.run();
+			println(" {");
+		} else {
+			printlnIndent("{");
+		}
+		indent++;
+		if (block != null) {
+			for (UniExpr expr : iter(block.body)) {
+				if (expr.isStatement()) {
+					traverseExpr(expr);
+				} else {
+					printIndent();
+					traverseExpr(expr);
+					println(";");
+				}
+			}
+		}
+		indent--;
+		if (afterBlock != null) {
+			printIndent();
+			print("} ");
+			afterBlock.run();
+			println("");
+		} else {
+			printlnIndent("}");
+		}
+	}
+
 	public static String generate(UniClassDec dec) {
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); PrintStream printer = new PrintStream(out)) {
 			generate(dec, printer);
@@ -195,15 +230,8 @@ public class JavaGenerator extends Traverser {
 	}
 
 	@Override
-	public void traverseBlock(UniBlock block) {
-		if (block == null) {
-			return;
-		}
-		for (UniExpr expr : iter(block.body)) {
-			printIndent();
-			traverseExpr(expr);
-			println(";");
-		}
+	public void traverseBlock(UniBlock node) {
+		genBlockInner(node, null, null);
 	}
 
 	@Override
@@ -220,26 +248,33 @@ public class JavaGenerator extends Traverser {
 
 	@Override
 	public void traverseWhile(UniWhile node) {
+
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void traverseDoWhile(UniDoWhile node) {
-		// TODO Auto-generated method stub
-
+		genBlockInnerS(node.block, "do", () -> {
+			print("while (");
+			traverseExpr(node.cond);
+			print(";");
+		});
 	}
 
 	@Override
 	public void traverseDecVar(UniDecVar node) {
-		// TODO Auto-generated method stub
-
+		String mod = String.join(" ", node.modifiers);
+		printlnIndent(String.join(" ", mod, node.type, node.name));
 	}
 
 	@Override
 	public void traverseDecVarWithValue(UniDecVarWithValue node) {
-		// TODO Auto-generated method stub
-
+		String mod = String.join(" ", node.modifiers);
+		printIndent();
+		print(String.join(" ", mod, node.type, node.name));
+		print(" = ");
+		traverseExpr(node.value);
 	}
 
 	@Override
@@ -250,17 +285,13 @@ public class JavaGenerator extends Traverser {
 			args.add(arg.type + " " + arg.name);
 		}
 		String argWithParen = "(" + String.join(", ", args) + ")";
-		printlnIndent(String.join(" ", mod, methDec.returnType, methDec.methodName, argWithParen, "{"));
-		indent++;
-		traverseBlock(methDec.block);
-		indent--;
-		printlnIndent("}");
+		String declare = String.join(" ", mod, methDec.returnType, methDec.methodName, argWithParen);
+		genBlockInnerS(methDec.block, declare, null);
 	}
 
 	@Override
 	public void traverseArg(UniArg node) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override

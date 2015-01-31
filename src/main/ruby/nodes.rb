@@ -93,12 +93,12 @@ Dsl.define_node do |x|
       #
       # Var Dec
       #
-      x.node "DecVar", statement: true, doc: '変数宣言' do |d|
+      x.node "DecVar", doc: '変数宣言' do |d|
         d.mem "modifiers", String, list: true
         d.mem "type", String
         d.mem "name", String
       end
-      x.node "DecVarWithValue", statement: true, doc: '変数宣言＋代入' do |d|
+      x.node "DecVarWithValue", doc: '変数宣言＋代入' do |d|
         d.mem "modifiers", String, list: true
         d.mem "type", String
         d.mem "name", String

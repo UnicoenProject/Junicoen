@@ -33,6 +33,6 @@ public class UniDecVar extends UniExpr {
 
 	@Override
 	public boolean isStatement() {
-		return true;
+		return false;
 	}
 }
