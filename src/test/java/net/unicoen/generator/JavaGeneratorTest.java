@@ -1,11 +1,7 @@
 package net.unicoen.generator;
 
-import static net.unicoen.node_helper.Builder.arg;
-import static net.unicoen.node_helper.Builder.block;
-import static net.unicoen.node_helper.Builder.ident;
-import static net.unicoen.node_helper.Builder.list;
-import static net.unicoen.node_helper.Builder.lit;
-import static org.junit.Assert.assertEquals;
+import static net.unicoen.node_helper.Builder.*;
+import static org.junit.Assert.*;
 
 import java.util.regex.Pattern;
 
@@ -49,5 +45,22 @@ public class JavaGeneratorTest {
 
 		String code = JavaGenerator.generate(cDec);
 		assertEquals(normalize(cDecStr), normalize(code));
+	}
+
+	@Test
+	public void genHelloWorld_with_indent() {
+		UniExpr body = new UniMethodCall(new UniFieldAccess(ident("System"), "out"), "println", list(lit("Hello, world")));
+		UniMethodDec mDec = new UniMethodDec("main", list("public", "static"), "void", list(arg("String[]", "args")), block(body));
+		UniClassDec cDec = new UniClassDec("Foo", list("public"), list(mDec));
+
+		String[] codes = {
+				"public class Foo {",
+				"	public static void main (String[] args) {",
+				"		System.out.println(\"Hello, world\");",
+				"	}",
+				"}"
+		};
+		String code = JavaGenerator.generate(cDec);
+		assertEquals(String.join("\n", codes) + "\n", code);
 	}
 }
