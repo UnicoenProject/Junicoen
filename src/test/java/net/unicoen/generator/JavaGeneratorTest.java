@@ -18,6 +18,7 @@ import net.unicoen.node.UniDoubleLiteral;
 import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniFieldAccess;
 import net.unicoen.node.UniFor;
+import net.unicoen.node.UniIf;
 import net.unicoen.node.UniIntLiteral;
 import net.unicoen.node.UniLongLiteral;
 import net.unicoen.node.UniMethodCall;
@@ -159,19 +160,29 @@ public class JavaGeneratorTest {
 		assertGen(codes, expr);
 	}
 
-//	@Test
-//	public void test_If() {
-//		UniExpr init = new UniDecVarWithValue(null, "int", "i", lit(0));
-//		UniExpr cond = new UniBinOp("<", ident("i"), lit(10));
-//		UniExpr step = new UniUnaryOp("_++", ident("i"));
-//		UniExpr body = new UniFor(init, cond, step, block(lit(3)));
-//		String[] codes = {
-//				"for (int i = 0; i < 10; i++) {",
-//				"	3;",
-//				"}",
-//		};
-//		assertGen(codes, body);
-//	}
+	@Test
+	public void test_If() {
+		{
+			UniExpr ifStmt = new UniIf(lit(true), block(lit(6)), null);
+			String[] codes = {
+					"if (true) {",
+					"	6;",
+					"}",
+			};
+			assertGen(codes, ifStmt);
+		}
+		{
+			UniExpr ifStmt = new UniIf(lit(true), block(lit(6)), block(lit(3)));
+			String[] codes = {
+					"if (true) {",
+					"	6;",
+					"} else {",
+					"	3;",
+					"}",
+			};
+			assertGen(codes, ifStmt);
+		}
+	}
 
 	@Test
 	public void test_For() {

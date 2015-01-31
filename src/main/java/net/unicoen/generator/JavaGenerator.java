@@ -75,11 +75,13 @@ public class JavaGenerator extends Traverser {
 		printlnIndent(String.format(format, args));
 	}
 
-	private void genBlockInnerS(UniBlock block, String preStatement, Runnable afterBlock) {
-		genBlockInner(block, () ->{ print(preStatement); }, afterBlock);
+	private void genBlockS(UniBlock block, String preStatement, Runnable afterBlock) {
+		genBlock(block, () -> {
+			print(preStatement);
+		}, afterBlock);
 	}
 
-	private void genBlockInner(UniBlock block, Runnable beforeBlock, Runnable afterBlock) {
+	private void genBlock(UniBlock block, Runnable beforeBlock, Runnable afterBlock) {
 		if (beforeBlock != null) {
 			printIndent();
 			beforeBlock.run();
@@ -87,6 +89,18 @@ public class JavaGenerator extends Traverser {
 		} else {
 			printlnIndent("{");
 		}
+		genBlockInner(block);
+		if (afterBlock != null) {
+			printIndent();
+			print("} ");
+			afterBlock.run();
+			println("");
+		} else {
+			printlnIndent("}");
+		}
+	}
+
+	private void genBlockInner(UniBlock block) {
 		indent++;
 		if (block != null) {
 			for (UniExpr expr : iter(block.body)) {
@@ -100,14 +114,6 @@ public class JavaGenerator extends Traverser {
 			}
 		}
 		indent--;
-		if (afterBlock != null) {
-			printIndent();
-			print("} ");
-			afterBlock.run();
-			println("");
-		} else {
-			printlnIndent("}");
-		}
 	}
 
 	public static String generate(UniClassDec dec) {
@@ -195,10 +201,10 @@ public class JavaGenerator extends Traverser {
 
 	@Override
 	public void traverseUnaryOp(UniUnaryOp node) {
-		if(node.operator.startsWith("_")) {
+		if (node.operator.startsWith("_")) {
 			traverseExpr(node.expr);
 			print(node.operator.substring(1));
-		} else if(node.operator.endsWith("_")) { 
+		} else if (node.operator.endsWith("_")) {
 			print(node.operator.substring(0, node.operator.length() - 1));
 			traverseExpr(node.expr);
 		} else {
@@ -243,18 +249,26 @@ public class JavaGenerator extends Traverser {
 
 	@Override
 	public void traverseBlock(UniBlock node) {
-		genBlockInner(node, null, null);
+		genBlock(node, null, null);
 	}
 
 	@Override
 	public void traverseIf(UniIf node) {
-		// TODO Auto-generated method stub
-
+		printIndent();
+		print("if (");
+		traverseExpr(node.cond);
+		println(") {");
+		genBlockInner(node.trueBlock);
+		if (node.falseBlock != null) {
+			printlnIndent("} else {");
+			genBlockInner(node.falseBlock);
+		}
+		printlnIndent("}");
 	}
 
 	@Override
 	public void traverseFor(UniFor node) {
-		genBlockInner(node.block, ()->{
+		genBlock(node.block, () -> {
 			print("for (");
 			traverseExpr(node.init);
 			print("; ");
@@ -267,7 +281,7 @@ public class JavaGenerator extends Traverser {
 
 	@Override
 	public void traverseWhile(UniWhile node) {
-		genBlockInner(node.block, ()->{
+		genBlock(node.block, () -> {
 			print("while (");
 			traverseExpr(node.cond);
 			print(")");
@@ -276,7 +290,7 @@ public class JavaGenerator extends Traverser {
 
 	@Override
 	public void traverseDoWhile(UniDoWhile node) {
-		genBlockInnerS(node.block, "do", () -> {
+		genBlockS(node.block, "do", () -> {
 			print("while (");
 			traverseExpr(node.cond);
 			print(");");
@@ -291,8 +305,8 @@ public class JavaGenerator extends Traverser {
 
 	@Override
 	public void traverseDecVarWithValue(UniDecVarWithValue node) {
-		if(node.modifiers != null) {
-			for(String mod : node.modifiers) {
+		if (node.modifiers != null) {
+			for (String mod : node.modifiers) {
 				print(mod);
 				print(" ");
 			}
@@ -311,7 +325,7 @@ public class JavaGenerator extends Traverser {
 		}
 		String argWithParen = "(" + String.join(", ", args) + ")";
 		String declare = String.join(" ", mod, methDec.returnType, methDec.methodName, argWithParen);
-		genBlockInnerS(methDec.block, declare, null);
+		genBlockS(methDec.block, declare, null);
 	}
 
 	@Override
