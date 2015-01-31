@@ -21,7 +21,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<encoding>UTF-8</encoding>
 		<xtend.version>2.7.3</xtend.version>
-		<antlr.version>4.3</antlr.version>
+		<antlr.version>4.5</antlr.version>
 	</properties>
 
 	<repositories>
@@ -52,7 +52,6 @@
 			<artifactId>org.eclipse.xtend.lib</artifactId>
 			<version>${xtend.version}</version>
 		</dependency>
-
 		<!-- Test dependencies -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -70,7 +69,7 @@
 
 	<build>
 		<plugins>
-			<!-- Generate parsers with ANTLR 4 
+			<!-- Generate parsers with ANTLR 4 -->
 			<plugin>
 				<groupId>org.antlr</groupId>
 				<artifactId>antlr4-maven-plugin</artifactId>
@@ -88,7 +87,7 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>-->
+			</plugin>
 
 			<!-- Generate source code with Xtend -->
 			<plugin>
