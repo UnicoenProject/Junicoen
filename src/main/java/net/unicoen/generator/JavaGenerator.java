@@ -150,6 +150,7 @@ public class JavaGenerator extends Traverser {
 	@Override
 	public void traverseLongLiteral(UniLongLiteral node) {
 		print(Long.toString(node.value));
+		print("L");
 	}
 
 	@Override
@@ -194,14 +195,25 @@ public class JavaGenerator extends Traverser {
 
 	@Override
 	public void traverseUnaryOp(UniUnaryOp node) {
-		print(node.operator);
-		traverseExpr(node.expr);
+		if(node.operator.startsWith("_")) {
+			traverseExpr(node.expr);
+			print(node.operator.substring(1));
+		} else if(node.operator.endsWith("_")) { 
+			print(node.operator.substring(0, node.operator.length() - 1));
+			traverseExpr(node.expr);
+		} else {
+			print(node.operator);
+			traverseExpr(node.expr);
+		}
 	}
 
 	@Override
 	public void traverseBinOp(UniBinOp node) {
-		// TODO Auto-generated method stub
-
+		traverseExpr(node.left);
+		print(" ");
+		print(node.operator);
+		print(" ");
+		traverseExpr(node.right);
 	}
 
 	@Override
@@ -242,15 +254,24 @@ public class JavaGenerator extends Traverser {
 
 	@Override
 	public void traverseFor(UniFor node) {
-		// TODO Auto-generated method stub
-
+		genBlockInner(node.block, ()->{
+			print("for (");
+			traverseExpr(node.init);
+			print("; ");
+			traverseExpr(node.cond);
+			print("; ");
+			traverseExpr(node.step);
+			print(")");
+		}, null);
 	}
 
 	@Override
 	public void traverseWhile(UniWhile node) {
-
-		// TODO Auto-generated method stub
-
+		genBlockInner(node.block, ()->{
+			print("while (");
+			traverseExpr(node.cond);
+			print(")");
+		}, null);
 	}
 
 	@Override
@@ -258,21 +279,25 @@ public class JavaGenerator extends Traverser {
 		genBlockInnerS(node.block, "do", () -> {
 			print("while (");
 			traverseExpr(node.cond);
-			print(";");
+			print(");");
 		});
 	}
 
 	@Override
 	public void traverseDecVar(UniDecVar node) {
 		String mod = String.join(" ", node.modifiers);
-		printlnIndent(String.join(" ", mod, node.type, node.name));
+		print(String.join(" ", mod, node.type, node.name));
 	}
 
 	@Override
 	public void traverseDecVarWithValue(UniDecVarWithValue node) {
-		String mod = String.join(" ", node.modifiers);
-		printIndent();
-		print(String.join(" ", mod, node.type, node.name));
+		if(node.modifiers != null) {
+			for(String mod : node.modifiers) {
+				print(mod);
+				print(" ");
+			}
+		}
+		print(String.join(" ", node.type, node.name));
 		print(" = ");
 		traverseExpr(node.value);
 	}
