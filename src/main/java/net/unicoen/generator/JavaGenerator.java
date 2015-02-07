@@ -15,8 +15,8 @@ import net.unicoen.node.UniBreak;
 import net.unicoen.node.UniClassDec;
 import net.unicoen.node.UniCondOp;
 import net.unicoen.node.UniContinue;
-import net.unicoen.node.UniDecVar;
-import net.unicoen.node.UniDecVarWithValue;
+import net.unicoen.node.UniVariableDec;
+import net.unicoen.node.UniVariableDecWithValue;
 import net.unicoen.node.UniDoWhile;
 import net.unicoen.node.UniDoubleLiteral;
 import net.unicoen.node.UniExpr;
@@ -358,13 +358,13 @@ public class JavaGenerator extends Traverser {
 	}
 
 	@Override
-	public void traverseDecVar(UniDecVar node) {
+	public void traverseVariableDec(UniVariableDec node) {
 		String mod = String.join(" ", node.modifiers);
 		print(String.join(" ", mod, node.type, node.name));
 	}
 
 	@Override
-	public void traverseDecVarWithValue(UniDecVarWithValue node) {
+	public void traverseVariableDecWithValue(UniVariableDecWithValue node) {
 		if (node.modifiers != null) {
 			for (String mod : node.modifiers) {
 				print(mod);

@@ -11,8 +11,8 @@ import net.unicoen.node.UniBreak;
 import net.unicoen.node.UniClassDec;
 import net.unicoen.node.UniCondOp;
 import net.unicoen.node.UniContinue;
-import net.unicoen.node.UniDecVar;
-import net.unicoen.node.UniDecVarWithValue;
+import net.unicoen.node.UniVariableDec;
+import net.unicoen.node.UniVariableDecWithValue;
 import net.unicoen.node.UniDoWhile;
 import net.unicoen.node.UniDoubleLiteral;
 import net.unicoen.node.UniExpr;
@@ -205,7 +205,7 @@ public class JavaGeneratorTest {
 
 	@Test
 	public void test_For() {
-		UniExpr init = new UniDecVarWithValue(null, "int", "i", lit(0));
+		UniExpr init = new UniVariableDecWithValue(null, "int", "i", lit(0));
 		UniExpr cond = new UniBinOp("<", ident("i"), lit(10));
 		UniExpr step = new UniUnaryOp("_++", ident("i"));
 		UniExpr body = new UniFor(init, cond, step, block(new UniContinue()));
@@ -241,14 +241,14 @@ public class JavaGeneratorTest {
 
 	@Test
 	public void test_DecVar() {
-		UniExpr body = new UniDecVar(list("final"), "int", "a");
+		UniExpr body = new UniVariableDec(list("final"), "int", "a");
 		String code = "final int a;";
 		assertGen(code, body);
 	}
 
 	@Test
 	public void test_DecVarWithValue() {
-		UniExpr body = new UniDecVarWithValue(list("final"), "int", "a", lit(1));
+		UniExpr body = new UniVariableDecWithValue(list("final"), "int", "a", lit(1));
 		String code = "final int a = 1;";
 		assertGen(code, body);
 	}
