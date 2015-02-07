@@ -298,13 +298,13 @@ public class JavaGenerator extends Traverser {
 	}
 
 	@Override
-	public void traverseDecVar(UniVariableDec node) {
+	public void traverseVariableDec(UniVariableDec node) {
 		String mod = String.join(" ", node.modifiers);
 		print(String.join(" ", mod, node.type, node.name));
 	}
 
 	@Override
-	public void traverseDecVarWithValue(UniVariableDecWithValue node) {
+	public void traverseVariableDecWithValue(UniVariableDecWithValue node) {
 		if (node.modifiers != null) {
 			for (String mod : node.modifiers) {
 				print(mod);

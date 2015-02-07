@@ -19,7 +19,7 @@ public class UniVariableDec extends UniExpr {
 
 	@Override
 	public String toString() {
-		return "DecVar(" + type + ", " + name + ")";
+		return "VariableDec(" + type + ", " + name + ")";
 	}
 
 	@Override
