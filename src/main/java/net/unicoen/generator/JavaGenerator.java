@@ -15,8 +15,6 @@ import net.unicoen.node.UniBreak;
 import net.unicoen.node.UniClassDec;
 import net.unicoen.node.UniCondOp;
 import net.unicoen.node.UniContinue;
-import net.unicoen.node.UniVariableDec;
-import net.unicoen.node.UniVariableDecWithValue;
 import net.unicoen.node.UniDoWhile;
 import net.unicoen.node.UniDoubleLiteral;
 import net.unicoen.node.UniExpr;
@@ -32,6 +30,8 @@ import net.unicoen.node.UniMethodDec;
 import net.unicoen.node.UniReturn;
 import net.unicoen.node.UniStringLiteral;
 import net.unicoen.node.UniUnaryOp;
+import net.unicoen.node.UniVariableDec;
+import net.unicoen.node.UniVariableDecWithValue;
 import net.unicoen.node.UniWhile;
 
 public class JavaGenerator extends Traverser {
