@@ -136,6 +136,25 @@ public class JavaGeneratorTest {
 	}
 
 	@Test
+	public void test_BinOp() {
+		{
+			UniExpr expr = new UniBinOp("+", new UniBinOp("+", lit(1), lit(2)), new UniBinOp("+", lit(3), lit(4)));
+			String code = "1 + 2 + (3 + 4);";
+			assertGen(code, expr);
+		}
+		{
+			UniExpr expr = new UniBinOp("+", new UniBinOp("*", lit(1), lit(2)), new UniBinOp("*", lit(3), lit(4)));
+			String code = "1 * 2 + 3 * 4;";
+			assertGen(code, expr);
+		}
+		{
+			UniExpr expr = new UniBinOp("*", new UniBinOp("+", lit(1), lit(2)), new UniBinOp("+", lit(3), lit(4)));
+			String code = "(1 + 2) * (3 + 4);";
+			assertGen(code, expr);
+		}
+	}
+
+	@Test
 	public void test_CondOp() {
 		UniExpr expr = new UniCondOp(lit(true), lit(1), lit(2));
 		String code = "true ? 1 : 2;";
