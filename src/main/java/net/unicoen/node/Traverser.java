@@ -12,7 +12,7 @@ public abstract class Traverser {
 	public abstract void traverseMethodCall(UniMethodCall node);
 	public abstract void traverseUnaryOp(UniUnaryOp node);
 	public abstract void traverseBinOp(UniBinOp node);
-	public abstract void traverseCondOp(UniCondOp node);
+	public abstract void traverseTernaryOp(UniTernaryOp node);
 	public abstract void traverseReturn(UniReturn node);
 	public abstract void traverseBreak(UniBreak node);
 	public abstract void traverseContinue(UniContinue node);
@@ -68,8 +68,8 @@ public abstract class Traverser {
 			traverseBinOp((UniBinOp)node);
 			return;
 		}
-		if (node instanceof UniCondOp) {
-			traverseCondOp((UniCondOp)node);
+		if (node instanceof UniTernaryOp) {
+			traverseTernaryOp((UniTernaryOp)node);
 			return;
 		}
 		if (node instanceof UniReturn) {

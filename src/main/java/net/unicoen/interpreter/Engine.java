@@ -14,7 +14,7 @@ import net.unicoen.node.UniBlock;
 import net.unicoen.node.UniBoolLiteral;
 import net.unicoen.node.UniBreak;
 import net.unicoen.node.UniClassDec;
-import net.unicoen.node.UniCondOp;
+import net.unicoen.node.UniTernaryOp;
 import net.unicoen.node.UniContinue;
 import net.unicoen.node.UniVariableDec;
 import net.unicoen.node.UniVariableDecWithValue;
@@ -202,8 +202,8 @@ public class Engine {
 		if (expr instanceof UniBinOp) {
 			return execBinOp((UniBinOp) expr, scope);
 		}
-		if (expr instanceof UniCondOp) {
-			UniCondOp condOp = (UniCondOp) expr;
+		if (expr instanceof UniTernaryOp) {
+			UniTernaryOp condOp = (UniTernaryOp) expr;
 			return toBool(execExpr(condOp.cond, scope)) ? execExpr(condOp.trueExpr, scope) : execExpr(condOp.falseExpr,
 					scope);
 		}

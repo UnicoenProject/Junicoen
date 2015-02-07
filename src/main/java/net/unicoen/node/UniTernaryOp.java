@@ -1,15 +1,15 @@
 package net.unicoen.node;
 
 /** 条件式/条件演算子 */
-public class UniCondOp extends UniExpr {
+public class UniTernaryOp extends UniExpr {
 	public UniExpr cond;
 	public UniExpr trueExpr;
 	public UniExpr falseExpr;
 
-	public UniCondOp() {
+	public UniTernaryOp() {
 	}
 
-	public UniCondOp(UniExpr cond, UniExpr trueExpr, UniExpr falseExpr) {
+	public UniTernaryOp(UniExpr cond, UniExpr trueExpr, UniExpr falseExpr) {
 		this.cond = cond;
 		this.trueExpr = trueExpr;
 		this.falseExpr = falseExpr;
@@ -17,13 +17,13 @@ public class UniCondOp extends UniExpr {
 
 	@Override
 	public String toString() {
-		return "CondOp";
+		return "TernaryOp";
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null || !(obj instanceof UniCondOp)) return false;
-		UniCondOp that = (UniCondOp)obj;
+		if (obj == null || !(obj instanceof UniTernaryOp)) return false;
+		UniTernaryOp that = (UniTernaryOp)obj;
 		return (this.cond == null ? that.cond == null : this.cond.equals(that.cond))
 			&& (this.trueExpr == null ? that.trueExpr == null : this.trueExpr.equals(that.trueExpr))
 			&& (this.falseExpr == null ? that.falseExpr == null : this.falseExpr.equals(that.falseExpr));
