@@ -15,8 +15,8 @@ import net.unicoen.node.UniBreak;
 import net.unicoen.node.UniClassDec;
 import net.unicoen.node.UniCondOp;
 import net.unicoen.node.UniContinue;
-import net.unicoen.node.UniDecVar;
-import net.unicoen.node.UniDecVarWithValue;
+import net.unicoen.node.UniVariableDec;
+import net.unicoen.node.UniVariableDecWithValue;
 import net.unicoen.node.UniDoWhile;
 import net.unicoen.node.UniDoubleLiteral;
 import net.unicoen.node.UniExpr;
@@ -39,8 +39,11 @@ public class JavaGenerator extends Traverser {
 	private final PrintStream out;
 	private int indent = 0;
 
+	private final IntStack exprPriority = new IntStack();
+
 	private JavaGenerator(PrintStream out) {
 		this.out = out;
+		exprPriority.push(0);
 	}
 
 	/**
@@ -75,11 +78,13 @@ public class JavaGenerator extends Traverser {
 		printlnIndent(String.format(format, args));
 	}
 
-	private void genBlockInnerS(UniBlock block, String preStatement, Runnable afterBlock) {
-		genBlockInner(block, () ->{ print(preStatement); }, afterBlock);
+	private void genBlockS(UniBlock block, String preStatement, Runnable afterBlock) {
+		genBlock(block, () -> {
+			print(preStatement);
+		}, afterBlock);
 	}
 
-	private void genBlockInner(UniBlock block, Runnable beforeBlock, Runnable afterBlock) {
+	private void genBlock(UniBlock block, Runnable beforeBlock, Runnable afterBlock) {
 		if (beforeBlock != null) {
 			printIndent();
 			beforeBlock.run();
@@ -87,19 +92,7 @@ public class JavaGenerator extends Traverser {
 		} else {
 			printlnIndent("{");
 		}
-		indent++;
-		if (block != null) {
-			for (UniExpr expr : iter(block.body)) {
-				if (expr.isStatement()) {
-					traverseExpr(expr);
-				} else {
-					printIndent();
-					traverseExpr(expr);
-					println(";");
-				}
-			}
-		}
-		indent--;
+		genBlockInner(block);
 		if (afterBlock != null) {
 			printIndent();
 			print("} ");
@@ -108,6 +101,70 @@ public class JavaGenerator extends Traverser {
 		} else {
 			printlnIndent("}");
 		}
+	}
+
+	private int priorityTable(String operator) {
+		switch (operator) {
+		case "*":
+		case "/":
+		case "%":
+			return 11;
+		case "+":
+		case "-":
+			return 10;
+		case ">>":
+		case "<<":
+			return 9;
+		case ">":
+		case ">=":
+		case "<":
+		case "<=":
+		case "instanceof":
+			return 8;
+		case "==":
+		case "!=":
+			return 7;
+		case "&":
+			return 6;
+		case "^":
+			return 5;
+		case "|":
+			return 4;
+		case "&&":
+			return 3;
+		case "||":
+			return 2;
+		case "?":
+		case ":":
+			return 1;
+		}
+		return 0;
+	}
+
+	private void parseExpr(UniExpr node, int priority) {
+		exprPriority.push(priority);
+		traverseExpr(node);
+		exprPriority.pop();
+	}
+
+	private void parseExpr(UniExpr node) {
+		parseExpr(node, 0);
+	}
+
+	private void genBlockInner(UniBlock block) {
+		indent++;
+		if (block != null) {
+			for (UniExpr expr : iter(block.body)) {
+				if (expr.isStatement()) {
+					parseExpr(expr);
+				} else {
+					printIndent();
+					parseExpr(expr);
+					println(";");
+				}
+			}
+		}
+		indent--;
 	}
 
 	public static String generate(UniClassDec dec) {
@@ -150,6 +207,7 @@ public class JavaGenerator extends Traverser {
 	@Override
 	public void traverseLongLiteral(UniLongLiteral node) {
 		print(Long.toString(node.value));
+		print("L");
 	}
 
 	@Override
@@ -169,14 +227,14 @@ public class JavaGenerator extends Traverser {
 
 	@Override
 	public void traverseFieldAccess(UniFieldAccess fa) {
-		traverseExpr(fa.receiver);
+		parseExpr(fa.receiver);
 		print(".");
 		print(fa.fieldName);
 	}
 
 	@Override
 	public void traverseMethodCall(UniMethodCall mCall) {
-		traverseExpr(mCall.receiver);
+		parseExpr(mCall.receiver);
 		print(".");
 		print(mCall.methodName);
 		print("(");
@@ -187,36 +245,56 @@ public class JavaGenerator extends Traverser {
 			} else {
 				print(", ");
 			}
-			traverseExpr(innerExpr);
+			parseExpr(innerExpr);
 		}
 		print(")");
 	}
 
 	@Override
 	public void traverseUnaryOp(UniUnaryOp node) {
-		print(node.operator);
-		traverseExpr(node.expr);
+		if (node.operator.startsWith("_")) {
+			parseExpr(node.expr);
+			print(node.operator.substring(1));
+		} else if (node.operator.endsWith("_")) {
+			print(node.operator.substring(0, node.operator.length() - 1));
+			parseExpr(node.expr);
+		} else {
+			print(node.operator);
+			parseExpr(node.expr);
+		}
 	}
 
 	@Override
 	public void traverseBinOp(UniBinOp node) {
-		// TODO Auto-generated method stub
-
+		int priority = priorityTable(node.operator) * 10 + 1;
+		assert priority > 0;
+		boolean requireParen = exprPriority.peek() >= priority;
+		if (requireParen) {
+			print("(");
+		}
+		parseExpr(node.left, priority - 1);
+		print(" ");
+		print(node.operator);
+		print(" ");
+		parseExpr(node.right, priority);
+		if (requireParen) {
+			print(")");
+		}
 	}
 
 	@Override
 	public void traverseCondOp(UniCondOp node) {
-		traverseExpr(node.cond);
+		parseExpr(node.cond);
 		print(" ? ");
-		traverseExpr(node.trueExpr);
+		parseExpr(node.trueExpr);
 		print(" : ");
-		traverseExpr(node.falseExpr);
+		parseExpr(node.falseExpr);
 	}
 
 	@Override
 	public void traverseReturn(UniReturn node) {
 		print("return ");
-		traverseExpr(node.value);
+		parseExpr(node.value);
 	}
 
 	@Override
@@ -231,50 +309,71 @@ public class JavaGenerator extends Traverser {
 
 	@Override
 	public void traverseBlock(UniBlock node) {
-		genBlockInner(node, null, null);
+		genBlock(node, null, null);
 	}
 
 	@Override
 	public void traverseIf(UniIf node) {
-		// TODO Auto-generated method stub
-
+		printIndent();
+		print("if (");
+		parseExpr(node.cond);
+		println(") {");
+		genBlockInner(node.trueBlock);
+		if (node.falseBlock != null) {
+			printlnIndent("} else {");
+			genBlockInner(node.falseBlock);
+		}
+		printlnIndent("}");
 	}
 
 	@Override
 	public void traverseFor(UniFor node) {
-		// TODO Auto-generated method stub
-
+		genBlock(node.block, () -> {
+			print("for (");
+			parseExpr(node.init);
+			print("; ");
+			parseExpr(node.cond);
+			print("; ");
+			parseExpr(node.step);
+			print(")");
+		}, null);
 	}
 
 	@Override
 	public void traverseWhile(UniWhile node) {
-
-		// TODO Auto-generated method stub
-
+		genBlock(node.block, () -> {
+			print("while (");
+			parseExpr(node.cond);
+			print(")");
+		}, null);
 	}
 
 	@Override
 	public void traverseDoWhile(UniDoWhile node) {
-		genBlockInnerS(node.block, "do", () -> {
+		genBlockS(node.block, "do", () -> {
 			print("while (");
-			traverseExpr(node.cond);
-			print(";");
+			parseExpr(node.cond);
+			print(");");
 		});
 	}
 
 	@Override
-	public void traverseDecVar(UniDecVar node) {
+	public void traverseVariableDec(UniVariableDec node) {
 		String mod = String.join(" ", node.modifiers);
-		printlnIndent(String.join(" ", mod, node.type, node.name));
+		print(String.join(" ", mod, node.type, node.name));
 	}
 
 	@Override
-	public void traverseDecVarWithValue(UniDecVarWithValue node) {
-		String mod = String.join(" ", node.modifiers);
-		printIndent();
-		print(String.join(" ", mod, node.type, node.name));
+	public void traverseVariableDecWithValue(UniVariableDecWithValue node) {
+		if (node.modifiers != null) {
+			for (String mod : node.modifiers) {
+				print(mod);
+				print(" ");
+			}
+		}
+		print(String.join(" ", node.type, node.name));
 		print(" = ");
-		traverseExpr(node.value);
+		parseExpr(node.value);
 	}
 
 	@Override
@@ -286,7 +385,7 @@ public class JavaGenerator extends Traverser {
 		}
 		String argWithParen = "(" + String.join(", ", args) + ")";
 		String declare = String.join(" ", mod, methDec.returnType, methDec.methodName, argWithParen);
-		genBlockInnerS(methDec.block, declare, null);
+		genBlockS(methDec.block, declare, null);
 	}
 
 	@Override
