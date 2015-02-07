@@ -16,8 +16,8 @@ import net.unicoen.node.UniBreak;
 import net.unicoen.node.UniClassDec;
 import net.unicoen.node.UniCondOp;
 import net.unicoen.node.UniContinue;
-import net.unicoen.node.UniDecVar;
-import net.unicoen.node.UniDecVarWithValue;
+import net.unicoen.node.UniVariableDec;
+import net.unicoen.node.UniVariableDecWithValue;
 import net.unicoen.node.UniDoubleLiteral;
 import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniFor;
@@ -218,13 +218,13 @@ public class Engine {
 			Object retValue = execExpr(uniRet, scope);
 			throw new Return(retValue);
 		}
-		if (expr instanceof UniDecVar) {
-			UniDecVar decVar = (UniDecVar) expr;
+		if (expr instanceof UniVariableDec) {
+			UniVariableDec decVar = (UniVariableDec) expr;
 			scope.setTop(decVar.name, null);
 			return null;
 		}
-		if (expr instanceof UniDecVarWithValue) {
-			UniDecVarWithValue decVar = (UniDecVarWithValue) expr;
+		if (expr instanceof UniVariableDecWithValue) {
+			UniVariableDecWithValue decVar = (UniVariableDecWithValue) expr;
 			Object value = execExpr(decVar.value, scope);
 			scope.setTop(decVar.name, value);
 			return value;
