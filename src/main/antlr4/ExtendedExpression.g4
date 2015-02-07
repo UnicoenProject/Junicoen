@@ -5,7 +5,17 @@ grammar ExtendedExpression;
 }
 
 program :
-		(ifStatement | expression)* EOF;
+		CLASS name LEFTBRACE methodDeclaration* RIGHTBRACE EOF;
+methodDeclaration:
+		VOID name LEFTPAREN RIGHTPAREN methodBody;
+methodBody:
+		LEFTBRACE statement* RIGHTBRACE;
+name:
+		ID*;
+statement:
+		ifStatement | variableDeclaration;
+variableDeclaration:
+		INT name EQUAL normalExp SEMICOLON;
 ifStatement :
 		IF LEFTPAREN compareExp RIGHTPAREN LEFTBRACE RIGHTBRACE (  ELSE LEFTBRACE RIGHTBRACE ) ? ;
 expression :
@@ -72,3 +82,11 @@ ID :
 		[a-zA-Z] ;
 SEMICOLON :
 		';' ;
+CLASS :
+		'class';
+VOID:
+		'void';
+EQUAL:
+		'=';
+INT:
+		'int';

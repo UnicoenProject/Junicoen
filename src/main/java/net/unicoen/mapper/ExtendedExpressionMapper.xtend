@@ -15,11 +15,12 @@ import net.unicoen.node.UniIntLiteral
 import net.unicoen.node.UniDoubleLiteral
 import org.antlr.v4.runtime.tree.RuleNode
 import net.unicoen.node.UniClassDec
+import com.google.common.collect.Lists
 import net.unicoen.node.UniMemberDec
 import net.unicoen.node.UniMethodDec
-import com.google.common.collect.Lists
 import net.unicoen.node.UniBlock
-import org.antlr.v4.runtime.tree.TerminalNode
+import net.unicoen.node.UniVariableDecWithValue
+import net.unicoen.node.UniIf
 
 class ExtendedExpressionMapper extends ExtendedExpressionBaseVisitor<Object> {
 	def parseFile(String path) {
@@ -70,24 +71,69 @@ class ExtendedExpressionMapper extends ExtendedExpressionBaseVisitor<Object> {
 	}
 
 	override public visitProgram(ExtendedExpressionParser.ProgramContext ctx) {
-		val stmts = ctx.children.takeWhile [ child |
-			if (child instanceof TerminalNode) {
-				child.symbol.type != -1
-			} else {
-				true
+		val ret = new UniClassDec
+		val methods = Lists.newArrayList
+		for (child : ctx.children) {
+			if (child instanceof ExtendedExpressionParser.NameContext) {
+				ret.className = visit(child) as String
+			} else if (child instanceof ExtendedExpressionParser.MethodDeclarationContext) {
+				methods.add(visit(child) as UniMemberDec)
 			}
-		].map [ child |
-			visit(child) as UniExpr
-		].toList
-		val members = Lists.newArrayList(
-			new UniMethodDec("main", null, "void", null, new UniBlock(stmts)) as UniMemberDec
-		)
+		}
+		ret.members = methods
+		ret
+	}
 
-		new UniClassDec("", null, members)
+	override public visitMethodDeclaration(ExtendedExpressionParser.MethodDeclarationContext ctx) {
+		val ret = new UniMethodDec
+		ret.returnType = "void"
+		for (child : ctx.children) {
+			if (child instanceof ExtendedExpressionParser.NameContext) {
+				ret.methodName = visit(child) as String
+			}
+			if (child instanceof ExtendedExpressionParser.MethodBodyContext) {
+				ret.block = visit(child) as UniBlock
+			}
+		}
+		ret
+	}
+
+	override public visitMethodBody(ExtendedExpressionParser.MethodBodyContext ctx) {
+		val ret = Lists.newArrayList
+		for (child : ctx.children) {
+			if (child instanceof ExtendedExpressionParser.StatementContext) {
+				ret.add(visit(child) as UniExpr)
+			}
+		}
+		new UniBlock(ret)
+	}
+
+	override public visitName(ExtendedExpressionParser.NameContext ctx) {
+		ctx.text
+	}
+
+	override public visitVariableDeclaration(ExtendedExpressionParser.VariableDeclarationContext ctx) {
+		val ret = new UniVariableDecWithValue
+		ret.type = "int"
+		for (child : ctx.children) {
+			if (child instanceof ExtendedExpressionParser.NameContext) {
+				ret.name = visit(child) as String
+			}
+			if (child instanceof ExtendedExpressionParser.NormalExpContext) {
+				ret.value = visit(child) as UniExpr
+			}
+		}
+		ret
 	}
 
 	override public visitIfStatement(ExtendedExpressionParser.IfStatementContext ctx) {
-		super.visitIfStatement(ctx)
+		val ret = new UniIf
+		for (child : ctx.children) {
+			if (child instanceof ExtendedExpressionParser.CompareExpContext) {
+				ret.cond = visit(child) as UniExpr
+			}
+		}
+		ret
 	}
 
 	override public visitCompareExp(ExtendedExpressionParser.CompareExpContext ctx) {
@@ -100,7 +146,7 @@ class ExtendedExpressionMapper extends ExtendedExpressionBaseVisitor<Object> {
 				ret.right = visit(tree) as UniExpr
 			} else if (tree instanceof ExtendedExpressionParser.CompareOpContext) {
 				var temp = new UniBinOp
-				temp.operator = tree.text
+				temp.operator = visit(tree) as String
 				if (ret.operator == null) {
 					temp.left = ret.right
 				} else {
@@ -112,6 +158,10 @@ class ExtendedExpressionMapper extends ExtendedExpressionBaseVisitor<Object> {
 			}
 		}
 		ret
+	}
+
+	override public visitCompareOp(ExtendedExpressionParser.CompareOpContext ctx) {
+		ctx.text
 	}
 
 	override public visitNormalExp(ExtendedExpressionParser.NormalExpContext ctx) {
