@@ -9,7 +9,7 @@ import net.unicoen.node.UniBinOp;
 import net.unicoen.node.UniBoolLiteral;
 import net.unicoen.node.UniBreak;
 import net.unicoen.node.UniClassDec;
-import net.unicoen.node.UniCondOp;
+import net.unicoen.node.UniTernaryOp;
 import net.unicoen.node.UniContinue;
 import net.unicoen.node.UniVariableDec;
 import net.unicoen.node.UniVariableDecWithValue;
@@ -156,7 +156,7 @@ public class JavaGeneratorTest {
 
 	@Test
 	public void test_CondOp() {
-		UniExpr expr = new UniCondOp(lit(true), lit(1), lit(2));
+		UniExpr expr = new UniTernaryOp(lit(true), lit(1), lit(2));
 		String code = "true ? 1 : 2;";
 		assertGen(code, expr);
 	}
