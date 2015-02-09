@@ -5,17 +5,33 @@ grammar ExtendedExpression;
 }
 
 program :
-		CLASS name LEFTBRACE methodDeclaration* RIGHTBRACE EOF;
+		classModifiers CLASS name LEFTBRACE methodDeclaration* RIGHTBRACE EOF;
+classModifiers:
+		classVisibility? abs? stat?;
+classVisibility:
+		PUBLIC | PRIVATE;
+abs:
+		ABSTRACT;
+stat:
+		STATIC;
 methodDeclaration:
-		VOID name LEFTPAREN RIGHTPAREN methodBody;
+		methodModifiers type name LEFTPAREN RIGHTPAREN methodBody;
+methodModifiers:
+		methodVisibility? fin? abs? stat?;
+fin:
+		FINAL;
+methodVisibility:
+		PUBLIC | PROTECTED | PACKAGE | PRIVATE;
 methodBody:
 		LEFTBRACE statement* RIGHTBRACE;
 name:
 		ID*;
+type:
+		VOID | INT;
 statement:
 		ifStatement | variableDeclaration;
 variableDeclaration:
-		INT name EQUAL normalExp SEMICOLON;
+		type name EQUAL normalExp SEMICOLON;
 ifStatement :
 		IF LEFTPAREN compareExp RIGHTPAREN LEFTBRACE RIGHTBRACE (  ELSE LEFTBRACE RIGHTBRACE ) ? ;
 expression :
@@ -90,3 +106,21 @@ EQUAL:
 		'=';
 INT:
 		'int';
+PUBLIC:
+		'public';
+PRIVATE:
+		'private';
+ABSTRACT:
+		'abstract';
+PROTECTED:
+		'protected';
+PACKAGE:
+		'package';
+STATIC:
+		'static';
+FINAL:
+		'final';
+WS :
+		[ \t\r\n\u000C]+ -> skip;
+
+		

@@ -3,20 +3,17 @@ package net.unicoen.mapper
 import org.junit.Test
 import static org.hamcrest.Matchers.*
 import static org.junit.Assert.*
-import net.unicoen.node.UniIntLiteral
-import net.unicoen.node.UniDoubleLiteral
-import net.unicoen.node.UniBinOp
-import net.unicoen.node.UniIf
 import net.unicoen.node.UniClassDec
 
-class ExtendedExpressionMapperTest {
-	val mapper = new ExtendedExpressionMapper()
+class ExtendedExpressionMapperTest extends MapperTest {
+	val mapper = new ExtendedExpressionMapper(true)
 
 	@Test
 	def parseSimpleIfStatement() {
-		val node = mapper.parse("class A{void f(){if(3>2){}else{}}}")
-		assertThat(node, instanceOf(typeof(UniClassDec)))
-		assertEquals((node as UniClassDec).className, "A");
+		val node = mapper.parse("public class A{void f(){if(3>2){}else{}}}")
+		evaluateClass(node, "A", "public")
+		val methods = (node as UniClassDec).members
+
 	}
 
 	@Test
