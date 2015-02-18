@@ -15,13 +15,17 @@ abs:
 stat:
 		STATIC;
 methodDeclaration:
-		methodModifiers type name LEFTPAREN RIGHTPAREN methodBody;
+		methodModifiers type name LEFTPAREN methodArguments? RIGHTPAREN methodBody;
 methodModifiers:
 		methodVisibility? fin? abs? stat?;
 fin:
 		FINAL;
 methodVisibility:
 		PUBLIC | PROTECTED | PACKAGE | PRIVATE;
+methodArguments:
+		methodArgument ( COMMA methodArgument ) *;
+methodArgument:
+		type name;
 methodBody:
 		LEFTBRACE statement* RIGHTBRACE;
 name:
@@ -120,6 +124,8 @@ STATIC:
 		'static';
 FINAL:
 		'final';
+COMMA:
+		',';
 WS :
 		[ \t\r\n\u000C]+ -> skip;
 

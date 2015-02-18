@@ -68,6 +68,18 @@ public interface ExtendedExpressionVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitMethodVisibility(ExtendedExpressionParser.MethodVisibilityContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link ExtendedExpressionParser#methodArguments}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMethodArguments(ExtendedExpressionParser.MethodArgumentsContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ExtendedExpressionParser#methodArgument}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMethodArgument(ExtendedExpressionParser.MethodArgumentContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link ExtendedExpressionParser#methodBody}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

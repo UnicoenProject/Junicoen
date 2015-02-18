@@ -22,6 +22,7 @@ import net.unicoen.node.UniBlock
 import net.unicoen.node.UniVariableDecWithValue
 import net.unicoen.node.UniIf
 import java.util.List
+import net.unicoen.node.UniArg
 
 class ExtendedExpressionMapper extends ExtendedExpressionBaseVisitor<Object> {
 	var isDebugMode = false
@@ -73,7 +74,7 @@ class ExtendedExpressionMapper extends ExtendedExpressionBaseVisitor<Object> {
 			println("*** visit" + ruleName + " ***")
 			println(tree.text)
 			val ret = tree.accept(this)
-			println(ret)
+			println("returned: " + ret)
 
 			ret
 		} else {
@@ -84,7 +85,7 @@ class ExtendedExpressionMapper extends ExtendedExpressionBaseVisitor<Object> {
 	override public visitProgram(ExtendedExpressionParser.ProgramContext ctx) {
 		val ret = new UniClassDec
 		ret.members = Lists.newArrayList
-		ctx.children.listIterator.forEach [
+		ctx.children.forEach [
 			switch it {
 				ExtendedExpressionParser.NameContext:
 					ret.className = visit(it) as String
@@ -123,14 +124,16 @@ class ExtendedExpressionMapper extends ExtendedExpressionBaseVisitor<Object> {
 		val ret = new UniMethodDec
 		ctx.children.forEach [
 			switch it {
-				case ExtendedExpressionParser.TypeContext:
+				ExtendedExpressionParser.TypeContext:
 					ret.returnType = visit(it) as String
-				case ExtendedExpressionParser.NameContext:
+				ExtendedExpressionParser.NameContext:
 					ret.methodName = visit(it) as String
-				case ExtendedExpressionParser.MethodBodyContext:
+				ExtendedExpressionParser.MethodBodyContext:
 					ret.block = visit(it) as UniBlock
-				case ExtendedExpressionParser.MethodModifiersContext:
+				ExtendedExpressionParser.MethodModifiersContext:
 					ret.modifiers = visit(it) as List<String>
+				ExtendedExpressionParser.MethodArgumentsContext:
+					ret.args = visit(it) as List<UniArg>
 			}
 		]
 		ret
@@ -138,9 +141,11 @@ class ExtendedExpressionMapper extends ExtendedExpressionBaseVisitor<Object> {
 
 	override public visitMethodModifiers(ExtendedExpressionParser.MethodModifiersContext ctx) {
 		val list = Lists.newArrayList
-		ctx.children.forEach [
-			list += visit(it) as String
-		]
+		if (ctx.children != null) {
+			ctx.children.forEach [
+				list += visit(it) as String
+			]
+		}
 		list
 	}
 
@@ -148,11 +153,42 @@ class ExtendedExpressionMapper extends ExtendedExpressionBaseVisitor<Object> {
 		ctx.text
 	}
 
+	override public visitMethodVisibility(ExtendedExpressionParser.MethodVisibilityContext ctx) {
+		ctx.text
+	}
+
+	override public visitMethodArguments(ExtendedExpressionParser.MethodArgumentsContext ctx) {
+		val list = Lists.newArrayList
+		if (ctx.children != null) {
+			ctx.children.forEach [
+				switch it {
+					ExtendedExpressionParser.MethodArgumentContext:
+						list += visit(it) as UniArg
+				}
+			]
+		}
+		list
+	}
+
+	override public visitMethodArgument(ExtendedExpressionParser.MethodArgumentContext ctx) {
+		val ret = new UniArg
+		ctx.children.forEach [
+			switch it {
+				ExtendedExpressionParser.TypeContext:
+					ret.type = visit(it) as String
+				ExtendedExpressionParser.NameContext:
+					ret.name = visit(it) as String
+			}
+		]
+		ret
+	}
+
 	override public visitMethodBody(ExtendedExpressionParser.MethodBodyContext ctx) {
 		val ret = Lists.newArrayList
 		ctx.children.forEach [
-			if (it instanceof ExtendedExpressionParser.StatementContext) {
-				ret.add(visit(it) as UniExpr)
+			switch it {
+				ExtendedExpressionParser.StatementContext:
+					ret += visit(it) as UniExpr
 			}
 		]
 		new UniBlock(ret)
@@ -170,11 +206,11 @@ class ExtendedExpressionMapper extends ExtendedExpressionBaseVisitor<Object> {
 		val ret = new UniVariableDecWithValue
 		ctx.children.forEach [
 			switch it {
-				case ExtendedExpressionParser.TypeContext:
+				ExtendedExpressionParser.TypeContext:
 					ret.type = visit(it) as String
-				case ExtendedExpressionParser.NameContext:
+				ExtendedExpressionParser.NameContext:
 					ret.name = visit(it) as String
-				case ExtendedExpressionParser.NormalExpContext:
+				ExtendedExpressionParser.NormalExpContext:
 					ret.value = visit(it) as UniExpr
 			}
 		]
@@ -183,18 +219,16 @@ class ExtendedExpressionMapper extends ExtendedExpressionBaseVisitor<Object> {
 
 	override public visitIfStatement(ExtendedExpressionParser.IfStatementContext ctx) {
 		val ret = new UniIf
-		for (it : ctx.children) {
-			if (it instanceof ExtendedExpressionParser.CompareExpContext) {
-				ret.cond = visit(it) as UniExpr
+		ctx.children.forEach [
+			switch it {
+				ExtendedExpressionParser.CompareExpContext:
+					ret.cond = visit(it) as UniExpr
 			}
-		}
+		]
 		ret
 	}
 
 	override public visitCompareExp(ExtendedExpressionParser.CompareExpContext ctx) {
-		if (ctx.childCount == 1) {
-			return visit(ctx.getChild(0))
-		}
 		var ret = new UniBinOp
 		for (tree : ctx.children) {
 			if (tree instanceof ExtendedExpressionParser.NormalExpContext) {
