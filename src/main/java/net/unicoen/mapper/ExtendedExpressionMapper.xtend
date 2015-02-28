@@ -23,12 +23,13 @@ import net.unicoen.node.UniVariableDecWithValue
 import net.unicoen.node.UniIf
 import java.util.List
 import net.unicoen.node.UniArg
+import org.antlr.v4.runtime.tree.TerminalNode
 
 class ExtendedExpressionMapper extends ExtendedExpressionBaseVisitor<Object> {
-	var isDebugMode = false
+	var _isDebugMode = false
 
 	new(boolean isDebugMode) {
-		this.isDebugMode = isDebugMode
+		_isDebugMode = isDebugMode
 	}
 
 	def parseFile(String path) {
@@ -49,33 +50,32 @@ class ExtendedExpressionMapper extends ExtendedExpressionBaseVisitor<Object> {
 		val tokens = new CommonTokenStream(lexer)
 		val parser = new ExtendedExpressionParser(tokens)
 		val tree = parser.program
-		visit(tree)
+		tree.visit
 	}
 
 	override public visitChildren(RuleNode node) {
-		val n = node.getChildCount();
-		(0 ..< n).fold(defaultResult()) [ acc, i |
-			if (!shouldVisitNextChild(node, acc)) {
+		val n = node.childCount;
+		(0 ..< n).fold(defaultResult) [ acc, i |
+			if (!node.shouldVisitNextChild(acc)) {
 				acc
 			} else {
 				val c = node.getChild(i);
-				val childResult = visit(c);
-				aggregateResult(acc, childResult);
+				val childResult = c.visit;
+				acc.aggregateResult(childResult);
 			}
 		]
 	}
 
 	override public visit(ParseTree tree) {
-		if (isDebugMode) {
+		if (_isDebugMode) {
 			if (!(tree instanceof ParserRuleContext)) {
-				throw new RuntimeException("Don't visit terminal nodes!")
+				return visitTerminal(tree as TerminalNode)
 			}
 			var ruleName = ExtendedExpressionParser.ruleNames.get((tree as ParserRuleContext).ruleIndex)
 			println("*** visit" + ruleName + " ***")
 			println(tree.text)
 			val ret = tree.accept(this)
 			println("returned: " + ret)
-
 			ret
 		} else {
 			tree.accept(this)
@@ -88,11 +88,11 @@ class ExtendedExpressionMapper extends ExtendedExpressionBaseVisitor<Object> {
 		ctx.children.forEach [
 			switch it {
 				ExtendedExpressionParser.NameContext:
-					ret.className = visit(it) as String
+					ret.className = it.visit as String
 				ExtendedExpressionParser.MethodDeclarationContext:
-					ret.members += visit(it) as UniMemberDec
+					ret.members += it.visit as UniMemberDec
 				ExtendedExpressionParser.ClassModifiersContext:
-					ret.modifiers = visit(it) as List<String>
+					ret.modifiers = it.visit as List<String>
 			}
 		]
 		ret
@@ -102,7 +102,7 @@ class ExtendedExpressionMapper extends ExtendedExpressionBaseVisitor<Object> {
 		val list = Lists.newArrayList
 		if (ctx.children != null) {
 			ctx.children.forEach [
-				list += visit(it)
+				list += it.visit
 			]
 		}
 		list
@@ -125,15 +125,15 @@ class ExtendedExpressionMapper extends ExtendedExpressionBaseVisitor<Object> {
 		ctx.children.forEach [
 			switch it {
 				ExtendedExpressionParser.TypeContext:
-					ret.returnType = visit(it) as String
+					ret.returnType = it.visit as String
 				ExtendedExpressionParser.NameContext:
-					ret.methodName = visit(it) as String
+					ret.methodName = it.visit as String
 				ExtendedExpressionParser.MethodBodyContext:
-					ret.block = visit(it) as UniBlock
+					ret.block = it.visit as UniBlock
 				ExtendedExpressionParser.MethodModifiersContext:
-					ret.modifiers = visit(it) as List<String>
+					ret.modifiers = it.visit as List<String>
 				ExtendedExpressionParser.MethodArgumentsContext:
-					ret.args = visit(it) as List<UniArg>
+					ret.args = it.visit as List<UniArg>
 			}
 		]
 		ret
@@ -143,7 +143,7 @@ class ExtendedExpressionMapper extends ExtendedExpressionBaseVisitor<Object> {
 		val list = Lists.newArrayList
 		if (ctx.children != null) {
 			ctx.children.forEach [
-				list += visit(it) as String
+				list += it.visit as String
 			]
 		}
 		list
@@ -163,7 +163,7 @@ class ExtendedExpressionMapper extends ExtendedExpressionBaseVisitor<Object> {
 			ctx.children.forEach [
 				switch it {
 					ExtendedExpressionParser.MethodArgumentContext:
-						list += visit(it) as UniArg
+						list += it.visit as UniArg
 				}
 			]
 		}
@@ -175,9 +175,9 @@ class ExtendedExpressionMapper extends ExtendedExpressionBaseVisitor<Object> {
 		ctx.children.forEach [
 			switch it {
 				ExtendedExpressionParser.TypeContext:
-					ret.type = visit(it) as String
+					ret.type = it.visit as String
 				ExtendedExpressionParser.NameContext:
-					ret.name = visit(it) as String
+					ret.name = it.visit as String
 			}
 		]
 		ret
@@ -188,7 +188,7 @@ class ExtendedExpressionMapper extends ExtendedExpressionBaseVisitor<Object> {
 		ctx.children.forEach [
 			switch it {
 				ExtendedExpressionParser.StatementContext:
-					ret += visit(it) as UniExpr
+					ret += it.visit as UniExpr
 			}
 		]
 		new UniBlock(ret)
@@ -207,11 +207,11 @@ class ExtendedExpressionMapper extends ExtendedExpressionBaseVisitor<Object> {
 		ctx.children.forEach [
 			switch it {
 				ExtendedExpressionParser.TypeContext:
-					ret.type = visit(it) as String
+					ret.type = it.visit as String
 				ExtendedExpressionParser.NameContext:
-					ret.name = visit(it) as String
+					ret.name = it.visit as String
 				ExtendedExpressionParser.NormalExpContext:
-					ret.value = visit(it) as UniExpr
+					ret.value = it.visit as UniExpr
 			}
 		]
 		ret
@@ -222,7 +222,7 @@ class ExtendedExpressionMapper extends ExtendedExpressionBaseVisitor<Object> {
 		ctx.children.forEach [
 			switch it {
 				ExtendedExpressionParser.CompareExpContext:
-					ret.cond = visit(it) as UniExpr
+					ret.cond = it.visit as UniExpr
 			}
 		]
 		ret
@@ -231,19 +231,19 @@ class ExtendedExpressionMapper extends ExtendedExpressionBaseVisitor<Object> {
 	override public visitCompareExp(ExtendedExpressionParser.CompareExpContext ctx) {
 		var ret = new UniBinOp
 		for (tree : ctx.children) {
-			if (tree instanceof ExtendedExpressionParser.NormalExpContext) {
-				ret.right = visit(tree) as UniExpr
-			} else if (tree instanceof ExtendedExpressionParser.CompareOpContext) {
-				var temp = new UniBinOp
-				temp.operator = visit(tree) as String
-				if (ret.operator == null) {
-					temp.left = ret.right
-				} else {
-					temp.left = ret
+			switch tree {
+				ExtendedExpressionParser.NormalExpContext:
+					ret.right = tree.visit as UniExpr
+				ExtendedExpressionParser.CompareOpContext: {
+					var temp = new UniBinOp
+					temp.operator = visit(tree) as String
+					if (ret.operator == null) {
+						temp.left = ret.right
+					} else {
+						temp.left = ret
+						ret = temp
+					}
 				}
-				ret = temp
-			} else {
-				throw new RuntimeException
 			}
 		}
 		ret
@@ -259,19 +259,19 @@ class ExtendedExpressionMapper extends ExtendedExpressionBaseVisitor<Object> {
 		}
 		var ret = new UniBinOp
 		for (tree : ctx.children) {
-			if (tree instanceof ExtendedExpressionParser.TermContext) {
-				ret.right = visit(tree) as UniExpr
-			} else if (tree instanceof ExtendedExpressionParser.AddSubOpContext) {
-				var temp = new UniBinOp
-				temp.operator = tree.text
-				if (ret.operator == null) {
-					temp.left = ret.right
-				} else {
-					temp.left = ret
+			switch tree {
+				ExtendedExpressionParser.TermContext:
+					ret.right = tree.visit as UniExpr
+				ExtendedExpressionParser.AddSubOpContext: {
+					var temp = new UniBinOp
+					temp.operator = tree.text
+					if (ret.operator == null) {
+						temp.left = ret.right
+					} else {
+						temp.left = ret
+					}
+					ret = temp
 				}
-				ret = temp
-			} else {
-				throw new RuntimeException
 			}
 		}
 		ret
@@ -283,33 +283,22 @@ class ExtendedExpressionMapper extends ExtendedExpressionBaseVisitor<Object> {
 		}
 		var ret = new UniBinOp
 		for (tree : ctx.children) {
-			if (tree instanceof ExtendedExpressionParser.FactorContext) {
-				ret.right = visit(tree) as UniExpr
-			} else if (tree instanceof ExtendedExpressionParser.MulDivOpContext) {
-				var temp = new UniBinOp
-				temp.operator = tree.text
-				if (ret.operator == null) {
-					temp.left = ret.right
-				} else {
-					temp.left = ret
+			switch tree {
+				ExtendedExpressionParser.FactorContext:
+					ret.right = tree.visit as UniExpr
+				ExtendedExpressionParser.MulDivOpContext: {
+					var temp = new UniBinOp
+					temp.operator = tree.text
+					if (ret.operator == null) {
+						temp.left = ret.right
+					} else {
+						temp.left = ret
+					}
+					ret = temp
 				}
-				ret = temp
-			} else {
-				throw new RuntimeException
 			}
 		}
 		ret
-	}
-
-	override public visitFactor(ExtendedExpressionParser.FactorContext ctx) {
-		for (tree : ctx.children) {
-			if (tree instanceof ExtendedExpressionParser.NumberContext) {
-				return visit(tree)
-			}
-			if (tree instanceof ExtendedExpressionParser.NormalExpContext) {
-				return visit(tree)
-			}
-		}
 	}
 
 	override public visitInteger(ExtendedExpressionParser.IntegerContext ctx) {
