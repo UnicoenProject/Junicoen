@@ -116,6 +116,12 @@ public interface ExtendedExpressionVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitIfStatement(ExtendedExpressionParser.IfStatementContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link ExtendedExpressionParser#whileStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitWhileStatement(ExtendedExpressionParser.WhileStatementContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link ExtendedExpressionParser#expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

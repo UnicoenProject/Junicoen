@@ -6,6 +6,8 @@ import org.antlr.v4.runtime.CharStream
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.tree.ParseTree
+import org.antlr.v4.runtime.tree.RuleNode
+import org.antlr.v4.runtime.tree.TerminalNode
 import net.unicoen.parser.ExtendedExpressionLexer
 import net.unicoen.parser.ExtendedExpressionParser
 import net.unicoen.parser.ExtendedExpressionBaseVisitor
@@ -13,17 +15,16 @@ import net.unicoen.node.UniBinOp
 import net.unicoen.node.UniExpr
 import net.unicoen.node.UniIntLiteral
 import net.unicoen.node.UniDoubleLiteral
-import org.antlr.v4.runtime.tree.RuleNode
 import net.unicoen.node.UniClassDec
-import com.google.common.collect.Lists
 import net.unicoen.node.UniMemberDec
 import net.unicoen.node.UniMethodDec
 import net.unicoen.node.UniBlock
 import net.unicoen.node.UniVariableDecWithValue
 import net.unicoen.node.UniIf
-import java.util.List
 import net.unicoen.node.UniArg
-import org.antlr.v4.runtime.tree.TerminalNode
+import net.unicoen.node.UniWhile
+import com.google.common.collect.Lists
+import java.util.List
 
 class ExtendedExpressionMapper extends ExtendedExpressionBaseVisitor<Object> {
 	var _isDebugMode = false
@@ -102,7 +103,7 @@ class ExtendedExpressionMapper extends ExtendedExpressionBaseVisitor<Object> {
 		val list = Lists.newArrayList
 		if (ctx.children != null) {
 			ctx.children.forEach [
-				list += it.visit
+				list += it.visit as String
 			]
 		}
 		list
@@ -219,12 +220,33 @@ class ExtendedExpressionMapper extends ExtendedExpressionBaseVisitor<Object> {
 
 	override public visitIfStatement(ExtendedExpressionParser.IfStatementContext ctx) {
 		val ret = new UniIf
+		val tList = Lists.newArrayList
 		ctx.children.forEach [
 			switch it {
 				ExtendedExpressionParser.CompareExpContext:
 					ret.cond = it.visit as UniExpr
+				ExtendedExpressionParser.StatementContext:
+					tList += it.visit as UniExpr
 			}
 		]
+		val tBlock = new UniBlock(tList)
+		ret.trueBlock = tBlock
+		ret
+	}
+
+	override public visitWhileStatement(ExtendedExpressionParser.WhileStatementContext ctx) {
+		val ret = new UniWhile
+		val list = Lists.newArrayList
+		ctx.children.forEach [
+			switch it {
+				ExtendedExpressionParser.CompareExpContext:
+					ret.cond = it.visit as UniExpr
+				ExtendedExpressionParser.StatementContext:
+					list += it.visit as UniExpr
+			}
+		]
+		val block = new UniBlock(list)
+		ret.block = block
 		ret
 	}
 
@@ -235,7 +257,7 @@ class ExtendedExpressionMapper extends ExtendedExpressionBaseVisitor<Object> {
 				ExtendedExpressionParser.NormalExpContext:
 					ret.right = tree.visit as UniExpr
 				ExtendedExpressionParser.CompareOpContext: {
-					var temp = new UniBinOp
+					val temp = new UniBinOp
 					temp.operator = visit(tree) as String
 					if (ret.operator == null) {
 						temp.left = ret.right
@@ -263,7 +285,7 @@ class ExtendedExpressionMapper extends ExtendedExpressionBaseVisitor<Object> {
 				ExtendedExpressionParser.TermContext:
 					ret.right = tree.visit as UniExpr
 				ExtendedExpressionParser.AddSubOpContext: {
-					var temp = new UniBinOp
+					val temp = new UniBinOp
 					temp.operator = tree.text
 					if (ret.operator == null) {
 						temp.left = ret.right

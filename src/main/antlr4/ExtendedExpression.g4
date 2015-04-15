@@ -31,13 +31,15 @@ methodBody:
 name:
 		ID*;
 type:
-		VOID | INT;
+		VOID | INT | DOUBLE;
 statement:
-		ifStatement | variableDeclaration;
+		ifStatement | variableDeclaration | whileStatement;
 variableDeclaration:
 		type name EQUAL normalExp SEMICOLON;
 ifStatement :
-		IF LEFTPAREN compareExp RIGHTPAREN LEFTBRACE RIGHTBRACE (  ELSE LEFTBRACE RIGHTBRACE ) ? ;
+		IF LEFTPAREN compareExp RIGHTPAREN LEFTBRACE statement* RIGHTBRACE (  ELSE LEFTBRACE RIGHTBRACE ) ? ;
+whileStatement :
+		WHILE LEFTPAREN compareExp RIGHTPAREN LEFTBRACE statement* RIGHTBRACE;
 expression :
 		compareExp | normalExp ;
 compareExp :
@@ -110,6 +112,8 @@ EQUAL:
 		'=';
 INT:
 		'int';
+DOUBLE:
+		'double';
 PUBLIC:
 		'public';
 PRIVATE:
@@ -126,6 +130,8 @@ FINAL:
 		'final';
 COMMA:
 		',';
+WHILE:
+		'while';
 WS :
 		[ \t\r\n\u000C]+ -> skip;
 

@@ -13,7 +13,6 @@ class ExtendedExpressionMapperTest extends MapperTest {
 		val node = mapper.parse("public class A{void f(int i){if(3>2){}else{}}}")
 		evaluateClass(node, "A", "public")
 		val methods = (node as UniClassDec).members
-
 	}
 
 	@Test
@@ -21,6 +20,11 @@ class ExtendedExpressionMapperTest extends MapperTest {
 		val node = mapper.parse("class Main{void func(){int a=123;}}")
 		assertThat(node, instanceOf(typeof(UniClassDec)))
 		assertThat((node as UniClassDec).className, equalTo("Main"))
+	}
+	
+	@Test
+	def parseAddExpression(){
+		val node = mapper.parse("class Main{public static void main(int args){int a = 1+2+3+4+5;}}")
 	}
 
 	@Test
