@@ -13,7 +13,7 @@ import org.junit.Test;
 
 public class ExecuteFixturesTest {
 
-	@Test
+	//@Test
 	public void testHouse() {
 		String file = "House.java";
 		String filePath = "fixtures/" + file;
