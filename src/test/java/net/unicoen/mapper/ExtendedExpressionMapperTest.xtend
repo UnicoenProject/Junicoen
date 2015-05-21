@@ -1,9 +1,10 @@
 package net.unicoen.mapper
 
+import net.unicoen.node.UniClassDec
 import org.junit.Test
+
 import static org.hamcrest.Matchers.*
 import static org.junit.Assert.*
-import net.unicoen.node.UniClassDec
 
 class ExtendedExpressionMapperTest extends MapperTest {
 	val mapper = new ExtendedExpressionMapper(true)
@@ -21,9 +22,9 @@ class ExtendedExpressionMapperTest extends MapperTest {
 		assertThat(node, instanceOf(typeof(UniClassDec)))
 		assertThat((node as UniClassDec).className, equalTo("Main"))
 	}
-	
+
 	@Test
-	def parseAddExpression(){
+	def parseAddExpression() {
 		val node = mapper.parse("class Main{public static void main(int args){int a = 1+2+3+4+5;}}")
 	}
 
