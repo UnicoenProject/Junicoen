@@ -6,6 +6,8 @@ import static org.hamcrest.Matchers.*
 import static org.junit.Assert.*
 import org.junit.Test
 import static net.unicoen.node_helper.Builder.*
+import net.unicoen.generator.JavaGeneratorTest
+import net.unicoen.generator.JavaGenerator
 
 class JavaMapperTest {
 	@Test
@@ -55,5 +57,23 @@ class JavaMapperTest {
 			list(lit(true))
 		)
 		assertThat(thenLine, equalTo(expect))
+	}
+
+	@Test
+	def testReadWriteHelloWorld() {
+		val sb = new StringBuilder()
+		sb.append("public class A {")
+		sb.append("  public static void main(String[] args) {")
+		sb.append("    if (true) {")
+		sb.append("      System.out.println(\"Hello, world\")")
+		sb.append("    }")
+		sb.append("  }")
+		sb.append("}")
+		val code = JavaGeneratorTest.normalize(sb.toString())
+
+		val mapper = new JavaMapper()
+		val classDec = mapper.parse(sb.toString()) as UniClassDec
+		val generatedCode = JavaGenerator.generate(classDec);
+		assertThat(generatedCode, equalTo(code))
 	}
 }

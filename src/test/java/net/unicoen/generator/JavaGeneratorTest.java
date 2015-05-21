@@ -34,7 +34,7 @@ public class JavaGeneratorTest {
 
 	private static Pattern whitespace = Pattern.compile("\\s+");
 
-	private static String normalize(String str) {
+	public static String normalize(String str) {
 		String replaced = whitespace.matcher(str).replaceAll(" ");
 		if (replaced.charAt(replaced.length() - 1) == ' ') {
 			replaced = replaced.substring(0, replaced.length() - 1);
