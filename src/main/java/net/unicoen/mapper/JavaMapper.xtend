@@ -77,7 +77,7 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		]
 	}
 
-	override public visitNormalClassDeclaration(Java8Parser.NormalClassDeclarationContext ctx) {
+	override visitNormalClassDeclaration(Java8Parser.NormalClassDeclarationContext ctx) {
 		val maps = createMaps(ctx)
 		val ret = new UniClassDec()
 		ret.className = maps.get("Identifier").get(0) as String
@@ -85,7 +85,7 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		return ret
 	}
 
-	override protected aggregateResult(UniNode aggregate, UniNode nextResult) {
+	protected override aggregateResult(UniNode aggregate, UniNode nextResult) {
 		if (aggregate == null) {
 			nextResult
 		} else {
@@ -100,7 +100,7 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		ret
 	}
 
-	override public visitClassBodyDeclaration(Java8Parser.ClassBodyDeclarationContext ctx) {
+	override visitClassBodyDeclaration(Java8Parser.ClassBodyDeclarationContext ctx) {
 		val maps = createMaps(ctx)
 		val mems = maps.get("classMemberDeclaration")
 		if (mems.size() > 0) {
@@ -109,7 +109,7 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		null
 	}
 
-	override public visitClassMemberDeclaration(Java8Parser.ClassMemberDeclarationContext ctx) {
+	override visitClassMemberDeclaration(Java8Parser.ClassMemberDeclarationContext ctx) {
 		val maps = createMaps(ctx)
 		val mems = maps.get("methodDeclaration")
 		if (mems.size() > 0) {
