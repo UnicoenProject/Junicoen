@@ -165,6 +165,8 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 	}
 
 	override visitClassBody(Java8Parser.ClassBodyContext ctx) {
+		// classBody
+		// :	'{' classBodyDeclaration* '}' ;
 		val maps = createMaps(ctx)
 		var ret = new AggregatedNode()
 		ret.list = maps.getOrEmpty("classBodyDeclaration").map[it as UniMemberDec]
@@ -217,6 +219,13 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		// methodHeader
 		// methodBody
 		methodDec
+	}
+
+	override visitResult(Java8Parser.ResultContext ctx) {
+		// result
+		// :	unannType
+		// |	'void' ;
+		new StringNode(ctx.children.get(0).text)
 	}
 
 	private static def <T> List<T> getOrEmpty(Map<String, List<T>> map, String key) {
