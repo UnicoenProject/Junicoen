@@ -86,7 +86,7 @@ public class JavaGeneratorTest {
 		UniClassDec cDec = new UniClassDec("Foo", list("public"), list(mDec));
 
 		String code = JavaGenerator.generate(cDec);
-		assertEquals(buff.toString(), code);
+		assertEquals(buff.toString(), code.replace("\r\n", "\n"));
 	}
 
 	@Test
