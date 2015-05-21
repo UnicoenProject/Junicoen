@@ -8,6 +8,7 @@ import net.unicoen.node.UniArg;
 import net.unicoen.node.UniBinOp;
 import net.unicoen.node.UniBlock;
 import net.unicoen.node.UniBoolLiteral;
+import net.unicoen.node.UniDoubleLiteral;
 import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniFieldAccess;
 import net.unicoen.node.UniIdent;
@@ -36,6 +37,10 @@ public class Builder {
 
 	public static UniIntLiteral lit(int value) {
 		return new UniIntLiteral(value);
+	}
+
+	public static UniDoubleLiteral lit(double value) {
+		return new UniDoubleLiteral(value);
 	}
 
 	public static UniBoolLiteral lit(boolean value) {

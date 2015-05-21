@@ -19,6 +19,15 @@ import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.TerminalNodeImpl
 import org.eclipse.xtext.xbase.lib.Functions.Function1
+import net.unicoen.node.UniIntLiteral
+import net.unicoen.node.UniDoubleLiteral
+import net.unicoen.node.UniStringLiteral
+import net.unicoen.node.UniBoolLiteral
+import net.unicoen.node.UniExpr
+import net.unicoen.node.UniIf
+import net.unicoen.node.UniBlock
+import net.unicoen.node.UniIdent
+import net.unicoen.node.UniMethodCall
 
 class JavaMapper extends Java8BaseVisitor<UniNode> {
 
@@ -226,6 +235,48 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		// :	unannType
 		// |	'void' ;
 		new StringNode(ctx.children.get(0).text)
+
+	}
+
+	override visitMethodInvocation(Java8Parser.MethodInvocationContext ctx) {
+		val maps = createMaps(ctx)
+		if (maps.containsKey("methodName")) {
+			val methodName = getOne(maps, "methodName") as UniIdent
+			val argumentList = getOne(maps, "argumentList") as AggregatedNode
+			return new UniMethodCall(null, methodName.name, argumentList.list.map[x|x as UniExpr])
+		}
+		throw new RuntimeException("Not implemented")
+	}
+
+	override visitMethodName(Java8Parser.MethodNameContext ctx) {
+		val maps = createMaps(ctx)
+		val str = maps.get("Identifier").get(0) as String
+		return new UniIdent(str)
+	}
+
+	override visitIfThenStatement(Java8Parser.IfThenStatementContext ctx) {
+		val maps = createMaps(ctx)
+		val cond = getOne(maps, "expression") as UniExpr
+		val trueBlcok = (getOne(maps, "statement") as AggregatedNode).list.map[x|x as UniExpr]
+		return new UniIf(cond, new UniBlock(trueBlcok), null)
+	}
+
+	override visitLiteral(Java8Parser.LiteralContext ctx) {
+		val maps = createMaps(ctx)
+		val convertMap = newHashMap(
+			"BooleanLiteral" -> [x|new UniBoolLiteral("true".equals(x))],
+			"IntegerLiteral" -> [x|new UniIntLiteral(Integer.parseInt(x))],
+			"FloatingPointLiteral" -> [x|new UniDoubleLiteral(Double.parseDouble(x))],
+			// TODO support escaped string
+			"StringLiteral" -> [String x|new UniStringLiteral(x.substring(1, x.length - 1))]
+		)
+		for (entry : convertMap.entrySet) {
+			if (maps.containsKey(entry.key)) {
+				val str = maps.get(entry.key).get(0) as String
+				return entry.value.apply(str)
+			}
+		}
+		throw new RuntimeException("Unknown literal type")
 	}
 
 	private static def <T> List<T> getOrEmpty(Map<String, List<T>> map, String key) {
@@ -234,5 +285,15 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		} else {
 			Collections.emptyList()
 		}
+	}
+
+	private static def <T> T getOne(Map<String, List<T>> map, String key) {
+		if (map.containsKey(key)) {
+			val items = map.get(key)
+			if (items.size() > 0) {
+				return items.get(0)
+			}
+		}
+		throw new RuntimeException("No item")
 	}
 }

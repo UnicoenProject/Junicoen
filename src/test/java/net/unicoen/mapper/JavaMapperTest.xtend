@@ -33,6 +33,34 @@ class JavaMapperTest {
 	}
 
 	@Test
+	def parseLiteral() {
+		val mapper = new JavaMapper();
+		{
+			val literal = mapper.parse("1", [p|p.literal])
+			assertThat(literal, equalTo(lit(1)))
+		}
+		{
+			val literal = mapper.parse("1.0", [p|p.literal])
+			assertThat(literal, equalTo(lit(1.0)))
+		}
+		{
+			val literal = mapper.parse("true", [p|p.literal])
+			assertThat(literal, equalTo(lit(true)))
+		}
+		{
+			val literal = mapper.parse("\"Hello\"", [p|p.literal])
+			assertThat(literal, equalTo(lit("Hello")))
+		}
+	}
+
+	@Test
+	def parseFuncCall() {
+		val mapper = new JavaMapper();
+		val literal = mapper.parse("f()", [p|p.literal])
+		assertThat(literal, equalTo(new UniMethodCall(null, "f", list())))
+	}
+
+	@Test
 	def parseMainIf() {
 		val mapper = new JavaMapper()
 		val sb = new StringBuilder()
