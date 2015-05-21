@@ -61,6 +61,17 @@ class JavaMapperTest {
 	}
 
 	@Test
+	def parseIfStatement() {
+		val mapper = new JavaMapper();
+		val literal = mapper.parse("if(false) { f(); }", [p|p.ifThenStatement])
+
+		val body = block(new UniMethodCall(null, "f", list()))
+		val ifStmt = new UniIf(lit(false), body, null)
+
+		assertThat(literal, equalTo(ifStmt))
+	}
+
+	@Test
 	def parseMainIf() {
 		val mapper = new JavaMapper()
 		val sb = new StringBuilder()

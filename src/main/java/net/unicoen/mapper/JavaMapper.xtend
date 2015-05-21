@@ -178,7 +178,7 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		// :	'{' classBodyDeclaration* '}' ;
 		val maps = createMaps(ctx)
 		var ret = new AggregatedNode()
-		ret.list = maps.getOrEmpty("classBodyDeclaration").map[it as UniMemberDec]
+		ret.list = maps.getListOrEmpty("classBodyDeclaration").map[it as UniMemberDec]
 		ret
 	}
 
@@ -257,8 +257,69 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 	override visitIfThenStatement(Java8Parser.IfThenStatementContext ctx) {
 		val maps = createMaps(ctx)
 		val cond = getOne(maps, "expression") as UniExpr
-		val trueBlcok = (getOne(maps, "statement") as AggregatedNode).list.map[x|x as UniExpr]
-		return new UniIf(cond, new UniBlock(trueBlcok), null)
+		val trueBlcok = getOne(maps, "statement") as UniBlock
+		return new UniIf(cond, trueBlcok, null)
+	}
+
+	override visitStatement(Java8Parser.StatementContext ctx) {
+		val key = "statementWithoutTrailingSubstatement"
+		val maps = createMaps(ctx)
+		if (maps.containsKey("statementWithoutTrailingSubstatement")) {
+			return getOne(maps, "statementWithoutTrailingSubstatement") as UniNode
+		}
+		throw new RuntimeException("not implemented")
+	}
+
+	override visitStatementWithoutTrailingSubstatement(Java8Parser.StatementWithoutTrailingSubstatementContext ctx) {
+		val maps = createMaps(ctx)
+		if (maps.containsKey("expressionStatement")) {
+			return getOne(maps, "expressionStatement") as UniNode
+		}
+		if (maps.containsKey("block")) {
+			return getOne(maps, "block") as UniNode
+		}
+		throw new RuntimeException("not implemented")
+	}
+
+	override visitBlock(Java8Parser.BlockContext ctx) {
+		val maps = createMaps(ctx)
+		if (maps.containsKey("blockStatements")) {
+			return getOne(maps, "blockStatements") as UniNode
+		}
+		throw new RuntimeException("not implemented")
+	}
+
+	override visitBlockStatements(Java8Parser.BlockStatementsContext ctx) {
+		val maps = createMaps(ctx)
+		if (maps.containsKey("blockStatement")) {
+			val list = getListOrEmpty(maps, "blockStatement")
+			return new UniBlock(list.map[x|x as UniExpr])
+		}
+		throw new RuntimeException("not implemented")
+	}
+
+	override visitBlockStatement(Java8Parser.BlockStatementContext ctx) {
+		val maps = createMaps(ctx)
+		if (maps.containsKey("statement")) {
+			return getOne(maps, "statement") as UniNode
+		}
+		throw new RuntimeException("not implemented")
+	}
+
+	override visitExpressionStatement(Java8Parser.ExpressionStatementContext ctx) {
+		val maps = createMaps(ctx)
+		if (maps.containsKey("statementExpression")) {
+			return getOne(maps, "statementExpression") as UniNode
+		}
+		throw new RuntimeException("not implemented")
+	}
+
+	override visitStatementExpression(Java8Parser.StatementExpressionContext ctx) {
+		val maps = createMaps(ctx)
+		if (maps.containsKey("methodInvocation")) {
+			return getOne(maps, "methodInvocation") as UniNode
+		}
+		throw new RuntimeException("not implemented")
 	}
 
 	override visitLiteral(Java8Parser.LiteralContext ctx) {
@@ -279,7 +340,7 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		throw new RuntimeException("Unknown literal type")
 	}
 
-	private static def <T> List<T> getOrEmpty(Map<String, List<T>> map, String key) {
+	private static def <T> List<T> getListOrEmpty(Map<String, List<T>> map, String key) {
 		if (map.containsKey(key)) {
 			return map.get(key)
 		} else {
