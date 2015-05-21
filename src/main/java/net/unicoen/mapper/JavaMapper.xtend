@@ -14,6 +14,8 @@ import org.antlr.v4.runtime.CharStream
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.tree.TerminalNodeImpl
+import java.util.Map
+import java.util.Collections
 
 class JavaMapper extends Java8BaseVisitor<UniNode> {
 
@@ -96,7 +98,7 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 	override visitClassBody(Java8Parser.ClassBodyContext ctx) {
 		val maps = createMaps(ctx)
 		var ret = new AggregatedNode()
-		ret.list = maps.get("classBodyDeclaration").map[it as UniMemberDec]
+		ret.list = getOrEmpty(maps, "classBodyDeclaration").map[it as UniMemberDec]
 		ret
 	}
 
@@ -116,5 +118,13 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 			return mems.get(0) as UniNode
 		}
 		null
+	}
+
+	private def <T> List<T> getOrEmpty(Map<String, List<T>> map, String key) {
+		if (map.containsKey(key)) {
+			return map.get(key)
+		} else {
+			Collections.emptyList()
+		}
 	}
 }

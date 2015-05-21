@@ -4,9 +4,10 @@ import net.unicoen.node.UniClassDec
 
 import static org.hamcrest.Matchers.*
 import static org.junit.Assert.*
+import org.junit.Test
 
 class JavaMapperTest {
-	//@Test
+	@Test
 	def parseClass() {
 		val mapper = new JavaMapper()
 		val node = mapper.parse("class A {}")
