@@ -56,7 +56,7 @@ class JavaMapperTest {
 	@Test
 	def parseFuncCall() {
 		val mapper = new JavaMapper();
-		val literal = mapper.parse("f()", [p|p.literal])
+		val literal = mapper.parse("f()", [p|p.methodInvocation])
 		assertThat(literal, equalTo(new UniMethodCall(null, "f", list())))
 	}
 

@@ -242,8 +242,8 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		val maps = createMaps(ctx)
 		if (maps.containsKey("methodName")) {
 			val methodName = getOne(maps, "methodName") as UniIdent
-			val argumentList = getOne(maps, "argumentList") as AggregatedNode
-			return new UniMethodCall(null, methodName.name, argumentList.list.map[x|x as UniExpr])
+			// TODO parse "argumentList"
+			return new UniMethodCall(null, methodName.name, Collections.emptyList())
 		}
 		throw new RuntimeException("Not implemented")
 	}
