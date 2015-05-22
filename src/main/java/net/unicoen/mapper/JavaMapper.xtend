@@ -172,6 +172,21 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		return new UniIf(cond, trueBlcok, null)
 	}
 
+	override visitIfThenElseStatement(Java8Parser.IfThenElseStatementContext ctx) {
+		val maps = createMaps(ctx)
+		val cond = maps.getOne("expression") as UniExpr
+		val trueBlcok = maps.getOne("statementNoShortIf") as UniBlock
+		val falseBlcok = maps.getOne("statement") as UniBlock
+		return new UniIf(cond, trueBlcok, falseBlcok)
+	}
+
+	override visitIfThenElseStatementNoShortIf(Java8Parser.IfThenElseStatementNoShortIfContext ctx) {
+		val maps = createMaps(ctx)
+		val cond = maps.getOne("expression") as UniExpr
+		val trueBlcok = maps.getOne("statement") as UniBlock
+		return new UniIf(cond, trueBlcok, null)
+	}
+
 	override visitStatement(Java8Parser.StatementContext ctx) {
 		val key = "statementWithoutTrailingSubstatement"
 		val maps = createMaps(ctx)
