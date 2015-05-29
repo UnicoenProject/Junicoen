@@ -11,7 +11,6 @@ import net.unicoen.node.UniBreak;
 import net.unicoen.node.UniClassDec;
 import net.unicoen.node.UniTernaryOp;
 import net.unicoen.node.UniContinue;
-import net.unicoen.node.UniVariableDec;
 import net.unicoen.node.UniVariableDecWithValue;
 import net.unicoen.node.UniDoWhile;
 import net.unicoen.node.UniDoubleLiteral;
@@ -237,13 +236,6 @@ public class JavaGeneratorTest {
 				"} while (false);",
 		};
 		assertGen(codes, body);
-	}
-
-	@Test
-	public void test_DecVar() {
-		UniExpr body = new UniVariableDec(list("final"), "int", "a");
-		String code = "final int a;";
-		assertGen(code, body);
 	}
 
 	@Test
