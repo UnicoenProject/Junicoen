@@ -22,6 +22,16 @@ public class UniFor extends UniExpr {
 	}
 
 	@Override
+	public int hashCode() {
+		int result = 17;
+		result = result * 31 + (init == null ? 0 : init.hashCode());
+		result = result * 31 + (cond == null ? 0 : cond.hashCode());
+		result = result * 31 + (step == null ? 0 : step.hashCode());
+		result = result * 31 + (block == null ? 0 : block.hashCode());
+		return result;
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == null || !(obj instanceof UniFor)) return false;
 		UniFor that = (UniFor)obj;

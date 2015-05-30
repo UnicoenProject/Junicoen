@@ -18,6 +18,14 @@ public class UniFieldAccess extends UniExpr {
 	}
 
 	@Override
+	public int hashCode() {
+		int result = 17;
+		result = result * 31 + (receiver == null ? 0 : receiver.hashCode());
+		result = result * 31 + (fieldName == null ? 0 : fieldName.hashCode());
+		return result;
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == null || !(obj instanceof UniFieldAccess)) return false;
 		UniFieldAccess that = (UniFieldAccess)obj;

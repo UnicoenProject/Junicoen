@@ -25,6 +25,16 @@ public class UniVariableDecWithValue extends UniExpr {
 	}
 
 	@Override
+	public int hashCode() {
+		int result = 17;
+		result = result * 31 + (modifiers == null ? 0 : modifiers.hashCode());
+		result = result * 31 + (type == null ? 0 : type.hashCode());
+		result = result * 31 + (name == null ? 0 : name.hashCode());
+		result = result * 31 + (value == null ? 0 : value.hashCode());
+		return result;
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == null || !(obj instanceof UniVariableDecWithValue)) return false;
 		UniVariableDecWithValue that = (UniVariableDecWithValue)obj;

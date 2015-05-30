@@ -16,6 +16,11 @@ public class UniStringLiteral extends UniExpr {
 	}
 
 	@Override
+	public int hashCode() {
+		return (value == null ? 0 : value.hashCode());
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == null || !(obj instanceof UniStringLiteral)) return false;
 		UniStringLiteral that = (UniStringLiteral)obj;

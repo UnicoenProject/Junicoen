@@ -26,6 +26,17 @@ public class UniMethodDec extends UniMemberDec {
 	}
 
 	@Override
+	public int hashCode() {
+		int result = 17;
+		result = result * 31 + (methodName == null ? 0 : methodName.hashCode());
+		result = result * 31 + (modifiers == null ? 0 : modifiers.hashCode());
+		result = result * 31 + (returnType == null ? 0 : returnType.hashCode());
+		result = result * 31 + (args == null ? 0 : args.hashCode());
+		result = result * 31 + (block == null ? 0 : block.hashCode());
+		return result;
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == null || !(obj instanceof UniMethodDec)) return false;
 		UniMethodDec that = (UniMethodDec)obj;

@@ -22,6 +22,15 @@ public class UniClassDec implements UniNode {
 	}
 
 	@Override
+	public int hashCode() {
+		int result = 17;
+		result = result * 31 + (className == null ? 0 : className.hashCode());
+		result = result * 31 + (modifiers == null ? 0 : modifiers.hashCode());
+		result = result * 31 + (members == null ? 0 : members.hashCode());
+		return result;
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == null || !(obj instanceof UniClassDec)) return false;
 		UniClassDec that = (UniClassDec)obj;

@@ -16,6 +16,11 @@ public class UniReturn extends UniExpr {
 	}
 
 	@Override
+	public int hashCode() {
+		return (value == null ? 0 : value.hashCode());
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == null || !(obj instanceof UniReturn)) return false;
 		UniReturn that = (UniReturn)obj;

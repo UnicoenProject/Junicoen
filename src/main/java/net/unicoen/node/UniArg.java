@@ -18,6 +18,14 @@ public class UniArg {
 	}
 
 	@Override
+	public int hashCode() {
+		int result = 17;
+		result = result * 31 + (type == null ? 0 : type.hashCode());
+		result = result * 31 + (name == null ? 0 : name.hashCode());
+		return result;
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == null || !(obj instanceof UniArg)) return false;
 		UniArg that = (UniArg)obj;

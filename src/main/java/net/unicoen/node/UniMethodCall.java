@@ -23,6 +23,15 @@ public class UniMethodCall extends UniExpr {
 	}
 
 	@Override
+	public int hashCode() {
+		int result = 17;
+		result = result * 31 + (receiver == null ? 0 : receiver.hashCode());
+		result = result * 31 + (methodName == null ? 0 : methodName.hashCode());
+		result = result * 31 + (args == null ? 0 : args.hashCode());
+		return result;
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == null || !(obj instanceof UniMethodCall)) return false;
 		UniMethodCall that = (UniMethodCall)obj;

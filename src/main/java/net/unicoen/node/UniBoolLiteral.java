@@ -16,6 +16,11 @@ public class UniBoolLiteral extends UniExpr {
 	}
 
 	@Override
+	public int hashCode() {
+		return value ? 1 : 0;
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == null || !(obj instanceof UniBoolLiteral)) return false;
 		UniBoolLiteral that = (UniBoolLiteral)obj;

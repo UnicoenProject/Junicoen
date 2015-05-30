@@ -18,6 +18,11 @@ public class UniBlock extends UniExpr {
 	}
 
 	@Override
+	public int hashCode() {
+		return (body == null ? 0 : body.hashCode());
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == null || !(obj instanceof UniBlock)) return false;
 		UniBlock that = (UniBlock)obj;

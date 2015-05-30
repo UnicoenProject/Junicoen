@@ -21,6 +21,15 @@ public class UniBinOp extends UniExpr {
 	}
 
 	@Override
+	public int hashCode() {
+		int result = 17;
+		result = result * 31 + (operator == null ? 0 : operator.hashCode());
+		result = result * 31 + (left == null ? 0 : left.hashCode());
+		result = result * 31 + (right == null ? 0 : right.hashCode());
+		return result;
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == null || !(obj instanceof UniBinOp)) return false;
 		UniBinOp that = (UniBinOp)obj;

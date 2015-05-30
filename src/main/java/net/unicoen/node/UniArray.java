@@ -18,6 +18,11 @@ public class UniArray extends UniExpr {
 	}
 
 	@Override
+	public int hashCode() {
+		return (items == null ? 0 : items.hashCode());
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == null || !(obj instanceof UniArray)) return false;
 		UniArray that = (UniArray)obj;

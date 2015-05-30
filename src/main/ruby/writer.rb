@@ -191,6 +191,47 @@ module Writer
   # equals を生成します
   #
   def write_equals(dsl, node, w)
+    # hashCode()
+    w << "@Override"
+    pre_stmt = []
+    exprs = node.members.map do |name, type, opt|
+      case type.to_s
+      when /^[A-Z][A-Za-z_]+/
+        "(#{name} == null ? 0 : #{name}.hashCode())"
+      when /bool/
+        "#{name} ? 1 : 0"
+      when /int/
+        name
+      when /long/
+        "(int)(#{name}^(#{name}>>32))"
+      when /double/
+        tmp_name = name + "HashCode"
+        pre_stmt << "long #{tmp_name} = Double.doubleToLongBits(#{name});"
+        "(int)(#{tmp_name}^(#{tmp_name}>>32))"
+      else
+        raise "Unknown type: #{type}(#{type.class})"
+      end
+    end
+    w.block "public int hashCode()" do
+      pre_stmt.each do |stmt|
+        w << stmt
+      end
+      case exprs.size
+      when 0
+        w << "return 0;"
+      when 1
+        w << "return #{exprs.first};"
+      else
+        w << "int result = 17;"
+        exprs.each do |expr|
+          w << "result = result * 31 + #{expr};"
+        end
+        w << "return result;"
+      end
+    end
+    w.newline
+
+    # equals()
     w << "@Override"
     w.block "public boolean equals(Object obj)" do
       if node.members.size == 0
