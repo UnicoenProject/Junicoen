@@ -35,4 +35,20 @@ public class UniMethodCall extends UniExpr {
 	public boolean isStatement() {
 		return false;
 	}
+
+	public void merge(UniMethodCall that) {
+		if (that.receiver != null) {
+			this.receiver = that.receiver;
+		}
+		if (that.methodName != null) {
+			this.methodName = that.methodName;
+		}
+		if (that.args != null) {
+			if (this.args != null) {
+				this.args = that.args;
+			} else {
+				this.args.addAll(that.args);
+			}
+		}
+	}
 }

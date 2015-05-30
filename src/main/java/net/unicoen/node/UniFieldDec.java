@@ -32,4 +32,23 @@ public class UniFieldDec extends UniMemberDec {
 			&& (this.name == null ? that.name == null : this.name.equals(that.name))
 			&& (this.value == null ? that.value == null : this.value.equals(that.value));
 	}
+
+	public void merge(UniFieldDec that) {
+		if (that.modifiers != null) {
+			if (this.modifiers != null) {
+				this.modifiers = that.modifiers;
+			} else {
+				this.modifiers.addAll(that.modifiers);
+			}
+		}
+		if (that.type != null) {
+			this.type = that.type;
+		}
+		if (that.name != null) {
+			this.name = that.name;
+		}
+		if (that.value != null) {
+			this.value = that.value;
+		}
+	}
 }

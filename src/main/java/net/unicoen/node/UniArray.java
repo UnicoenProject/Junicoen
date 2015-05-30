@@ -28,4 +28,14 @@ public class UniArray extends UniExpr {
 	public boolean isStatement() {
 		return false;
 	}
+
+	public void merge(UniArray that) {
+		if (that.items != null) {
+			if (this.items != null) {
+				this.items = that.items;
+			} else {
+				this.items.addAll(that.items);
+			}
+		}
+	}
 }

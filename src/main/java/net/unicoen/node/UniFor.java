@@ -35,4 +35,19 @@ public class UniFor extends UniExpr {
 	public boolean isStatement() {
 		return true;
 	}
+
+	public void merge(UniFor that) {
+		if (that.init != null) {
+			this.init = that.init;
+		}
+		if (that.cond != null) {
+			this.cond = that.cond;
+		}
+		if (that.step != null) {
+			this.step = that.step;
+		}
+		if (that.block != null) {
+			this.block = that.block;
+		}
+	}
 }

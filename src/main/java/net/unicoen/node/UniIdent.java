@@ -26,4 +26,10 @@ public class UniIdent extends UniExpr {
 	public boolean isStatement() {
 		return false;
 	}
+
+	public void merge(UniIdent that) {
+		if (that.name != null) {
+			this.name = that.name;
+		}
+	}
 }

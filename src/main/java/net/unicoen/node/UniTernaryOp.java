@@ -33,4 +33,16 @@ public class UniTernaryOp extends UniExpr {
 	public boolean isStatement() {
 		return false;
 	}
+
+	public void merge(UniTernaryOp that) {
+		if (that.cond != null) {
+			this.cond = that.cond;
+		}
+		if (that.trueExpr != null) {
+			this.trueExpr = that.trueExpr;
+		}
+		if (that.falseExpr != null) {
+			this.falseExpr = that.falseExpr;
+		}
+	}
 }

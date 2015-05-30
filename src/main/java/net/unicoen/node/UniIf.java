@@ -32,4 +32,16 @@ public class UniIf extends UniExpr {
 	public boolean isStatement() {
 		return true;
 	}
+
+	public void merge(UniIf that) {
+		if (that.cond != null) {
+			this.cond = that.cond;
+		}
+		if (that.trueBlock != null) {
+			this.trueBlock = that.trueBlock;
+		}
+		if (that.falseBlock != null) {
+			this.falseBlock = that.falseBlock;
+		}
+	}
 }

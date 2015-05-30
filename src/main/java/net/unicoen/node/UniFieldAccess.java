@@ -29,4 +29,13 @@ public class UniFieldAccess extends UniExpr {
 	public boolean isStatement() {
 		return false;
 	}
+
+	public void merge(UniFieldAccess that) {
+		if (that.receiver != null) {
+			this.receiver = that.receiver;
+		}
+		if (that.fieldName != null) {
+			this.fieldName = that.fieldName;
+		}
+	}
 }

@@ -26,4 +26,7 @@ public class UniBoolLiteral extends UniExpr {
 	public boolean isStatement() {
 		return false;
 	}
+
+	public void merge(UniBoolLiteral that) {
+	}
 }

@@ -35,4 +35,30 @@ public class UniMethodDec extends UniMemberDec {
 			&& (this.args == null ? that.args == null : this.args.equals(that.args))
 			&& (this.block == null ? that.block == null : this.block.equals(that.block));
 	}
+
+	public void merge(UniMethodDec that) {
+		if (that.methodName != null) {
+			this.methodName = that.methodName;
+		}
+		if (that.modifiers != null) {
+			if (this.modifiers != null) {
+				this.modifiers = that.modifiers;
+			} else {
+				this.modifiers.addAll(that.modifiers);
+			}
+		}
+		if (that.returnType != null) {
+			this.returnType = that.returnType;
+		}
+		if (that.args != null) {
+			if (this.args != null) {
+				this.args = that.args;
+			} else {
+				this.args.addAll(that.args);
+			}
+		}
+		if (that.block != null) {
+			this.block = that.block;
+		}
+	}
 }

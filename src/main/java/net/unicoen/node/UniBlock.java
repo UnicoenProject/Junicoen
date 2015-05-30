@@ -28,4 +28,14 @@ public class UniBlock extends UniExpr {
 	public boolean isStatement() {
 		return true;
 	}
+
+	public void merge(UniBlock that) {
+		if (that.body != null) {
+			if (this.body != null) {
+				this.body = that.body;
+			} else {
+				this.body.addAll(that.body);
+			}
+		}
+	}
 }

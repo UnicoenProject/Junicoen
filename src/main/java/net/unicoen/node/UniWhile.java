@@ -29,4 +29,13 @@ public class UniWhile extends UniExpr {
 	public boolean isStatement() {
 		return true;
 	}
+
+	public void merge(UniWhile that) {
+		if (that.cond != null) {
+			this.cond = that.cond;
+		}
+		if (that.block != null) {
+			this.block = that.block;
+		}
+	}
 }

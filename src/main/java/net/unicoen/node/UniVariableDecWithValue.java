@@ -38,4 +38,23 @@ public class UniVariableDecWithValue extends UniExpr {
 	public boolean isStatement() {
 		return false;
 	}
+
+	public void merge(UniVariableDecWithValue that) {
+		if (that.modifiers != null) {
+			if (this.modifiers != null) {
+				this.modifiers = that.modifiers;
+			} else {
+				this.modifiers.addAll(that.modifiers);
+			}
+		}
+		if (that.type != null) {
+			this.type = that.type;
+		}
+		if (that.name != null) {
+			this.name = that.name;
+		}
+		if (that.value != null) {
+			this.value = that.value;
+		}
+	}
 }

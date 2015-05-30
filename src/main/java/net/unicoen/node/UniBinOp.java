@@ -33,4 +33,16 @@ public class UniBinOp extends UniExpr {
 	public boolean isStatement() {
 		return false;
 	}
+
+	public void merge(UniBinOp that) {
+		if (that.operator != null) {
+			this.operator = that.operator;
+		}
+		if (that.left != null) {
+			this.left = that.left;
+		}
+		if (that.right != null) {
+			this.right = that.right;
+		}
+	}
 }

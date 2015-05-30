@@ -30,4 +30,13 @@ public class UniUnaryOp extends UniExpr {
 	public boolean isStatement() {
 		return false;
 	}
+
+	public void merge(UniUnaryOp that) {
+		if (that.operator != null) {
+			this.operator = that.operator;
+		}
+		if (that.expr != null) {
+			this.expr = that.expr;
+		}
+	}
 }

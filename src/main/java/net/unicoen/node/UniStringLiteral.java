@@ -26,4 +26,10 @@ public class UniStringLiteral extends UniExpr {
 	public boolean isStatement() {
 		return false;
 	}
+
+	public void merge(UniStringLiteral that) {
+		if (that.value != null) {
+			this.value = that.value;
+		}
+	}
 }

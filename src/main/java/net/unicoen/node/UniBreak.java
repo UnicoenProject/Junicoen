@@ -19,4 +19,7 @@ public class UniBreak extends UniExpr {
 	public boolean isStatement() {
 		return false;
 	}
+
+	public void merge(UniBreak that) {
+	}
 }

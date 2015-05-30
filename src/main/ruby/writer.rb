@@ -128,6 +128,8 @@ module Writer
         w.newline
         write_equals(dsl, node, w)
         write_conc_additional_member(dsl, node, w)
+        w.newline
+        write_merge(dsl, node, w)
       else
         write_abst_additional_member(dsl, node, w)
       end
@@ -221,6 +223,37 @@ module Writer
     end
   end
 
+  #
+  # mergeメソッドを生成します
+  #
+  def write_merge(dsl, node, w)
+    w.block "public void merge(#{node.name} that)" do
+      node.members.each do |name, type, opt|
+        if /^[a-z]+/ !~ type.to_s
+          w.block "if (that.#{name} != null)" do
+            if opt[:list]
+              w << "if (this.#{name} != null) {"
+              w.with_indent do
+                w << "this.#{name} = that.#{name};"
+              end
+              w << "} else {"
+              w.with_indent do
+                w << "this.#{name}.addAll(that.#{name});"
+              end
+              w << "}"
+            else
+              w << "this.#{name} = that.#{name};"
+            end
+          end
+        end
+      end
+    end
+  end
+
+
+  #
+  # 抽象メソッドを生成します
+  #
   def write_abst_additional_member(dsl, node, w)
     node.opt.fetch(:member, {}).each do |name, type|
       m_name = (/bool/i =~ type ? 'is' : 'get') + name.to_s.pascalize
@@ -232,6 +265,10 @@ module Writer
     end
   end
 
+  #
+  # フラグをメンバー化させます
+  # 例: `isStatement()`を生成
+  #
   def write_conc_additional_member(dsl, node, w)
     node.parents.each do |parent|
       parent.opt.fetch(:member, {}).each do |name, type|

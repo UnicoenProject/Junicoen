@@ -19,4 +19,7 @@ public class UniContinue extends UniExpr {
 	public boolean isStatement() {
 		return false;
 	}
+
+	public void merge(UniContinue that) {
+	}
 }

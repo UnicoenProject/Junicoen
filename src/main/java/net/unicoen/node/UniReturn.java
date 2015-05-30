@@ -26,4 +26,10 @@ public class UniReturn extends UniExpr {
 	public boolean isStatement() {
 		return false;
 	}
+
+	public void merge(UniReturn that) {
+		if (that.value != null) {
+			this.value = that.value;
+		}
+	}
 }

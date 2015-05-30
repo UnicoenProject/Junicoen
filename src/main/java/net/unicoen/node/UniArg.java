@@ -24,4 +24,13 @@ public class UniArg {
 		return (this.type == null ? that.type == null : this.type.equals(that.type))
 			&& (this.name == null ? that.name == null : this.name.equals(that.name));
 	}
+
+	public void merge(UniArg that) {
+		if (that.type != null) {
+			this.type = that.type;
+		}
+		if (that.name != null) {
+			this.name = that.name;
+		}
+	}
 }
