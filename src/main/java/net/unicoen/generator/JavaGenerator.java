@@ -8,6 +8,7 @@ import java.util.Collections;
 
 import net.unicoen.node.Traverser;
 import net.unicoen.node.UniArg;
+import net.unicoen.node.UniArray;
 import net.unicoen.node.UniBinOp;
 import net.unicoen.node.UniBlock;
 import net.unicoen.node.UniBoolLiteral;
@@ -405,6 +406,11 @@ public class JavaGenerator extends Traverser {
 
 	@Override
 	public void traverseFieldDec(UniFieldDec node) {
+		throw new RuntimeException("Not Implemented");
+	}
+
+	@Override
+	public void traverseArray(UniArray node) {
 		throw new RuntimeException("Not Implemented");
 	}
 }

@@ -28,6 +28,9 @@ Dsl.define_node do |x|
       #
       # Expressions
       #
+      x.node "Array" do |d|
+        d.mem "items", "Expr", list: true
+      end
       x.node "FieldAccess" do |d|
         d.mem "receiver", "Expr"
         d.mem "fieldName", String

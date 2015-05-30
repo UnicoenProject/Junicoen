@@ -8,6 +8,7 @@ public abstract class Traverser {
 	public abstract void traverseDoubleLiteral(UniDoubleLiteral node);
 	public abstract void traverseStringLiteral(UniStringLiteral node);
 	public abstract void traverseIdent(UniIdent node);
+	public abstract void traverseArray(UniArray node);
 	public abstract void traverseFieldAccess(UniFieldAccess node);
 	public abstract void traverseMethodCall(UniMethodCall node);
 	public abstract void traverseUnaryOp(UniUnaryOp node);
@@ -22,10 +23,10 @@ public abstract class Traverser {
 	public abstract void traverseWhile(UniWhile node);
 	public abstract void traverseDoWhile(UniDoWhile node);
 	public abstract void traverseVariableDecWithValue(UniVariableDecWithValue node);
+	public abstract void traverseFieldDec(UniFieldDec node);
 	public abstract void traverseMethodDec(UniMethodDec node);
 	public abstract void traverseArg(UniArg node);
 	public abstract void traverseClassDec(UniClassDec node);
-	public abstract void traverseFieldDec(UniFieldDec node);
 
 	public final void traverseExpr(UniExpr node) {
 		if (node instanceof UniBoolLiteral) {
@@ -50,6 +51,10 @@ public abstract class Traverser {
 		}
 		if (node instanceof UniIdent) {
 			traverseIdent((UniIdent)node);
+			return;
+		}
+		if (node instanceof UniArray) {
+			traverseArray((UniArray)node);
 			return;
 		}
 		if (node instanceof UniFieldAccess) {
