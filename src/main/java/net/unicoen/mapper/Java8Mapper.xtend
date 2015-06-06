@@ -1,18 +1,19 @@
 package net.unicoen.mapper
 
 import java.io.FileInputStream
+import java.util.ArrayList
 import org.antlr.v4.runtime.ANTLRInputStream
 import org.antlr.v4.runtime.CharStream
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.ParserRuleContext
+import org.antlr.v4.runtime.RuleContext
 import org.antlr.v4.runtime.tree.ParseTree
+import org.antlr.v4.runtime.tree.RuleNode
+import org.antlr.v4.runtime.tree.TerminalNode
 import net.unicoen.parser.Java8Lexer
 import net.unicoen.parser.Java8Parser
 import net.unicoen.parser.Java8BaseVisitor
 import net.unicoen.node.*
-import org.antlr.v4.runtime.tree.RuleNode
-import org.antlr.v4.runtime.tree.TerminalNode
-import java.util.ArrayList
 
 class Java8Mapper extends Java8BaseVisitor<Object> {
 	var _isDebugMode = false
@@ -78,29 +79,31 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 	override public visitNormalClassDeclaration(Java8Parser.NormalClassDeclarationContext ctx) {
 		val ret = new UniClassDec
 		ctx.children.forEach [
-			switch it {
-				Java8Parser.ClassModifierContext: {
-					if (ret.modifiers == null) {
-						ret.modifiers = new ArrayList<String>
+			if (it instanceof RuleContext) {
+				switch (it as RuleContext).invokingState {
+					case 71: {
+						if (ret.modifiers == null) {
+							ret.modifiers = new ArrayList<String>
+						}
+						ret.modifiers += it.visit as java.util.List<java.lang.String>
 					}
-					ret.modifiers += it.visit as java.util.List<java.lang.String>
-				}
-				Java8Parser.ClassBodyContext: {
-					if (ret.members == null) {
-						ret.members = it.visit as java.util.List<net.unicoen.node.UniMemberDec>
-					} else {
-						ret.members += it.visit as java.util.List<net.unicoen.node.UniMemberDec>
+					case 72:
+						ret.className = it.visit as java.lang.String
+					case 76: {
+						if (ret.members == null) {
+							ret.members = it.visit as java.util.List<net.unicoen.node.UniMemberDec>
+						} else {
+							ret.members += it.visit as java.util.List<net.unicoen.node.UniMemberDec>
+						}
 					}
 				}
-				TerminalNode: {
-					ret.className = it.text
-				}
-				default:
-				// do nothing
-				println()
 			}
 		]
 		ret
+	}
+
+	override public visitClassName(Java8Parser.ClassNameContext ctx) {
+		ctx.text
 	}
 
 	override public visitClassModifier(Java8Parser.ClassModifierContext ctx) {
@@ -144,13 +147,15 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 	override public visitVariableDeclarator(Java8Parser.VariableDeclaratorContext ctx) {
 		val ret = new UniFieldDec
 		ctx.children.forEach [
-			switch it {
-				Java8Parser.VariableDeclaratorIdContext: {
+			if (it instanceof RuleContext) {
+				switch (it as RuleContext).invokingState {
+				case 159: {
 					val child = it.visit as UniFieldDec
 					ret.merge(child)
 				}
-				Java8Parser.VariableInitializerContext:
-					ret.value = it.visit as net.unicoen.node.UniExpr
+					case 160:
+						ret.value = it.visit as net.unicoen.node.UniExpr
+				}
 			}
 		]
 		ret
@@ -159,9 +164,11 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 	override public visitVariableDeclaratorId(Java8Parser.VariableDeclaratorIdContext ctx) {
 		val ret = new UniFieldDec
 		ctx.children.forEach [
-			switch it {
-				Java8Parser.DimsContext:
-					ret.type = it.visit as java.lang.String
+			if (it instanceof RuleContext) {
+				switch (it as RuleContext).invokingState {
+					case 161:
+						ret.type = it.visit as java.lang.String
+				}
 			}
 		]
 		ret
