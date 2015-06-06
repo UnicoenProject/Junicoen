@@ -33,5 +33,8 @@ public class UniIntLiteral extends UniExpr {
 	}
 
 	public void merge(UniIntLiteral that) {
+		if (that.value != 0) {
+			this.value = that.value;
+		}
 	}
 }

@@ -93,10 +93,7 @@ Dsl.define_node do |x|
         d.mem "catchBlock", "Block"
         d.mem "finallyBlock", "Block"
       end
-      #
-      # Var Dec
-      #
-      x.node "VariableDecWithValue", doc: '変数宣言＋代入' do |d|
+      x.node "VariableDec", doc: '変数宣言＋代入' do |d|
         d.mem "modifiers", String, list: true
         d.mem "type", String
         d.mem "name", String

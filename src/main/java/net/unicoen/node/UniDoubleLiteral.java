@@ -34,5 +34,8 @@ public class UniDoubleLiteral extends UniExpr {
 	}
 
 	public void merge(UniDoubleLiteral that) {
+		if (that.value != 0) {
+			this.value = that.value;
+		}
 	}
 }

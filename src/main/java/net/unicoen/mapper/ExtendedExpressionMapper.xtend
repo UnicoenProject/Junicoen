@@ -19,7 +19,7 @@ import net.unicoen.node.UniClassDec
 import net.unicoen.node.UniMemberDec
 import net.unicoen.node.UniMethodDec
 import net.unicoen.node.UniBlock
-import net.unicoen.node.UniVariableDecWithValue
+import net.unicoen.node.UniVariableDec
 import net.unicoen.node.UniIf
 import net.unicoen.node.UniArg
 import net.unicoen.node.UniWhile
@@ -204,7 +204,7 @@ class ExtendedExpressionMapper extends ExtendedExpressionBaseVisitor<Object> {
 	}
 
 	override public visitVariableDeclaration(ExtendedExpressionParser.VariableDeclarationContext ctx) {
-		val ret = new UniVariableDecWithValue
+		val ret = new UniVariableDec
 		ctx.children.forEach [
 			switch it {
 				ExtendedExpressionParser.TypeContext:

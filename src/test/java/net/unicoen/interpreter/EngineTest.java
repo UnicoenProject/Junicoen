@@ -16,7 +16,7 @@ import net.unicoen.node.UniArg;
 import net.unicoen.node.UniBinOp;
 import net.unicoen.node.UniBlock;
 import net.unicoen.node.UniClassDec;
-import net.unicoen.node.UniVariableDecWithValue;
+import net.unicoen.node.UniVariableDec;
 import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniIdent;
 import net.unicoen.node.UniIf;
@@ -128,8 +128,8 @@ public class EngineTest {
 	@Test
 	public void testScope() {
 		// { int i = 1; { int i = 100; }; i += 1; i }
-		UniExpr exp1 = new UniVariableDecWithValue(null, "int", "i", lit(1));
-		UniExpr exp2 = new UniVariableDecWithValue(null, "int", "i", lit(100));
+		UniExpr exp1 = new UniVariableDec(null, "int", "i", lit(1));
+		UniExpr exp2 = new UniVariableDec(null, "int", "i", lit(100));
 		UniExpr exp3 = new UniBinOp("+=", ident("i"), lit(1));
 		UniExpr exp4 = ident("i");
 		UniBlock program = block(exp1, block(exp2), exp3, exp4);
@@ -141,24 +141,24 @@ public class EngineTest {
 	@Test
 	public void testIncrement() {
 		// { int i = 0; ???; j; }
-		UniExpr exp1 = new UniVariableDecWithValue(null, "int", "i", lit(0));
+		UniExpr exp1 = new UniVariableDec(null, "int", "i", lit(0));
 		UniExpr exp2;
 		UniExpr exp3 = ident("j");
 
 		// int j = i++;
-		exp2 = new UniVariableDecWithValue(null, "int", "j", new UniUnaryOp("_++", ident("i")));
+		exp2 = new UniVariableDec(null, "int", "j", new UniUnaryOp("_++", ident("i")));
 		assertEquals(0, Engine.executeSimple(block(exp1, exp2, exp3)));
 
 		// int j = ++i;
-		exp2 = new UniVariableDecWithValue(null, "int", "j", new UniUnaryOp("++_", ident("i")));
+		exp2 = new UniVariableDec(null, "int", "j", new UniUnaryOp("++_", ident("i")));
 		assertEquals(1, Engine.executeSimple(block(exp1, exp2, exp3)));
 
 		// int j = i--;
-		exp2 = new UniVariableDecWithValue(null, "int", "j", new UniUnaryOp("_--", ident("i")));
+		exp2 = new UniVariableDec(null, "int", "j", new UniUnaryOp("_--", ident("i")));
 		assertEquals(0, Engine.executeSimple(block(exp1, exp2, exp3)));
 
 		// int j = --i;
-		exp2 = new UniVariableDecWithValue(null, "int", "j", new UniUnaryOp("--_", ident("i")));
+		exp2 = new UniVariableDec(null, "int", "j", new UniUnaryOp("--_", ident("i")));
 		assertEquals(-1, Engine.executeSimple(block(exp1, exp2, exp3)));
 	}
 

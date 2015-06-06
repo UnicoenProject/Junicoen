@@ -22,7 +22,7 @@ public abstract class Traverser {
 	public abstract void traverseFor(UniFor node);
 	public abstract void traverseWhile(UniWhile node);
 	public abstract void traverseDoWhile(UniDoWhile node);
-	public abstract void traverseVariableDecWithValue(UniVariableDecWithValue node);
+	public abstract void traverseVariableDec(UniVariableDec node);
 	public abstract void traverseFieldDec(UniFieldDec node);
 	public abstract void traverseMethodDec(UniMethodDec node);
 	public abstract void traverseArg(UniArg node);
@@ -109,8 +109,8 @@ public abstract class Traverser {
 			traverseDoWhile((UniDoWhile)node);
 			return;
 		}
-		if (node instanceof UniVariableDecWithValue) {
-			traverseVariableDecWithValue((UniVariableDecWithValue)node);
+		if (node instanceof UniVariableDec) {
+			traverseVariableDec((UniVariableDec)node);
 			return;
 		}
 		throw new RuntimeException("Unknown node: " + node);

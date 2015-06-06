@@ -3,16 +3,16 @@ package net.unicoen.node;
 import java.util.List;
 
 /** 変数宣言＋代入 */
-public class UniVariableDecWithValue extends UniExpr {
+public class UniVariableDec extends UniExpr {
 	public List<String> modifiers;
 	public String type;
 	public String name;
 	public UniExpr value;
 
-	public UniVariableDecWithValue() {
+	public UniVariableDec() {
 	}
 
-	public UniVariableDecWithValue(List<String> modifiers, String type, String name, UniExpr value) {
+	public UniVariableDec(List<String> modifiers, String type, String name, UniExpr value) {
 		this.modifiers = modifiers;
 		this.type = type;
 		this.name = name;
@@ -21,7 +21,7 @@ public class UniVariableDecWithValue extends UniExpr {
 
 	@Override
 	public String toString() {
-		return "VariableDecWithValue(" + type + ", " + name + ")";
+		return "VariableDec(" + type + ", " + name + ")";
 	}
 
 	@Override
@@ -36,8 +36,8 @@ public class UniVariableDecWithValue extends UniExpr {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null || !(obj instanceof UniVariableDecWithValue)) return false;
-		UniVariableDecWithValue that = (UniVariableDecWithValue)obj;
+		if (obj == null || !(obj instanceof UniVariableDec)) return false;
+		UniVariableDec that = (UniVariableDec)obj;
 		return (this.modifiers == null ? that.modifiers == null : this.modifiers.equals(that.modifiers))
 			&& (this.type == null ? that.type == null : this.type.equals(that.type))
 			&& (this.name == null ? that.name == null : this.name.equals(that.name))
@@ -49,7 +49,7 @@ public class UniVariableDecWithValue extends UniExpr {
 		return false;
 	}
 
-	public void merge(UniVariableDecWithValue that) {
+	public void merge(UniVariableDec that) {
 		if (that.modifiers != null) {
 			if (this.modifiers != null) {
 				this.modifiers = that.modifiers;

@@ -270,7 +270,16 @@ module Writer
   def write_merge(dsl, node, w)
     w.block "public void merge(#{node.name} that)" do
       node.members.each do |name, type, opt|
-        if /^[a-z]+/ !~ type.to_s
+        case type.to_s
+        when /bool.*/
+          w.block "if (that.#{name})" do
+            w << "this.#{name} = true;"
+          end
+        when /int|long|double|float/
+          w.block "if (that.#{name} != 0)" do
+            w << "this.#{name} = that.#{name};"
+          end
+        else
           w.block "if (that.#{name} != null)" do
             if opt[:list]
               w << "if (this.#{name} != null) {"

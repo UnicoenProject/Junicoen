@@ -32,7 +32,7 @@ import net.unicoen.node.UniReturn;
 import net.unicoen.node.UniStringLiteral;
 import net.unicoen.node.UniTernaryOp;
 import net.unicoen.node.UniUnaryOp;
-import net.unicoen.node.UniVariableDecWithValue;
+import net.unicoen.node.UniVariableDec;
 import net.unicoen.node.UniWhile;
 
 public class JavaGenerator extends Traverser {
@@ -362,7 +362,7 @@ public class JavaGenerator extends Traverser {
 	}
 
 	@Override
-	public void traverseVariableDecWithValue(UniVariableDecWithValue node) {
+	public void traverseVariableDec(UniVariableDec node) {
 		if (node.modifiers != null) {
 			for (String mod : node.modifiers) {
 				print(mod);
