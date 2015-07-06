@@ -70,21 +70,21 @@ Dsl.define_node do |x|
       end
       x.node "If", statement: true do |d|
         d.mem "cond", "Expr"
-        d.mem "trueBlock",  "Block"
-        d.mem "falseBlock", "Block"
+        d.mem "trueStatement",  "Expr"
+        d.mem "falseStatement", "Expr"
       end
       x.node "For", statement: true do |d|
         d.mem "init", "Expr"
         d.mem "cond", "Expr"
         d.mem "step", "Expr"
-        d.mem "block", "Block"
+        d.mem "statement", "Expr"
       end
       x.node "While", statement: true do |d|
         d.mem "cond", "Expr"
-        d.mem "block", "Block"
+        d.mem "statement", "Expr"
       end
       x.node "DoWhile", statement: true do |d|
-        d.mem "block", "Block"
+        d.mem "statement", "Expr"
         d.mem "cond", "Expr"
       end
       x._node "Try", statement: true do |d|

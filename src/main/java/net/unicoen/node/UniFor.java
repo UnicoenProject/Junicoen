@@ -4,16 +4,16 @@ public class UniFor extends UniExpr {
 	public UniExpr init;
 	public UniExpr cond;
 	public UniExpr step;
-	public UniBlock block;
+	public UniExpr statement;
 
 	public UniFor() {
 	}
 
-	public UniFor(UniExpr init, UniExpr cond, UniExpr step, UniBlock block) {
+	public UniFor(UniExpr init, UniExpr cond, UniExpr step, UniExpr statement) {
 		this.init = init;
 		this.cond = cond;
 		this.step = step;
-		this.block = block;
+		this.statement = statement;
 	}
 
 	@Override
@@ -27,7 +27,7 @@ public class UniFor extends UniExpr {
 		result = result * 31 + (init == null ? 0 : init.hashCode());
 		result = result * 31 + (cond == null ? 0 : cond.hashCode());
 		result = result * 31 + (step == null ? 0 : step.hashCode());
-		result = result * 31 + (block == null ? 0 : block.hashCode());
+		result = result * 31 + (statement == null ? 0 : statement.hashCode());
 		return result;
 	}
 
@@ -38,7 +38,7 @@ public class UniFor extends UniExpr {
 		return (this.init == null ? that.init == null : this.init.equals(that.init))
 			&& (this.cond == null ? that.cond == null : this.cond.equals(that.cond))
 			&& (this.step == null ? that.step == null : this.step.equals(that.step))
-			&& (this.block == null ? that.block == null : this.block.equals(that.block));
+			&& (this.statement == null ? that.statement == null : this.statement.equals(that.statement));
 	}
 
 	@Override
@@ -56,8 +56,8 @@ public class UniFor extends UniExpr {
 		if (that.step != null) {
 			this.step = that.step;
 		}
-		if (that.block != null) {
-			this.block = that.block;
+		if (that.statement != null) {
+			this.statement = that.statement;
 		}
 	}
 }

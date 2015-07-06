@@ -89,7 +89,7 @@ class JavaMapperTest {
 		val ifExpr = mainMethodDec.block.body.get(0) as UniIf
 
 		assertThat(ifExpr.cond, equalTo(lit(true)))
-		val thenLine = ifExpr.trueBlock.body.get(0) as UniMethodCall
+		val thenLine = ifExpr.trueStatement.asBlock.body.get(0) as UniMethodCall
 		val expect = new UniMethodCall(
 			field(ident("System"), "out"),
 			"println",
@@ -114,5 +114,9 @@ class JavaMapperTest {
 		val classDec = mapper.parse(sb.toString()) as UniClassDec
 		val generatedCode = JavaGenerator.generate(classDec);
 		assertThat(generatedCode, equalTo(code))
+	}
+	
+	def asBlock(UniExpr expr) {
+		expr as UniBlock
 	}
 }

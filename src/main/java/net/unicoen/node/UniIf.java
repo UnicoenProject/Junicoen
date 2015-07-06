@@ -2,16 +2,16 @@ package net.unicoen.node;
 
 public class UniIf extends UniExpr {
 	public UniExpr cond;
-	public UniBlock trueBlock;
-	public UniBlock falseBlock;
+	public UniExpr trueStatement;
+	public UniExpr falseStatement;
 
 	public UniIf() {
 	}
 
-	public UniIf(UniExpr cond, UniBlock trueBlock, UniBlock falseBlock) {
+	public UniIf(UniExpr cond, UniExpr trueStatement, UniExpr falseStatement) {
 		this.cond = cond;
-		this.trueBlock = trueBlock;
-		this.falseBlock = falseBlock;
+		this.trueStatement = trueStatement;
+		this.falseStatement = falseStatement;
 	}
 
 	@Override
@@ -23,8 +23,8 @@ public class UniIf extends UniExpr {
 	public int hashCode() {
 		int result = 17;
 		result = result * 31 + (cond == null ? 0 : cond.hashCode());
-		result = result * 31 + (trueBlock == null ? 0 : trueBlock.hashCode());
-		result = result * 31 + (falseBlock == null ? 0 : falseBlock.hashCode());
+		result = result * 31 + (trueStatement == null ? 0 : trueStatement.hashCode());
+		result = result * 31 + (falseStatement == null ? 0 : falseStatement.hashCode());
 		return result;
 	}
 
@@ -33,8 +33,8 @@ public class UniIf extends UniExpr {
 		if (obj == null || !(obj instanceof UniIf)) return false;
 		UniIf that = (UniIf)obj;
 		return (this.cond == null ? that.cond == null : this.cond.equals(that.cond))
-			&& (this.trueBlock == null ? that.trueBlock == null : this.trueBlock.equals(that.trueBlock))
-			&& (this.falseBlock == null ? that.falseBlock == null : this.falseBlock.equals(that.falseBlock));
+			&& (this.trueStatement == null ? that.trueStatement == null : this.trueStatement.equals(that.trueStatement))
+			&& (this.falseStatement == null ? that.falseStatement == null : this.falseStatement.equals(that.falseStatement));
 	}
 
 	@Override
@@ -46,11 +46,11 @@ public class UniIf extends UniExpr {
 		if (that.cond != null) {
 			this.cond = that.cond;
 		}
-		if (that.trueBlock != null) {
-			this.trueBlock = that.trueBlock;
+		if (that.trueStatement != null) {
+			this.trueStatement = that.trueStatement;
 		}
-		if (that.falseBlock != null) {
-			this.falseBlock = that.falseBlock;
+		if (that.falseStatement != null) {
+			this.falseStatement = that.falseStatement;
 		}
 	}
 }

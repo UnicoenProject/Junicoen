@@ -14,6 +14,7 @@ import net.unicoen.node.UniBlock;
 import net.unicoen.node.UniBoolLiteral;
 import net.unicoen.node.UniBreak;
 import net.unicoen.node.UniClassDec;
+import net.unicoen.node.UniDoWhile;
 import net.unicoen.node.UniTernaryOp;
 import net.unicoen.node.UniContinue;
 import net.unicoen.node.UniVariableDec;
@@ -229,9 +230,9 @@ public class Engine {
 		if (expr instanceof UniIf) {
 			UniIf ui = (UniIf) expr;
 			if (toBool(execExpr(ui.cond, scope))) {
-				return execBlock(ui.trueBlock, scope);
+				return execExpr(ui.trueStatement, scope);
 			} else {
-				return execBlock(ui.falseBlock, scope);
+				return execExpr(ui.falseStatement, scope);
 			}
 		}
 		if (expr instanceof UniFor) {
@@ -242,7 +243,7 @@ public class Engine {
 				for (execExpr(uniFor.init, forScope); toBool(execExpr(uniFor.cond, forScope)); execExpr(uniFor.step,
 						forScope)) {
 					try {
-						lastEval = execBlock(uniFor.block, forScope);
+						lastEval = execExpr(uniFor.statement, forScope);
 					} catch (Continue e) { /* do nothing*/
 					}
 				}
@@ -257,7 +258,7 @@ public class Engine {
 				Object lastEval = null;
 				while (toBool(execExpr(uniWhile.cond, scope))) {
 					try {
-						lastEval = execBlock(uniWhile.block, scope);
+						lastEval = execExpr(uniWhile.statement, scope);
 					} catch (Continue e) { /* do nothing*/
 					}
 				}
@@ -266,13 +267,13 @@ public class Engine {
 				return null;
 			}
 		}
-		if (expr instanceof UniWhile) {
-			UniWhile uniWhile = (UniWhile) expr;
+		if (expr instanceof UniDoWhile) {
+			UniDoWhile uniWhile = (UniDoWhile) expr;
 			try {
 				Object lastEval = null;
 				do {
 					try {
-						lastEval = execBlock(uniWhile.block, scope);
+						lastEval = execExpr(uniWhile.statement, scope);
 					} catch (Continue e) { /* do nothing*/
 					}
 				} while (toBool(execExpr(uniWhile.cond, scope)));

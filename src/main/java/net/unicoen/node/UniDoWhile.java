@@ -1,14 +1,14 @@
 package net.unicoen.node;
 
 public class UniDoWhile extends UniExpr {
-	public UniBlock block;
+	public UniExpr statement;
 	public UniExpr cond;
 
 	public UniDoWhile() {
 	}
 
-	public UniDoWhile(UniBlock block, UniExpr cond) {
-		this.block = block;
+	public UniDoWhile(UniExpr statement, UniExpr cond) {
+		this.statement = statement;
 		this.cond = cond;
 	}
 
@@ -20,7 +20,7 @@ public class UniDoWhile extends UniExpr {
 	@Override
 	public int hashCode() {
 		int result = 17;
-		result = result * 31 + (block == null ? 0 : block.hashCode());
+		result = result * 31 + (statement == null ? 0 : statement.hashCode());
 		result = result * 31 + (cond == null ? 0 : cond.hashCode());
 		return result;
 	}
@@ -29,7 +29,7 @@ public class UniDoWhile extends UniExpr {
 	public boolean equals(Object obj) {
 		if (obj == null || !(obj instanceof UniDoWhile)) return false;
 		UniDoWhile that = (UniDoWhile)obj;
-		return (this.block == null ? that.block == null : this.block.equals(that.block))
+		return (this.statement == null ? that.statement == null : this.statement.equals(that.statement))
 			&& (this.cond == null ? that.cond == null : this.cond.equals(that.cond));
 	}
 
@@ -39,8 +39,8 @@ public class UniDoWhile extends UniExpr {
 	}
 
 	public void merge(UniDoWhile that) {
-		if (that.block != null) {
-			this.block = that.block;
+		if (that.statement != null) {
+			this.statement = that.statement;
 		}
 		if (that.cond != null) {
 			this.cond = that.cond;

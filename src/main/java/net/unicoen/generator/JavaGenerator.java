@@ -39,6 +39,7 @@ public class JavaGenerator extends Traverser {
 
 	private final PrintStream out;
 	private int indent = 0;
+	private boolean indentAtThisLine = false;
 
 	private final IntStack exprPriority = new IntStack();
 
@@ -47,63 +48,30 @@ public class JavaGenerator extends Traverser {
 		exprPriority.push(0);
 	}
 
-	/**
-	 * インデントする
-	 */
-	private void printIndent() {
-		for (int i = 0; i < indent; i++) {
-			out.print("\t");
-		}
+	private void withIndent(Runnable runnable) {
+		indent++;
+		runnable.run();
+		indent--;
 	}
 
 	private void print(String str) {
+		if (indentAtThisLine == false) {
+			indentAtThisLine = true;
+			for (int i = 0; i < indent; i++) {
+				out.print("\t");
+			}
+		}
 		out.print(str);
 	}
 
-	private void println(String str) {
-		out.println(str);
+	private void newline() {
+		out.print("\n");
+		indentAtThisLine = false;
 	}
 
-	/**
-	 * インデント付きで出力する。
-	 */
-	private void printlnIndent(String str) {
-		printIndent();
-		out.println(str);
-	}
-
-	/**
-	 * インデント付きで出力する。
-	 */
-	private void printlnIndent(String format, Object... args) {
-		printlnIndent(String.format(format, args));
-	}
-
-	private void genBlockS(UniBlock block, String preStatement,
-			Runnable afterBlock) {
-		genBlock(block, () -> {
-			print(preStatement);
-		}, afterBlock);
-	}
-
-	private void genBlock(UniBlock block, Runnable beforeBlock,
-			Runnable afterBlock) {
-		if (beforeBlock != null) {
-			printIndent();
-			beforeBlock.run();
-			println(" {");
-		} else {
-			printlnIndent("{");
-		}
-		genBlockInner(block);
-		if (afterBlock != null) {
-			printIndent();
-			print("} ");
-			afterBlock.run();
-			println("");
-		} else {
-			printlnIndent("}");
-		}
+	private void x_println(String str) {
+		print(str);
+		newline();
 	}
 
 	private int priorityTable(String operator) {
@@ -154,20 +122,23 @@ public class JavaGenerator extends Traverser {
 		parseExpr(node, 0);
 	}
 
-	private void genBlockInner(UniBlock block) {
-		indent++;
-		if (block != null) {
-			for (UniExpr expr : iter(block.body)) {
-				if (expr.isStatement()) {
-					parseExpr(expr);
-				} else {
-					printIndent();
-					parseExpr(expr);
-					println(";");
-				}
-			}
+	/**
+	 * ステートメントを出力し、改行します。 関数呼び出し等の場合は、セミコロンも出力します。
+	 */
+	private void parseStatement(UniExpr expr) {
+		parseExpr(expr);
+		if (expr.isStatement() == false) {
+			print(";");
 		}
-		indent--;
+		newline();
+	}
+
+	/** インデントし、複数のステートメントを出力します */
+	private void parseBlockInner(UniBlock block) {
+		withIndent(() -> {
+			for (UniExpr expr : block.body)
+				parseStatement(expr);
+		});
 	}
 
 	public static String generate(UniClassDec dec) {
@@ -313,48 +284,75 @@ public class JavaGenerator extends Traverser {
 
 	@Override
 	public void traverseBlock(UniBlock node) {
-		genBlock(node, null, null);
+		x_println("{");
+		parseBlockInner(node);
+		x_println("}");
 	}
 
 	@Override
 	public void traverseIf(UniIf node) {
-		printIndent();
 		print("if (");
 		parseExpr(node.cond);
-		println(") {");
-		genBlockInner(node.trueBlock);
-		if (node.falseBlock != null) {
-			printlnIndent("} else {");
-			genBlockInner(node.falseBlock);
+		print(")");
+		if (node.trueStatement == null) {
+			x_println(" {");
+			print("}");
+		} else if (node.trueStatement instanceof UniBlock) {
+			x_println(" {");
+			parseBlockInner((UniBlock) node.trueStatement);
+			print("}");
+		} else {
+			newline(); // ifの後ろの改行
+			withIndent(() -> {
+				parseStatement(node.trueStatement);
+			});
 		}
-		printlnIndent("}");
+		if (node.falseStatement != null) {
+			if (indentAtThisLine) {
+				print(" "); // 閉じカッコがすでに出力されているので空白を開ける
+			}
+			print("else");
+			if (node.falseStatement instanceof UniBlock) {
+				x_println(" {");
+				parseBlockInner((UniBlock) node.falseStatement);
+				println("}");
+			} else {
+				newline(); // elseの後ろの改行
+				withIndent(() -> {
+					parseStatement(node.falseStatement);
+				});
+			}
+		}
 	}
 
 	@Override
 	public void traverseFor(UniFor node) {
-		genBlock(node.block, () -> {
-			print("for (");
-			parseExpr(node.init);
-			print("; ");
-			parseExpr(node.cond);
-			print("; ");
-			parseExpr(node.step);
-			print(")");
-		}, null);
+		throw new RuntimeException("HOGE");
+		// genBlock(node.block, () -> {
+		// print("for (");
+		// parseExpr(node.init);
+		// print("; ");
+		// parseExpr(node.cond);
+		// print("; ");
+		// parseExpr(node.step);
+		// print(")");
+		// }, null);
 	}
 
 	@Override
 	public void traverseWhile(UniWhile node) {
-		genBlock(node.block, () -> {
-			print("while (");
-			parseExpr(node.cond);
-			print(")");
-		}, null);
+		throw new RuntimeException("HOGE");
+		// genBlock(node.block, () -> {
+		// print("while (");
+		// parseExpr(node.cond);
+		// print(")");
+		// }, null);
 	}
 
 	@Override
 	public void traverseDoWhile(UniDoWhile node) {
-		genBlockS(node.block, "do", () -> {
+		throw new RuntimeException("HOGE");
+		genBlockS(node.statement, "do", () -> {
 			print("while (");
 			parseExpr(node.cond);
 			print(");");

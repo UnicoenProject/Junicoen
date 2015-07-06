@@ -230,7 +230,7 @@ class ExtendedExpressionMapper extends ExtendedExpressionBaseVisitor<Object> {
 			}
 		]
 		val tBlock = new UniBlock(tList)
-		ret.trueBlock = tBlock
+		ret.trueStatement = tBlock
 		ret
 	}
 
@@ -246,7 +246,7 @@ class ExtendedExpressionMapper extends ExtendedExpressionBaseVisitor<Object> {
 			}
 		]
 		val block = new UniBlock(list)
-		ret.block = block
+		ret.statement = block
 		ret
 	}
 

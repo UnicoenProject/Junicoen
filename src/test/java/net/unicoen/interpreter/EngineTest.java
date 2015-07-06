@@ -68,18 +68,18 @@ public class EngineTest {
 					mCallT.methodName = "printInt";
 					mCallT.args = list(lit(1));
 				}
-				uIf.trueBlock = block(mCallT);
+				uIf.trueStatement = block(mCallT);
 				UniMethodCall mCallF = new UniMethodCall();
 				{
 					mCallF.receiver = ident("MyLib");
 					mCallF.methodName = "printInt";
 					mCallF.args = list(bin(lit(1), "+", lit(2)));
 				}
-				uIf.falseBlock = block(mCallF);
+				uIf.falseStatement = block(mCallF);
 			}
 			UniWhile uWhile = new UniWhile();
 			uWhile.cond = lit(false);
-			uWhile.block = block(lit(1));
+			uWhile.statement = block(lit(1));
 			fDec.block = block(uIf, uWhile);
 		}
 		cDec.members = list(fDec);
