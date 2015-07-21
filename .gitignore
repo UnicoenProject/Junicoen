@@ -6,3 +6,4 @@ src/test/xtend-gen
 src/main/xtend-gen
 src/main/generated-sources
 src/test/generated-sources
+*.DS_Store
