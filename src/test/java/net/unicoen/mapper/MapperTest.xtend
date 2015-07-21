@@ -26,5 +26,6 @@ class MapperTest {
 			assertTrue(cls.modifiers.contains(modifier))
 		]
 	}
+	//add evaluate method/array/ etc.
 
 }
