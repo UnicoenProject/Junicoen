@@ -99,6 +99,11 @@ Dsl.define_node do |x|
         d.mem "name", String
         d.mem "value", "Expr"
       end
+      x.node "NewArray" do |d|
+        d.mem "type", String
+        d.mem "elementsNum", "Expr", list: true
+        d.mem "value", "Array"
+      end
     end
 
     x.node "MemberDec", abstract: true do
@@ -124,6 +129,9 @@ Dsl.define_node do |x|
       d.mem "className", String
       d.mem "modifiers", String, list: true
       d.mem "members", "MemberDec", list: true
+      d.mem "superClass", String, list: true
+      d.mem "interfaces", String, list: true
+      d.mem "innerClasses", "ClassDec", list: true
     end
   end
 end

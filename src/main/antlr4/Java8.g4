@@ -54,7 +54,7 @@ Total lexer+parser time 30844ms.
 grammar Java8;
 
 @header {
- 	package net.unicoen.parser;
+	package net.unicoen.parser;
 }
 
 /*
@@ -285,9 +285,9 @@ classDeclaration
 normalClassDeclaration
 	:	classModifier* 'class' className typeParameters? superclass? superinterfaces? classBody
 	;
-	
+
 className
-	:	Identifier
+	: Identifier
 	;
 
 classModifier

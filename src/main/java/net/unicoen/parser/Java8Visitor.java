@@ -1,6 +1,6 @@
 // Generated from Java8.g4 by ANTLR 4.5
 
- 	package net.unicoen.parser;
+	package net.unicoen.parser;
 
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
@@ -776,7 +776,7 @@ public interface Java8Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitVariableInitializerList(Java8Parser.VariableInitializerListContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Java8Parser#statement}.
+	 * Visit a parse tree produced by {@link Java8Parser#block}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */

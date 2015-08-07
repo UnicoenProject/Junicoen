@@ -23,6 +23,7 @@ public abstract class Traverser {
 	public abstract void traverseWhile(UniWhile node);
 	public abstract void traverseDoWhile(UniDoWhile node);
 	public abstract void traverseVariableDec(UniVariableDec node);
+	public abstract void traverseNewArray(UniNewArray node);
 	public abstract void traverseFieldDec(UniFieldDec node);
 	public abstract void traverseMethodDec(UniMethodDec node);
 	public abstract void traverseArg(UniArg node);
@@ -111,6 +112,10 @@ public abstract class Traverser {
 		}
 		if (node instanceof UniVariableDec) {
 			traverseVariableDec((UniVariableDec)node);
+			return;
+		}
+		if (node instanceof UniNewArray) {
+			traverseNewArray((UniNewArray)node);
 			return;
 		}
 		throw new RuntimeException("Unknown node: " + node);
