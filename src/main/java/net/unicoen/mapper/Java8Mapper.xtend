@@ -39,7 +39,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val lexer = new Java8Lexer(chars)
 		val tokens = new CommonTokenStream(lexer)
 		val parser = new Java8Parser(tokens)
-		val tree = parser.compilationUnit
+		val tree = parser.literal
 		tree.visit
 	}
 
@@ -72,34 +72,28 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		}
 	}
 
-	override public visitDims(Java8Parser.DimsContext ctx) {
-		ctx.text
-	}
-
 	override public visitNormalClassDeclaration(Java8Parser.NormalClassDeclarationContext ctx) {
-		val ret = new UniClassDec
+		val bind = new UniClassDec
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch (it as RuleContext).invokingState {
-					case 71: {
-						if (ret.modifiers == null) {
-							ret.modifiers = new ArrayList<String>
-						}
-						ret.modifiers += it.visit as java.util.List<java.lang.String>
-					}
-					case 72:
-						ret.className = it.visit as java.lang.String
-					case 76: {
-						if (ret.members == null) {
-							ret.members = it.visit as java.util.List<net.unicoen.node.UniMemberDec>
+					case 73: {
+						if (bind.modifiers == null) {
+							bind.modifiers = it.visit as java.util.List<java.lang.String>
 						} else {
-							ret.members += it.visit as java.util.List<net.unicoen.node.UniMemberDec>
+							bind.modifiers += it.visit as java.util.List<java.lang.String>
 						}
+					}
+					case 74:
+						bind.className = it.visit as java.lang.String
+					case 78: {
+						val child = it.visit as UniClassDec
+						bind.merge(child)
 					}
 				}
 			}
 		]
-		ret
+		bind
 	}
 
 	override public visitClassName(Java8Parser.ClassNameContext ctx) {
@@ -107,75 +101,45 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 	}
 
 	override public visitClassModifier(Java8Parser.ClassModifierContext ctx) {
-		ctx.text
+		val list = new ArrayList<String>
+		if (ctx.children != null) {
+//			ctx.children.forEach [
+//				switch (it) {
+//				}
+//
+//			]
+		}
+
 	}
 
 	override public visitClassBody(Java8Parser.ClassBodyContext ctx) {
+		val bind = new UniClassDec
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch (it as RuleContext).invokingState {
+					case 139: {
+						if (bind.members == null) {
+							bind.members = it.visit as java.util.List<net.unicoen.node.UniMemberDec>
+						} else {
+							bind.members += it.visit as java.util.List<net.unicoen.node.UniMemberDec>
+						}
+					}
+				}
+			}
+		]
+		bind
+	}
+
+	override public visitClassBodyDeclaration(Java8Parser.ClassBodyDeclarationContext ctx) {
 		val list = new ArrayList<UniMemberDec>
 		if (ctx.children != null) {
-			ctx.children.forEach [
-				list += it.visit as UniMemberDec
-			]
+//			ctx.children.forEach [
+//				switch (it) {
+//				}
+//
+//			]
 		}
-		list
-	}
 
-	override public visitFieldDeclaration(Java8Parser.FieldDeclarationContext ctx) {
-		val list = new ArrayList<UniFieldDec>
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				list += it.visit as UniFieldDec
-			]
-		}
-		list
-	}
-
-	override public visitFieldModifier(Java8Parser.FieldModifierContext ctx) {
-		ctx.text
-	}
-
-	override public visitVariableDeclaratorList(Java8Parser.VariableDeclaratorListContext ctx) {
-		val list = new ArrayList<UniFieldDec>
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				list += it.visit as UniFieldDec
-			]
-		}
-		list
-	}
-
-	override public visitVariableDeclarator(Java8Parser.VariableDeclaratorContext ctx) {
-		val ret = new UniFieldDec
-		ctx.children.forEach [
-			if (it instanceof RuleContext) {
-				switch (it as RuleContext).invokingState {
-				case 159: {
-					val child = it.visit as UniFieldDec
-					ret.merge(child)
-				}
-					case 160:
-						ret.value = it.visit as net.unicoen.node.UniExpr
-				}
-			}
-		]
-		ret
-	}
-
-	override public visitVariableDeclaratorId(Java8Parser.VariableDeclaratorIdContext ctx) {
-		val ret = new UniFieldDec
-		ctx.children.forEach [
-			if (it instanceof RuleContext) {
-				switch (it as RuleContext).invokingState {
-					case 161:
-						ret.type = it.visit as java.lang.String
-				}
-			}
-		]
-		ret
-	}
-
-	override public visitUnannType(Java8Parser.UnannTypeContext ctx) {
-		ctx.text
 	}
 
 }
