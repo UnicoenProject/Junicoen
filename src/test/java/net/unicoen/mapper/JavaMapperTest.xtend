@@ -10,7 +10,7 @@ import net.unicoen.generator.JavaGeneratorTest
 import net.unicoen.generator.JavaGenerator
 
 class JavaMapperTest {
-	@Test
+//	@Test
 	def parseClass() {
 		val mapper = new JavaMapper()
 		val classDec = mapper.parse("public class A {}") as UniClassDec
@@ -32,7 +32,7 @@ class JavaMapperTest {
 		assertThat(mainMethodDec.methodName, equalTo("main"))
 	}
 
-	@Test
+//	@Test
 	def parseLiteral() {
 		val mapper = new JavaMapper();
 		{
@@ -53,14 +53,14 @@ class JavaMapperTest {
 		}
 	}
 
-	@Test
+//	@Test
 	def parseFuncCall() {
 		val mapper = new JavaMapper();
 		val literal = mapper.parse("f()", [p|p.methodInvocation])
 		assertThat(literal, equalTo(new UniMethodCall(null, "f", list())))
 	}
 
-	@Test
+//	@Test
 	def parseIfStatement() {
 		val mapper = new JavaMapper();
 		val literal = mapper.parse("if(false) { f(); }", [p|p.ifThenStatement])
