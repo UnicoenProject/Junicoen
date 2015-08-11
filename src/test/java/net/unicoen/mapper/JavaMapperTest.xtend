@@ -85,7 +85,7 @@ class JavaMapperTest {
 		sb.append("      System.out.println(true);")
 		sb.append("    }")
 		sb.append("  }")
-		sb.append(" }")
+		sb.append("}")
 		val code = JavaGeneratorTest.normalize(sb.toString())
 
 		val mapper = new JavaMapper()
@@ -100,7 +100,7 @@ class JavaMapperTest {
 		while (true) {
 			var newCode = lastCode.replace("  ", " ")
 			if (newCode.equals(lastCode)) {
-				return lastCode
+				return lastCode.replace(" (", "(").replace(" {", "{").replace(" }", "}")
 			}
 			lastCode = newCode
 		}

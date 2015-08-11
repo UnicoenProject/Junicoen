@@ -82,7 +82,7 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		// :	classModifier* 'class' className typeParameters? superclass? superinterfaces? classBody		
 		val map = createMap(ctx)
 		val ret = new UniClassDec()
-		ret.modifiers = map.get(Java8Parser.RULE_classModifier).map[(it as DummyNode<String>).item].toList
+		ret.modifiers = map.getOrEmpty(Java8Parser.RULE_classModifier).map[(it as DummyNode<String>).item].toList
 		ret.className = (map.get(Java8Parser.RULE_className).head as DummyNode<String>).item
 		ret.members = (map.get(Java8Parser.RULE_classBody).head as AggregatedNode).flatten.map[it as UniMemberDec]
 		ret
@@ -117,7 +117,7 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		// :	'{' classBodyDeclaration* '}' ;
 		val map = createMap(ctx)
 		var ret = new AggregatedNode()
-		ret.list = map.getListOrEmpty(Java8Parser.RULE_classBodyDeclaration).map[it as UniMemberDec]
+		ret.list = map.getOrEmpty(Java8Parser.RULE_classBodyDeclaration).map[it as UniMemberDec]
 		ret
 	}
 
@@ -163,7 +163,7 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		// :	methodModifier* methodHeader methodBody ;
 		val map = createMap(ctx)
 		val methodDec = new UniMethodDec()
-		methodDec.modifiers = map.get(Java8Parser.RULE_methodModifier).map[m|(m as DummyNode<String>).item]
+		methodDec.modifiers = map.getOrEmpty(Java8Parser.RULE_methodModifier).map[(it as DummyNode<String>).item]
 		val methodHeaderMaps = map.get(Java8Parser.RULE_methodHeader).head as MapNode
 		methodDec.returnType = (methodHeaderMaps.item.get(Java8Parser.RULE_result).head as DummyNode<String>).item
 		val methodDeclaratorMaps = methodHeaderMaps.item.get(Java8Parser.RULE_methodDeclarator).head as MapNode
@@ -332,7 +332,7 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		// blockStatements
 		// :	blockStatement blockStatement*
 		val map = createMap(ctx)
-		val list = getListOrEmpty(map, Java8Parser.RULE_blockStatement)
+		val list = net.unicoen.mapper.JavaMapper.getOrEmpty(map, Java8Parser.RULE_blockStatement)
 		new UniBlock(list.map[x|x as UniExpr])
 	}
 
@@ -483,7 +483,7 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		ret
 	}
 
-	private static def <T> List<T> getListOrEmpty(Map<Integer, List<T>> map, Integer key) {
+	private static def <T> List<T> getOrEmpty(Map<Integer, List<T>> map, Integer key) {
 		if (map.containsKey(key)) {
 			return map.get(key)
 		} else {
