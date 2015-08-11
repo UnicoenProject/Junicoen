@@ -337,7 +337,22 @@ public class JavaGenerator extends Traverser {
 
 	@Override
 	public void traverseWhile(UniWhile node) {
-		throw new RuntimeException("HOGE");
+		print("while (");
+		parseExpr(node.cond);
+		print(")");
+		if (node.statement == null) {
+			print("{");
+			print("}");
+		} else if (node.statement instanceof UniBlock) {
+			print(" ");
+			traverseBlock((UniBlock) node.statement);
+		} else {
+			newline(); // whileの後ろの改行
+			withIndent(() -> {
+				parseStatement(node.statement);
+			});
+		}
+
 		// genBlock(node.block, () -> {
 		// print("while (");
 		// parseExpr(node.cond);

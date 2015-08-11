@@ -198,7 +198,7 @@ public class JavaGeneratorTest {
 		assertGen(codes, body);
 	}
 
-	// @Test
+	@Test
 	public void test_While() {
 		UniExpr body = new UniWhile(lit(true), block(new UniBreak()));
 		String[] codes = { "while (true) {", "	break;", "}", };
