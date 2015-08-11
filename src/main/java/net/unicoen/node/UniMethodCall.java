@@ -33,11 +33,15 @@ public class UniMethodCall extends UniExpr {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null || !(obj instanceof UniMethodCall)) return false;
-		UniMethodCall that = (UniMethodCall)obj;
-		return (this.receiver == null ? that.receiver == null : this.receiver.equals(that.receiver))
-			&& (this.methodName == null ? that.methodName == null : this.methodName.equals(that.methodName))
-			&& (this.args == null ? that.args == null : this.args.equals(that.args));
+		if (obj == null || !(obj instanceof UniMethodCall))
+			return false;
+		UniMethodCall that = (UniMethodCall) obj;
+		return (this.receiver == null ? that.receiver == null : this.receiver
+				.equals(that.receiver))
+				&& (this.methodName == null ? that.methodName == null
+						: this.methodName.equals(that.methodName))
+				&& (this.args == null ? that.args == null : this.args
+						.equals(that.args));
 	}
 
 	@Override

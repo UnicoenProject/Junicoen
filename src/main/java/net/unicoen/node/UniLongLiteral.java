@@ -17,13 +17,14 @@ public class UniLongLiteral extends UniExpr {
 
 	@Override
 	public int hashCode() {
-		return (int)(value^(value>>32));
+		return (int) (value ^ (value >> 32));
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null || !(obj instanceof UniLongLiteral)) return false;
-		UniLongLiteral that = (UniLongLiteral)obj;
+		if (obj == null || !(obj instanceof UniLongLiteral))
+			return false;
+		UniLongLiteral that = (UniLongLiteral) obj;
 		return this.value == that.value;
 	}
 

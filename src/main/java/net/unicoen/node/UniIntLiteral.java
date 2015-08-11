@@ -22,8 +22,9 @@ public class UniIntLiteral extends UniExpr {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null || !(obj instanceof UniIntLiteral)) return false;
-		UniIntLiteral that = (UniIntLiteral)obj;
+		if (obj == null || !(obj instanceof UniIntLiteral))
+			return false;
+		UniIntLiteral that = (UniIntLiteral) obj;
 		return this.value == that.value;
 	}
 

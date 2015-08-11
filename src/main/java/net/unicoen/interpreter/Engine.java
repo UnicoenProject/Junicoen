@@ -14,10 +14,8 @@ import net.unicoen.node.UniBlock;
 import net.unicoen.node.UniBoolLiteral;
 import net.unicoen.node.UniBreak;
 import net.unicoen.node.UniClassDec;
-import net.unicoen.node.UniDoWhile;
-import net.unicoen.node.UniTernaryOp;
 import net.unicoen.node.UniContinue;
-import net.unicoen.node.UniVariableDec;
+import net.unicoen.node.UniDoWhile;
 import net.unicoen.node.UniDoubleLiteral;
 import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniFor;
@@ -31,7 +29,9 @@ import net.unicoen.node.UniMethodDec;
 import net.unicoen.node.UniNode;
 import net.unicoen.node.UniReturn;
 import net.unicoen.node.UniStringLiteral;
+import net.unicoen.node.UniTernaryOp;
 import net.unicoen.node.UniUnaryOp;
+import net.unicoen.node.UniVariableDec;
 import net.unicoen.node.UniWhile;
 
 public class Engine {
@@ -149,7 +149,8 @@ public class Engine {
 		}
 	}
 
-	public Object runCallMethod(Object instance, String methodName, Object[] args) {
+	public Object runCallMethod(Object instance, String methodName,
+			Object[] args) {
 		throw new RuntimeException("Not support call method for: " + instance);
 	}
 
@@ -204,8 +205,8 @@ public class Engine {
 		}
 		if (expr instanceof UniTernaryOp) {
 			UniTernaryOp condOp = (UniTernaryOp) expr;
-			return toBool(execExpr(condOp.cond, scope)) ? execExpr(condOp.trueExpr, scope) : execExpr(condOp.falseExpr,
-					scope);
+			return toBool(execExpr(condOp.cond, scope)) ? execExpr(
+					condOp.trueExpr, scope) : execExpr(condOp.falseExpr, scope);
 		}
 		if (expr instanceof UniBreak) {
 			throw new Break();
@@ -240,11 +241,11 @@ public class Engine {
 			Scope forScope = Scope.createLocal(scope);
 			try {
 				Object lastEval = null;
-				for (execExpr(uniFor.init, forScope); toBool(execExpr(uniFor.cond, forScope)); execExpr(uniFor.step,
-						forScope)) {
+				for (execExpr(uniFor.init, forScope); toBool(execExpr(
+						uniFor.cond, forScope)); execExpr(uniFor.step, forScope)) {
 					try {
 						lastEval = execExpr(uniFor.statement, forScope);
-					} catch (Continue e) { /* do nothing*/
+					} catch (Continue e) { /* do nothing */
 					}
 				}
 				return lastEval;
@@ -259,7 +260,7 @@ public class Engine {
 				while (toBool(execExpr(uniWhile.cond, scope))) {
 					try {
 						lastEval = execExpr(uniWhile.statement, scope);
-					} catch (Continue e) { /* do nothing*/
+					} catch (Continue e) { /* do nothing */
 					}
 				}
 				return lastEval;
@@ -274,7 +275,7 @@ public class Engine {
 				do {
 					try {
 						lastEval = execExpr(uniWhile.statement, scope);
-					} catch (Continue e) { /* do nothing*/
+					} catch (Continue e) { /* do nothing */
 					}
 				} while (toBool(execExpr(uniWhile.cond, scope)));
 				return lastEval;
@@ -285,32 +286,38 @@ public class Engine {
 		throw new RuntimeException("Not support expr type: " + expr);
 	}
 
-	private Object execMethodCall(Object receiver, String methodName, Object[] args) {
+	private Object execMethodCall(Object receiver, String methodName,
+			Object[] args) {
 		assert receiver != null;
 
-		String msg = String.format("Method not found: %s.%s", receiver.getClass().getName(), methodName);
+		String msg = String.format("Method not found: %s.%s", receiver
+				.getClass().getName(), methodName);
 		if (receiver instanceof Scope) {
 			Object func = ((Scope) receiver).get(methodName);
 			return execFuncCall(func, args);
 		} else if (receiver instanceof Class<?>) {
 			Predicate<Method> isStatic = m -> (m.getModifiers() | Modifier.STATIC) != 0;
-			Method method = findMethod((Class<?>) receiver, methodName, args, isStatic);
+			Method method = findMethod((Class<?>) receiver, methodName, args,
+					isStatic);
 			if (method == null) {
 				throw new RuntimeException(msg);
 			}
 			try {
 				return method.invoke(null, args);
-			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			} catch (IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException e) {
 				throw new RuntimeException(msg, e);
 			}
 		} else {
-			Method method = findMethod(receiver.getClass(), methodName, args, m -> true);
+			Method method = findMethod(receiver.getClass(), methodName, args,
+					m -> true);
 			if (method == null) {
 				throw new RuntimeException(msg);
 			}
 			try {
 				return method.invoke(receiver, args);
-			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			} catch (IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException e) {
 				throw new RuntimeException(msg, e);
 			}
 		}
@@ -335,7 +342,8 @@ public class Engine {
 			if (m != null) {
 				try {
 					return m.invoke(func, args);
-				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				} catch (IllegalAccessException | IllegalArgumentException
+						| InvocationTargetException e) {
 					throw new RuntimeException("Fail to invoke", e);
 				}
 			}
@@ -404,7 +412,8 @@ public class Engine {
 		switch (op) {
 		case "=": {
 			if (left instanceof UniIdent) {
-				return execAssign((UniIdent) left, execExpr(right, scope), scope);
+				return execAssign((UniIdent) left, execExpr(right, scope),
+						scope);
 			}
 			throw new RuntimeException("Assignment failure: " + left);
 		}
@@ -414,13 +423,17 @@ public class Engine {
 			return Eq.eq(execExpr(left, scope), execExpr(right, scope)) == false;
 
 		case "<":
-			return toDouble(execExpr(left, scope)) < toDouble(execExpr(right, scope));
+			return toDouble(execExpr(left, scope)) < toDouble(execExpr(right,
+					scope));
 		case "<=":
-			return toDouble(execExpr(left, scope)) <= toDouble(execExpr(right, scope));
+			return toDouble(execExpr(left, scope)) <= toDouble(execExpr(right,
+					scope));
 		case ">":
-			return toDouble(execExpr(left, scope)) > toDouble(execExpr(right, scope));
+			return toDouble(execExpr(left, scope)) > toDouble(execExpr(right,
+					scope));
 		case ">=":
-			return toDouble(execExpr(left, scope)) >= toDouble(execExpr(right, scope));
+			return toDouble(execExpr(left, scope)) >= toDouble(execExpr(right,
+					scope));
 
 		case "+":
 		case "-":
@@ -460,9 +473,11 @@ public class Engine {
 			break;
 		}
 		case "&&":
-			return toBool(execExpr(left, scope)) && toBool(execExpr(right, scope));
+			return toBool(execExpr(left, scope))
+					&& toBool(execExpr(right, scope));
 		case "||":
-			return toBool(execExpr(left, scope)) || toBool(execExpr(right, scope));
+			return toBool(execExpr(left, scope))
+					|| toBool(execExpr(right, scope));
 		}
 		if (op.length() > 1 && op.charAt(op.length() - 1) == '=') {
 			if (left instanceof UniIdent) {
@@ -500,7 +515,8 @@ public class Engine {
 		throw new RuntimeException("Cannot covert to boolean: " + obj);
 	}
 
-	private static Method findMethod(Class<?> clazz, String methodName, Object[] args, Predicate<Method> cond) {
+	private static Method findMethod(Class<?> clazz, String methodName,
+			Object[] args, Predicate<Method> cond) {
 		for (Method m : clazz.getMethods()) {
 			if (methodName.equals(m.getName()) == false) {
 				continue;
@@ -521,7 +537,8 @@ public class Engine {
 				if (argType.isPrimitive()) {
 					argType = getBoxType(argType);
 				}
-				boolean isOK = (obj == null || argType.isAssignableFrom(obj.getClass()));
+				boolean isOK = (obj == null || argType.isAssignableFrom(obj
+						.getClass()));
 				if (!isOK) {
 					continue;
 				}
@@ -561,7 +578,8 @@ public class Engine {
 				continue;
 			}
 			if (ret != null) {
-				throw new RuntimeException(String.format("Ambiguous: %s or %s", ret, m));
+				throw new RuntimeException(String.format("Ambiguous: %s or %s",
+						ret, m));
 			}
 			ret = m;
 		}

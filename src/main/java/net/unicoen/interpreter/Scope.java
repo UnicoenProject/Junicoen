@@ -14,7 +14,8 @@ public class Scope {
 
 	@FunctionalInterface
 	public interface VariableNotFoundListener {
-		public void variableNotFound(String variableName, Consumer<Object> setDefault);
+		public void variableNotFound(String variableName,
+				Consumer<Object> setDefault);
 	}
 
 	private static class ValueSetter implements Consumer<Object> {
@@ -67,7 +68,8 @@ public class Scope {
 					}
 				}
 			}
-			throw new UniRuntimeError(String.format("variable '%s' is not defined.", key));
+			throw new UniRuntimeError(String.format(
+					"variable '%s' is not defined.", key));
 		}
 	}
 

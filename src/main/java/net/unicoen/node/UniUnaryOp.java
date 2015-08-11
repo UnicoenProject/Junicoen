@@ -28,10 +28,13 @@ public class UniUnaryOp extends UniExpr {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null || !(obj instanceof UniUnaryOp)) return false;
-		UniUnaryOp that = (UniUnaryOp)obj;
-		return (this.operator == null ? that.operator == null : this.operator.equals(that.operator))
-			&& (this.expr == null ? that.expr == null : this.expr.equals(that.expr));
+		if (obj == null || !(obj instanceof UniUnaryOp))
+			return false;
+		UniUnaryOp that = (UniUnaryOp) obj;
+		return (this.operator == null ? that.operator == null : this.operator
+				.equals(that.operator))
+				&& (this.expr == null ? that.expr == null : this.expr
+						.equals(that.expr));
 	}
 
 	@Override

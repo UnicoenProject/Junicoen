@@ -1,7 +1,11 @@
 package net.unicoen.generator;
 
-import static net.unicoen.node_helper.Builder.*;
-import static org.junit.Assert.*;
+import static net.unicoen.node_helper.Builder.arg;
+import static net.unicoen.node_helper.Builder.block;
+import static net.unicoen.node_helper.Builder.ident;
+import static net.unicoen.node_helper.Builder.list;
+import static net.unicoen.node_helper.Builder.lit;
+import static org.junit.Assert.assertEquals;
 
 import java.util.regex.Pattern;
 
@@ -9,9 +13,7 @@ import net.unicoen.node.UniBinOp;
 import net.unicoen.node.UniBoolLiteral;
 import net.unicoen.node.UniBreak;
 import net.unicoen.node.UniClassDec;
-import net.unicoen.node.UniTernaryOp;
 import net.unicoen.node.UniContinue;
-import net.unicoen.node.UniVariableDec;
 import net.unicoen.node.UniDoWhile;
 import net.unicoen.node.UniDoubleLiteral;
 import net.unicoen.node.UniExpr;
@@ -24,7 +26,9 @@ import net.unicoen.node.UniMethodCall;
 import net.unicoen.node.UniMethodDec;
 import net.unicoen.node.UniReturn;
 import net.unicoen.node.UniStringLiteral;
+import net.unicoen.node.UniTernaryOp;
 import net.unicoen.node.UniUnaryOp;
+import net.unicoen.node.UniVariableDec;
 import net.unicoen.node.UniWhile;
 
 import org.junit.Test;
@@ -43,18 +47,22 @@ public class JavaGeneratorTest {
 
 	@Test
 	public void genClass() {
-		UniClassDec dec = new UniClassDec("Foo", list("public"), null);
+		UniClassDec dec = new UniClassDec("Foo", list("public"), null, null,
+				null, null);
 		String code = JavaGenerator.generate(dec);
 		assertEquals("public class Foo { }", normalize(code));
 	}
 
 	@Test
 	public void genHelloWorld() {
-		UniExpr body = new UniMethodCall(new UniFieldAccess(ident("System"), "out"), "println", list(lit("Hello, world")));
+		UniExpr body = new UniMethodCall(new UniFieldAccess(ident("System"),
+				"out"), "println", list(lit("Hello, world")));
 		String bodyStr = "System.out.println(\"Hello, world\");";
 
-		UniMethodDec mDec = new UniMethodDec("main", list("public", "static"), "void", list(arg("String[]", "args")), block(body));
-		String mDecStr = "public static void main (String[] args) { " + bodyStr + " }";
+		UniMethodDec mDec = new UniMethodDec("main", list("public", "static"),
+				"void", list(arg("String[]", "args")), block(body));
+		String mDecStr = "public static void main (String[] args) { " + bodyStr
+				+ " }";
 
 		UniClassDec cDec = new UniClassDec("Foo", list("public"), list(mDec));
 		String cDecStr = "public class Foo { " + mDecStr + " }";
@@ -81,8 +89,10 @@ public class JavaGeneratorTest {
 		buff.append("	}\n");
 		buff.append("}\n");
 
-		UniMethodDec mDec = new UniMethodDec("main", list("public", "static"), "void", list(arg("String[]", "args")), block(exprs));
-		UniClassDec cDec = new UniClassDec("Foo", list("public"), list(mDec));
+		UniMethodDec mDec = new UniMethodDec("main", list("public", "static"),
+				"void", list(arg("String[]", "args")), block(exprs));
+		UniClassDec cDec = new UniClassDec("Foo", list("public"), list(mDec),
+				null, null, null);
 
 		String code = JavaGenerator.generate(cDec);
 		assertEquals(buff.toString(), code.replace("\r\n", "\n"));
@@ -90,27 +100,18 @@ public class JavaGeneratorTest {
 
 	@Test
 	public void genHelloWorld_with_indent() {
-		UniExpr body = new UniMethodCall(new UniFieldAccess(ident("System"), "out"), "println", list(lit("Hello, world")));
+		UniExpr body = new UniMethodCall(new UniFieldAccess(ident("System"),
+				"out"), "println", list(lit("Hello, world")));
 		String code = "System.out.println(\"Hello, world\");";
 		assertGen(code, body);
 	}
 
 	@Test
 	public void test_Literal() {
-		UniExpr[] exprs = {
-				new UniBoolLiteral(true),
-				new UniIntLiteral(1),
-				new UniLongLiteral(2),
-				new UniDoubleLiteral(1),
-				new UniStringLiteral("foo"),
-		};
-		String[] codes = {
-				"true;",
-				"1;",
-				"2L;",
-				"1.0;",
-				"\"foo\";",
-		};
+		UniExpr[] exprs = { new UniBoolLiteral(true), new UniIntLiteral(1),
+				new UniLongLiteral(2), new UniDoubleLiteral(1),
+				new UniStringLiteral("foo"), };
+		String[] codes = { "true;", "1;", "2L;", "1.0;", "\"foo\";", };
 		assertGen(codes, exprs);
 	}
 
@@ -123,31 +124,29 @@ public class JavaGeneratorTest {
 
 	@Test
 	public void test_MethodCall() {
-		UniExpr[] exprs = {
-				new UniMethodCall(lit("Hello"), "length", null),
-				new UniMethodCall(ident("Integer"), "toString", list(lit(5)))
-		};
-		String[] codes = {
-				"\"Hello\".length();",
-				"Integer.toString(5);"
-		};
+		UniExpr[] exprs = { new UniMethodCall(lit("Hello"), "length", null),
+				new UniMethodCall(ident("Integer"), "toString", list(lit(5))) };
+		String[] codes = { "\"Hello\".length();", "Integer.toString(5);" };
 		assertGen(codes, exprs);
 	}
 
 	@Test
 	public void test_BinOp() {
 		{
-			UniExpr expr = new UniBinOp("+", new UniBinOp("+", lit(1), lit(2)), new UniBinOp("+", lit(3), lit(4)));
+			UniExpr expr = new UniBinOp("+", new UniBinOp("+", lit(1), lit(2)),
+					new UniBinOp("+", lit(3), lit(4)));
 			String code = "1 + 2 + (3 + 4);";
 			assertGen(code, expr);
 		}
 		{
-			UniExpr expr = new UniBinOp("+", new UniBinOp("*", lit(1), lit(2)), new UniBinOp("*", lit(3), lit(4)));
+			UniExpr expr = new UniBinOp("+", new UniBinOp("*", lit(1), lit(2)),
+					new UniBinOp("*", lit(3), lit(4)));
 			String code = "1 * 2 + 3 * 4;";
 			assertGen(code, expr);
 		}
 		{
-			UniExpr expr = new UniBinOp("*", new UniBinOp("+", lit(1), lit(2)), new UniBinOp("+", lit(3), lit(4)));
+			UniExpr expr = new UniBinOp("*", new UniBinOp("+", lit(1), lit(2)),
+					new UniBinOp("+", lit(3), lit(4)));
 			String code = "(1 + 2) * (3 + 4);";
 			assertGen(code, expr);
 		}
@@ -170,11 +169,7 @@ public class JavaGeneratorTest {
 	@Test
 	public void test_Block() {
 		UniExpr expr = block(lit(3));
-		String[] codes = {
-				"{",
-				"	3;",
-				"}",
-		};
+		String[] codes = { "{", "	3;", "}", };
 		assertGen(codes, expr);
 	}
 
@@ -182,22 +177,12 @@ public class JavaGeneratorTest {
 	public void test_If() {
 		{
 			UniExpr ifStmt = new UniIf(lit(true), block(lit(6)), null);
-			String[] codes = {
-					"if (true) {",
-					"	6;",
-					"}",
-			};
+			String[] codes = { "if (true) {", "	6;", "}", };
 			assertGen(codes, ifStmt);
 		}
 		{
 			UniExpr ifStmt = new UniIf(lit(true), block(lit(6)), block(lit(3)));
-			String[] codes = {
-					"if (true) {",
-					"	6;",
-					"} else {",
-					"	3;",
-					"}",
-			};
+			String[] codes = { "if (true) {", "	6;", "} else {", "	3;", "}", };
 			assertGen(codes, ifStmt);
 		}
 	}
@@ -208,33 +193,21 @@ public class JavaGeneratorTest {
 		UniExpr cond = new UniBinOp("<", ident("i"), lit(10));
 		UniExpr step = new UniUnaryOp("_++", ident("i"));
 		UniExpr body = new UniFor(init, cond, step, block(new UniContinue()));
-		String[] codes = {
-				"for (int i = 0; i < 10; i++) {",
-				"	continue;",
-				"}",
-		};
+		String[] codes = { "for (int i = 0; i < 10; i++) {", "	continue;", "}", };
 		assertGen(codes, body);
 	}
 
 	@Test
 	public void test_While() {
 		UniExpr body = new UniWhile(lit(true), block(new UniBreak()));
-		String[] codes = {
-				"while (true) {",
-				"	break;",
-				"}",
-		};
+		String[] codes = { "while (true) {", "	break;", "}", };
 		assertGen(codes, body);
 	}
 
 	@Test
 	public void test_DoWhile() {
 		UniExpr body = new UniDoWhile(block(lit(1)), lit(false));
-		String[] codes = {
-				"do {",
-				"	1;",
-				"} while (false);",
-		};
+		String[] codes = { "do {", "	1;", "} while (false);", };
 		assertGen(codes, body);
 	}
 

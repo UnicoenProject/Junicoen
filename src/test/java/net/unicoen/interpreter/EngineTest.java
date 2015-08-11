@@ -16,13 +16,13 @@ import net.unicoen.node.UniArg;
 import net.unicoen.node.UniBinOp;
 import net.unicoen.node.UniBlock;
 import net.unicoen.node.UniClassDec;
-import net.unicoen.node.UniVariableDec;
 import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniIdent;
 import net.unicoen.node.UniIf;
 import net.unicoen.node.UniMethodCall;
 import net.unicoen.node.UniMethodDec;
 import net.unicoen.node.UniUnaryOp;
+import net.unicoen.node.UniVariableDec;
 import net.unicoen.node.UniWhile;
 
 import org.junit.Test;
@@ -31,18 +31,9 @@ public class EngineTest {
 
 	private UniClassDec mkClassDec() {
 		/*
-		 * public class Main {
-		 *     public static void main(String[] args) {
-		 *         if (true && false) {
-		 *             MyLib.printInt(1);
-		 *         } else {
-		 *             MyLib.printInt(1 + 2);
-		 *         }
-		 *         while (false) {
-		 *             1;
-		 *         }
-		 *     }
-		 * }
+		 * public class Main { public static void main(String[] args) { if (true
+		 * && false) { MyLib.printInt(1); } else { MyLib.printInt(1 + 2); }
+		 * while (false) { 1; } } }
 		 */
 		UniClassDec cDec = new UniClassDec();
 		cDec.className = "Main";
@@ -112,7 +103,8 @@ public class EngineTest {
 	public void testNativeMethod() {
 		String str = "1234567890";
 		// str.substring(3,7)
-		UniExpr expr = new UniMethodCall(new UniIdent("str"), "substring", list(lit(3), lit(7)));
+		UniExpr expr = new UniMethodCall(new UniIdent("str"), "substring",
+				list(lit(3), lit(7)));
 		Object result = Engine.executeSimple(expr, "str", str);
 		assertEquals(str.substring(3, 7), result);
 	}
@@ -120,7 +112,8 @@ public class EngineTest {
 	@Test
 	public void testStaticMethod() {
 		// Integer.toString(100)
-		UniExpr expr = new UniMethodCall(new UniIdent("Integer"), "toString", list(lit(100)));
+		UniExpr expr = new UniMethodCall(new UniIdent("Integer"), "toString",
+				list(lit(100)));
 		Object result = Engine.executeSimple(expr, "Integer", Integer.class);
 		assertEquals("100", result);
 	}
@@ -146,19 +139,23 @@ public class EngineTest {
 		UniExpr exp3 = ident("j");
 
 		// int j = i++;
-		exp2 = new UniVariableDec(null, "int", "j", new UniUnaryOp("_++", ident("i")));
+		exp2 = new UniVariableDec(null, "int", "j", new UniUnaryOp("_++",
+				ident("i")));
 		assertEquals(0, Engine.executeSimple(block(exp1, exp2, exp3)));
 
 		// int j = ++i;
-		exp2 = new UniVariableDec(null, "int", "j", new UniUnaryOp("++_", ident("i")));
+		exp2 = new UniVariableDec(null, "int", "j", new UniUnaryOp("++_",
+				ident("i")));
 		assertEquals(1, Engine.executeSimple(block(exp1, exp2, exp3)));
 
 		// int j = i--;
-		exp2 = new UniVariableDec(null, "int", "j", new UniUnaryOp("_--", ident("i")));
+		exp2 = new UniVariableDec(null, "int", "j", new UniUnaryOp("_--",
+				ident("i")));
 		assertEquals(0, Engine.executeSimple(block(exp1, exp2, exp3)));
 
 		// int j = --i;
-		exp2 = new UniVariableDec(null, "int", "j", new UniUnaryOp("--_", ident("i")));
+		exp2 = new UniVariableDec(null, "int", "j", new UniUnaryOp("--_",
+				ident("i")));
 		assertEquals(-1, Engine.executeSimple(block(exp1, exp2, exp3)));
 	}
 
@@ -167,6 +164,7 @@ public class EngineTest {
 		Scope global = Scope.createGlobal();
 		StdLibLoader.initialize(global);
 
-		assertEquals(Integer.class, Engine.executeSimple(ident("Integer"), global));
+		assertEquals(Integer.class,
+				Engine.executeSimple(ident("Integer"), global));
 	}
 }
