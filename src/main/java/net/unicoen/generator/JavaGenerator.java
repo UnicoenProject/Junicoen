@@ -45,7 +45,7 @@ public class JavaGenerator extends Traverser {
 
 	private final IntStack exprPriority = new IntStack();
 
-	private JavaGenerator(PrintStream out) {
+	protected JavaGenerator(PrintStream out) {
 		this.out = out;
 		exprPriority.push(0);
 	}
@@ -56,7 +56,7 @@ public class JavaGenerator extends Traverser {
 		indent--;
 	}
 
-	private void print(String str) {
+	protected void print(String str) {
 		if (indentAtThisLine == false) {
 			indentAtThisLine = true;
 			for (int i = 0; i < indent; i++) {
@@ -115,7 +115,7 @@ public class JavaGenerator extends Traverser {
 		exprPriority.pop();
 	}
 
-	private void parseExpr(UniExpr node) {
+	protected void parseExpr(UniExpr node) {
 		parseExpr(node, 0);
 	}
 
@@ -155,7 +155,7 @@ public class JavaGenerator extends Traverser {
 
 	// ----- ----- ----- ----- HELPER ----- ----- ----- -----
 
-	private static <T> Iterable<T> iter(Iterable<T> iter) {
+	protected static <T> Iterable<T> iter(Iterable<T> iter) {
 		if (iter == null) {
 			return Collections.emptyList();
 		}
@@ -207,8 +207,10 @@ public class JavaGenerator extends Traverser {
 
 	@Override
 	public void traverseMethodCall(UniMethodCall mCall) {
-		parseExpr(mCall.receiver);
-		print(".");
+		if(mCall.receiver != null){
+			parseExpr(mCall.receiver);
+			print(".");	
+		}
 		print(mCall.methodName);
 		print("(");
 		boolean isFirst = true;
