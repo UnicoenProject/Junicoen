@@ -1,23 +1,29 @@
 package net.unicoen.mapper
 
-import net.unicoen.node.*
+import net.unicoen.generator.JavaGenerator
+import net.unicoen.generator.JavaGeneratorTest
+import net.unicoen.node.UniBlock
+import net.unicoen.node.UniClassDec
+import net.unicoen.node.UniExpr
+import net.unicoen.node.UniIf
+import net.unicoen.node.UniMethodCall
+import net.unicoen.node.UniMethodDec
+import org.junit.Ignore
+import org.junit.Test
 
+import static net.unicoen.node_helper.Builder.*
 import static org.hamcrest.Matchers.*
 import static org.junit.Assert.*
-import org.junit.Test
-import static net.unicoen.node_helper.Builder.*
-import net.unicoen.generator.JavaGeneratorTest
-import net.unicoen.generator.JavaGenerator
 
 class JavaMapperTest {
-//	@Test
+	@Test @Ignore
 	def parseClass() {
 		val mapper = new JavaMapper()
 		val classDec = mapper.parse("public class A {}") as UniClassDec
 		assertThat(classDec.className, equalTo("A"))
 	}
 
-	//@Test
+	@Test @Ignore
 	def parseMainMethod() {
 		val mapper = new JavaMapper()
 		val sb = new StringBuilder()
@@ -32,7 +38,7 @@ class JavaMapperTest {
 		assertThat(mainMethodDec.methodName, equalTo("main"))
 	}
 
-//	@Test
+	@Test @Ignore
 	def parseLiteral() {
 		val mapper = new JavaMapper();
 		{
@@ -53,14 +59,14 @@ class JavaMapperTest {
 		}
 	}
 
-//	@Test
+	@Test @Ignore
 	def parseFuncCall() {
 		val mapper = new JavaMapper();
 		val literal = mapper.parse("f()", [p|p.methodInvocation])
 		assertThat(literal, equalTo(new UniMethodCall(null, "f", list())))
 	}
 
-//	@Test
+	@Test @Ignore
 	def parseIfStatement() {
 		val mapper = new JavaMapper();
 		val literal = mapper.parse("if(false) { f(); }", [p|p.ifThenStatement])
@@ -71,7 +77,7 @@ class JavaMapperTest {
 		assertThat(literal, equalTo(ifStmt))
 	}
 
-	//@Test
+	@Test @Ignore
 	def parseMainIf() {
 		val mapper = new JavaMapper()
 		val sb = new StringBuilder()
@@ -98,7 +104,7 @@ class JavaMapperTest {
 		assertThat(thenLine, equalTo(expect))
 	}
 
-	//@Test
+	@Test @Ignore
 	def testReadWriteHelloWorld() {
 		val sb = new StringBuilder()
 		sb.append("public class A {")
@@ -115,7 +121,7 @@ class JavaMapperTest {
 		val generatedCode = JavaGenerator.generate(classDec);
 		assertThat(generatedCode, equalTo(code))
 	}
-	
+
 	def asBlock(UniExpr expr) {
 		expr as UniBlock
 	}
