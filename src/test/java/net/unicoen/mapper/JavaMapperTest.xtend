@@ -8,7 +8,6 @@ import net.unicoen.node.UniExpr
 import net.unicoen.node.UniIf
 import net.unicoen.node.UniMethodCall
 import net.unicoen.node.UniMethodDec
-import org.junit.Ignore
 import org.junit.Test
 
 import static net.unicoen.node_helper.Builder.*
@@ -16,14 +15,14 @@ import static org.hamcrest.Matchers.*
 import static org.junit.Assert.*
 
 class JavaMapperTest {
-	@Test @Ignore
+	@Test
 	def parseClass() {
 		val mapper = new JavaMapper()
 		val classDec = mapper.parse("public class A {}") as UniClassDec
 		assertThat(classDec.className, equalTo("A"))
 	}
 
-	@Test @Ignore
+	@Test
 	def parseMainMethod() {
 		val mapper = new JavaMapper()
 		val sb = new StringBuilder()
@@ -38,7 +37,7 @@ class JavaMapperTest {
 		assertThat(mainMethodDec.methodName, equalTo("main"))
 	}
 
-	@Test @Ignore
+	@Test
 	def parseLiteral() {
 		val mapper = new JavaMapper();
 		{
@@ -59,14 +58,14 @@ class JavaMapperTest {
 		}
 	}
 
-	@Test @Ignore
+	@Test
 	def parseFuncCall() {
 		val mapper = new JavaMapper();
 		val literal = mapper.parse("f()", [p|p.methodInvocation])
 		assertThat(literal, equalTo(new UniMethodCall(null, "f", list())))
 	}
 
-	@Test @Ignore
+	@Test
 	def parseIfStatement() {
 		val mapper = new JavaMapper();
 		val literal = mapper.parse("if(false) { f(); }", [p|p.ifThenStatement])
@@ -77,49 +76,34 @@ class JavaMapperTest {
 		assertThat(literal, equalTo(ifStmt))
 	}
 
-	@Test @Ignore
-	def parseMainIf() {
-		val mapper = new JavaMapper()
-		val sb = new StringBuilder()
-
-		sb.append("class A {")
-		sb.append("  public static void main(String[] args) {")
-		sb.append("    if (true) {")
-		sb.append("      System.out.println(true)")
-		sb.append("    }")
-		sb.append("  }")
-		sb.append("}");
-
-		val classDec = mapper.parse(sb.toString()) as UniClassDec
-		val mainMethodDec = classDec.members.get(0) as UniMethodDec
-		val ifExpr = mainMethodDec.block.body.get(0) as UniIf
-
-		assertThat(ifExpr.cond, equalTo(lit(true)))
-		val thenLine = ifExpr.trueStatement.asBlock.body.get(0) as UniMethodCall
-		val expect = new UniMethodCall(
-			field(ident("System"), "out"),
-			"println",
-			list(lit(true))
-		)
-		assertThat(thenLine, equalTo(expect))
-	}
-
-	@Test @Ignore
-	def testReadWriteHelloWorld() {
+	@Test
+	def testReadWritePrintln() {
 		val sb = new StringBuilder()
 		sb.append("public class A {")
-		sb.append("  public static void main(String[] args) {")
+		sb.append("  public static void main () {")
 		sb.append("    if (true) {")
-		sb.append("      System.out.println(\"Hello, world\")")
+		sb.append("      System.out.println(true);")
 		sb.append("    }")
 		sb.append("  }")
-		sb.append("}")
+		sb.append(" }")
 		val code = JavaGeneratorTest.normalize(sb.toString())
 
 		val mapper = new JavaMapper()
 		val classDec = mapper.parse(sb.toString()) as UniClassDec
 		val generatedCode = JavaGenerator.generate(classDec);
-		assertThat(generatedCode, equalTo(code))
+		assertThat(normalize(generatedCode), equalTo(normalize(code)))
+	}
+
+	def normalize(String code) {
+		val firstCode = code.replace("\r", " ").replace("\n", " ").replace("\t", " ").trim
+		var lastCode = firstCode
+		while (true) {
+			var newCode = lastCode.replace("  ", " ")
+			if (newCode.equals(lastCode)) {
+				return lastCode
+			}
+			lastCode = newCode
+		}
 	}
 
 	def asBlock(UniExpr expr) {

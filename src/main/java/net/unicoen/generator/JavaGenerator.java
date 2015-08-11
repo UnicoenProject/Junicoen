@@ -162,8 +162,9 @@ public class JavaGenerator extends Traverser {
 		return iter;
 	}
 
-	/* ***** ***** ***** ***** ***** ***** ***** ***** ***** *****
-	 * overrides ***** ***** ***** ***** ***** ***** ***** ***** ***** *****
+	/*
+	 * ***** ***** ***** ***** ***** ***** ***** ***** ***** ***** overrides
+	 * ***** ***** ***** ***** ***** ***** ***** ***** ***** *****
 	 */
 
 	@Override
@@ -405,9 +406,9 @@ public class JavaGenerator extends Traverser {
 
 	@Override
 	public void traverseClassDec(UniClassDec classDec) {
-		String mod = String.join(" ", classDec.modifiers);
-		String declare = String
-				.join(" ", mod, "class", classDec.className, "{");
+		String mod = safeJoin(classDec.modifiers, " ");
+		String declare = String.join(" ", mod, "class", classDec.className,
+				"{");
 		print(declare);
 		newline();
 		indent++;
@@ -433,5 +434,13 @@ public class JavaGenerator extends Traverser {
 	@Override
 	public void traverseNewArray(UniNewArray node) {
 		throw new RuntimeException("Not Implemented");
+	}
+
+	public static String safeJoin(Iterable<String> objs, String delimiter) {
+		if (objs == null) {
+			return "";
+		} else {
+			return String.join(delimiter, objs);
+		}
 	}
 }
