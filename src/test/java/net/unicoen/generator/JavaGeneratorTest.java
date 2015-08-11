@@ -64,12 +64,8 @@ public class JavaGeneratorTest {
 		String mDecStr = "public static void main (String[] args) { " + bodyStr
 				+ " }";
 
-<<<<<<< HEAD
 		UniClassDec cDec = new UniClassDec("Foo", list("public"), list(mDec),
 				null, null, null);
-=======
-		UniClassDec cDec = new UniClassDec("Foo", list("public"), list(mDec), null, null, null);
->>>>>>> origin/master
 		String cDecStr = "public class Foo { " + mDecStr + " }";
 
 		String code = JavaGenerator.generate(cDec);
@@ -192,7 +188,7 @@ public class JavaGeneratorTest {
 		}
 	}
 
-//	@Test
+	// @Test
 	public void test_For() {
 		UniExpr init = new UniVariableDec(null, "int", "i", lit(0));
 		UniExpr cond = new UniBinOp("<", ident("i"), lit(10));
@@ -202,14 +198,14 @@ public class JavaGeneratorTest {
 		assertGen(codes, body);
 	}
 
-//	@Test
+	// @Test
 	public void test_While() {
 		UniExpr body = new UniWhile(lit(true), block(new UniBreak()));
 		String[] codes = { "while (true) {", "	break;", "}", };
 		assertGen(codes, body);
 	}
 
-//	@Test
+	// @Test
 	public void test_DoWhile() {
 		UniExpr body = new UniDoWhile(block(lit(1)), lit(false));
 		String[] codes = { "do {", "	1;", "} while (false);", };

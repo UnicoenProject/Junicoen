@@ -1,5 +1,3 @@
-package net.unicoen.parser;
-
 // Generated from ECMAScript.g4 by ANTLR 4.5.1
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
