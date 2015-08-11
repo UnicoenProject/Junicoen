@@ -64,8 +64,12 @@ public class JavaGeneratorTest {
 		String mDecStr = "public static void main (String[] args) { " + bodyStr
 				+ " }";
 
+<<<<<<< HEAD
 		UniClassDec cDec = new UniClassDec("Foo", list("public"), list(mDec),
 				null, null, null);
+=======
+		UniClassDec cDec = new UniClassDec("Foo", list("public"), list(mDec), null, null, null);
+>>>>>>> origin/master
 		String cDecStr = "public class Foo { " + mDecStr + " }";
 
 		String code = JavaGenerator.generate(cDec);

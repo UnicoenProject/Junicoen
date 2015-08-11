@@ -2,4 +2,4 @@ Junicoen [![Build Status](https://secure.travis-ci.org/UnicoenProject/Junicoen.p
 ========
 
 ## Requirements
-- [Xtend](http://eclipse.org/xtend/)
+- [Xtend Eclipse Plugin](http://eclipse.org/xtend/) (if you want to edit this project using Eclipse.)
