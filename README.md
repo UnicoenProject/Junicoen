@@ -7,7 +7,7 @@ Junicoen [![Build Status](https://secure.travis-ci.org/UnicoenProject/Junicoen.p
 ## How to Import
 1. Import > Maven > Existing Maven Projects
 
-## Maven
+## How to Use Junicoen in Your Maven Project
 
 ```
 	<repository>
