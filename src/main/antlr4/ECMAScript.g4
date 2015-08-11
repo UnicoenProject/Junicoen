@@ -26,6 +26,10 @@
  */
 grammar ECMAScript;
 
+@header{
+    package net.unicoen.parser;
+}
+
 @parser::members {
   
     /**
