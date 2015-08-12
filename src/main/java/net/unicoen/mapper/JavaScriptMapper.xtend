@@ -3,11 +3,13 @@ package net.unicoen.mapper
 import com.google.common.collect.Lists
 import java.io.FileInputStream
 import java.util.ArrayList
+import net.unicoen.node.UniBinOp
 import net.unicoen.node.UniBlock
 import net.unicoen.node.UniBoolLiteral
 import net.unicoen.node.UniClassDec
 import net.unicoen.node.UniExpr
 import net.unicoen.node.UniIdent
+import net.unicoen.node.UniIf
 import net.unicoen.node.UniIntLiteral
 import net.unicoen.node.UniMethodCall
 import net.unicoen.node.UniMethodDec
@@ -18,19 +20,29 @@ import net.unicoen.node.UniWhile
 import net.unicoen.parser.ECMAScriptBaseVisitor
 import net.unicoen.parser.ECMAScriptLexer
 import net.unicoen.parser.ECMAScriptParser
+import net.unicoen.parser.ECMAScriptParser.AdditiveExpressionContext
 import net.unicoen.parser.ECMAScriptParser.ArgumentListContext
 import net.unicoen.parser.ECMAScriptParser.ArgumentsContext
+import net.unicoen.parser.ECMAScriptParser.AssignmentExpressionContext
+import net.unicoen.parser.ECMAScriptParser.BlockContext
+import net.unicoen.parser.ECMAScriptParser.EqualityExpressionContext
 import net.unicoen.parser.ECMAScriptParser.ExpressionSequenceContext
 import net.unicoen.parser.ECMAScriptParser.ExpressionStatementContext
 import net.unicoen.parser.ECMAScriptParser.FunctionBodyContext
 import net.unicoen.parser.ECMAScriptParser.FunctionDeclarationContext
 import net.unicoen.parser.ECMAScriptParser.IdentifierExpressionContext
 import net.unicoen.parser.ECMAScriptParser.IdentifierNameContext
+import net.unicoen.parser.ECMAScriptParser.IfStatementContext
 import net.unicoen.parser.ECMAScriptParser.LiteralContext
 import net.unicoen.parser.ECMAScriptParser.MemberDotExpressionContext
+import net.unicoen.parser.ECMAScriptParser.MultiplicativeExpressionContext
+import net.unicoen.parser.ECMAScriptParser.NotExpressionContext
 import net.unicoen.parser.ECMAScriptParser.NumericLiteralContext
+import net.unicoen.parser.ECMAScriptParser.RelationalExpressionContext
+import net.unicoen.parser.ECMAScriptParser.SingleExpressionContext
 import net.unicoen.parser.ECMAScriptParser.SourceElementContext
 import net.unicoen.parser.ECMAScriptParser.StatementContext
+import net.unicoen.parser.ECMAScriptParser.StatementListContext
 import net.unicoen.parser.ECMAScriptParser.VariableDeclarationContext
 import net.unicoen.parser.ECMAScriptParser.VariableDeclarationListContext
 import net.unicoen.parser.ECMAScriptParser.VariableStatementContext
@@ -43,16 +55,6 @@ import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.TerminalNode
 import org.antlr.v4.runtime.tree.TerminalNodeImpl
-import net.unicoen.parser.ECMAScriptParser.BlockContext
-import net.unicoen.parser.ECMAScriptParser.StatementListContext
-import javax.swing.plaf.multi.MultiButtonUI
-import net.unicoen.parser.ECMAScriptParser.MultiplicativeExpressionContext
-import net.unicoen.parser.ECMAScriptParser.AdditiveExpressionContext
-import net.unicoen.parser.ECMAScriptParser.RelationalExpressionContext
-import net.unicoen.parser.ECMAScriptParser.EqualityExpressionContext
-import net.unicoen.parser.ECMAScriptParser.AssignmentExpressionContext
-import net.unicoen.parser.ECMAScriptParser.NotExpressionContext
-import net.unicoen.node.UniBinOp
 
 class JavaScriptMapper extends ECMAScriptBaseVisitor<Object> {
 
@@ -144,6 +146,16 @@ class JavaScriptMapper extends ECMAScriptBaseVisitor<Object> {
 		}
 	}
 
+	override public visitStatementList(ECMAScriptParser.StatementListContext ctx) {
+		var statements = Lists.newArrayList
+
+		for (ParseTree node : ctx.children) {
+			statements.add(node.visit as UniExpr)
+		}
+
+		statements
+	}
+
 	override public visitFunctionDeclaration(FunctionDeclarationContext ctx) {
 		var dec = new UniMethodDec
 		dec.args = Lists.newArrayList
@@ -199,27 +211,45 @@ class JavaScriptMapper extends ECMAScriptBaseVisitor<Object> {
 	}
 
 	override public visitBlock(BlockContext ctx) {
+		var block = new UniBlock(Lists.newArrayList)
 		for (ParseTree node : ctx.children) {
 			if (node instanceof StatementListContext) {
-				return node.visit as UniExpr
+				block.body = node.visit as ArrayList<UniExpr>
 			}
 		}
+		block
 	}
 
-	// While '(' expressionSequence ')' statement  
-	override public visitWhileStatement(WhileStatementContext ctx) {
-		var ret = new UniWhile
-		var trueStatements = new UniBlock(Lists.newArrayList)
+//	ifStatement : If '(' expressionSequence ')' statement ( Else statement )?;	
+	override public visitIfStatement(IfStatementContext ctx) {
+		var ret = new UniIf
 
 		for (ParseTree node : ctx.children) {
 			if (node instanceof ECMAScriptParser.ExpressionSequenceContext) {
 				ret.cond = node.visit as UniExpr
 			} else if (node instanceof ECMAScriptParser.StatementContext) {
-				trueStatements.body.add(node.visit as UniExpr)
+				if (ret.trueStatement == null) {
+					ret.trueStatement = node.visit as UniExpr
+				} else {
+					ret.falseStatement = node.visit as UniExpr
+				}
 			}
 		}
 
-		ret.statement = trueStatements
+		ret
+	}
+
+	// While '(' expressionSequence ')' statement  
+	override public visitWhileStatement(WhileStatementContext ctx) {
+		var ret = new UniWhile
+		for (ParseTree node : ctx.children) {
+			if (node instanceof ECMAScriptParser.ExpressionSequenceContext) {
+				ret.cond = node.visit as UniExpr
+			} else if (node instanceof ECMAScriptParser.StatementContext) {
+				ret.statement = node.visit as UniExpr
+			}
+		}
+
 		ret
 	}
 
@@ -253,7 +283,6 @@ class JavaScriptMapper extends ECMAScriptBaseVisitor<Object> {
 				dec.value = node.visit as UniExpr
 			}
 		}
-
 		dec
 	}
 
@@ -310,67 +339,71 @@ class JavaScriptMapper extends ECMAScriptBaseVisitor<Object> {
 // | '(' expressionSequence ')'                                             # ParenthesizedExpression
 // ;
 	override public visitNotExpression(NotExpressionContext ctx) {
-		// TODO binOP convertion !
+		// TODO Unary OP convertion !
 	}
 
 	override public visitMultiplicativeExpression(MultiplicativeExpressionContext ctx) {
-		// TODO binOP convertion ( '*' | '/' | '%' )
+		return parseBinaryOp(ctx)
 	}
 
 	override public visitAdditiveExpression(AdditiveExpressionContext ctx) {
-		// TODO binOP convertion  ( '+' | '-' )
+		return parseBinaryOp(ctx)
 	}
 
 	override public visitRelationalExpression(RelationalExpressionContext ctx) {
-		var binOp = new UniBinOp
-		
-		for(ParseTree node : ctx.children){
-			if(node instanceof TerminalNodeImpl){
-				binOp.operator = node.text
-			}else{
-				if(binOp.left == null){
-					binOp.left = node.visit as UniExpr 
-				}else{
-					binOp.right = node.visit as UniExpr
-				}
-			}	
-		}
-		binOp
+		return parseBinaryOp(ctx)
 	}
 
 	override public visitEqualityExpression(EqualityExpressionContext ctx) {
-		var binOp = new UniBinOp
-		
-		for(ParseTree node : ctx.children){
-			if(node instanceof TerminalNodeImpl){
-				binOp.operator = node.text
-			}else{
-				if(binOp.left == null){
-					binOp.left = node.visit as UniExpr 
-				}else{
-					binOp.right = node.visit as UniExpr
-				}
-			}	
-		}
-		binOp
+		return parseBinaryOp(ctx)
 	}
 
 	override public visitAssignmentExpression(AssignmentExpressionContext ctx) {
-		// TODO binOP convertion =
+		return parseBinaryOp(ctx)
+	}
+
+	def public parseBinaryOp(SingleExpressionContext ctx) {
 		var binOp = new UniBinOp
-		
-		for(ParseTree node : ctx.children){
-			if(node instanceof TerminalNodeImpl){
-				binOp.operator = node.text
-			}else{
-				if(binOp.left == null){
-					binOp.left = node.visit as UniExpr 
-				}else{
+
+		for (ParseTree node : ctx.children) {
+			if (node instanceof TerminalNodeImpl) {
+				if (isBinaryOperator(node.symbol.type)) {
+					binOp.operator = node.text
+				}
+			} else {
+				if (binOp.left == null) {
+					binOp.left = node.visit as UniExpr
+				} else {
 					binOp.right = node.visit as UniExpr
 				}
-			}	
+			}
 		}
 		binOp
+	}
+		
+	def public isBinaryOperator(int type){
+		isAddapitiveOperator(type) || isRelationalOperator(type) || isAssignOperator(type) || isMultiplicativeOperator(type)
+	}
+
+	// +, -かどうか
+	def public isAddapitiveOperator(int type) {
+		type == ECMAScriptParser.Plus || type == ECMAScriptParser.Minus
+	}
+	
+	def public isMultiplicativeOperator(int type){
+		type == ECMAScriptParser.Divide || type == ECMAScriptParser.Multiply || type == ECMAScriptParser.Modulus
+	}
+	
+	
+	//=かどうか
+	def public isAssignOperator(int type){
+		type == ECMAScriptParser.Assign
+	}
+	
+	//>=,>,<.<=, ==かどうかを返す
+	def public isRelationalOperator(int type) {
+		type == ECMAScriptParser.LessThanEquals || type == ECMAScriptParser.LessThan ||
+			type == ECMAScriptParser.MoreThan || type == ECMAScriptParser.GreaterThanEquals || type == ECMAScriptParser.Equals
 	}
 
 	// singleExpression arguments
@@ -386,6 +419,26 @@ class JavaScriptMapper extends ECMAScriptBaseVisitor<Object> {
 			}
 		}
 		caller
+	}
+
+	override public visitArguments(ArgumentsContext ctx) {
+		var args = Lists.newArrayList
+
+		for (ParseTree node : ctx.children) {
+			if (node instanceof ECMAScriptParser.ArgumentListContext) {
+				args = node.visit as ArrayList<UniExpr>
+			}
+		}
+
+		args
+	}
+
+	override public visitArgumentList(ArgumentListContext ctx) {
+		var ret = Lists.newArrayList
+		for (ParseTree node : ctx.children) {
+			ret.add(node.visit as UniExpr)
+		}
+		ret
 	}
 
 	// DotExpression : singleExpression.identifierName
@@ -420,11 +473,8 @@ class JavaScriptMapper extends ECMAScriptBaseVisitor<Object> {
 		}
 	}
 
-	override public visitArgumentList(ArgumentListContext ctx) {
-		var ret = Lists.newArrayList
-		for (ParseTree node : ctx.children) {
-			ret.add(node.visit as UniExpr)
-		}
-		ret
+	override public visitIdentifierExpression(ECMAScriptParser.IdentifierExpressionContext ctx) {
+		return new UniIdent(ctx.text)
 	}
+
 }

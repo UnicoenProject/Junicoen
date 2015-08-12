@@ -38,7 +38,7 @@ public class JavaScriptGenerator extends JavaGenerator{
 			}
 		}
 
-		print("function" + "(" + String.join(", ", args) + ")");
+		print("function " + node.methodName +  "(" + String.join(", ", args) + ")");
 		traverseBlock(node.block);
 	}
 
