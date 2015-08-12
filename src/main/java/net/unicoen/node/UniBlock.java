@@ -5,11 +5,17 @@ import java.util.List;
 public class UniBlock extends UniExpr {
 	public List<UniExpr> body;
 
+	public String blockLabel;
+	
 	public UniBlock() {
 	}
 
 	public UniBlock(List<UniExpr> body) {
 		this.body = body;
+	}
+	
+	public void setLabel(String label){
+		this.blockLabel = label;
 	}
 
 	@Override

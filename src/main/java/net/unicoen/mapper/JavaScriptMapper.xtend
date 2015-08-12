@@ -1,6 +1,7 @@
 package net.unicoen.mapper
 
 import com.google.common.collect.Lists
+import java.io.File
 import java.io.FileInputStream
 import java.util.ArrayList
 import net.unicoen.node.UniBinOp
@@ -67,7 +68,9 @@ class JavaScriptMapper extends ECMAScriptBaseVisitor<Object> {
 	}
 
 	def parseFile(String path) {
-		className = path.substring(path.lastIndexOf("/"), path.lastIndexOf("."))
+		var file = new File(path)
+		className = file.name.substring(0,file.name.indexOf("."))
+		
 		val inputStream = new FileInputStream(path);
 		try {
 			parseCore(new ANTLRInputStream(inputStream));

@@ -59,6 +59,7 @@ public class BlockMapper {
 		List<UniMemberDec> ret = new ArrayList<>();
 		for (Node procNode : procs) {
 			UniMethodDec d = new UniMethodDec(getChildText(procNode, "Label"), new ArrayList<>(), methodsReturnTypes.get(getAttribute(procNode, "id")), new ArrayList<>(), null);
+			d.modifiers.add("public");
 			d.args = new ArrayList<>();
 
 			UniBlock body = new UniBlock();
@@ -184,9 +185,21 @@ public class BlockMapper {
 			return parseFunction(node, map);// 二項演算，または単項演算を解析して式モデルを返す
 		case "local-variable":
 			return parseLocalVariable(node, map);// ローカル変数を解析して，式モデルを返す
+		case "abstraction":
+			return parseAbstraction(node, map);
 		default:
 			throw new RuntimeException("Unsupported node: " + blockKind);
 		}
+	}
+	
+	private UniExpr parseAbstraction(Node node,HashMap<String, Node> map){
+		Node argsNode = getChildNode(node, "Sockets");
+		List<UniExpr> args = parseSocket(argsNode, map);
+
+		UniBlock block = (UniBlock) args.get(0);
+		block.blockLabel = getChildText(node, "Label");
+		
+		return block;
 	}
 
 	private UniExpr parseLiteral(Node node) {

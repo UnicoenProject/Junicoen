@@ -285,6 +285,10 @@ public class JavaGenerator extends Traverser {
 	@Override
 	public void traverseBlock(UniBlock node) {
 		print("{");
+		if(node.blockLabel != null){
+			print("//\t" + node.blockLabel);
+		}
+		
 		newline();
 		parseBlockInner(node);
 		print("}");
@@ -410,10 +414,23 @@ public class JavaGenerator extends Traverser {
 	public void traverseClassDec(UniClassDec classDec) {
 		String mod = safeJoin(classDec.modifiers, " ");
 		String declare = String.join(" ", mod, "class", classDec.className,
-				"{");
+				"extends Turtle{");
 		print(declare);
 		newline();
 		indent++;
+		
+		print("public static void main(String[] args) {");
+		newline();
+		indent++;
+		
+		print("Turtle.startTurtle(new " + classDec.className + "(), args);");
+		newline();
+		indent--;
+		
+		print("}");
+		newline();
+		newline();
+		
 		for (UniMemberDec dec : iter(classDec.members)) {
 			traverseMemberDec(dec);
 		}

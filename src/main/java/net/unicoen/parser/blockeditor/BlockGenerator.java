@@ -121,12 +121,26 @@ public class BlockGenerator {
 
 		for (UniMemberDec member : classDec.members) {
 			// フィールドメソッドの解析
-			model.addMethod(parseFunctionDec((UniMethodDec) member, document));
+			UniMethodDec mDec = (UniMethodDec) member;
+			if(!isMainMethod(mDec)){
+				model.addMethod(parseFunctionDec(mDec, document));	
+			}
 		}
 
 		return model;
 	}
 
+	public boolean isMainMethod(UniMethodDec dec){
+		if("main".equals(dec.methodName) && dec.modifiers != null){
+			for(String mod : dec.modifiers){
+				if("static".equals(mod)){
+					return true;		
+				}
+			}
+		}
+		return false;
+	}
+	
 	public List<BlockCommandModel> parseBody(Document document, Element parentElement, UniExpr statement) {
 		if (statement == null || !(statement instanceof UniBlock)) {
 			return new ArrayList<>(); // can be Collections.emptyList();
@@ -140,8 +154,6 @@ public class BlockGenerator {
 		for (int i = 0; i < statementBlock.body.size(); i++) {
 			UniExpr expr = statementBlock.body.get(i);
 			BlockElementModel command = parseExpr(expr, document, null);
-
-			System.out.println("parse" +  expr);
 
 			// statement以外は弾く
 			if (!(command instanceof BlockCommandModel)) {
