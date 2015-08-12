@@ -405,6 +405,7 @@ class JavaScriptMapper extends ECMAScriptBaseVisitor<Object> {
 		type == ECMAScriptParser.LessThanEquals || type == ECMAScriptParser.LessThan ||
 			type == ECMAScriptParser.MoreThan || type == ECMAScriptParser.GreaterThanEquals || type == ECMAScriptParser.Equals
 	}
+	//EqualityExpression
 
 	// singleExpression arguments
 	override public visitArgumentsExpression(ECMAScriptParser.ArgumentsExpressionContext ctx) {
