@@ -10,6 +10,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.xerces.parsers.DOMParser;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
 import net.unicoen.node.UniBinOp;
 import net.unicoen.node.UniBlock;
 import net.unicoen.node.UniBoolLiteral;
@@ -30,14 +37,6 @@ import net.unicoen.node.UniStringLiteral;
 import net.unicoen.node.UniUnaryOp;
 import net.unicoen.node.UniVariableDec;
 import net.unicoen.node.UniWhile;
-
-import org.apache.xerces.parsers.DOMParser;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 public class BlockMapper {
 
@@ -422,7 +421,7 @@ public class BlockMapper {
 			trueBlock = (UniBlock) args.get(1);
 		}
 		if (args.get(2) != null && args.get(2) instanceof UniBlock) {
-			trueBlock = (UniBlock) args.get(2);
+			falseBlock = (UniBlock) args.get(2);
 		}
 
 		return new UniIf(args.get(0), trueBlock, falseBlock);
