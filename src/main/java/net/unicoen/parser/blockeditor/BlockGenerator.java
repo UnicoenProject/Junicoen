@@ -151,21 +151,23 @@ public class BlockGenerator {
 		// bodyを辿ってモデル作成
 		List<BlockCommandModel> blocks = new ArrayList<>();
 		String beforeId = parentElement.getAttribute("id");
-		for (int i = 0; i < statementBlock.body.size(); i++) {
-			UniExpr expr = statementBlock.body.get(i);
-			BlockElementModel command = parseExpr(expr, document, null);
+		if(statementBlock.body  != null){
+			for (int i = 0; i < statementBlock.body.size(); i++) {
+				UniExpr expr = statementBlock.body.get(i);
+				BlockElementModel command = parseExpr(expr, document, null);
 
-			// statement以外は弾く
-			if (!(command instanceof BlockCommandModel)) {
-				throw new RuntimeException("cant use the expression" + expr.toString());
-			}
-			addBeforeBlockNode(document, command.getElement(), beforeId);
+				// statement以外は弾く
+				if (!(command instanceof BlockCommandModel)) {
+					throw new RuntimeException("cant use the expression" + expr.toString());
+				}
+				addBeforeBlockNode(document, command.getElement(), beforeId);
 
-			if (i + 1 < statementBlock.body.size()) {
-				addAfterBlockNode(document, command.getElement(), String.valueOf(ID_COUNTER));
-				beforeId = command.getElement().getAttribute("id");
-			}
-			blocks.add((BlockCommandModel) command);
+				if (i + 1 < statementBlock.body.size()) {
+					addAfterBlockNode(document, command.getElement(), String.valueOf(ID_COUNTER));
+					beforeId = command.getElement().getAttribute("id");
+				}
+				blocks.add((BlockCommandModel) command);
+			}	
 		}
 		return blocks;
 	}

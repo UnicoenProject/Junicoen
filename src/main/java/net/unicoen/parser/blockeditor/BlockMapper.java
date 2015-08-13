@@ -33,6 +33,7 @@ import net.unicoen.node.UniWhile;
 
 import org.apache.xerces.parsers.DOMParser;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -42,11 +43,10 @@ public class BlockMapper {
 
 	private VariableNameResolver variableResolver = new VariableNameResolver();
 	HashMap<String, Node> map = new HashMap<>();// Blockのidをキー該当ノードをvalueとして全てのBlockNodeを保持する変数
+	BlockNameResolver resolver = new BlockNameResolver("ext/blocks/");
 
 	public UniClassDec parse(File xmlFile) {
-
 		UniClassDec classDec = createProcotypeClassModel(xmlFile);
-
 		// Blockノードの親ノードを取得する
 		Node pageBlock = getPageBlocksNode(xmlFile);
 
@@ -78,6 +78,7 @@ public class BlockMapper {
 
 		return classDec;
 	}
+
 
 	public UniClassDec createProcotypeClassModel(File xmlFile) {
 		UniClassDec classDec = new UniClassDec();
@@ -245,9 +246,10 @@ public class BlockMapper {
 	private UniExpr parseLocalVariable(Node node, HashMap<String, Node> map) {
 		Node initValueNode = getChildNode(node, "Sockets");
 		List<UniExpr> initValues = parseSocket(initValueNode, map);
-
-		String type = getChildText(node, "Type");
-		String name = getChildText(node, "Name");
+		String blockGenusName = getAttribute(node, "genus-name");
+		
+		String type = getChildText(resolver.getBlockNode(blockGenusName),"Type");
+		String name = getChildText(node, "Label");//TODO should fix later
 
 		variableResolver.addLocalVariable(getChildText(node, "Name"), node);
 
@@ -309,7 +311,8 @@ public class BlockMapper {
 			return null;
 		} else {
 			// MethodCallとする
-			UniMethodCall call = new UniMethodCall(null, getChildText(node, "Name"), functionArgs);
+			//TODO should fix
+			UniMethodCall call = new UniMethodCall(null, getChildText(node, "Label"), functionArgs);
 			return call;
 		}
 	}
@@ -430,7 +433,7 @@ public class BlockMapper {
 		List<UniExpr> args = parseSocket(argsNode, map);
 		String blockGenusName = getAttribute(node, "genus-name");// ブロックの種類名を取得
 		// BlockModelを解析して，UniversalModelを生成する
-		String methodName = getChildText(node, "Name");
+		String methodName = getChildText(resolver.getBlockNode(blockGenusName), "Name");
 
 		if ("ifelse".equals(blockGenusName)) {
 			return parseIfBlock(node, map);
