@@ -440,7 +440,9 @@ public class BlockGenerator {
 		SocketsInfo socketsInfo = calcSocketsInfo(resolver.getSocketNodes("abstraction"));
 
 		List<Element> bodyTopElement = new ArrayList<>();
-		bodyTopElement.add(commands.get(0).getElement());
+		if(commands.size()>0){
+			bodyTopElement.add(commands.get(0).getElement());			
+		}
 		addSocketsNode(bodyTopElement, document, blockElement, socketsInfo);
 
 		//抽象化コメントの追加
@@ -898,7 +900,8 @@ public class BlockGenerator {
 		} else if ((leftType.equals("int") && rightType.equals("double")) || (leftType.equals("double") && rightType.equals("int"))) {
 			returnType =  "int";
 		} else {
-			assert returnType == null : "cant cal Expr type left :" + left.toString() + "right：" + right.toString();
+			//強制的にintに
+			//TODO should fix
 			returnType = "int";
 		}
 		return returnType;
