@@ -6,7 +6,9 @@ jdk:
 notifications:
  recipients:
    - exkazuu@gmail.com
-   - irxnjhtchlnrw@gmail.com
+   - nnujabok@gmail.com
+   - ohata@sakailab.info
+   - matsuzawa@si.aoyama.ac.jp
  email:
    on_success: change
    on_failure: always
