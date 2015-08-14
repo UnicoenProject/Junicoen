@@ -50,7 +50,7 @@ public class JavaGenerator extends Traverser {
 		exprPriority.push(0);
 	}
 
-	private void withIndent(Runnable runnable) {
+	protected void withIndent(Runnable runnable) {
 		indent++;
 		runnable.run();
 		indent--;
@@ -66,7 +66,7 @@ public class JavaGenerator extends Traverser {
 		out.print(str);
 	}
 
-	private void newline() {
+	protected void newline() {
 		out.print(NEW_LINE);
 		indentAtThisLine = false;
 	}
@@ -207,9 +207,9 @@ public class JavaGenerator extends Traverser {
 
 	@Override
 	public void traverseMethodCall(UniMethodCall mCall) {
-		if(mCall.receiver != null){
+		if (mCall.receiver != null) {
 			parseExpr(mCall.receiver);
-			print(".");	
+			print(".");
 		}
 		print(mCall.methodName);
 		print("(");
@@ -285,10 +285,10 @@ public class JavaGenerator extends Traverser {
 	@Override
 	public void traverseBlock(UniBlock node) {
 		print("{");
-		if(node.blockLabel != null){
+		if (node.blockLabel != null) {
 			print("//\t" + node.blockLabel);
 		}
-		
+
 		newline();
 		parseBlockInner(node);
 		print("}");
@@ -414,27 +414,15 @@ public class JavaGenerator extends Traverser {
 	public void traverseClassDec(UniClassDec classDec) {
 		String mod = safeJoin(classDec.modifiers, " ");
 		String declare = String.join(" ", mod, "class", classDec.className,
-				"extends Turtle{");
+				"{");
 		print(declare);
 		newline();
-		indent++;
-		
-		print("public static void main(String[] args) {");
-		newline();
-		indent++;
-		
-		print("Turtle.startTurtle(new " + classDec.className + "(), args);");
-		newline();
-		indent--;
-		
-		print("}");
-		newline();
-		newline();
-		
-		for (UniMemberDec dec : iter(classDec.members)) {
-			traverseMemberDec(dec);
-		}
-		indent--;
+
+		withIndent(() -> {
+			for (UniMemberDec dec : iter(classDec.members)) {
+				traverseMemberDec(dec);
+			}
+		});
 		newline();
 		print("}");
 		newline();
