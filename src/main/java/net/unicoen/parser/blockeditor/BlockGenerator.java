@@ -443,6 +443,11 @@ public class BlockGenerator {
 		bodyTopElement.add(commands.get(0).getElement());
 		addSocketsNode(bodyTopElement, document, blockElement, socketsInfo);
 
+		//抽象化コメントの追加
+		if(blockExpr.blockLabel != null){
+			addElement("Label", document, blockExpr.blockLabel, blockElement);	
+		}
+
 		model.setSockets(commands);
 
 		return model;
