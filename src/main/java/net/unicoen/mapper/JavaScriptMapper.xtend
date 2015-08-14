@@ -16,6 +16,7 @@ import net.unicoen.node.UniMethodCall
 import net.unicoen.node.UniMethodDec
 import net.unicoen.node.UniNode
 import net.unicoen.node.UniStringLiteral
+import net.unicoen.node.UniUnaryOp
 import net.unicoen.node.UniVariableDec
 import net.unicoen.node.UniWhile
 import net.unicoen.parser.ECMAScriptBaseVisitor
@@ -39,6 +40,7 @@ import net.unicoen.parser.ECMAScriptParser.MemberDotExpressionContext
 import net.unicoen.parser.ECMAScriptParser.MultiplicativeExpressionContext
 import net.unicoen.parser.ECMAScriptParser.NotExpressionContext
 import net.unicoen.parser.ECMAScriptParser.NumericLiteralContext
+import net.unicoen.parser.ECMAScriptParser.PostIncrementExpressionContext
 import net.unicoen.parser.ECMAScriptParser.RelationalExpressionContext
 import net.unicoen.parser.ECMAScriptParser.SingleExpressionContext
 import net.unicoen.parser.ECMAScriptParser.SourceElementContext
@@ -56,6 +58,7 @@ import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.TerminalNode
 import org.antlr.v4.runtime.tree.TerminalNodeImpl
+import net.unicoen.parser.ECMAScriptParser.PostDecreaseExpressionContext
 
 class JavaScriptMapper extends ECMAScriptBaseVisitor<Object> {
 
@@ -363,6 +366,16 @@ class JavaScriptMapper extends ECMAScriptBaseVisitor<Object> {
 
 	override public visitAssignmentExpression(AssignmentExpressionContext ctx) {
 		return parseBinaryOp(ctx)
+	}
+	
+	override public visitPostIncrementExpression(PostIncrementExpressionContext ctx){
+		var op = new UniUnaryOp("_++", ctx.children.get(0).visit as UniExpr)
+		return op
+	}
+
+	override public visitPostDecreaseExpression(PostDecreaseExpressionContext ctx){
+		var op = new UniUnaryOp("_--", ctx.children.get(0).visit as UniExpr)
+		return op
 	}
 
 	def public parseBinaryOp(SingleExpressionContext ctx) {
