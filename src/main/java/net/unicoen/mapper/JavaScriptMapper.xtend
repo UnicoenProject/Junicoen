@@ -278,7 +278,7 @@ class JavaScriptMapper extends ECMAScriptBaseVisitor<Object> {
 	override public visitVariableDeclaration(VariableDeclarationContext ctx) {
 		var dec = new UniVariableDec
 		dec.modifiers = new ArrayList
-		dec.type = "Turtle"
+		dec.type = "int"
 		for (ParseTree node : ctx.children) {
 			if (node instanceof TerminalNodeImpl) {
 				dec.name = node.text
