@@ -392,7 +392,6 @@ public class BlockMapper {
 				assert argNode.getNodeName().equals("BlockConnector");
 				String argElemId = getAttribute(argNode, "con-block-id");
 				Node realArgNode = map.get(argElemId);
-				System.out.println(getChildText(realArgNode, "BeforeBlockId"));
 				if (realArgNode != null) {
 					// beforeを持たないElementNodeは引数なので，引数の解析
 					if (getChildText(realArgNode, "BeforeBlockId") == null) {
@@ -431,8 +430,6 @@ public class BlockMapper {
 		Node argsNode = getChildNode(node, "Sockets");
 		List<UniExpr> args = parseSocket(argsNode, map);
 		String blockGenusName = getAttribute(node, "genus-name");// ブロックの種類名を取得
-		// BlockModelを解析して，UniversalModelを生成する
-		String methodName = getChildText(resolver.getBlockNode(blockGenusName), "Name");
 
 		if ("ifelse".equals(blockGenusName)) {
 			return parseIfBlock(node, map);
@@ -459,9 +456,11 @@ public class BlockMapper {
 			}
 			return uniReturn;
 		} else if (blockGenusName.startsWith("setter")) {
-			if (variableResolver.getVariableNode(methodName) != null || args.size() == 1) {
+			// BlockModelを解析して，UniversalModelを生成する
+			String variableName = getChildText(node, "Label");
+			if (variableResolver.getVariableNode(variableName) != null || args.size() == 1) {
 				// 代入式
-				UniBinOp op = new UniBinOp("=", new UniIdent(methodName), args.get(0));
+				UniBinOp op = new UniBinOp("=", new UniIdent(variableName), args.get(0));
 				return op;
 			} else {
 				throw new RuntimeException("illegal setter");
@@ -475,6 +474,7 @@ public class BlockMapper {
 
 			return caller;
 		} else {
+			String methodName = getChildText(resolver.getBlockNode(blockGenusName), "Name");
 			UniMethodCall mcall = getProtoType(methodName);
 			if (mcall != null) {
 				mcall.args = args;
