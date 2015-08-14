@@ -465,7 +465,16 @@ public class BlockMapper {
 			} else {
 				throw new RuntimeException("illegal setter");
 			}
-		} else if(blockGenusName.equals("callActionMethod2")){
+		} else if (blockGenusName.startsWith("inc")){//increment 
+			String variableName = getChildText(node, "Label");
+			if (variableResolver.getVariableNode(variableName) != null || args.size() == 1) {
+				// 代入式
+				UniUnaryOp op = new UniUnaryOp("_++", new UniIdent(variableName));
+				return op;
+			} else {
+				throw new RuntimeException("illegal setter");
+			}
+		}else if(blockGenusName.equals("callActionMethod2")){
 			UniIdent ident = (UniIdent)args.get(0);
 			UniBlock socketBlock = (UniBlock)args.get(1);
 			UniMethodCall caller = (UniMethodCall)socketBlock.body.get(0);

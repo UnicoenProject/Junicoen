@@ -286,9 +286,8 @@ public class JavaGenerator extends Traverser {
 	public void traverseBlock(UniBlock node) {
 		print("{");
 		if(node.blockLabel != null){
-			print("//\t" + node.blockLabel);
+			print("//" + node.blockLabel);
 		}
-		
 		newline();
 		parseBlockInner(node);
 		print("}");
