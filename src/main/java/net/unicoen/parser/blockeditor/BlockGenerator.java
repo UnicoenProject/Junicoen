@@ -345,12 +345,7 @@ public class BlockGenerator {
 			model = parseContinueBreak("continue", document, parent);
 		} else if (expr instanceof UniUnaryOp) {
 			model = parseUnaryOperator((UniUnaryOp) expr, document, parent);
-		}
-		// else if (expr instanceof UniVariableDec) {
-		// return parseVarDec(((UniVariableDec) expr).type, ((UniVariableDec)
-		// expr).name, document, parent);
-		// }
-		else if (expr instanceof UniVariableDec) {
+		}else if (expr instanceof UniVariableDec) {
 			model = parseVarDec((UniVariableDec) expr, document, parent);
 		} else if (expr instanceof UniIdent) {
 			model = parseIdent((UniIdent) expr, document, parent);
@@ -713,8 +708,7 @@ public class BlockGenerator {
 
 	public BlockElementModel parseBinOp(UniBinOp binopExpr, Document document, Node parent) {
 		Element blockElement;
-		String type = getExprType(binopExpr.left, binopExpr.right);// //
-																	// 左右を先読みして，何型の演算か取得
+		String type = getExprType(binopExpr.left, binopExpr.right);// 左右を先読みして，何型の演算か取得
 
 		if (binopExpr.operator.equals("=")) {// 他の二項演算と扱いが別（ソケットが一つのみ）
 			return createEqualOperatorModel(binopExpr, document);
@@ -890,16 +884,19 @@ public class BlockGenerator {
 	}
 
 	public String getExprType(UniExpr left, UniExpr right) {
-		// exprの型を取得する
+		// 二項演算の返り値の型を計算する
 		String leftType = getExprType(left);
 		String rightType = getExprType(right);
+		String returnType = null;
 		if (leftType.equals(rightType)) {
-			return leftType;
+			returnType =  leftType;
 		} else if ((leftType.equals("int") && rightType.equals("double")) || (leftType.equals("double") && rightType.equals("int"))) {
-			return "int";
+			returnType =  "int";
 		} else {
-			return null;
+			assert returnType == null : "cant cal Expr type left :" + left.toString() + "right：" + right.toString();
+			returnType = "int";
 		}
+		return returnType;
 	}
 
 	public String getExprType(UniExpr expr) {
