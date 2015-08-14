@@ -332,7 +332,7 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		// blockStatements
 		// :	blockStatement blockStatement*
 		val map = createMap(ctx)
-		val list = net.unicoen.mapper.JavaMapper.getOrEmpty(map, Java8Parser.RULE_blockStatement)
+		val list = JavaMapper.getOrEmpty(map, Java8Parser.RULE_blockStatement)
 		new UniBlock(list.map[x|x as UniExpr])
 	}
 
@@ -437,29 +437,26 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		]
 	}
 
-	private static def getName(ParseTree tree) {
-		switch (tree) {
-			TerminalNodeImpl: tree.name
-			ParserRuleContext: tree.name
-			default: null
-		}
-	}
-
-	private static def getName(TerminalNodeImpl node) {
-		Java8Parser.VOCABULARY.getSymbolicName(node.symbol.type)
-	}
-
+//	private static def getName(ParseTree tree) {
+//		switch (tree) {
+//			TerminalNodeImpl: tree.name
+//			ParserRuleContext: tree.name
+//			default: null
+//		}
+//	}
+//	private static def getName(TerminalNodeImpl node) {
+//		Java8Parser.VOCABULARY.getSymbolicName(node.symbol.type)
+//	}
 	private static def getName(ParserRuleContext node) {
 		Java8Parser.ruleNames.get(node.ruleIndex)
 	}
 
-	private static def getTokenName(ParseTree tree) {
-		switch (tree) {
-			TerminalNodeImpl: tree.name
-			default: null
-		}
-	}
-
+//	private static def getTokenName(ParseTree tree) {
+//		switch (tree) {
+//			TerminalNodeImpl: tree.name
+//			default: null
+//		}
+//	}
 	private static def getRuleName(ParseTree tree) {
 		switch (tree) {
 			ParserRuleContext: tree.name
@@ -467,22 +464,21 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		}
 	}
 
-	private static def getTextList(ParseTree node) {
-		privateGetTextList(node, new ArrayList<String>())
-	}
-
-	private static def privateGetTextList(ParseTree node, List<String> ret) {
-		val count = node.childCount
-		if (count == 0) {
-			ret.add(node.text)
-		} else {
-			(0 ..< count).forEach [ i |
-				privateGetTextList(node.getChild(i), ret)
-			]
-		}
-		ret
-	}
-
+//	private static def getTextList(ParseTree node) {
+//		privateGetTextList(node, new ArrayList<String>())
+//	}
+//
+//	private static def privateGetTextList(ParseTree node, List<String> ret) {
+//		val count = node.childCount
+//		if (count == 0) {
+//			ret.add(node.text)
+//		} else {
+//			(0 ..< count).forEach [ i |
+//				privateGetTextList(node.getChild(i), ret)
+//			]
+//		}
+//		ret
+//	}
 	private static def <T> List<T> getOrEmpty(Map<Integer, List<T>> map, Integer key) {
 		if (map.containsKey(key)) {
 			return map.get(key)
@@ -501,9 +497,9 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		throw new RuntimeException("No item")
 	}
 
-	private static def <T> getIdentifier(Map<Integer, List<T>> map) {
-		new UniIdent(map.identifierStr)
-	}
+//	private static def <T> getIdentifier(Map<Integer, List<T>> map) {
+//		new UniIdent(map.identifierStr)
+//	}
 
 	private static def <T> getIdentifierStr(Map<Integer, List<T>> map) {
 		map.get(-Java8Parser.Identifier).head as String

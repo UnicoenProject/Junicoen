@@ -41,8 +41,12 @@ import net.unicoen.node.UniWhile;
 public class BlockMapper {
 
 	private VariableNameResolver variableResolver = new VariableNameResolver();
-	HashMap<String, Node> map = new HashMap<>();// Blockのidをキー該当ノードをvalueとして全てのBlockNodeを保持する変数
-	BlockNameResolver resolver = new BlockNameResolver("ext"  + File.separator + "blocks" + File.separator);
+	private HashMap<String, Node> map = new HashMap<>();// Blockのidをキー該当ノードをvalueとして全てのBlockNodeを保持する変数
+	private BlockNameResolver resolver;
+
+	public BlockMapper(String langdefRootPath) {
+		resolver = new BlockNameResolver(langdefRootPath);
+	}
 
 	public UniClassDec parse(File xmlFile) {
 		UniClassDec classDec = createProcotypeClassModel(xmlFile);
@@ -57,7 +61,8 @@ public class BlockMapper {
 
 		List<UniMemberDec> ret = new ArrayList<>();
 		for (Node procNode : procs) {
-			UniMethodDec d = new UniMethodDec(getChildText(procNode, "Label"), new ArrayList<>(), methodsReturnTypes.get(getAttribute(procNode, "id")), new ArrayList<>(), null);
+			UniMethodDec d = new UniMethodDec(getChildText(procNode, "Label"), new ArrayList<>(),
+					methodsReturnTypes.get(getAttribute(procNode, "id")), new ArrayList<>(), null);
 			d.modifiers.add("public");
 			d.args = new ArrayList<>();
 
@@ -77,7 +82,6 @@ public class BlockMapper {
 
 		return classDec;
 	}
-
 
 	public UniClassDec createProcotypeClassModel(File xmlFile) {
 		UniClassDec classDec = new UniClassDec();
@@ -191,14 +195,14 @@ public class BlockMapper {
 			throw new RuntimeException("Unsupported node: " + blockKind);
 		}
 	}
-	
-	private UniExpr parseAbstraction(Node node,HashMap<String, Node> map){
+
+	private UniExpr parseAbstraction(Node node, HashMap<String, Node> map) {
 		Node argsNode = getChildNode(node, "Sockets");
 		List<UniExpr> args = parseSocket(argsNode, map);
 
 		UniBlock block = (UniBlock) args.get(0);
 		block.blockLabel = getChildText(node, "Label");
-		
+
 		return block;
 	}
 
@@ -246,9 +250,9 @@ public class BlockMapper {
 		Node initValueNode = getChildNode(node, "Sockets");
 		List<UniExpr> initValues = parseSocket(initValueNode, map);
 		String blockGenusName = getAttribute(node, "genus-name");
-		
-		String type = getChildText(resolver.getBlockNode(blockGenusName),"Type");
-		String name = getChildText(node, "Label");//TODO should fix later
+
+		String type = getChildText(resolver.getBlockNode(blockGenusName), "Type");
+		String name = getChildText(node, "Label");// TODO should fix later
 
 		variableResolver.addLocalVariable(getChildText(node, "Label"), node);
 
@@ -306,17 +310,18 @@ public class BlockMapper {
 				throw new RuntimeException("Unknown operator type: " + blockGenusName);
 			}
 			return binOp;
-		} else if(isNewInstanceCreation(blockGenusName)){
+		} else if (isNewInstanceCreation(blockGenusName)) {
 			return null;
 		} else {
 			// MethodCallとする
-			//TODO should fix
-			UniMethodCall call = new UniMethodCall(null, getChildText(resolver.getBlockNode(blockGenusName), "Name"), functionArgs);
+			// TODO should fix
+			UniMethodCall call = new UniMethodCall(null, getChildText(resolver.getBlockNode(blockGenusName), "Name"),
+					functionArgs);
 			return call;
 		}
 	}
 
-	private boolean isNewInstanceCreation(String blockType){
+	private boolean isNewInstanceCreation(String blockType) {
 		return blockType.startsWith("new-");
 	}
 
@@ -341,11 +346,13 @@ public class BlockMapper {
 	}
 
 	private boolean isEqualsOperator(String blockType) {
-		return "equals-number".equals(blockType) || "equals-string".equals(blockType) || "equals-number-double".equals(blockType) || "equals-boolean".equals(blockType);
+		return "equals-number".equals(blockType) || "equals-string".equals(blockType)
+				|| "equals-number-double".equals(blockType) || "equals-boolean".equals(blockType);
 	}
 
 	private boolean isNotEqualsOperator(String blockType) {
-		return "not-equals-number".equals(blockType) || "not-equals-string".equals(blockType) || "not-equals-number-double".equals(blockType) || "not-equals-boolean".equals(blockType);
+		return "not-equals-number".equals(blockType) || "not-equals-string".equals(blockType)
+				|| "not-equals-number-double".equals(blockType) || "not-equals-boolean".equals(blockType);
 	}
 
 	private boolean isAddOperator(String blockType) {
@@ -377,7 +384,11 @@ public class BlockMapper {
 	}
 
 	private boolean isBinOp(String blockType) {
-		if (isEqualsOperator(blockType) || isNotEqualsOperator(blockType) || isLessThanOperator(blockType) || isLessThanOrEqualOperator(blockType) || isGreaterThanOperator(blockType) || isGreaterThanOrEqualOperator(blockType) || "and".equals(blockType) || "or".equals(blockType) || isAddOperator(blockType) || isDifferenceOperator(blockType) || isMulOperator(blockType) || isDivOperator(blockType) || isRemOperator(blockType)) {
+		if (isEqualsOperator(blockType) || isNotEqualsOperator(blockType) || isLessThanOperator(blockType)
+				|| isLessThanOrEqualOperator(blockType) || isGreaterThanOperator(blockType)
+				|| isGreaterThanOrEqualOperator(blockType) || "and".equals(blockType) || "or".equals(blockType)
+				|| isAddOperator(blockType) || isDifferenceOperator(blockType) || isMulOperator(blockType)
+				|| isDivOperator(blockType) || isRemOperator(blockType)) {
 			return true;
 		} else {
 			return false;
@@ -465,7 +476,7 @@ public class BlockMapper {
 			} else {
 				throw new RuntimeException("illegal setter");
 			}
-		} else if (blockGenusName.startsWith("inc")){//increment 
+		} else if (blockGenusName.startsWith("inc")) {// increment
 			String variableName = getChildText(node, "Label");
 			if (variableResolver.getVariableNode(variableName) != null || args.size() == 1) {
 				// 代入式
@@ -474,10 +485,10 @@ public class BlockMapper {
 			} else {
 				throw new RuntimeException("illegal setter");
 			}
-		}else if(blockGenusName.equals("callActionMethod2")){
-			UniIdent ident = (UniIdent)args.get(0);
-			UniBlock socketBlock = (UniBlock)args.get(1);
-			UniMethodCall caller = (UniMethodCall)socketBlock.body.get(0);
+		} else if (blockGenusName.equals("callActionMethod2")) {
+			UniIdent ident = (UniIdent) args.get(0);
+			UniBlock socketBlock = (UniBlock) args.get(1);
+			UniMethodCall caller = (UniMethodCall) socketBlock.body.get(0);
 
 			caller.receiver = ident;
 
