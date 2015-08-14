@@ -1,24 +1,20 @@
 package net.unicoen.mapper
 
 import java.io.FileInputStream
+import net.unicoen.node.UniBlock
+import net.unicoen.node.UniClassDec
+import net.unicoen.node.UniMemberDec
+import net.unicoen.node.UniMethodDec
+import net.unicoen.parser.CBaseVisitor
+import net.unicoen.parser.CLexer
+import net.unicoen.parser.CParser
 import org.antlr.v4.runtime.ANTLRInputStream
 import org.antlr.v4.runtime.CharStream
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.tree.ParseTree
-import net.unicoen.parser.CLexer
-import net.unicoen.parser.CParser
-import net.unicoen.parser.CBaseVisitor
-import net.unicoen.node.UniBinOp
-import net.unicoen.node.UniExpr
-import net.unicoen.node.UniIntLiteral
-import net.unicoen.node.UniDoubleLiteral
 import org.antlr.v4.runtime.tree.RuleNode
-import net.unicoen.node.UniClassDec
-import net.unicoen.node.UniMemberDec
 import org.antlr.v4.runtime.tree.TerminalNode
-import net.unicoen.node.UniMethodDec
-import net.unicoen.node.UniBlock
 
 class CMapper extends CBaseVisitor<Object> {
 	var _isDebugMode = false

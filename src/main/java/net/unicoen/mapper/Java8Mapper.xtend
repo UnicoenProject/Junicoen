@@ -1,7 +1,6 @@
 package net.unicoen.mapper
 
 import java.io.FileInputStream
-import java.util.ArrayList
 import java.util.List
 import net.unicoen.node.UniClassDec
 import net.unicoen.node.UniMemberDec
@@ -103,7 +102,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 	}
 
 	override public visitClassModifier(Java8Parser.ClassModifierContext ctx) {
-		val list = new ArrayList<String>
+//		val list = new ArrayList<String>
 		if (ctx.children != null) {
 //			ctx.children.forEach [
 //				switch (it) {
@@ -133,7 +132,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 	}
 
 	override public visitClassBodyDeclaration(Java8Parser.ClassBodyDeclarationContext ctx) {
-		val list = new ArrayList<UniMemberDec>
+//		val list = new ArrayList<UniMemberDec>
 		if (ctx.children != null) {
 //			ctx.children.forEach [
 //				switch (it) {
