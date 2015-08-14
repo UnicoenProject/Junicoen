@@ -36,38 +36,43 @@ import net.unicoen.node.UniUnaryOp;
 import net.unicoen.node.UniVariableDec;
 import net.unicoen.node.UniWhile;
 
+/**
+ * Dolittle出力のテスト
+ * 
+ * @author ymatsuzawa
+ *
+ */
 public class DolittleGenerator extends Traverser {
 
 	PrintStream out;
 	Map<String, String> turtleMethodNameMap = new HashMap<String, String>();
-	
-	public DolittleGenerator(PrintStream out){
+
+	public DolittleGenerator(PrintStream out) {
 		this.out = out;
 		initMap();
 	}
-	
+
 	public static String generate(UniClassDec dec) {
-		try (ByteArrayOutputStream out = new ByteArrayOutputStream();
-				PrintStream printer = new PrintStream(out)) {
+		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); PrintStream printer = new PrintStream(out)) {
 			generate(dec, printer);
 			return out.toString();
 		} catch (IOException e) {
 			return null;
 		}
 	}
-	
+
 	public static void generate(UniClassDec classDec, PrintStream out) {
 		DolittleGenerator g = new DolittleGenerator(out);
 		g.traverseClassDec(classDec);
 	}
-	
-	public void initMap(){
+
+	public void initMap() {
 		turtleMethodNameMap.put("fd", "歩く");
 		turtleMethodNameMap.put("rt", "右回り");
 		turtleMethodNameMap.put("lt", "左回り");
 		turtleMethodNameMap.put("createTurtle", "タートル！作る");
 	}
-	
+
 	@Override
 	public void traverseBoolLiteral(UniBoolLiteral node) {
 		// TODO Auto-generated method stub
@@ -117,29 +122,29 @@ public class DolittleGenerator extends Traverser {
 	@Override
 	public void traverseMethodCall(UniMethodCall node) {
 		String name = turtleMethodNameMap.get(node.methodName);
-		if(node.receiver !=null){
+		if (node.receiver != null) {
 			traverseExpr(node.receiver);
 			print("！ ");
 		}
-		
-		if(name != null){
-			for(UniExpr arg : node.args){
+
+		if (name != null) {
+			for (UniExpr arg : node.args) {
 				traverseExpr(arg);
 			}
 			print(turtleMethodNameMap.get(node.methodName));
-		}else{
+		} else {
 			print(node.methodName);
-		}		
+		}
 	}
 
 	@Override
 	public void traverseUnaryOp(UniUnaryOp node) {
-		if(node.operator.equals("_++")){
+		if (node.operator.equals("_++")) {
 			traverseExpr(node.expr);
 			print("=");
 			traverseExpr(node.expr);
 			print(" + 1");
-		}else{
+		} else {
 			throw new RuntimeException("not impl" + node.operator);
 		}
 	}
@@ -177,34 +182,34 @@ public class DolittleGenerator extends Traverser {
 
 	@Override
 	public void traverseBlock(UniBlock node) {
-		if(node.body != null && !node.body.isEmpty()){
-			for(int i =0;i<node.body.size();i++){
+		if (node.body != null && !node.body.isEmpty()) {
+			for (int i = 0; i < node.body.size(); i++) {
 				traverseExpr(node.body.get(i));
-				if(i != node.body.size()-1){
-					out.println("。");	
+				if (i != node.body.size() - 1) {
+					out.println("。");
 				}
-			}			
+			}
 		}
 	}
 
 	@Override
 	public void traverseIf(UniIf node) {
-		//cond
+		// cond
 		print("「");
 		traverseExpr(node.cond);
 		print("」！なら");
-		if(node.falseStatement!=null){
-			UniBlock block = (UniBlock)node.falseStatement;
-			if(block.body != null && block.body.size()>0){
-				parseElseStatement((UniBlock)node.falseStatement);	
+		if (node.falseStatement != null) {
+			UniBlock block = (UniBlock) node.falseStatement;
+			if (block.body != null && block.body.size() > 0) {
+				parseElseStatement((UniBlock) node.falseStatement);
 			}
 		}
 		print("実行");
-		
+
 	}
-	
-	public void parseElseStatement(UniBlock falseBlock){
-//		if(falseBlock.body)
+
+	public void parseElseStatement(UniBlock falseBlock) {
+		// if(falseBlock.body)
 	}
 
 	@Override
@@ -215,19 +220,19 @@ public class DolittleGenerator extends Traverser {
 
 	@Override
 	public void traverseWhile(UniWhile node) {
-		UniBlock block = (UniBlock)node.statement;
-		//cond
+		UniBlock block = (UniBlock) node.statement;
+		// cond
 		print("「");
 		traverseExpr(node.cond);
 		print("」！の間");
-		
-		//body
+
+		// body
 		print("「");
-		for(UniExpr expr: block.body){
+		for (UniExpr expr : block.body) {
 			traverseExpr(expr);
 			print("。");
 		}
-		print("」実行");	
+		print("」実行");
 	}
 
 	@Override
@@ -239,8 +244,8 @@ public class DolittleGenerator extends Traverser {
 	@Override
 	public void traverseVariableDec(UniVariableDec node) {
 		print(node.name);
-		
-		if(node.value != null){
+
+		if (node.value != null) {
 			print(" = ");
 			traverseExpr(node.value);
 		}
@@ -260,7 +265,7 @@ public class DolittleGenerator extends Traverser {
 
 	@Override
 	public void traverseMethodDec(UniMethodDec node) {
-		for(UniExpr expr :node.block.body){
+		for (UniExpr expr : node.block.body) {
 			traverseExpr(expr);
 			print("。");
 			newLine();
@@ -275,16 +280,16 @@ public class DolittleGenerator extends Traverser {
 
 	@Override
 	public void traverseClassDec(UniClassDec node) {
-		for(UniMemberDec dec : node.members){
+		for (UniMemberDec dec : node.members) {
 			traverseMemberDec(dec);
 		}
 	}
-	
-	public void newLine(){
-		print(System.getProperty("line.separator"));	
+
+	public void newLine() {
+		print(System.getProperty("line.separator"));
 	}
 
-	public void print(String str){
+	public void print(String str) {
 		out.print(str);
 	}
 }
