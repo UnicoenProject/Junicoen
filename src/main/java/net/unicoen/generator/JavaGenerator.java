@@ -387,8 +387,10 @@ public class JavaGenerator extends Traverser {
 			}
 		}
 		print(String.join(" ", node.type, node.name));
-		print(" = ");
-		parseExpr(node.value);
+		if(node.value != null){
+			print(" = ");
+			parseExpr(node.value);	
+		}
 	}
 
 	@Override

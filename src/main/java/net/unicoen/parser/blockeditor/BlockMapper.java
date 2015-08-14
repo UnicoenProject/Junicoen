@@ -42,7 +42,7 @@ public class BlockMapper {
 
 	private VariableNameResolver variableResolver = new VariableNameResolver();
 	HashMap<String, Node> map = new HashMap<>();// Blockのidをキー該当ノードをvalueとして全てのBlockNodeを保持する変数
-	BlockNameResolver resolver = new BlockNameResolver("ext/blocks/");
+	BlockNameResolver resolver = new BlockNameResolver("ext"  + File.separator + "blocks" + File.separator);
 
 	public UniClassDec parse(File xmlFile) {
 		UniClassDec classDec = createProcotypeClassModel(xmlFile);
@@ -223,19 +223,19 @@ public class BlockMapper {
 			falseValue.value = false;
 			return falseValue;
 		} else if (blockGenusName.startsWith("getter")) {
-			UniIdent ident = new UniIdent(getChildText(node, "Name"));
+			UniIdent ident = new UniIdent(getChildText(node, "Label"));
 			return ident;
 		} else if (blockGenusName.startsWith("preinc")) {
-			UniUnaryOp op = new UniUnaryOp("++_", new UniIdent(getChildText(node, "Name")));
+			UniUnaryOp op = new UniUnaryOp("++_", new UniIdent(getChildText(node, "Label")));
 			return op;
 		} else if (blockGenusName.startsWith("predec")) {
-			UniUnaryOp op = new UniUnaryOp("--_", new UniIdent(getChildText(node, "Name")));
+			UniUnaryOp op = new UniUnaryOp("--_", new UniIdent(getChildText(node, "Label")));
 			return op;
 		} else if (blockGenusName.startsWith("postinc")) {
-			UniUnaryOp op = new UniUnaryOp("_++", new UniIdent(getChildText(node, "Name")));
+			UniUnaryOp op = new UniUnaryOp("_++", new UniIdent(getChildText(node, "Label")));
 			return op;
 		} else if (blockGenusName.startsWith("postdec")) {
-			UniUnaryOp op = new UniUnaryOp("_--", new UniIdent(getChildText(node, "Name")));
+			UniUnaryOp op = new UniUnaryOp("_--", new UniIdent(getChildText(node, "Label")));
 			return op;
 		} else {
 			throw new RuntimeException("not supported data type:" + blockGenusName);
@@ -250,7 +250,7 @@ public class BlockMapper {
 		String type = getChildText(resolver.getBlockNode(blockGenusName),"Type");
 		String name = getChildText(node, "Label");//TODO should fix later
 
-		variableResolver.addLocalVariable(getChildText(node, "Name"), node);
+		variableResolver.addLocalVariable(getChildText(node, "Label"), node);
 
 		if (initValues.get(0) != null && initValues.size() > 0) {
 			// 初期値あり
@@ -263,55 +263,55 @@ public class BlockMapper {
 	private UniExpr parseFunction(Node node, HashMap<String, Node> map) {
 		Node functionArgsNode = getChildNode(node, "Sockets");
 		List<UniExpr> functionArgs = parseSocket(functionArgsNode, map);
-		String blockType = getAttribute(node, "genus-name");
+		String blockGenusName = getAttribute(node, "genus-name");
 
-		if (isUnaryOp(blockType)) {
+		if (isUnaryOp(blockGenusName)) {
 			UniUnaryOp unaryOp = new UniUnaryOp();
 			unaryOp.operator = "!";
 			unaryOp.expr = functionArgs.get(0);
 			return unaryOp;
-		} else if (isBinOp(blockType)) {
+		} else if (isBinOp(blockGenusName)) {
 			UniBinOp binOp = new UniBinOp();
 
 			binOp.left = functionArgs.get(0);
 			binOp.right = functionArgs.get(1);
 
-			if (isEqualsOperator(blockType)) {
+			if (isEqualsOperator(blockGenusName)) {
 				binOp.operator = "==";
-			} else if (isNotEqualsOperator(blockType)) {
+			} else if (isNotEqualsOperator(blockGenusName)) {
 				binOp.operator = "!=";
-			} else if (isLessThanOperator(blockType)) {
+			} else if (isLessThanOperator(blockGenusName)) {
 				binOp.operator = "<";
-			} else if (isLessThanOrEqualOperator(blockType)) {
+			} else if (isLessThanOrEqualOperator(blockGenusName)) {
 				binOp.operator = "<=";
-			} else if (isGreaterThanOperator(blockType)) {
+			} else if (isGreaterThanOperator(blockGenusName)) {
 				binOp.operator = ">";
-			} else if (isGreaterThanOrEqualOperator(blockType)) {
+			} else if (isGreaterThanOrEqualOperator(blockGenusName)) {
 				binOp.operator = ">=";
-			} else if ("and".equals(blockType)) {
+			} else if ("and".equals(blockGenusName)) {
 				binOp.operator = "&&";
-			} else if ("or".equals(blockType)) {
+			} else if ("or".equals(blockGenusName)) {
 				binOp.operator = "||";
-			} else if (isAddOperator(blockType)) {
+			} else if (isAddOperator(blockGenusName)) {
 				binOp.operator = "+";
-			} else if (isDifferenceOperator(blockType)) {
+			} else if (isDifferenceOperator(blockGenusName)) {
 				binOp.operator = "-";
-			} else if (isMulOperator(blockType)) {
+			} else if (isMulOperator(blockGenusName)) {
 				binOp.operator = "*";
-			} else if (isDivOperator(blockType)) {
+			} else if (isDivOperator(blockGenusName)) {
 				binOp.operator = "/";
-			} else if (isRemOperator(blockType)) {
+			} else if (isRemOperator(blockGenusName)) {
 				binOp.operator = "%";
 			} else {
-				throw new RuntimeException("Unknown operator type: " + blockType);
+				throw new RuntimeException("Unknown operator type: " + blockGenusName);
 			}
 			return binOp;
-		} else if(isNewInstanceCreation(blockType)){
+		} else if(isNewInstanceCreation(blockGenusName)){
 			return null;
 		} else {
 			// MethodCallとする
 			//TODO should fix
-			UniMethodCall call = new UniMethodCall(null, getChildText(node, "Label"), functionArgs);
+			UniMethodCall call = new UniMethodCall(null, getChildText(resolver.getBlockNode(blockGenusName), "Name"), functionArgs);
 			return call;
 		}
 	}
@@ -392,7 +392,7 @@ public class BlockMapper {
 				assert argNode.getNodeName().equals("BlockConnector");
 				String argElemId = getAttribute(argNode, "con-block-id");
 				Node realArgNode = map.get(argElemId);
-
+				System.out.println(getChildText(realArgNode, "BeforeBlockId"));
 				if (realArgNode != null) {
 					// beforeを持たないElementNodeは引数なので，引数の解析
 					if (getChildText(realArgNode, "BeforeBlockId") == null) {
@@ -468,8 +468,8 @@ public class BlockMapper {
 			}
 		} else if(blockGenusName.equals("callActionMethod2")){
 			UniIdent ident = (UniIdent)args.get(0);
-			UniExpr socketBlock = args.get(1);
-			UniMethodCall caller = (UniMethodCall) socketBlock;
+			UniBlock socketBlock = (UniBlock)args.get(1);
+			UniMethodCall caller = (UniMethodCall)socketBlock.body.get(0);
 
 			caller.receiver = ident;
 

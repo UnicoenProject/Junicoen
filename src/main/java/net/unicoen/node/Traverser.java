@@ -143,6 +143,10 @@ public abstract class Traverser {
 			traverseNewArray((UniNewArray) node);
 			return;
 		}
+		if(node == null){
+			return;
+		}
+		
 		throw new RuntimeException("Unknown node: " + node);
 	}
 
