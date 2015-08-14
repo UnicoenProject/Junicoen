@@ -40,6 +40,8 @@ public class JavaScriptGenerator extends JavaGenerator{
 
 		print("function " + node.methodName +  "(" + String.join(", ", args) + ")");
 		traverseBlock(node.block);
+		newline();
+		print(node.methodName + "();");
 	}
 
 	@Override

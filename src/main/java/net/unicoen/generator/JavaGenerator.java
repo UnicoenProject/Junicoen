@@ -66,7 +66,7 @@ public class JavaGenerator extends Traverser {
 		out.print(str);
 	}
 
-	private void newline() {
+	public void newline() {
 		out.print(NEW_LINE);
 		indentAtThisLine = false;
 	}
