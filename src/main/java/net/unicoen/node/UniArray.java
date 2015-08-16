@@ -24,11 +24,9 @@ public class UniArray extends UniExpr {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null || !(obj instanceof UniArray))
-			return false;
-		UniArray that = (UniArray) obj;
-		return (this.items == null ? that.items == null : this.items
-				.equals(that.items));
+		if (obj == null || !(obj instanceof UniArray)) return false;
+		UniArray that = (UniArray)obj;
+		return (this.items == null ? that.items == null : this.items.equals(that.items));
 	}
 
 	@Override

@@ -5,17 +5,11 @@ import java.util.List;
 public class UniBlock extends UniExpr {
 	public List<UniExpr> body;
 
-	public String blockLabel;
-	
 	public UniBlock() {
 	}
 
 	public UniBlock(List<UniExpr> body) {
 		this.body = body;
-	}
-	
-	public void setLabel(String label){
-		this.blockLabel = label;
 	}
 
 	@Override
@@ -30,11 +24,9 @@ public class UniBlock extends UniExpr {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null || !(obj instanceof UniBlock))
-			return false;
-		UniBlock that = (UniBlock) obj;
-		return (this.body == null ? that.body == null : this.body
-				.equals(that.body));
+		if (obj == null || !(obj instanceof UniBlock)) return false;
+		UniBlock that = (UniBlock)obj;
+		return (this.body == null ? that.body == null : this.body.equals(that.body));
 	}
 
 	@Override
