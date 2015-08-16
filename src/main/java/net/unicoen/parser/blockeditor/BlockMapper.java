@@ -66,7 +66,7 @@ public class BlockMapper {
 			d.modifiers.add("public");
 			d.args = new ArrayList<>();
 
-			UniBlock body = new UniBlock();
+			UniBlock body = new UniBlock(new ArrayList<>());
 
 			String nextNodeId = getChildText(procNode, "AfterBlockId");
 			if (nextNodeId != null) {
