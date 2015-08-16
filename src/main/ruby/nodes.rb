@@ -40,6 +40,15 @@ Dsl.define_node do |x|
         d.mem "methodName", String
         d.mem "args", "Expr", list: true
       end
+      x.node "New" do |d|
+        d.mem "type", String
+        d.mem "args", "Expr", list: true
+      end
+      x.node "NewArray" do |d|
+        d.mem "type", String
+        d.mem "elementsNum", "Expr", list: true
+        d.mem "value", "Array"
+      end
       x.node "UnaryOp", doc: '単項式' do |d|
         d.mem "operator", String
         d.mem "expr", "Expr"
@@ -98,11 +107,6 @@ Dsl.define_node do |x|
         d.mem "type", String
         d.mem "name", String
         d.mem "value", "Expr"
-      end
-      x.node "NewArray" do |d|
-        d.mem "type", String
-        d.mem "elementsNum", "Expr", list: true
-        d.mem "value", "Array"
       end
     end
 
