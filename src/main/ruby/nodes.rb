@@ -76,6 +76,7 @@ Dsl.define_node do |x|
       #
       x.node "Block", statement: true do |d|
         d.mem "body", "Expr", list: true
+        d.mem "blockLabel", String
       end
       x.node "If", statement: true do |d|
         d.mem "cond", "Expr"
