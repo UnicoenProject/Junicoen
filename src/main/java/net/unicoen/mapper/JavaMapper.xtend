@@ -29,6 +29,7 @@ import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.TerminalNodeImpl
 import org.eclipse.xtext.xbase.lib.Functions.Function1
 import net.unicoen.node.UniIdent
+import net.unicoen.node.UniWhile
 
 class JavaMapper extends Java8BaseVisitor<UniNode> {
 	def parse(String code) {
@@ -309,6 +310,13 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		ctx.children.head.accept(this)
 	}
 
+	override visitWhileStatement(Java8Parser.WhileStatementContext ctx) {
+		// whileStatement
+		// :	'while' '(' expression ')' statement		
+		val nodes = createNodeMap(ctx)
+		new UniWhile(nodes.getOneNode(Java8Parser.RULE_expression), nodes.getOneNode(Java8Parser.RULE_statement))
+	}
+
 	override visitStatementWithoutTrailingSubstatement(Java8Parser.StatementWithoutTrailingSubstatementContext ctx) {
 		// statementWithoutTrailingSubstatement
 		// :	block
@@ -449,7 +457,10 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		// :	'new' typeArguments? annotation* Identifier ('.' annotation* Identifier)* typeArgumentsOrDiamond? '(' argumentList? ')' classBody?
 		// |	expressionName '.' 'new' typeArguments? annotation* Identifier typeArgumentsOrDiamond? '(' argumentList? ')' classBody?
 		// |	primary '.' 'new' typeArguments? annotation* Identifier typeArgumentsOrDiamond? '(' argumentList? ')' classBody?
+		val texts = createTextMap(ctx)
+		val type = texts.get(Java8Parser.Identifier).join(".")
 		if (ctx.children.head.text.equals("new")) {
+			
 		}
 		throw new RuntimeException("Not implemented")
 	}
