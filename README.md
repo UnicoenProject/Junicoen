@@ -20,6 +20,6 @@ Junicoen [![Build Status](https://secure.travis-ci.org/UnicoenProject/Junicoen.p
 	<dependency>
 	    <groupId>com.github.UnicoenProject</groupId>
 	    <artifactId>Junicoen</artifactId>
-	    <version>v0.0.1</version>
+	    <version>v0.0.2</version>
 	</dependency>
 ```
