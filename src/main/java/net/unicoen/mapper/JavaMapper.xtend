@@ -442,6 +442,197 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		ctx.children.head.accept(this)
 	}
 
+	override visitAssignmentExpression(Java8Parser.AssignmentExpressionContext ctx) {
+		// assignmentExpression
+		// :	conditionalExpression
+		// |	assignment
+		ctx.children.head.accept(this)
+	}
+
+	override visitConditionalExpression(Java8Parser.ConditionalExpressionContext ctx) {
+		// conditionalExpression
+		// :	conditionalOrExpression
+		// |	conditionalOrExpression '?' expression ':' conditionalExpression
+		if (ctx.children.size == 1) {
+			ctx.children.head.accept(this)
+		}
+	}
+
+	override visitConditionalOrExpression(Java8Parser.ConditionalOrExpressionContext ctx) {
+		// conditionalOrExpression
+		// :	conditionalAndExpression
+		// |	conditionalOrExpression '||' conditionalAndExpression
+		if (ctx.children.size == 1) {
+			ctx.children.head.accept(this)
+		}
+	}
+
+	override visitConditionalAndExpression(Java8Parser.ConditionalAndExpressionContext ctx) {
+		// conditionalAndExpression
+		// :	inclusiveOrExpression
+		// |	conditionalAndExpression '&&' inclusiveOrExpression
+		if (ctx.children.size == 1) {
+			ctx.children.head.accept(this)
+		}
+	}
+
+	override visitInclusiveOrExpression(Java8Parser.InclusiveOrExpressionContext ctx) {
+		// inclusiveOrExpression
+		// :	exclusiveOrExpression
+		// |	inclusiveOrExpression '|' exclusiveOrExpression
+		if (ctx.children.size == 1) {
+			ctx.children.head.accept(this)
+		}
+	}
+
+	override visitExclusiveOrExpression(Java8Parser.ExclusiveOrExpressionContext ctx) {
+		// exclusiveOrExpression
+		// :	andExpression
+		// |	exclusiveOrExpression '^' andExpression
+		if (ctx.children.size == 1) {
+			ctx.children.head.accept(this)
+		}
+	}
+
+	override visitAndExpression(Java8Parser.AndExpressionContext ctx) {
+		// andExpression
+		// :	equalityExpression
+		// |	andExpression '&' equalityExpression
+		if (ctx.children.size == 1) {
+			ctx.children.head.accept(this)
+		}
+	}
+
+	override visitEqualityExpression(Java8Parser.EqualityExpressionContext ctx) {
+		// equalityExpression
+		// :	relationalExpression
+		// |	equalityExpression '==' relationalExpression
+		// |	equalityExpression '!=' relationalExpression
+		if (ctx.children.size == 1) {
+			ctx.children.head.accept(this)
+		}
+	}
+
+	override visitRelationalExpression(Java8Parser.RelationalExpressionContext ctx) {
+		// relationalExpression
+		// :	shiftExpression
+		// |	relationalExpression '<' shiftExpression
+		// |	relationalExpression '>' shiftExpression
+		// |	relationalExpression '<=' shiftExpression
+		// |	relationalExpression '>=' shiftExpression
+		// |	relationalExpression 'instanceof' referenceType
+		if (ctx.children.size == 1) {
+			ctx.children.head.accept(this)
+		}
+	}
+
+	override visitShiftExpression(Java8Parser.ShiftExpressionContext ctx) {
+		// shiftExpression
+		// :	additiveExpression
+		// |	shiftExpression '<' '<' additiveExpression
+		// |	shiftExpression '>' '>' additiveExpression
+		// |	shiftExpression '>' '>' '>' additiveExpression
+		if (ctx.children.size == 1) {
+			ctx.children.head.accept(this)
+		}
+	}
+
+	override visitAdditiveExpression(Java8Parser.AdditiveExpressionContext ctx) {
+		// additiveExpression
+		// :	multiplicativeExpression
+		// |	additiveExpression '+' multiplicativeExpression
+		// |	additiveExpression '-' multiplicativeExpression
+		if (ctx.children.size == 1) {
+			ctx.children.head.accept(this)
+		}
+	}
+
+	override visitMultiplicativeExpression(Java8Parser.MultiplicativeExpressionContext ctx) {
+		// multiplicativeExpression
+		// :	unaryExpression
+		// |	multiplicativeExpression '*' unaryExpression
+		// |	multiplicativeExpression '/' unaryExpression
+		// |	multiplicativeExpression '%' unaryExpression
+		if (ctx.children.size == 1) {
+			ctx.children.head.accept(this)
+		}
+	}
+
+	override visitUnaryExpression(Java8Parser.UnaryExpressionContext ctx) {
+		// unaryExpression
+		// :	preIncrementExpression
+		// |	preDecrementExpression
+		// |	'+' unaryExpression
+		// |	'-' unaryExpression
+		// |	unaryExpressionNotPlusMinus
+		if (ctx.children.size == 1) {
+			ctx.children.head.accept(this)
+		}
+	}
+
+	override visitUnaryExpressionNotPlusMinus(Java8Parser.UnaryExpressionNotPlusMinusContext ctx) {
+		// unaryExpressionNotPlusMinus
+		// :	postfixExpression
+		// |	'~' unaryExpression
+		// |	'!' unaryExpression
+		// |	castExpression
+		if (ctx.children.size == 1) {
+			ctx.children.head.accept(this)
+		}
+	}
+
+	override visitPostfixExpression(Java8Parser.PostfixExpressionContext ctx) {
+		// postfixExpression
+		// :	(	primary
+		// |	expressionName
+		// )
+		// (	postIncrementExpression_lf_postfixExpression
+		// |	postDecrementExpression_lf_postfixExpression
+		// )*
+		if (ctx.children.size == 1) {
+			ctx.children.head.accept(this)
+		}
+	}
+
+	override visitPrimary(Java8Parser.PrimaryContext ctx) {
+		// primary
+		// :	(	primaryNoNewArray_lfno_primary
+		// |	arrayCreationExpression
+		// )
+		// (	primaryNoNewArray_lf_primary
+		// )*
+		if (ctx.children.size == 1) {
+			ctx.children.head.accept(this)
+		}
+	}
+
+	override visitPrimaryNoNewArray_lfno_primary(Java8Parser.PrimaryNoNewArray_lfno_primaryContext ctx) {
+		// primaryNoNewArray_lfno_primary
+		// :	literal
+		// |	typeName ('[' ']')* '.' 'class'
+		// |	unannPrimitiveType ('[' ']')* '.' 'class'
+		// |	'void' '.' 'class'
+		// |	'this'
+		// |	typeName '.' 'this'
+		// |	'(' expression ')'
+		// |	classInstanceCreationExpression_lfno_primary
+		// |	fieldAccess_lfno_primary
+		// |	arrayAccess_lfno_primary
+		// |	methodInvocation_lfno_primary
+		// |	methodReference_lfno_primary
+		val headText = ctx.children.head.text
+		if (headText.equals("this")) {
+			return new UniIdent("this")
+		}
+		if (headText.equals("(")) {
+			return ctx.children.get(1).accept(this)
+		}
+		if (ctx.children.size == 1) {
+			return ctx.children.head.accept(this)
+		}
+		throw new RuntimeException("Not implemented")
+	}
+
 	override visitExpressionStatement(Java8Parser.ExpressionStatementContext ctx) {
 		// expressionStatement
 		// :	statementExpression ';'
@@ -458,6 +649,43 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		// |	methodInvocation
 		// |	classInstanceCreationExpression
 		ctx.children.head.accept(this)
+	}
+
+	override visitClassInstanceCreationExpression_lf_primary(
+		Java8Parser.ClassInstanceCreationExpression_lf_primaryContext ctx) {
+		// classInstanceCreationExpression_lf_primary
+		// :	'.' 'new' typeArguments? annotation* Identifier typeArgumentsOrDiamond? '(' argumentList? ')' classBody?
+		val nodes = createNodeMap(ctx)
+		val texts = createTextMap(ctx)
+		val type = texts.get(Java8Parser.Identifier).join(".")
+		if (ctx.children.head.text.equals("new")) {
+			val argumentList = if (nodes.containsKey(Java8Parser.RULE_argumentList)) {
+					nodes.getOneNode(Java8Parser.RULE_argumentList).flattenForBuilding
+				} else {
+					Collections.emptyList()
+				}
+			return new UniNew(type, argumentList)
+		}
+		throw new RuntimeException("Not implemented")
+	}
+
+	override visitClassInstanceCreationExpression_lfno_primary(
+		Java8Parser.ClassInstanceCreationExpression_lfno_primaryContext ctx) {
+		// classInstanceCreationExpression_lfno_primary
+		// :	'new' typeArguments? annotation* Identifier ('.' annotation* Identifier)* typeArgumentsOrDiamond? '(' argumentList? ')' classBody?
+		// |	expressionName '.' 'new' typeArguments? annotation* Identifier typeArgumentsOrDiamond? '(' argumentList? ')' classBody?
+		val nodes = createNodeMap(ctx)
+		val texts = createTextMap(ctx)
+		val type = texts.get(-Java8Parser.Identifier).join(".")
+		if (ctx.children.head.text.equals("new")) {
+			val argumentList = if (nodes.containsKey(Java8Parser.RULE_argumentList)) {
+					nodes.getOneNode(Java8Parser.RULE_argumentList).flattenForBuilding
+				} else {
+					Collections.emptyList()
+				}
+			return new UniNew(type, argumentList)
+		}
+		throw new RuntimeException("Not implemented")
 	}
 
 	override visitClassInstanceCreationExpression(Java8Parser.ClassInstanceCreationExpressionContext ctx) {
