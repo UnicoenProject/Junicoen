@@ -12,6 +12,8 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.util.function.IntUnaryOperator;
 
+import org.junit.Test;
+
 import net.unicoen.node.UniArg;
 import net.unicoen.node.UniBinOp;
 import net.unicoen.node.UniBlock;
@@ -24,8 +26,6 @@ import net.unicoen.node.UniMethodDec;
 import net.unicoen.node.UniUnaryOp;
 import net.unicoen.node.UniVariableDec;
 import net.unicoen.node.UniWhile;
-
-import org.junit.Test;
 
 public class EngineTest {
 

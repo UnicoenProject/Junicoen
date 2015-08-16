@@ -9,6 +9,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.regex.Pattern;
 
+import org.junit.Test;
+
 import net.unicoen.node.UniBinOp;
 import net.unicoen.node.UniBoolLiteral;
 import net.unicoen.node.UniBreak;
@@ -30,8 +32,6 @@ import net.unicoen.node.UniTernaryOp;
 import net.unicoen.node.UniUnaryOp;
 import net.unicoen.node.UniVariableDec;
 import net.unicoen.node.UniWhile;
-
-import org.junit.Test;
 
 public class JavaGeneratorTest {
 

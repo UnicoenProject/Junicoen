@@ -13,7 +13,7 @@ import org.antlr.v4.runtime.tree.TerminalNode
 import net.unicoen.parser.ExtendedExpressionLexer
 import net.unicoen.parser.ExtendedExpressionParser
 import net.unicoen.parser.ExtendedExpressionBaseVisitor
-import net.unicoen.node.*
+import net.unicoen.node.UniClassDec
 
 class ExtendedExpressionMapper extends ExtendedExpressionBaseVisitor<Object> {
 	var _isDebugMode = false

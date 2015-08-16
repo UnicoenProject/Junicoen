@@ -3,9 +3,9 @@ package net.unicoen.parser.blockeditor;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.unicoen.parser.blockeditor.blockmodel.BlockExprModel;
-
 import org.w3c.dom.Element;
+
+import net.unicoen.parser.blockeditor.blockmodel.BlockExprModel;
 
 public class BlockBinaryOperatorModel extends BlockExprModel{
 

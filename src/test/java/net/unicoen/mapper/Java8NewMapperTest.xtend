@@ -7,8 +7,8 @@ import org.junit.Test
 import static org.hamcrest.Matchers.*
 import static org.junit.Assert.*
 
-class Java8MapperTest {
-	val mapper = new Java8Mapper(true)
+class Java8NewMapperTest {
+	val mapper = new Java8NewMapper(true)
 
 	@Test @Ignore
 	def void parseMain() {
@@ -19,7 +19,7 @@ class Java8MapperTest {
 
 	@Test
 	def void parseClass() {
-		val mapper = new Java8Mapper(true)
+		val mapper = new Java8NewMapper(true)
 		mapper.parse("public class A {}")
 	}
 }

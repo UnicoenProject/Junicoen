@@ -11,13 +11,16 @@ import net.unicoen.node.UniClassDec
 import net.unicoen.node.UniDoubleLiteral
 import net.unicoen.node.UniExpr
 import net.unicoen.node.UniFieldAccess
+import net.unicoen.node.UniIdent
 import net.unicoen.node.UniIf
 import net.unicoen.node.UniIntLiteral
 import net.unicoen.node.UniMethodCall
 import net.unicoen.node.UniMethodDec
+import net.unicoen.node.UniNew
 import net.unicoen.node.UniNode
 import net.unicoen.node.UniStringLiteral
 import net.unicoen.node.UniVariableDec
+import net.unicoen.node.UniWhile
 import net.unicoen.parser.Java8BaseVisitor
 import net.unicoen.parser.Java8Lexer
 import net.unicoen.parser.Java8Parser
@@ -28,8 +31,6 @@ import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.TerminalNodeImpl
 import org.eclipse.xtext.xbase.lib.Functions.Function1
-import net.unicoen.node.UniIdent
-import net.unicoen.node.UniWhile
 
 class JavaMapper extends Java8BaseVisitor<UniNode> {
 	def parse(String code) {
@@ -349,7 +350,7 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		// :	blockStatement blockStatement*
 		val nodes = createNodeMap(ctx)
 		val list = nodes.getOrEmpty(Java8Parser.RULE_blockStatement)
-		new UniBlock(list.map[it.flattenForBuilding].flatten.toList)
+		new UniBlock(list.map[it.flattenForBuilding].flatten.toList, null)
 	}
 
 	override visitBlockStatement(Java8Parser.BlockStatementContext ctx) {
@@ -434,6 +435,13 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		throw new RuntimeException("not implemented")
 	}
 
+	override visitExpression(Java8Parser.ExpressionContext ctx) {
+		// expression
+		// :	lambdaExpression
+		// |	assignmentExpression
+		ctx.children.head.accept(this)
+	}
+
 	override visitExpressionStatement(Java8Parser.ExpressionStatementContext ctx) {
 		// expressionStatement
 		// :	statementExpression ';'
@@ -457,10 +465,16 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		// :	'new' typeArguments? annotation* Identifier ('.' annotation* Identifier)* typeArgumentsOrDiamond? '(' argumentList? ')' classBody?
 		// |	expressionName '.' 'new' typeArguments? annotation* Identifier typeArgumentsOrDiamond? '(' argumentList? ')' classBody?
 		// |	primary '.' 'new' typeArguments? annotation* Identifier typeArgumentsOrDiamond? '(' argumentList? ')' classBody?
+		val nodes = createNodeMap(ctx)
 		val texts = createTextMap(ctx)
 		val type = texts.get(Java8Parser.Identifier).join(".")
 		if (ctx.children.head.text.equals("new")) {
-			
+			val argumentList = if (nodes.containsKey(Java8Parser.RULE_argumentList)) {
+					nodes.getOneNode(Java8Parser.RULE_argumentList).flattenForBuilding
+				} else {
+					Collections.emptyList()
+				}
+			return new UniNew(type, argumentList)
 		}
 		throw new RuntimeException("Not implemented")
 	}

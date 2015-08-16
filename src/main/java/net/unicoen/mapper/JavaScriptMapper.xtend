@@ -217,7 +217,7 @@ class JavaScriptMapper extends ECMAScriptBaseVisitor<Object> {
 	}
 
 	override public visitBlock(BlockContext ctx) {
-		var block = new UniBlock(Lists.newArrayList)
+		var block = new UniBlock(Lists.newArrayList, null)
 		for (ParseTree node : ctx.children) {
 			if (node instanceof StatementListContext) {
 				block.body = node.visit as ArrayList<UniExpr>

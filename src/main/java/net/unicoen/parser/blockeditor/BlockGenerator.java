@@ -387,7 +387,7 @@ public class BlockGenerator {
 
 	public BlockElementModel parseFor(UniFor forExpr, Document document, Node parent) {
 		// whileをもつ抽象化ブロックを作成して返す
-		UniBlock forBlock = new UniBlock(new ArrayList<>());
+		UniBlock forBlock = new UniBlock(new ArrayList<>(), null);
 		if (forExpr.init != null) {
 			forBlock.body.add(forExpr.init);
 		}

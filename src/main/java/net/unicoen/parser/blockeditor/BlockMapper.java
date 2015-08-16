@@ -61,12 +61,14 @@ public class BlockMapper {
 
 		List<UniMemberDec> ret = new ArrayList<>();
 		for (Node procNode : procs) {
-			UniMethodDec d = new UniMethodDec(getChildText(procNode, "Label"), new ArrayList<>(),
-					methodsReturnTypes.get(getAttribute(procNode, "id")), new ArrayList<>(), null);
+			UniMethodDec d = new UniMethodDec(getChildText(procNode, "Label"),
+					new ArrayList<>(),
+					methodsReturnTypes.get(getAttribute(procNode, "id")),
+					new ArrayList<>(), null);
 			d.modifiers.add("public");
 			d.args = new ArrayList<>();
 
-			UniBlock body = new UniBlock(new ArrayList<>());
+			UniBlock body = new UniBlock(new ArrayList<>(), null);
 
 			String nextNodeId = getChildText(procNode, "AfterBlockId");
 			if (nextNodeId != null) {
@@ -102,7 +104,8 @@ public class BlockMapper {
 		return d;
 	}
 
-	public void putAllBlockNodes(Node pageBlock, ArrayList<Node> procs, Map<String, String> returnTypes) {
+	public void putAllBlockNodes(Node pageBlock, ArrayList<Node> procs,
+			Map<String, String> returnTypes) {
 		// xmlのPageの子ノードから，メソッド定義のBlockノードのみを抽出する
 		for (Node node : eachChild(pageBlock)) {
 			String name = node.getNodeName();
@@ -123,8 +126,10 @@ public class BlockMapper {
 			}
 
 			if ("return".equals(blockType)) {
-				Node socketNode = getChildNode(getChildNode(node, "Sockets"), "BlockConnector");
-				returnTypes.put(getChildText(node, "ParentMethod"), getSocketType(socketNode));
+				Node socketNode = getChildNode(getChildNode(node, "Sockets"),
+						"BlockConnector");
+				returnTypes.put(getChildText(node, "ParentMethod"),
+						getSocketType(socketNode));
 			}
 
 		}
@@ -168,7 +173,7 @@ public class BlockMapper {
 			nextNodeId = getChildText(next, "AfterBlockId");
 		}
 
-		UniBlock block = new UniBlock(body);
+		UniBlock block = new UniBlock(body, null);
 
 		return block;
 	}
@@ -210,13 +215,16 @@ public class BlockMapper {
 		String blockGenusName = getAttribute(node, "genus-name");
 		if ("number".equals(blockGenusName)) {
 			// String num = getChildText(node, "Label");
-			UniIntLiteral num = new UniIntLiteral(Integer.parseInt(getChildText(node, "Label")));
+			UniIntLiteral num = new UniIntLiteral(
+					Integer.parseInt(getChildText(node, "Label")));
 			return num;
 		} else if ("string".equals(blockGenusName)) {
-			UniStringLiteral lit = new UniStringLiteral(getChildText(node, "Label"));
+			UniStringLiteral lit = new UniStringLiteral(
+					getChildText(node, "Label"));
 			return lit;
 		} else if ("double-number".equals(blockGenusName)) {
-			UniDoubleLiteral value = new UniDoubleLiteral(Double.parseDouble(getChildText(node, "Label")));
+			UniDoubleLiteral value = new UniDoubleLiteral(
+					Double.parseDouble(getChildText(node, "Label")));
 			return value;
 		} else if ("true".endsWith(blockGenusName)) {
 			UniBoolLiteral trueValue = new UniBoolLiteral();
@@ -230,19 +238,24 @@ public class BlockMapper {
 			UniIdent ident = new UniIdent(getChildText(node, "Label"));
 			return ident;
 		} else if (blockGenusName.startsWith("preinc")) {
-			UniUnaryOp op = new UniUnaryOp("++_", new UniIdent(getChildText(node, "Label")));
+			UniUnaryOp op = new UniUnaryOp("++_",
+					new UniIdent(getChildText(node, "Label")));
 			return op;
 		} else if (blockGenusName.startsWith("predec")) {
-			UniUnaryOp op = new UniUnaryOp("--_", new UniIdent(getChildText(node, "Label")));
+			UniUnaryOp op = new UniUnaryOp("--_",
+					new UniIdent(getChildText(node, "Label")));
 			return op;
 		} else if (blockGenusName.startsWith("postinc")) {
-			UniUnaryOp op = new UniUnaryOp("_++", new UniIdent(getChildText(node, "Label")));
+			UniUnaryOp op = new UniUnaryOp("_++",
+					new UniIdent(getChildText(node, "Label")));
 			return op;
 		} else if (blockGenusName.startsWith("postdec")) {
-			UniUnaryOp op = new UniUnaryOp("_--", new UniIdent(getChildText(node, "Label")));
+			UniUnaryOp op = new UniUnaryOp("_--",
+					new UniIdent(getChildText(node, "Label")));
 			return op;
 		} else {
-			throw new RuntimeException("not supported data type:" + blockGenusName);
+			throw new RuntimeException(
+					"not supported data type:" + blockGenusName);
 		}
 	}
 
@@ -251,7 +264,8 @@ public class BlockMapper {
 		List<UniExpr> initValues = parseSocket(initValueNode, map);
 		String blockGenusName = getAttribute(node, "genus-name");
 
-		String type = getChildText(resolver.getBlockNode(blockGenusName), "Type");
+		String type = getChildText(resolver.getBlockNode(blockGenusName),
+				"Type");
 		String name = getChildText(node, "Label");// TODO should fix later
 
 		variableResolver.addLocalVariable(getChildText(node, "Label"), node);
@@ -307,7 +321,8 @@ public class BlockMapper {
 			} else if (isRemOperator(blockGenusName)) {
 				binOp.operator = "%";
 			} else {
-				throw new RuntimeException("Unknown operator type: " + blockGenusName);
+				throw new RuntimeException(
+						"Unknown operator type: " + blockGenusName);
 			}
 			return binOp;
 		} else if (isNewInstanceCreation(blockGenusName)) {
@@ -315,7 +330,8 @@ public class BlockMapper {
 		} else {
 			// MethodCallとする
 			// TODO should fix
-			UniMethodCall call = new UniMethodCall(null, getChildText(resolver.getBlockNode(blockGenusName), "Name"),
+			UniMethodCall call = new UniMethodCall(null,
+					getChildText(resolver.getBlockNode(blockGenusName), "Name"),
 					functionArgs);
 			return call;
 		}
@@ -330,49 +346,62 @@ public class BlockMapper {
 	// }
 
 	private boolean isLessThanOperator(String blockType) {
-		return "lessthan".equals(blockType) || "lessthan-double".equals(blockType);
+		return "lessthan".equals(blockType)
+				|| "lessthan-double".equals(blockType);
 	}
 
 	private boolean isLessThanOrEqualOperator(String blockType) {
-		return "lessthanorequalto".equals(blockType) || "lessthanorequalto-double".equals(blockType);
+		return "lessthanorequalto".equals(blockType)
+				|| "lessthanorequalto-double".equals(blockType);
 	}
 
 	private boolean isGreaterThanOperator(String blockType) {
-		return "greaterthan".equals(blockType) || "greaterthan-double".equals(blockType);
+		return "greaterthan".equals(blockType)
+				|| "greaterthan-double".equals(blockType);
 	}
 
 	private boolean isGreaterThanOrEqualOperator(String blockType) {
-		return "greaterthanorequalto".equals(blockType) || "greaterthanorequalto-double".equals(blockType);
+		return "greaterthanorequalto".equals(blockType)
+				|| "greaterthanorequalto-double".equals(blockType);
 	}
 
 	private boolean isEqualsOperator(String blockType) {
-		return "equals-number".equals(blockType) || "equals-string".equals(blockType)
-				|| "equals-number-double".equals(blockType) || "equals-boolean".equals(blockType);
+		return "equals-number".equals(blockType)
+				|| "equals-string".equals(blockType)
+				|| "equals-number-double".equals(blockType)
+				|| "equals-boolean".equals(blockType);
 	}
 
 	private boolean isNotEqualsOperator(String blockType) {
-		return "not-equals-number".equals(blockType) || "not-equals-string".equals(blockType)
-				|| "not-equals-number-double".equals(blockType) || "not-equals-boolean".equals(blockType);
+		return "not-equals-number".equals(blockType)
+				|| "not-equals-string".equals(blockType)
+				|| "not-equals-number-double".equals(blockType)
+				|| "not-equals-boolean".equals(blockType);
 	}
 
 	private boolean isAddOperator(String blockType) {
-		return "sum".equals(blockType) || "sum-double".equals(blockType) || "string-append".equals(blockType);
+		return "sum".equals(blockType) || "sum-double".equals(blockType)
+				|| "string-append".equals(blockType);
 	}
 
 	private boolean isDifferenceOperator(String blockType) {
-		return "difference".equals(blockType) || "difference-double".endsWith(blockType);
+		return "difference".equals(blockType)
+				|| "difference-double".endsWith(blockType);
 	}
 
 	private boolean isMulOperator(String blockType) {
-		return "product".equals(blockType) || "product-double".endsWith(blockType);
+		return "product".equals(blockType)
+				|| "product-double".endsWith(blockType);
 	}
 
 	private boolean isDivOperator(String blockType) {
-		return "quotient".equals(blockType) || "quotient-double".endsWith(blockType);
+		return "quotient".equals(blockType)
+				|| "quotient-double".endsWith(blockType);
 	}
 
 	private boolean isRemOperator(String blockType) {
-		return "remainder".equals(blockType) || "remainder-double".endsWith(blockType);
+		return "remainder".equals(blockType)
+				|| "remainder-double".endsWith(blockType);
 	}
 
 	private boolean isUnaryOp(String blockType) {
@@ -384,11 +413,15 @@ public class BlockMapper {
 	}
 
 	private boolean isBinOp(String blockType) {
-		if (isEqualsOperator(blockType) || isNotEqualsOperator(blockType) || isLessThanOperator(blockType)
-				|| isLessThanOrEqualOperator(blockType) || isGreaterThanOperator(blockType)
-				|| isGreaterThanOrEqualOperator(blockType) || "and".equals(blockType) || "or".equals(blockType)
-				|| isAddOperator(blockType) || isDifferenceOperator(blockType) || isMulOperator(blockType)
-				|| isDivOperator(blockType) || isRemOperator(blockType)) {
+		if (isEqualsOperator(blockType) || isNotEqualsOperator(blockType)
+				|| isLessThanOperator(blockType)
+				|| isLessThanOrEqualOperator(blockType)
+				|| isGreaterThanOperator(blockType)
+				|| isGreaterThanOrEqualOperator(blockType)
+				|| "and".equals(blockType) || "or".equals(blockType)
+				|| isAddOperator(blockType) || isDifferenceOperator(blockType)
+				|| isMulOperator(blockType) || isDivOperator(blockType)
+				|| isRemOperator(blockType)) {
 			return true;
 		} else {
 			return false;
@@ -396,7 +429,8 @@ public class BlockMapper {
 
 	}
 
-	private List<UniExpr> parseSocket(Node argsNode, HashMap<String, Node> map) {
+	private List<UniExpr> parseSocket(Node argsNode,
+			HashMap<String, Node> map) {
 		List<UniExpr> args = new ArrayList<>();
 		if (argsNode != null) {
 			for (Node argNode : eachChild(argsNode)) {
@@ -469,18 +503,22 @@ public class BlockMapper {
 		} else if (blockGenusName.startsWith("setter")) {
 			// BlockModelを解析して，UniversalModelを生成する
 			String variableName = getChildText(node, "Label");
-			if (variableResolver.getVariableNode(variableName) != null || args.size() == 1) {
+			if (variableResolver.getVariableNode(variableName) != null
+					|| args.size() == 1) {
 				// 代入式
-				UniBinOp op = new UniBinOp("=", new UniIdent(variableName), args.get(0));
+				UniBinOp op = new UniBinOp("=", new UniIdent(variableName),
+						args.get(0));
 				return op;
 			} else {
 				throw new RuntimeException("illegal setter");
 			}
 		} else if (blockGenusName.startsWith("inc")) {// increment
 			String variableName = getChildText(node, "Label");
-			if (variableResolver.getVariableNode(variableName) != null || args.size() == 1) {
+			if (variableResolver.getVariableNode(variableName) != null
+					|| args.size() == 1) {
 				// 代入式
-				UniUnaryOp op = new UniUnaryOp("_++", new UniIdent(variableName));
+				UniUnaryOp op = new UniUnaryOp("_++",
+						new UniIdent(variableName));
 				return op;
 			} else {
 				throw new RuntimeException("illegal setter");
@@ -494,13 +532,15 @@ public class BlockMapper {
 
 			return caller;
 		} else {
-			String methodName = getChildText(resolver.getBlockNode(blockGenusName), "Name");
+			String methodName = getChildText(
+					resolver.getBlockNode(blockGenusName), "Name");
 			UniMethodCall mcall = getProtoType(methodName);
 			if (mcall != null) {
 				mcall.args = args;
 				return mcall;
 			} else {
-				throw new RuntimeException("Unknown method type: " + blockGenusName);
+				throw new RuntimeException(
+						"Unknown method type: " + blockGenusName);
 			}
 		}
 	}

@@ -1,8 +1,8 @@
 package net.unicoen.node_helper;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import net.unicoen.node.UniArg;
 import net.unicoen.node.UniBinOp;
@@ -16,14 +16,9 @@ import net.unicoen.node.UniIntLiteral;
 import net.unicoen.node.UniStringLiteral;
 
 public class Builder {
-
 	@SafeVarargs
 	public static <T> List<T> list(T... args) {
-		ArrayList<T> list = new ArrayList<>(args.length);
-		for (T item : args) {
-			list.add(item);
-		}
-		return list;
+		return Lists.newArrayList(args);
 	}
 
 	public static UniArg arg(String type, String name) {
@@ -31,7 +26,7 @@ public class Builder {
 	}
 
 	public static UniBlock block(UniExpr... exprs) {
-		return new UniBlock(new ArrayList<>(Arrays.asList(exprs)));
+		return new UniBlock(Lists.newArrayList(exprs), null);
 	}
 
 	public static UniIntLiteral lit(int value) {
