@@ -11,8 +11,7 @@ public class UniFieldDec extends UniMemberDec {
 	public UniFieldDec() {
 	}
 
-	public UniFieldDec(List<String> modifiers, String type, String name,
-			UniExpr value) {
+	public UniFieldDec(List<String> modifiers, String type, String name, UniExpr value) {
 		this.modifiers = modifiers;
 		this.type = type;
 		this.name = name;
@@ -36,17 +35,12 @@ public class UniFieldDec extends UniMemberDec {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null || !(obj instanceof UniFieldDec))
-			return false;
-		UniFieldDec that = (UniFieldDec) obj;
-		return (this.modifiers == null ? that.modifiers == null
-				: this.modifiers.equals(that.modifiers))
-				&& (this.type == null ? that.type == null : this.type
-						.equals(that.type))
-				&& (this.name == null ? that.name == null : this.name
-						.equals(that.name))
-				&& (this.value == null ? that.value == null : this.value
-						.equals(that.value));
+		if (obj == null || !(obj instanceof UniFieldDec)) return false;
+		UniFieldDec that = (UniFieldDec)obj;
+		return (this.modifiers == null ? that.modifiers == null : this.modifiers.equals(that.modifiers))
+			&& (this.type == null ? that.type == null : this.type.equals(that.type))
+			&& (this.name == null ? that.name == null : this.name.equals(that.name))
+			&& (this.value == null ? that.value == null : this.value.equals(that.value));
 	}
 
 	public void merge(UniFieldDec that) {

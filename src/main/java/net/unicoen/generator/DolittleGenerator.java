@@ -28,6 +28,7 @@ import net.unicoen.node.UniLongLiteral;
 import net.unicoen.node.UniMemberDec;
 import net.unicoen.node.UniMethodCall;
 import net.unicoen.node.UniMethodDec;
+import net.unicoen.node.UniNew;
 import net.unicoen.node.UniNewArray;
 import net.unicoen.node.UniReturn;
 import net.unicoen.node.UniStringLiteral;
@@ -291,5 +292,11 @@ public class DolittleGenerator extends Traverser {
 
 	public void print(String str) {
 		out.print(str);
+	}
+
+	@Override
+	public void traverseNew(UniNew node) {
+		// TODO Auto-generated method stub
+		
 	}
 }

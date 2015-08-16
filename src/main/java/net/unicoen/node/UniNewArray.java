@@ -25,23 +25,18 @@ public class UniNewArray extends UniExpr {
 	public int hashCode() {
 		int result = 17;
 		result = result * 31 + (type == null ? 0 : type.hashCode());
-		result = result * 31
-				+ (elementsNum == null ? 0 : elementsNum.hashCode());
+		result = result * 31 + (elementsNum == null ? 0 : elementsNum.hashCode());
 		result = result * 31 + (value == null ? 0 : value.hashCode());
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null || !(obj instanceof UniNewArray))
-			return false;
-		UniNewArray that = (UniNewArray) obj;
-		return (this.type == null ? that.type == null : this.type
-				.equals(that.type))
-				&& (this.elementsNum == null ? that.elementsNum == null
-						: this.elementsNum.equals(that.elementsNum))
-				&& (this.value == null ? that.value == null : this.value
-						.equals(that.value));
+		if (obj == null || !(obj instanceof UniNewArray)) return false;
+		UniNewArray that = (UniNewArray)obj;
+		return (this.type == null ? that.type == null : this.type.equals(that.type))
+			&& (this.elementsNum == null ? that.elementsNum == null : this.elementsNum.equals(that.elementsNum))
+			&& (this.value == null ? that.value == null : this.value.equals(that.value));
 	}
 
 	@Override
