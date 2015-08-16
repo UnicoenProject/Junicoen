@@ -5,7 +5,7 @@ Dsl.define_node do |x|
   x.package = "net.unicoen.node"
   x.prefix = "Uni"
 
-  x.node "Node", interface: true do
+  x.node "Node", abstract: true do
 
     x.node "Expr", abstract: true, member: { statement: :boolean } do
       #

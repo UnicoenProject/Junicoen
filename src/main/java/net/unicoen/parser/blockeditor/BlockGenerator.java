@@ -343,8 +343,6 @@ public class BlockGenerator {
 			model = parseUnaryOperator((UniUnaryOp) expr, document, parent);
 		} else if (expr instanceof UniVariableDec) {
 			model = parseVarDec((UniVariableDec) expr, document, parent);
-		} else if (expr instanceof UniIdent) {
-			model = parseIdent((UniIdent) expr, document, parent);
 		} else if (expr instanceof UniLongLiteral) {
 			throw new RuntimeException("The expr has not been supported yet");
 		} else if (expr instanceof UniReturn) {

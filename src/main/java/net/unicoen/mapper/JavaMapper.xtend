@@ -11,14 +11,13 @@ import net.unicoen.node.UniClassDec
 import net.unicoen.node.UniDoubleLiteral
 import net.unicoen.node.UniExpr
 import net.unicoen.node.UniFieldAccess
-import net.unicoen.node.UniIdent
 import net.unicoen.node.UniIf
 import net.unicoen.node.UniIntLiteral
-import net.unicoen.node.UniMemberDec
 import net.unicoen.node.UniMethodCall
 import net.unicoen.node.UniMethodDec
 import net.unicoen.node.UniNode
 import net.unicoen.node.UniStringLiteral
+import net.unicoen.node.UniVariableDec
 import net.unicoen.parser.Java8BaseVisitor
 import net.unicoen.parser.Java8Lexer
 import net.unicoen.parser.Java8Parser
@@ -29,6 +28,7 @@ import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.TerminalNodeImpl
 import org.eclipse.xtext.xbase.lib.Functions.Function1
+import net.unicoen.node.UniIdent
 
 class JavaMapper extends Java8BaseVisitor<UniNode> {
 	def parse(String code) {
@@ -80,11 +80,11 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 	override visitNormalClassDeclaration(Java8Parser.NormalClassDeclarationContext ctx) {
 		// normalClassDeclaration
 		// :	classModifier* 'class' className typeParameters? superclass? superinterfaces? classBody		
-		val map = createMap(ctx)
+		val nodes = createNodeMap(ctx)
 		val ret = new UniClassDec()
-		ret.modifiers = map.getOrEmpty(Java8Parser.RULE_classModifier).map[(it as DummyNode<String>).item].toList
-		ret.className = (map.get(Java8Parser.RULE_className).head as DummyNode<String>).item
-		ret.members = (map.get(Java8Parser.RULE_classBody).head as AggregatedNode).flatten.map[it as UniMemberDec]
+		ret.modifiers = nodes.getOrEmpty(Java8Parser.RULE_classModifier).map[it.toString].toList
+		ret.className = nodes.getOneNode(Java8Parser.RULE_className).toString
+		ret.members = nodes.getOneNode(Java8Parser.RULE_classBody).flattenForBuilding
 		ret
 	}
 
@@ -98,45 +98,47 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		// |	'static'
 		// |	'final'
 		// |	'strictfp'
-		val node = ctx.children.get(0)
-		if (node.ruleName == "annotation") {
-			throw new UnsupportedOperationException("Not yet implemented: annotation")
-		}
-		new DummyNode(node.text)
+		new StringNode(ctx.children.head.text) // TODO: this code treat annotation as a string
 	}
 
 	override visitClassName(Java8Parser.ClassNameContext ctx) {
 		// className
 		// :	Identifier
-		val map = createMap(ctx)
-		new DummyNode(map.identifierStr)
+		new StringNode(ctx.children.head.text)
 	}
 
 	override visitClassBody(Java8Parser.ClassBodyContext ctx) {
 		// classBody
 		// :	'{' classBodyDeclaration* '}' ;
-		val map = createMap(ctx)
-		var ret = new AggregatedNode()
-		ret.list = map.getOrEmpty(Java8Parser.RULE_classBodyDeclaration).map[it as UniMemberDec]
-		ret
+		val nodes = createNodeMap(ctx)
+		new ListNode(nodes.getOrEmpty(Java8Parser.RULE_classBodyDeclaration))
 	}
 
 	override visitClassBodyDeclaration(Java8Parser.ClassBodyDeclarationContext ctx) {
-		val map = createMap(ctx)
-		val mems = map.get(Java8Parser.RULE_classMemberDeclaration)
+		// classBodyDeclaration
+		// :	classMemberDeclaration
+		// |	instanceInitializer
+		// |	staticInitializer
+		// |	constructorDeclaration		
+		val nodes = createNodeMap(ctx)
+		val mems = nodes.get(Java8Parser.RULE_classMemberDeclaration)
 		if (mems.size() > 0) {
-			return mems.get(0) as UniNode
+			mems.get(0)
 		}
-		null
 	}
 
 	override visitClassMemberDeclaration(Java8Parser.ClassMemberDeclarationContext ctx) {
-		val map = createMap(ctx)
-		val mems = map.get(Java8Parser.RULE_methodDeclaration)
+		// classMemberDeclaration
+		// :	fieldDeclaration
+		// |	methodDeclaration
+		// |	classDeclaration
+		// |	interfaceDeclaration
+		// |	';'
+		val nodes = createNodeMap(ctx)
+		val mems = nodes.get(Java8Parser.RULE_methodDeclaration)
 		if (mems.size() > 0) {
-			return mems.get(0) as UniNode
+			mems.get(0)
 		}
-		null
 	}
 
 	override visitMethodModifier(Java8Parser.MethodModifierContext ctx) {
@@ -151,24 +153,20 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		// |	'synchronized'
 		// |	'native'
 		// |	'strictfp' ;
-		val node = ctx.children.get(0)
-		if (node.ruleName == "annotation") {
-			throw new UnsupportedOperationException("Not yet implemented: annotation")
-		}
-		new DummyNode(node.text)
+		new StringNode(ctx.children.head.text) // TODO: this code treat annotation as a string
 	}
 
 	override visitMethodDeclaration(Java8Parser.MethodDeclarationContext ctx) {
 		// methodDeclaration
 		// :	methodModifier* methodHeader methodBody ;
-		val map = createMap(ctx)
+		val nodes = createNodeMap(ctx)
 		val methodDec = new UniMethodDec()
-		methodDec.modifiers = map.getOrEmpty(Java8Parser.RULE_methodModifier).map[(it as DummyNode<String>).item]
-		val methodHeaderMaps = map.get(Java8Parser.RULE_methodHeader).head as MapNode
-		methodDec.returnType = (methodHeaderMaps.item.get(Java8Parser.RULE_result).head as DummyNode<String>).item
-		val methodDeclaratorMaps = methodHeaderMaps.item.get(Java8Parser.RULE_methodDeclarator).head as MapNode
+		methodDec.modifiers = nodes.getOrEmpty(Java8Parser.RULE_methodModifier).map[it.toString]
+		val methodHeaderMaps = nodes.getOneNode(Java8Parser.RULE_methodHeader) as MapNode
+		methodDec.returnType = methodHeaderMaps.item.getOne(Java8Parser.RULE_result).toString
+		val methodDeclaratorMaps = methodHeaderMaps.item.getOne(Java8Parser.RULE_methodDeclarator) as MapNode
 		methodDec.methodName = methodDeclaratorMaps.item.identifierStr
-		methodDec.block = map.get(Java8Parser.RULE_methodBody).head as UniBlock
+		methodDec.block = nodes.getOneNode(Java8Parser.RULE_methodBody)
 		methodDec
 	}
 
@@ -183,7 +181,7 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		// result
 		// :	unannType
 		// |	'void' ;
-		new DummyNode(ctx.children.head.text)
+		new StringNode(ctx.children.head.text)
 	}
 
 	override visitMethodDeclarator(Java8Parser.MethodDeclaratorContext ctx) {
@@ -196,11 +194,9 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		// methodBody
 		// :	block
 		// |	';'
-		val map = createMap(ctx)
-		if (map.containsKey(Java8Parser.RULE_block)) {
-			map.getOne(Java8Parser.RULE_block) as UniBlock
-		} else {
-			null
+		val nodes = createNodeMap(ctx)
+		if (nodes.containsKey(Java8Parser.RULE_block)) {
+			nodes.getOneNode(Java8Parser.RULE_block)
 		}
 	}
 
@@ -212,22 +208,23 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		// |	primary '.' typeArguments? Identifier '(' argumentList? ')'
 		// |	'super' '.' typeArguments? Identifier '(' argumentList? ')'
 		// |	typeName '.' 'super' '.' typeArguments? Identifier '(' argumentList? ')'		
-		val map = createMap(ctx)
-		val argumentList = if (map.containsKey(Java8Parser.RULE_argumentList)) {
-				(map.getOne(Java8Parser.RULE_argumentList) as DummyNode<List<UniExpr>>).item
+		val nodes = createNodeMap(ctx)
+		val texts = createTextMap(ctx)
+		val argumentList = if (nodes.containsKey(Java8Parser.RULE_argumentList)) {
+				nodes.getOneNode(Java8Parser.RULE_argumentList).flattenForBuilding
 			} else {
 				Collections.emptyList()
 			}
-		if (map.containsKey(Java8Parser.RULE_methodName)) {
-			val methodName = map.getOne(Java8Parser.RULE_methodName) as UniIdent
+		if (nodes.containsKey(Java8Parser.RULE_methodName)) {
+			val methodName = nodes.getOneNode(Java8Parser.RULE_methodName)
 			// TODO parse "argumentList"
-			return new UniMethodCall(null, methodName.name, argumentList)
+			return new UniMethodCall(null, methodName.toString, argumentList)
 		}
-		if (map.containsKey(Java8Parser.RULE_typeName)) {
-			val typeName = map.getOne(Java8Parser.RULE_typeName) as UniExpr
-			if (!map.containsKey(-Java8Parser.SUPER)) {
+		if (nodes.containsKey(Java8Parser.RULE_typeName)) {
+			val typeName = nodes.getOneNode(Java8Parser.RULE_typeName)
+			if (!texts.containsKey(-Java8Parser.SUPER)) {
 				// TODO parse "argumentList"
-				return new UniMethodCall(typeName, map.identifierStr, argumentList)
+				return new UniMethodCall(typeName, texts.identifierStr, argumentList)
 			} else {
 			}
 		}
@@ -238,10 +235,10 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		// typeName
 		// :	Identifier
 		// |	packageOrTypeName '.' Identifier		
-		val map = createMap(ctx)
-		val identifier = map.identifierStr
-		if (map.containsKey(Java8Parser.RULE_packageOrTypeName)) {
-			new UniFieldAccess(map.get(Java8Parser.RULE_packageOrTypeName).head as UniExpr, identifier)
+		val nodes = createNodeMap(ctx)
+		val identifier = ctx.identifierStr
+		if (nodes.containsKey(Java8Parser.RULE_packageOrTypeName)) {
+			new UniFieldAccess(nodes.getOneNode(Java8Parser.RULE_packageOrTypeName), identifier)
 		} else {
 			new UniIdent(identifier)
 		}
@@ -250,11 +247,11 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 	override visitPackageOrTypeName(Java8Parser.PackageOrTypeNameContext ctx) {
 		// packageOrTypeName
 		// :	Identifier
-		// |	packageOrTypeName '.' Identifier		
-		val map = createMap(ctx)
-		val identifier = map.identifierStr
-		if (map.containsKey(Java8Parser.RULE_packageOrTypeName)) {
-			new UniFieldAccess(map.get(Java8Parser.RULE_packageOrTypeName).head as UniExpr, identifier)
+		// |	packageOrTypeName '.' Identifier
+		val nodes = createNodeMap(ctx)
+		val identifier = ctx.identifierStr
+		if (nodes.containsKey(Java8Parser.RULE_packageOrTypeName)) {
+			new UniFieldAccess(nodes.getOneNode(Java8Parser.RULE_packageOrTypeName), identifier)
 		} else {
 			new UniIdent(identifier)
 		}
@@ -263,35 +260,41 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 	override visitArgumentList(Java8Parser.ArgumentListContext ctx) {
 		// argumentList
 		// :	expression (',' expression)*		
-		val map = createMap(ctx)
-		new DummyNode(map.get(Java8Parser.RULE_expression))
+		val nodes = createNodeMap(ctx)
+		new ListNode(nodes.get(Java8Parser.RULE_expression))
 	}
 
 	override visitMethodName(Java8Parser.MethodNameContext ctx) {
-		val map = createMap(ctx)
-		val str = map.get(-Java8Parser.Identifier).get(0) as String
-		return new UniIdent(str)
+		// methodName
+		// :	Identifier
+		new StringNode(ctx.children.head.text)
 	}
 
 	override visitIfThenStatement(Java8Parser.IfThenStatementContext ctx) {
-		val map = createMap(ctx)
-		val cond = map.getOne(Java8Parser.RULE_expression) as UniExpr
-		val trueBlcok = map.getOne(Java8Parser.RULE_statement) as UniBlock
+		// ifThenStatement
+		// :	'if' '(' expression ')' statement		
+		val nodes = createNodeMap(ctx)
+		val cond = nodes.getOneNode(Java8Parser.RULE_expression)
+		val trueBlcok = nodes.getOneNode(Java8Parser.RULE_statement)
 		return new UniIf(cond, trueBlcok, null)
 	}
 
 	override visitIfThenElseStatement(Java8Parser.IfThenElseStatementContext ctx) {
-		val map = createMap(ctx)
-		val cond = map.getOne(Java8Parser.RULE_expression) as UniExpr
-		val trueBlcok = map.getOne(Java8Parser.RULE_statementNoShortIf) as UniBlock
-		val falseBlcok = map.getOne(Java8Parser.RULE_statement) as UniBlock
+		// ifThenElseStatement
+		// :	'if' '(' expression ')' statementNoShortIf 'else' statement		
+		val nodes = createNodeMap(ctx)
+		val cond = nodes.getOneNode(Java8Parser.RULE_expression)
+		val trueBlcok = nodes.getOneNode(Java8Parser.RULE_statementNoShortIf)
+		val falseBlcok = nodes.getOneNode(Java8Parser.RULE_statement)
 		return new UniIf(cond, trueBlcok, falseBlcok)
 	}
 
 	override visitIfThenElseStatementNoShortIf(Java8Parser.IfThenElseStatementNoShortIfContext ctx) {
-		val map = createMap(ctx)
-		val cond = map.getOne(Java8Parser.RULE_expression) as UniExpr
-		val trueBlcok = map.getOne(Java8Parser.RULE_statement) as UniBlock
+		// ifThenElseStatementNoShortIf
+		// :	'if' '(' expression ')' statementNoShortIf 'else' statementNoShortIf
+		val nodes = createNodeMap(ctx)
+		val cond = nodes.getOneNode(Java8Parser.RULE_expression)
+		val trueBlcok = nodes.getOneNode(Java8Parser.RULE_statement)
 		return new UniIf(cond, trueBlcok, null)
 	}
 
@@ -303,27 +306,32 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		// |	ifThenElseStatement
 		// |	whileStatement
 		// |	forStatement		
-		val map = createMap(ctx)
-		map.values.head.head as UniExpr
+		ctx.children.head.accept(this)
 	}
 
 	override visitStatementWithoutTrailingSubstatement(Java8Parser.StatementWithoutTrailingSubstatementContext ctx) {
-		val map = createMap(ctx)
-		if (map.containsKey(Java8Parser.RULE_expressionStatement)) {
-			return getOne(map, Java8Parser.RULE_expressionStatement) as UniNode
-		}
-		if (map.containsKey(Java8Parser.RULE_block)) {
-			return getOne(map, Java8Parser.RULE_block) as UniNode
-		}
-		throw new RuntimeException("not implemented")
+		// statementWithoutTrailingSubstatement
+		// :	block
+		// |	emptyStatement
+		// |	expressionStatement
+		// |	assertStatement
+		// |	switchStatement
+		// |	doStatement
+		// |	breakStatement
+		// |	continueStatement
+		// |	returnStatement
+		// |	synchronizedStatement
+		// |	throwStatement
+		// |	tryStatement
+		ctx.children.head.accept(this)
 	}
 
 	override visitBlock(Java8Parser.BlockContext ctx) {
 		// block
 		// :	'{' blockStatements? '}'		
-		val map = createMap(ctx)
-		if (map.containsKey(Java8Parser.RULE_blockStatements)) {
-			return getOne(map, Java8Parser.RULE_blockStatements) as UniNode
+		val nodes = createNodeMap(ctx)
+		if (nodes.containsKey(Java8Parser.RULE_blockStatements)) {
+			return nodes.getOneNode(Java8Parser.RULE_blockStatements)
 		}
 		new UniBlock()
 	}
@@ -331,51 +339,140 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 	override visitBlockStatements(Java8Parser.BlockStatementsContext ctx) {
 		// blockStatements
 		// :	blockStatement blockStatement*
-		val map = createMap(ctx)
-		val list = JavaMapper.getOrEmpty(map, Java8Parser.RULE_blockStatement)
-		new UniBlock(list.map[x|x as UniExpr])
+		val nodes = createNodeMap(ctx)
+		val list = nodes.getOrEmpty(Java8Parser.RULE_blockStatement)
+		new UniBlock(list.map[it.flattenForBuilding].flatten.toList)
 	}
 
 	override visitBlockStatement(Java8Parser.BlockStatementContext ctx) {
 		// blockStatement
 		// :	localVariableDeclarationStatement
 		// |	classDeclaration
-		// |	statement		
+		// |	statement
+		ctx.children.head.accept(this)
+	}
+
+	override visitLocalVariableDeclarationStatement(Java8Parser.LocalVariableDeclarationStatementContext ctx) {
+		// localVariableDeclarationStatement
+		// :	localVariableDeclaration ';'
+		ctx.children.head.accept(this)
+	}
+
+	override visitLocalVariableDeclaration(Java8Parser.LocalVariableDeclarationContext ctx) {
+		// localVariableDeclaration
+		// :	variableModifier* unannType variableDeclaratorList
+		val nodes = createNodeMap(ctx)
+		val modifiers = nodes.getOrEmpty(Java8Parser.RULE_variableModifier).map[it.toString]
+		val type = nodes.getOneNode(Java8Parser.RULE_unannType).toString
+		val varDecList = (nodes.getOneNode(Java8Parser.
+			RULE_variableDeclaratorList) as DummyNode<List<DummyNode<Pair<DummyNode<Pair<String, String>>, UniExpr>>>>).
+			item.map [
+				val nameAndTypeSuffix = it.item.key.item
+				new UniVariableDec(modifiers, type + nameAndTypeSuffix.value, nameAndTypeSuffix.key, it.item.value)
+			]
+		new ListNode(varDecList)
+	}
+
+	override visitVariableModifier(Java8Parser.VariableModifierContext ctx) {
+		// variableModifier
+		// :	annotation
+		// |	'final'
+		return new StringNode(ctx.children.head.text) // TODO: this code treat annotation as a string
+	}
+
+	override visitUnannType(Java8Parser.UnannTypeContext ctx) {
+		// unannType
+		// :	unannPrimitiveType
+		// |	unannReferenceType
+		return new StringNode(ctx.children.head.text)
+	}
+
+	override visitVariableDeclaratorList(Java8Parser.VariableDeclaratorListContext ctx) {
+		// variableDeclaratorList
+		// :	variableDeclarator (',' variableDeclarator)*
+		val nodes = createNodeMap(ctx)
+		new DummyNode(nodes.get(Java8Parser.RULE_variableDeclarator))
+	}
+
+	override visitVariableDeclarator(Java8Parser.VariableDeclaratorContext ctx) {
+		// variableDeclarator
+		// :	variableDeclaratorId ('=' variableInitializer)?
+		val nodes = createNodeMap(ctx)
+		val id = nodes.getOneNode(Java8Parser.RULE_variableDeclaratorId)
+		if (nodes.containsKey(Java8Parser.RULE_variableInitializer)) {
+			return new DummyNode(id -> nodes.getOneNode(Java8Parser.RULE_variableInitializer))
+		}
+		return new DummyNode(id -> null)
+	}
+
+	override visitVariableDeclaratorId(Java8Parser.VariableDeclaratorIdContext ctx) {
+		// variableDeclaratorId
+		// :	Identifier dims?
+		if (ctx.children.size == 1) {
+			return new DummyNode(ctx.children.head.text -> "")
+		} else {
+			return new DummyNode(ctx.children.head.text -> ctx.children.last.text)
+		}
+	}
+
+	override visitVariableInitializer(Java8Parser.VariableInitializerContext ctx) {
+		// variableInitializer
+		// :	expression
+		// |	arrayInitializer
 		val map = createMap(ctx)
-		if (map.containsKey(Java8Parser.RULE_statement)) {
-			return getOne(map, Java8Parser.RULE_statement) as UniNode
+		if (map.containsKey(Java8Parser.RULE_expression)) {
+			return getOne(map, Java8Parser.RULE_expression) as UniExpr
 		}
 		throw new RuntimeException("not implemented")
 	}
 
 	override visitExpressionStatement(Java8Parser.ExpressionStatementContext ctx) {
-		val map = createMap(ctx)
-		if (map.containsKey(Java8Parser.RULE_statementExpression)) {
-			return getOne(map, Java8Parser.RULE_statementExpression) as UniNode
-		}
-		throw new RuntimeException("not implemented")
+		// expressionStatement
+		// :	statementExpression ';'
+		ctx.children.head.accept(this)
 	}
 
 	override visitStatementExpression(Java8Parser.StatementExpressionContext ctx) {
-		val map = createMap(ctx)
-		if (map.containsKey(Java8Parser.RULE_methodInvocation)) {
-			return getOne(map, Java8Parser.RULE_methodInvocation) as UniNode
+		// statementExpression
+		// :	assignment
+		// |	preIncrementExpression
+		// |	preDecrementExpression
+		// |	postIncrementExpression
+		// |	postDecrementExpression
+		// |	methodInvocation
+		// |	classInstanceCreationExpression
+		ctx.children.head.accept(this)
+	}
+
+	override visitClassInstanceCreationExpression(Java8Parser.ClassInstanceCreationExpressionContext ctx) {
+		// classInstanceCreationExpression
+		// :	'new' typeArguments? annotation* Identifier ('.' annotation* Identifier)* typeArgumentsOrDiamond? '(' argumentList? ')' classBody?
+		// |	expressionName '.' 'new' typeArguments? annotation* Identifier typeArgumentsOrDiamond? '(' argumentList? ')' classBody?
+		// |	primary '.' 'new' typeArguments? annotation* Identifier typeArgumentsOrDiamond? '(' argumentList? ')' classBody?
+		if (ctx.children.head.text.equals("new")) {
 		}
-		throw new RuntimeException("not implemented")
+		throw new RuntimeException("Not implemented")
 	}
 
 	override visitLiteral(Java8Parser.LiteralContext ctx) {
-		val map = createMap(ctx)
+		// literal
+		// :	IntegerLiteral
+		// |	FloatingPointLiteral
+		// |	BooleanLiteral
+		// |	CharacterLiteral
+		// |	StringLiteral
+		// |	NullLiteral
+		val texts = createTextMap(ctx)
 		val convertMap = newHashMap(
-			-Java8Parser.BooleanLiteral -> [x|new UniBoolLiteral("true".equals(x))],
-			-Java8Parser.IntegerLiteral -> [x|new UniIntLiteral(Integer.parseInt(x))],
-			-Java8Parser.FloatingPointLiteral -> [x|new UniDoubleLiteral(Double.parseDouble(x))],
+			-Java8Parser.BooleanLiteral -> [new UniBoolLiteral("true".equals(it))],
+			-Java8Parser.IntegerLiteral -> [new UniIntLiteral(Integer.parseInt(it))],
+			-Java8Parser.FloatingPointLiteral -> [new UniDoubleLiteral(Double.parseDouble(it))],
 			// TODO support escaped string
-			-Java8Parser.StringLiteral -> [String x|new UniStringLiteral(x.substring(1, x.length - 1))]
+			-Java8Parser.StringLiteral -> [String s|new UniStringLiteral(s.substring(1, s.length - 1))]
 		)
 		for (entry : convertMap.entrySet) {
-			if (map.containsKey(entry.key)) {
-				val str = map.get(entry.key).get(0) as String
+			if (texts.containsKey(entry.key)) {
+				val str = texts.get(entry.key).get(0)
 				return entry.value.apply(str)
 			}
 		}
@@ -383,38 +480,47 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 	}
 
 	/**
-	 * Visitorでリストを返すためのクラスです．
-	 */
-	static class AggregatedNode implements UniNode {
-		public List<UniNode> list;
-
-		def List<UniNode> flatten() {
-			flattenTo(new ArrayList<UniNode>())
-		}
-
-		def List<UniNode> flattenTo(List<UniNode> dst) {
-			list.forEach [
-				if (it != null) {
-					switch it {
-						AggregatedNode:
-							it.flattenTo(dst)
-						default:
-							dst.add(it)
-					}
-				}
-			]
-			dst
-		}
-	}
-
-	/**
 	 * VisitorでUniNodeの以外のオブジェクトを返すためのクラスです。
 	 */
-	static class DummyNode<T> implements UniNode {
+	static class DummyNode<T> extends UniNode {
 		public T item;
 
 		new(T item) {
 			this.item = item;
+		}
+	}
+
+	static class StringNode extends DummyNode<String> {
+		new(String item) {
+			super(item)
+		}
+
+		override toString() {
+			item
+		}
+	}
+
+	static class ListNode<T extends UniNode> extends DummyNode<List<T>> {
+		new(List<T> item) {
+			super(item)
+		}
+
+		override <T2 extends UniNode> List<T2> flattenForBuilding() {
+			flattenTo(new ArrayList<T2>())
+		}
+
+		def <T2 extends UniNode> List<T2> flattenTo(List<T2> dst) {
+			item.forEach [
+				if (it != null) {
+					switch it {
+						ListNode<T2>:
+							it.flattenTo(dst)
+						default:
+							dst.add(it as T2)
+					}
+				}
+			]
+			dst
 		}
 	}
 
@@ -437,48 +543,30 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		]
 	}
 
-//	private static def getName(ParseTree tree) {
-//		switch (tree) {
-//			TerminalNodeImpl: tree.name
-//			ParserRuleContext: tree.name
-//			default: null
-//		}
-//	}
-//	private static def getName(TerminalNodeImpl node) {
-//		Java8Parser.VOCABULARY.getSymbolicName(node.symbol.type)
-//	}
-	private static def getName(ParserRuleContext node) {
-		Java8Parser.ruleNames.get(node.ruleIndex)
+	private def createTextMap(ParserRuleContext context) {
+		context.children.map [
+			switch (it) {
+				TerminalNodeImpl: -it.symbol.type -> it.text
+			}
+		].filter[it != null].groupBy [
+			it.key
+		].mapValues [
+			it.map[it.value]
+		]
 	}
 
-//	private static def getTokenName(ParseTree tree) {
-//		switch (tree) {
-//			TerminalNodeImpl: tree.name
-//			default: null
-//		}
-//	}
-	private static def getRuleName(ParseTree tree) {
-		switch (tree) {
-			ParserRuleContext: tree.name
-			default: null
-		}
+	private def <T extends UniNode> createNodeMap(ParserRuleContext context) {
+		context.children.map [
+			switch (it) {
+				ParserRuleContext: it.ruleIndex -> it.accept(this)
+			}
+		].filter[it != null].groupBy [
+			it.key
+		].mapValues [
+			it.map[it.value as T]
+		]
 	}
 
-//	private static def getTextList(ParseTree node) {
-//		privateGetTextList(node, new ArrayList<String>())
-//	}
-//
-//	private static def privateGetTextList(ParseTree node, List<String> ret) {
-//		val count = node.childCount
-//		if (count == 0) {
-//			ret.add(node.text)
-//		} else {
-//			(0 ..< count).forEach [ i |
-//				privateGetTextList(node.getChild(i), ret)
-//			]
-//		}
-//		ret
-//	}
 	private static def <T> List<T> getOrEmpty(Map<Integer, List<T>> map, Integer key) {
 		if (map.containsKey(key)) {
 			return map.get(key)
@@ -487,21 +575,36 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		}
 	}
 
-	private static def <T> T getOne(Map<Integer, List<T>> map, Integer key) {
+	private static def <T extends UniNode> T getOneNode(Map<Integer, List<UniNode>> map, Integer key) {
 		if (map.containsKey(key)) {
 			val items = map.get(key)
 			if (items.size() > 0) {
-				return items.get(0)
+				return items.get(0) as T
 			}
 		}
 		throw new RuntimeException("No item")
 	}
 
-//	private static def <T> getIdentifier(Map<Integer, List<T>> map) {
-//		new UniIdent(map.identifierStr)
-//	}
+	private static def <T> T getOne(Map<Integer, List<Object>> map, Integer key) {
+		if (map.containsKey(key)) {
+			val items = map.get(key)
+			if (items.size() > 0) {
+				return items.get(0) as T
+			}
+		}
+		throw new RuntimeException("No item")
+	}
 
 	private static def <T> getIdentifierStr(Map<Integer, List<T>> map) {
 		map.get(-Java8Parser.Identifier).head as String
+	}
+
+	private static def getIdentifierStr(ParserRuleContext ctx) {
+		ctx.children.findFirst [
+			switch (it) {
+				TerminalNodeImpl: it.symbol.type == Java8Parser.Identifier
+				default: false
+			}
+		].text
 	}
 }

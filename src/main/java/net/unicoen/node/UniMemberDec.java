@@ -1,4 +1,4 @@
 package net.unicoen.node;
 
-public abstract class UniMemberDec implements UniNode {
+public abstract class UniMemberDec extends UniNode {
 }
