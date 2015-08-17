@@ -444,13 +444,8 @@ public class BlockMapper {
 					} else {
 						args.add(parseBody(realArgNode, map));
 					}
-				} else {
-					// con-block-id がnullの場合は，空
-					args.add(null);
 				}
 			}
-		} else {
-			args.add(null);
 		}
 		return args;
 	}
@@ -461,11 +456,13 @@ public class BlockMapper {
 		UniBlock trueBlock = null;
 		UniBlock falseBlock = null;
 
-		if (args.get(1) != null && args.get(1) instanceof UniBlock) {
-			trueBlock = (UniBlock) args.get(1);
-		}
-		if (args.get(2) != null && args.get(2) instanceof UniBlock) {
-			falseBlock = (UniBlock) args.get(2);
+		for(int i =1;i< args.size(); i++){
+			if (i == 1 && args.get(1) != null && args.get(1) instanceof UniBlock) {
+				trueBlock = (UniBlock) args.get(1);
+			}
+			if (i == 2 && args.get(2) != null && args.get(2) instanceof UniBlock) {
+				falseBlock = (UniBlock) args.get(2);
+			}
 		}
 
 		return new UniIf(args.get(0), trueBlock, falseBlock);
@@ -525,15 +522,11 @@ public class BlockMapper {
 			}
 		} else if (blockGenusName.equals("callActionMethod2")) {
 			UniIdent ident = (UniIdent) args.get(0);
-			UniBlock socketBlock = (UniBlock) args.get(1);
-			UniMethodCall caller = (UniMethodCall) socketBlock.body.get(0);
-
+			UniMethodCall caller = (UniMethodCall) args.get(1);
 			caller.receiver = ident;
-
 			return caller;
 		} else {
-			String methodName = getChildText(
-					resolver.getBlockNode(blockGenusName), "Name");
+			String methodName = getChildText(resolver.getBlockNode(blockGenusName), "Name");
 			UniMethodCall mcall = getProtoType(methodName);
 			if (mcall != null) {
 				mcall.args = args;
@@ -550,7 +543,7 @@ public class BlockMapper {
 		 * 最初にテーブルを作って、呼ばれるたびに、nodeのクローンを作って返す。
 		 */
 		if (methodName != null) {
-			UniMethodCall mcall = new UniMethodCall(null, methodName, null);
+			UniMethodCall mcall = new UniMethodCall(null, methodName, new ArrayList<UniExpr>());
 			return mcall;
 		} else {
 			throw new RuntimeException("method name is null:" + methodName);
