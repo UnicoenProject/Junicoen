@@ -348,6 +348,8 @@ public class BlockGenerator {
 		BlockElementModel model = null;
 		if (expr instanceof UniMethodCall) {
 			model = parseMethodCall((UniMethodCall) expr, document, parent);
+		} else if (expr instanceof UniIdent) {
+			model = parseIdent((UniIdent) expr, document, parent);
 		} else if (expr instanceof UniStringLiteral) {
 			model = parseStringLiteral((UniStringLiteral) expr, document,
 					parent);
