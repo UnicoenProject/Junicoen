@@ -10,6 +10,11 @@ public class JavaGeneratorForTurtle extends JavaGenerator {
 		super(out);
 	}
 
+	public static void generate(UniClassDec classDec, PrintStream out) {
+		JavaGeneratorForTurtle g = new JavaGeneratorForTurtle(out);
+		g.traverseClassDec(classDec);
+	}
+
 	@Override
 	public void traverseClassDec(UniClassDec classDec) {
 		String mod = safeJoin(classDec.modifiers, " ");
