@@ -55,8 +55,9 @@ public class JavaGeneratorTest {
 
 	@Test
 	public void genHelloWorld() {
-		UniExpr body = new UniMethodCall(new UniFieldAccess(ident("System"),
-				"out"), "println", list(lit("Hello, world")));
+		UniExpr body = new UniMethodCall(
+				new UniFieldAccess(ident("System"), "out"), "println",
+				list(lit("Hello, world")));
 		String bodyStr = "System.out.println(\"Hello, world\");";
 
 		UniMethodDec mDec = new UniMethodDec("main", list("public", "static"),
@@ -101,8 +102,9 @@ public class JavaGeneratorTest {
 
 	@Test
 	public void genHelloWorld_with_indent() {
-		UniExpr body = new UniMethodCall(new UniFieldAccess(ident("System"),
-				"out"), "println", list(lit("Hello, world")));
+		UniExpr body = new UniMethodCall(
+				new UniFieldAccess(ident("System"), "out"), "println",
+				list(lit("Hello, world")));
 		String code = "System.out.println(\"Hello, world\");";
 		assertGen(code, body);
 	}
@@ -194,7 +196,8 @@ public class JavaGeneratorTest {
 		UniExpr cond = new UniBinOp("<", ident("i"), lit(10));
 		UniExpr step = new UniUnaryOp("_++", ident("i"));
 		UniExpr body = new UniFor(init, cond, step, block(new UniContinue()));
-		String[] codes = { "for (int i = 0; i < 10; i++) {", "	continue;", "}", };
+		String[] codes = { "for (int i = 0; i < 10; i++) {", "	continue;",
+				"}", };
 		assertGen(codes, body);
 	}
 

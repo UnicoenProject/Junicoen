@@ -205,8 +205,9 @@ public class Engine {
 		}
 		if (expr instanceof UniTernaryOp) {
 			UniTernaryOp condOp = (UniTernaryOp) expr;
-			return toBool(execExpr(condOp.cond, scope)) ? execExpr(
-					condOp.trueExpr, scope) : execExpr(condOp.falseExpr, scope);
+			return toBool(execExpr(condOp.cond, scope))
+					? execExpr(condOp.trueExpr, scope)
+					: execExpr(condOp.falseExpr, scope);
 		}
 		if (expr instanceof UniBreak) {
 			throw new Break();
@@ -241,8 +242,9 @@ public class Engine {
 			Scope forScope = Scope.createLocal(scope);
 			try {
 				Object lastEval = null;
-				for (execExpr(uniFor.init, forScope); toBool(execExpr(
-						uniFor.cond, forScope)); execExpr(uniFor.step, forScope)) {
+				for (execExpr(uniFor.init, forScope); toBool(
+						execExpr(uniFor.cond, forScope)); execExpr(uniFor.step,
+								forScope)) {
 					try {
 						lastEval = execExpr(uniFor.statement, forScope);
 					} catch (Continue e) { /* do nothing */
@@ -290,13 +292,14 @@ public class Engine {
 			Object[] args) {
 		assert receiver != null;
 
-		String msg = String.format("Method not found: %s.%s", receiver
-				.getClass().getName(), methodName);
+		String msg = String.format("Method not found: %s.%s",
+				receiver.getClass().getName(), methodName);
 		if (receiver instanceof Scope) {
 			Object func = ((Scope) receiver).get(methodName);
 			return execFuncCall(func, args);
 		} else if (receiver instanceof Class<?>) {
-			Predicate<Method> isStatic = m -> (m.getModifiers() | Modifier.STATIC) != 0;
+			Predicate<Method> isStatic = m -> (m.getModifiers()
+					| Modifier.STATIC) != 0;
 			Method method = findMethod((Class<?>) receiver, methodName, args,
 					isStatic);
 			if (method == null) {
@@ -408,7 +411,8 @@ public class Engine {
 		return execBinOp(binOp.operator, binOp.left, binOp.right, scope);
 	}
 
-	private Object execBinOp(String op, UniExpr left, UniExpr right, Scope scope) {
+	private Object execBinOp(String op, UniExpr left, UniExpr right,
+			Scope scope) {
 		switch (op) {
 		case "=": {
 			if (left instanceof UniIdent) {
@@ -420,20 +424,21 @@ public class Engine {
 		case "==":
 			return Eq.eq(execExpr(left, scope), execExpr(right, scope));
 		case "!=":
-			return Eq.eq(execExpr(left, scope), execExpr(right, scope)) == false;
+			return Eq.eq(execExpr(left, scope),
+					execExpr(right, scope)) == false;
 
 		case "<":
-			return toDouble(execExpr(left, scope)) < toDouble(execExpr(right,
-					scope));
+			return toDouble(execExpr(left, scope)) < toDouble(
+					execExpr(right, scope));
 		case "<=":
-			return toDouble(execExpr(left, scope)) <= toDouble(execExpr(right,
-					scope));
+			return toDouble(execExpr(left, scope)) <= toDouble(
+					execExpr(right, scope));
 		case ">":
-			return toDouble(execExpr(left, scope)) > toDouble(execExpr(right,
-					scope));
+			return toDouble(execExpr(left, scope)) > toDouble(
+					execExpr(right, scope));
 		case ">=":
-			return toDouble(execExpr(left, scope)) >= toDouble(execExpr(right,
-					scope));
+			return toDouble(execExpr(left, scope)) >= toDouble(
+					execExpr(right, scope));
 
 		case "+":
 		case "-":
@@ -537,8 +542,8 @@ public class Engine {
 				if (argType.isPrimitive()) {
 					argType = getBoxType(argType);
 				}
-				boolean isOK = (obj == null || argType.isAssignableFrom(obj
-						.getClass()));
+				boolean isOK = (obj == null
+						|| argType.isAssignableFrom(obj.getClass()));
 				if (!isOK) {
 					continue;
 				}
@@ -578,8 +583,8 @@ public class Engine {
 				continue;
 			}
 			if (ret != null) {
-				throw new RuntimeException(String.format("Ambiguous: %s or %s",
-						ret, m));
+				throw new RuntimeException(
+						String.format("Ambiguous: %s or %s", ret, m));
 			}
 			ret = m;
 		}

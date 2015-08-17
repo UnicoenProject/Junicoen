@@ -7,13 +7,12 @@ public class SocketsInfo {
 
 	private List<SocketInfo> sockets = new ArrayList<>();
 
-	public void addSocketInfo(SocketInfo socket){
+	public void addSocketInfo(SocketInfo socket) {
 		sockets.add(socket);
 	}
 
-	public List<SocketInfo> getSockets(){
+	public List<SocketInfo> getSockets() {
 		return this.sockets;
 	}
-
 
 }

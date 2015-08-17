@@ -68,8 +68,8 @@ public class Scope {
 					}
 				}
 			}
-			throw new UniRuntimeError(String.format(
-					"variable '%s' is not defined.", key));
+			throw new UniRuntimeError(
+					String.format("variable '%s' is not defined.", key));
 		}
 	}
 

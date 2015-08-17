@@ -16,20 +16,20 @@ import static org.junit.Assert.*
 
 class JavaMapperTest {
 	@Test
-	def parseClass() {
+	def void parseClass() {
 		val mapper = new JavaMapper()
 		val classDec = mapper.parse("public class A {}") as UniClassDec
 		assertThat(classDec.className, equalTo("A"))
 	}
 
 	@Test
-	def parseMainMethod() {
+	def void parseMainMethod() {
 		val mapper = new JavaMapper()
 		val sb = new StringBuilder()
 
 		sb.append("class A {")
-		sb.append("    public static void main(String[] args) {")
-		sb.append("    }")
+		sb.append("  public static void main(String[] args) {")
+		sb.append("  }")
 		sb.append("}");
 
 		val classDec = mapper.parse(sb.toString()) as UniClassDec
@@ -38,7 +38,7 @@ class JavaMapperTest {
 	}
 
 	@Test
-	def parseLiteral() {
+	def void parseLiteral() {
 		val mapper = new JavaMapper();
 		{
 			val literal = mapper.parse("1", [p|p.literal])
@@ -59,14 +59,14 @@ class JavaMapperTest {
 	}
 
 	@Test
-	def parseFuncCall() {
+	def void parseFuncCall() {
 		val mapper = new JavaMapper();
 		val literal = mapper.parse("f()", [p|p.methodInvocation])
 		assertThat(literal, equalTo(new UniMethodCall(null, "f", list())))
 	}
 
 	@Test
-	def parseIfStatement() {
+	def void parseIfStatement() {
 		val mapper = new JavaMapper();
 		val literal = mapper.parse("if(false) { f(); }", [p|p.ifThenStatement])
 
@@ -77,7 +77,7 @@ class JavaMapperTest {
 	}
 
 	@Test
-	def regeneratePrintln() {
+	def void regeneratePrintln() {
 		val sb = new StringBuilder()
 		sb.append("public class A {")
 		sb.append("  public static void main () {")
@@ -95,7 +95,7 @@ class JavaMapperTest {
 	}
 
 	@Test
-	def regenerateNew() {
+	def void regenerateNew() {
 		val sb = new StringBuilder()
 		sb.append("public class A {")
 		sb.append("  public static void main () {")
@@ -104,6 +104,31 @@ class JavaMapperTest {
 		sb.append("}")
 		val code = JavaGeneratorTest.normalize(sb.toString())
 
+		val mapper = new JavaMapper()
+		val classDec = mapper.parse(sb.toString()) as UniClassDec
+		val generatedCode = JavaGenerator.generate(classDec);
+		assertThat(normalize(generatedCode), equalTo(normalize(code)))
+	}
+
+	@Test
+	def void regenerateTurtleDemo() {
+		val sb = new StringBuilder()
+		sb.append("public class A {")
+		sb.append("  public static void main () {")
+		sb.append("    Turtle t = new Turtle();")
+		sb.append("    int i = 0;")
+		sb.append("    while (i < 4) {")
+		sb.append("      t.fd(100);")
+		sb.append("      t.rt(90);")
+		sb.append("      if (i == 1) {")
+		sb.append("        t.rt(30);")
+		sb.append("      }")
+		sb.append("      i = i + 1;")
+		sb.append("    }")
+		sb.append("  }")
+		sb.append("}")
+		val code = JavaGeneratorTest.normalize(sb.toString())
+		
 		val mapper = new JavaMapper()
 		val classDec = mapper.parse(sb.toString()) as UniClassDec
 		val generatedCode = JavaGenerator.generate(classDec);

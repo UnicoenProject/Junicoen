@@ -7,16 +7,15 @@ public class BlockElementModel {
 	protected Long id;
 	protected Element element;
 
-	public BlockElementModel(){
+	public BlockElementModel() {
 	}
 
-	public Element getElement(){
+	public Element getElement() {
 		return this.element;
 	}
 
-	public void setElement(Element element){
+	public void setElement(Element element) {
 		this.element = element;
 	}
-
 
 }

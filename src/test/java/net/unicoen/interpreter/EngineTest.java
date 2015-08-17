@@ -139,23 +139,23 @@ public class EngineTest {
 		UniExpr exp3 = ident("j");
 
 		// int j = i++;
-		exp2 = new UniVariableDec(null, "int", "j", new UniUnaryOp("_++",
-				ident("i")));
+		exp2 = new UniVariableDec(null, "int", "j",
+				new UniUnaryOp("_++", ident("i")));
 		assertEquals(0, Engine.executeSimple(block(exp1, exp2, exp3)));
 
 		// int j = ++i;
-		exp2 = new UniVariableDec(null, "int", "j", new UniUnaryOp("++_",
-				ident("i")));
+		exp2 = new UniVariableDec(null, "int", "j",
+				new UniUnaryOp("++_", ident("i")));
 		assertEquals(1, Engine.executeSimple(block(exp1, exp2, exp3)));
 
 		// int j = i--;
-		exp2 = new UniVariableDec(null, "int", "j", new UniUnaryOp("_--",
-				ident("i")));
+		exp2 = new UniVariableDec(null, "int", "j",
+				new UniUnaryOp("_--", ident("i")));
 		assertEquals(0, Engine.executeSimple(block(exp1, exp2, exp3)));
 
 		// int j = --i;
-		exp2 = new UniVariableDec(null, "int", "j", new UniUnaryOp("--_",
-				ident("i")));
+		exp2 = new UniVariableDec(null, "int", "j",
+				new UniUnaryOp("--_", ident("i")));
 		assertEquals(-1, Engine.executeSimple(block(exp1, exp2, exp3)));
 	}
 

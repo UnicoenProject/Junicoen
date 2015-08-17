@@ -29,10 +29,13 @@ public class UniBlock extends UniExpr {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null || !(obj instanceof UniBlock)) return false;
-		UniBlock that = (UniBlock)obj;
-		return (this.body == null ? that.body == null : this.body.equals(that.body))
-			&& (this.blockLabel == null ? that.blockLabel == null : this.blockLabel.equals(that.blockLabel));
+		if (obj == null || !(obj instanceof UniBlock))
+			return false;
+		UniBlock that = (UniBlock) obj;
+		return (this.body == null ? that.body == null
+				: this.body.equals(that.body))
+				&& (this.blockLabel == null ? that.blockLabel == null
+						: this.blockLabel.equals(that.blockLabel));
 	}
 
 	@Override

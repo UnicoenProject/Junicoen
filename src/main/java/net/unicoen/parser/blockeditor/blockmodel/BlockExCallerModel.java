@@ -5,20 +5,20 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
-public class BlockExCallerModel extends BlockCommandModel{
+public class BlockExCallerModel extends BlockCommandModel {
 
 	private BlockCommandModel methodBlock;
 
-	public void setCallMethod(BlockCommandModel method){
+	public void setCallMethod(BlockCommandModel method) {
 		this.methodBlock = method;
 	}
 
-	public List<Element> getCommandBlockElements(){
+	public List<Element> getCommandBlockElements() {
 		List<Element> commandBlocks = new ArrayList<>();
 
 		commandBlocks.add(getElement());
 
-		for(BlockExprModel socket : getSocketBlocks()){
+		for (BlockExprModel socket : getSocketBlocks()) {
 			commandBlocks.addAll(socket.getExprElements());
 		}
 

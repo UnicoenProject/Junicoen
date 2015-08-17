@@ -31,11 +31,15 @@ public class UniTernaryOp extends UniExpr {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null || !(obj instanceof UniTernaryOp)) return false;
-		UniTernaryOp that = (UniTernaryOp)obj;
-		return (this.cond == null ? that.cond == null : this.cond.equals(that.cond))
-			&& (this.trueExpr == null ? that.trueExpr == null : this.trueExpr.equals(that.trueExpr))
-			&& (this.falseExpr == null ? that.falseExpr == null : this.falseExpr.equals(that.falseExpr));
+		if (obj == null || !(obj instanceof UniTernaryOp))
+			return false;
+		UniTernaryOp that = (UniTernaryOp) obj;
+		return (this.cond == null ? that.cond == null
+				: this.cond.equals(that.cond))
+				&& (this.trueExpr == null ? that.trueExpr == null
+						: this.trueExpr.equals(that.trueExpr))
+				&& (this.falseExpr == null ? that.falseExpr == null
+						: this.falseExpr.equals(that.falseExpr));
 	}
 
 	@Override

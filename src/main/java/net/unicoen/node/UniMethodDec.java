@@ -12,7 +12,8 @@ public class UniMethodDec extends UniMemberDec {
 	public UniMethodDec() {
 	}
 
-	public UniMethodDec(String methodName, List<String> modifiers, String returnType, List<UniArg> args, UniBlock block) {
+	public UniMethodDec(String methodName, List<String> modifiers,
+			String returnType, List<UniArg> args, UniBlock block) {
 		this.methodName = methodName;
 		this.modifiers = modifiers;
 		this.returnType = returnType;
@@ -38,13 +39,19 @@ public class UniMethodDec extends UniMemberDec {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null || !(obj instanceof UniMethodDec)) return false;
-		UniMethodDec that = (UniMethodDec)obj;
-		return (this.methodName == null ? that.methodName == null : this.methodName.equals(that.methodName))
-			&& (this.modifiers == null ? that.modifiers == null : this.modifiers.equals(that.modifiers))
-			&& (this.returnType == null ? that.returnType == null : this.returnType.equals(that.returnType))
-			&& (this.args == null ? that.args == null : this.args.equals(that.args))
-			&& (this.block == null ? that.block == null : this.block.equals(that.block));
+		if (obj == null || !(obj instanceof UniMethodDec))
+			return false;
+		UniMethodDec that = (UniMethodDec) obj;
+		return (this.methodName == null ? that.methodName == null
+				: this.methodName.equals(that.methodName))
+				&& (this.modifiers == null ? that.modifiers == null
+						: this.modifiers.equals(that.modifiers))
+				&& (this.returnType == null ? that.returnType == null
+						: this.returnType.equals(that.returnType))
+				&& (this.args == null ? that.args == null
+						: this.args.equals(that.args))
+				&& (this.block == null ? that.block == null
+						: this.block.equals(that.block));
 	}
 
 	public void merge(UniMethodDec that) {

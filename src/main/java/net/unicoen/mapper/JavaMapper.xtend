@@ -5,6 +5,7 @@ import java.util.ArrayList
 import java.util.Collections
 import java.util.List
 import java.util.Map
+import net.unicoen.node.UniBinOp
 import net.unicoen.node.UniBlock
 import net.unicoen.node.UniBoolLiteral
 import net.unicoen.node.UniClassDec
@@ -31,6 +32,7 @@ import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.TerminalNodeImpl
 import org.eclipse.xtext.xbase.lib.Functions.Function1
+import net.unicoen.node.UniTernaryOp
 
 class JavaMapper extends Java8BaseVisitor<UniNode> {
 	def parse(String code) {
@@ -449,12 +451,31 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		ctx.children.head.accept(this)
 	}
 
+	override visitAssignment(Java8Parser.AssignmentContext ctx) {
+		// assignment
+		// :	leftHandSide assignmentOperator expression
+		new UniBinOp(ctx.children.get(1).text, ctx.children.head.accept(this) as UniExpr,
+			ctx.children.last.accept(this) as UniExpr)
+	}
+
+	override visitLeftHandSide(Java8Parser.LeftHandSideContext ctx) {
+		// leftHandSide
+		// :	expressionName
+		// |	fieldAccess
+		// |	arrayAccess
+		ctx.children.head.accept(this)
+	}
+
 	override visitConditionalExpression(Java8Parser.ConditionalExpressionContext ctx) {
 		// conditionalExpression
 		// :	conditionalOrExpression
 		// |	conditionalOrExpression '?' expression ':' conditionalExpression
 		if (ctx.children.size == 1) {
 			ctx.children.head.accept(this)
+		} else {
+			val nodes = createNodeMap(ctx)
+			new UniTernaryOp(nodes.getOneNode(Java8Parser.RULE_conditionalOrExpression),
+				nodes.getOneNode(Java8Parser.RULE_expression), nodes.getOneNode(Java8Parser.RULE_conditionalExpression))
 		}
 	}
 
@@ -464,6 +485,9 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		// |	conditionalOrExpression '||' conditionalAndExpression
 		if (ctx.children.size == 1) {
 			ctx.children.head.accept(this)
+		} else {
+			new UniBinOp(getTerminals(ctx).join, ctx.children.head.accept(this) as UniExpr,
+				ctx.children.last.accept(this) as UniExpr)
 		}
 	}
 
@@ -473,6 +497,9 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		// |	conditionalAndExpression '&&' inclusiveOrExpression
 		if (ctx.children.size == 1) {
 			ctx.children.head.accept(this)
+		} else {
+			new UniBinOp(getTerminals(ctx).join, ctx.children.head.accept(this) as UniExpr,
+				ctx.children.last.accept(this) as UniExpr)
 		}
 	}
 
@@ -482,6 +509,9 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		// |	inclusiveOrExpression '|' exclusiveOrExpression
 		if (ctx.children.size == 1) {
 			ctx.children.head.accept(this)
+		} else {
+			new UniBinOp(getTerminals(ctx).join, ctx.children.head.accept(this) as UniExpr,
+				ctx.children.last.accept(this) as UniExpr)
 		}
 	}
 
@@ -491,6 +521,9 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		// |	exclusiveOrExpression '^' andExpression
 		if (ctx.children.size == 1) {
 			ctx.children.head.accept(this)
+		} else {
+			new UniBinOp(getTerminals(ctx).join, ctx.children.head.accept(this) as UniExpr,
+				ctx.children.last.accept(this) as UniExpr)
 		}
 	}
 
@@ -500,6 +533,9 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		// |	andExpression '&' equalityExpression
 		if (ctx.children.size == 1) {
 			ctx.children.head.accept(this)
+		} else {
+			new UniBinOp(getTerminals(ctx).join, ctx.children.head.accept(this) as UniExpr,
+				ctx.children.last.accept(this) as UniExpr)
 		}
 	}
 
@@ -510,6 +546,9 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		// |	equalityExpression '!=' relationalExpression
 		if (ctx.children.size == 1) {
 			ctx.children.head.accept(this)
+		} else {
+			new UniBinOp(getTerminals(ctx).join, ctx.children.head.accept(this) as UniExpr,
+				ctx.children.last.accept(this) as UniExpr)
 		}
 	}
 
@@ -523,6 +562,9 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		// |	relationalExpression 'instanceof' referenceType
 		if (ctx.children.size == 1) {
 			ctx.children.head.accept(this)
+		} else {
+			new UniBinOp(getTerminals(ctx).join, ctx.children.head.accept(this) as UniExpr,
+				ctx.children.last.accept(this) as UniExpr)
 		}
 	}
 
@@ -534,6 +576,9 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		// |	shiftExpression '>' '>' '>' additiveExpression
 		if (ctx.children.size == 1) {
 			ctx.children.head.accept(this)
+		} else {
+			new UniBinOp(getTerminals(ctx).join, ctx.children.head.accept(this) as UniExpr,
+				ctx.children.last.accept(this) as UniExpr)
 		}
 	}
 
@@ -544,6 +589,9 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		// |	additiveExpression '-' multiplicativeExpression
 		if (ctx.children.size == 1) {
 			ctx.children.head.accept(this)
+		} else {
+			new UniBinOp(getTerminals(ctx).join, ctx.children.head.accept(this) as UniExpr,
+				ctx.children.last.accept(this) as UniExpr)
 		}
 	}
 
@@ -555,6 +603,9 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		// |	multiplicativeExpression '%' unaryExpression
 		if (ctx.children.size == 1) {
 			ctx.children.head.accept(this)
+		} else {
+			new UniBinOp(getTerminals(ctx).join, ctx.children.head.accept(this) as UniExpr,
+				ctx.children.last.accept(this) as UniExpr)
 		}
 	}
 
@@ -591,6 +642,15 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		// )*
 		if (ctx.children.size == 1) {
 			ctx.children.head.accept(this)
+		}
+	}
+
+	override visitExpressionName(Java8Parser.ExpressionNameContext ctx) {
+		// expressionName
+		// :	Identifier
+		// |	ambiguousName '.' Identifier
+		if (ctx.children.size == 1) {
+			new UniIdent(ctx.children.head.text)
 		}
 	}
 
@@ -859,5 +919,9 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 				default: false
 			}
 		].text
+	}
+
+	private static def getTerminals(ParserRuleContext ctx) {
+		ctx.children.filter[it instanceof TerminalNodeImpl].map[it.text]
 	}
 }

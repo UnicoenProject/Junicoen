@@ -22,9 +22,11 @@ public class UniIdent extends UniExpr {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null || !(obj instanceof UniIdent)) return false;
-		UniIdent that = (UniIdent)obj;
-		return (this.name == null ? that.name == null : this.name.equals(that.name));
+		if (obj == null || !(obj instanceof UniIdent))
+			return false;
+		UniIdent that = (UniIdent) obj;
+		return (this.name == null ? that.name == null
+				: this.name.equals(that.name));
 	}
 
 	@Override

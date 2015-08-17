@@ -5,28 +5,27 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
-public class BlockLocalVarDecModel extends BlockCommandModel{
+public class BlockLocalVarDecModel extends BlockCommandModel {
 
 	private BlockExprModel initializer;
 
-	public BlockLocalVarDecModel(Element localVarElement){
+	public BlockLocalVarDecModel(Element localVarElement) {
 		element = localVarElement;
 	}
 
-	public void setInitializer(BlockExprModel initializer){
+	public void setInitializer(BlockExprModel initializer) {
 		this.initializer = initializer;
 	}
 
-	public List<Element> getCommandBlockElements(){
+	public List<Element> getCommandBlockElements() {
 		List<Element> commandBlocks = new ArrayList<>();
 
 		commandBlocks.add(getElement());
-		if(initializer != null){
+		if (initializer != null) {
 			commandBlocks.addAll(initializer.getExprElements());
 		}
 
 		return commandBlocks;
 	}
-
 
 }

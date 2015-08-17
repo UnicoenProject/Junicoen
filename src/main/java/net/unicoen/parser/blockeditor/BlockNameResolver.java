@@ -67,26 +67,33 @@ public class BlockNameResolver {
 				Node node = genusNodes.item(i);
 
 				// 全ブロック情報のマップに登録
-				allAvailableBlocks.put(BlockMapper.getAttribute(node, "name"), node);
+				allAvailableBlocks.put(BlockMapper.getAttribute(node, "name"),
+						node);
 
 				// 利用可能な変数型リストに登録
 				if ("param".equals(BlockMapper.getAttribute(node, "kind"))) {
 
-					this.availableFunctionArgsTypes.put(BlockMapper.getChildNode(node, "Type").getTextContent(),
+					this.availableFunctionArgsTypes.put(
+							BlockMapper.getChildNode(node, "Type")
+									.getTextContent(),
 							BlockMapper.getAttribute(node, "name"));
 				}
 
 				// 利用可能な関数の引数の型リストに登録
-				if ("local-variable".equals(BlockMapper.getAttribute(node, "kind"))) {
+				if ("local-variable"
+						.equals(BlockMapper.getAttribute(node, "kind"))) {
 					this.availableLocalVariableDecralationTypes.put(
-							BlockMapper.getChildNode(node, "Type").getTextContent(),
+							BlockMapper.getChildNode(node, "Type")
+									.getTextContent(),
 							BlockMapper.getAttribute(node, "name"));
 				}
 
 				// 利用可能な関数の引数の型リストに登録
-				if ("global-variable".equals(BlockMapper.getAttribute(node, "kind"))) {
+				if ("global-variable"
+						.equals(BlockMapper.getAttribute(node, "kind"))) {
 					this.availableFieldVariableDecralationTypes.put(
-							BlockMapper.getChildNode(node, "Type").getTextContent(),
+							BlockMapper.getChildNode(node, "Type")
+									.getTextContent(),
 							BlockMapper.getAttribute(node, "genus-name"));
 				}
 			}
@@ -112,7 +119,9 @@ public class BlockNameResolver {
 				Node node = genusNodes.item(i);
 
 				if (BlockMapper.getChildNode(node, "Name") != null) {
-					turtleMethods.put(convertMethodName(BlockMapper.getAttribute(node, "name")),
+					turtleMethods.put(
+							convertMethodName(
+									BlockMapper.getAttribute(node, "name")),
 							getNameSpaceString(node));
 				}
 			}
@@ -151,11 +160,14 @@ public class BlockNameResolver {
 		if (genusNode == null) {
 			return null;
 		} else {
-			Node socketConnectors = BlockMapper.getChildNode(genusNode, "BlockConnectors");
-			for (int i = 0; i < socketConnectors.getChildNodes().getLength(); i++) {
+			Node socketConnectors = BlockMapper.getChildNode(genusNode,
+					"BlockConnectors");
+			for (int i = 0; i < socketConnectors.getChildNodes()
+					.getLength(); i++) {
 				Node connector = socketConnectors.getChildNodes().item(i);
 				if (connector.getNodeName().equals("BlockConnector")
-						&& BlockMapper.getAttribute(connector, "connector-kind").equals("plug")) {
+						&& BlockMapper.getAttribute(connector, "connector-kind")
+								.equals("plug")) {
 					plugNode = connector;
 				}
 			}
@@ -171,11 +183,14 @@ public class BlockNameResolver {
 		if (genusNode == null) {
 			return null;
 		} else {
-			Node socketConnectors = BlockMapper.getChildNode(genusNode, "BlockConnectors");
-			for (int i = 0; i < socketConnectors.getChildNodes().getLength(); i++) {
+			Node socketConnectors = BlockMapper.getChildNode(genusNode,
+					"BlockConnectors");
+			for (int i = 0; i < socketConnectors.getChildNodes()
+					.getLength(); i++) {
 				Node connector = socketConnectors.getChildNodes().item(i);
 				if (connector.getNodeName().equals("BlockConnector")
-						&& BlockMapper.getAttribute(connector, "connector-kind").equals("socket")) {
+						&& BlockMapper.getAttribute(connector, "connector-kind")
+								.equals("socket")) {
 					socketsNode.add(connector);
 				}
 			}

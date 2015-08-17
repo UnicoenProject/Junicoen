@@ -17,7 +17,7 @@ class Java8NewMapperTest {
 		assertThat((node as UniClassDec).className, equalTo("main"))
 	}
 
-	@Test
+	@Test @Ignore
 	def void parseClass() {
 		val mapper = new Java8NewMapper(true)
 		mapper.parse("public class A {}")

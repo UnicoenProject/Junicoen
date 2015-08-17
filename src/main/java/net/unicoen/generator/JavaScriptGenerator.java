@@ -11,8 +11,7 @@ import net.unicoen.node.UniMemberDec;
 import net.unicoen.node.UniMethodDec;
 import net.unicoen.node.UniVariableDec;
 
-public class JavaScriptGenerator extends JavaGenerator{
-
+public class JavaScriptGenerator extends JavaGenerator {
 
 	public JavaScriptGenerator(PrintStream out) {
 		super(out);
@@ -22,23 +21,23 @@ public class JavaScriptGenerator extends JavaGenerator{
 	public void traverseVariableDec(UniVariableDec node) {
 		print(String.join(" ", "var", node.name));
 
-		if(node.value != null){
+		if (node.value != null) {
 			print(" = ");
 			parseExpr(node.value);
 		}
 	}
 
-
 	@Override
 	public void traverseMethodDec(UniMethodDec node) {
 		ArrayList<String> args = new ArrayList<>();
-		if(node.args != null){
-			for(UniArg arg : node.args){
+		if (node.args != null) {
+			for (UniArg arg : node.args) {
 				args.add(arg.name);
 			}
 		}
 
-		print("function " + node.methodName +  "(" + String.join(", ", args) + ")");
+		print("function " + node.methodName + "(" + String.join(", ", args)
+				+ ")");
 		traverseBlock(node.block);
 		newline();
 		print(node.methodName + "();");
@@ -46,11 +45,11 @@ public class JavaScriptGenerator extends JavaGenerator{
 
 	@Override
 	public void traverseClassDec(UniClassDec node) {
-		for(UniMemberDec dec : JavaGenerator.iter(node.members)){
+		for (UniMemberDec dec : JavaGenerator.iter(node.members)) {
 			traverseMemberDec(dec);
 		}
 	}
-	
+
 	public static String generate(UniClassDec dec) {
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream();
 				PrintStream printer = new PrintStream(out)) {

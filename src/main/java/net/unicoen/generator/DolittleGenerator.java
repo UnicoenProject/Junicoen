@@ -54,7 +54,8 @@ public class DolittleGenerator extends Traverser {
 	}
 
 	public static String generate(UniClassDec dec) {
-		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); PrintStream printer = new PrintStream(out)) {
+		try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+				PrintStream printer = new PrintStream(out)) {
 			generate(dec, printer);
 			return out.toString();
 		} catch (IOException e) {
@@ -297,6 +298,6 @@ public class DolittleGenerator extends Traverser {
 	@Override
 	public void traverseNew(UniNew node) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

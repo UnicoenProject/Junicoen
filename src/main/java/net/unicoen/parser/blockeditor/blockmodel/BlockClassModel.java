@@ -10,21 +10,18 @@ public class BlockClassModel {
 
 	private List<BlockProcedureModel> methods = new ArrayList<>();
 
-
-	public Element createBlockNodes(Document document){
+	public Element createBlockNodes(Document document) {
 		Element pageBlocksElement = document.createElement("PageBlocks");
 
-		for(BlockProcedureModel method : methods){
+		for (BlockProcedureModel method : methods) {
 			method.addBlockNodes(pageBlocksElement);
 		}
 
 		return pageBlocksElement;
 	}
 
-
-	public void addMethod(BlockProcedureModel method){
+	public void addMethod(BlockProcedureModel method) {
 		this.methods.add(method);
 	}
-
 
 }

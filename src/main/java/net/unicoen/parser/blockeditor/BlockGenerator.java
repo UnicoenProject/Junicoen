@@ -136,7 +136,8 @@ public class BlockGenerator {
 		return false;
 	}
 
-	public List<BlockCommandModel> parseBody(Document document, Element parentElement, UniExpr statement) {
+	public List<BlockCommandModel> parseBody(Document document,
+			Element parentElement, UniExpr statement) {
 		if (statement == null || !(statement instanceof UniBlock)) {
 			return new ArrayList<>(); // can be Collections.emptyList();
 		}
@@ -153,12 +154,14 @@ public class BlockGenerator {
 
 				// statement以外は弾く
 				if (!(command instanceof BlockCommandModel)) {
-					throw new RuntimeException("cant use the expression" + expr.toString());
+					throw new RuntimeException(
+							"cant use the expression" + expr.toString());
 				}
 				addBeforeBlockNode(document, command.getElement(), beforeId);
 
 				if (i + 1 < statementBlock.body.size()) {
-					addAfterBlockNode(document, command.getElement(), String.valueOf(ID_COUNTER));
+					addAfterBlockNode(document, command.getElement(),
+							String.valueOf(ID_COUNTER));
 					beforeId = command.getElement().getAttribute("id");
 				}
 				blocks.add((BlockCommandModel) command);
@@ -170,19 +173,23 @@ public class BlockGenerator {
 	/*
 	 * 関数の解析
 	 */
-	public BlockProcedureModel parseFunctionDec(UniMethodDec funcDec, Document document) {
+	public BlockProcedureModel parseFunctionDec(UniMethodDec funcDec,
+			Document document) {
 		BlockProcedureModel model = new BlockProcedureModel();
 
-		Element procedureElement = createBlockElement(document, "procedure", ID_COUNTER++, "procedure");
+		Element procedureElement = createBlockElement(document, "procedure",
+				ID_COUNTER++, "procedure");
 
 		addElement("Label", document, funcDec.methodName, procedureElement);
-		addElement("ReturnType", document, funcDec.returnType, procedureElement);
+		addElement("ReturnType", document, funcDec.returnType,
+				procedureElement);
 		addLocationElement(document, "50", "50", procedureElement);
 
 		model.setProcedureElement(procedureElement);
 
 		// //引数を解析して引数モデルを生成
-		model.setParams(parseFunctionArgs(document, funcDec.args, procedureElement));
+		model.setParams(
+				parseFunctionArgs(document, funcDec.args, procedureElement));
 
 		addParameterSocketInfo(document, procedureElement, model.getParams());
 
@@ -190,27 +197,32 @@ public class BlockGenerator {
 		model.setBodyBlocks(bodyBlocks);
 		// funcDec.body ボディのパース
 		if (hasBody(funcDec)) {
-			addAfterBlockNode(document, procedureElement, String.valueOf(ID_COUNTER));
+			addAfterBlockNode(document, procedureElement,
+					String.valueOf(ID_COUNTER));
 			String beforeId = procedureElement.getAttribute("id");
 			List<UniExpr> body = funcDec.block.body;
 			for (int i = 0; i < body.size(); i++) {
 				// expressionの解析 行き掛け順
-				BlockElementModel commandBlock = parseExpr(body.get(i), document, null);// 木で返す．
+				BlockElementModel commandBlock = parseExpr(body.get(i),
+						document, null);// 木で返す．
 
 				if (!(commandBlock instanceof BlockCommandModel)) {
 					throw new RuntimeException("cant convert " + body.get(i));
 				}
 
 				if (i + 1 < body.size()) {
-					addAfterBlockNode(document, commandBlock.getElement(), String.valueOf(ID_COUNTER));
+					addAfterBlockNode(document, commandBlock.getElement(),
+							String.valueOf(ID_COUNTER));
 				}
 
 				// 左辺ブロックに直前のブロックのIDを追加する
-				addBeforeBlockNode(document, commandBlock.getElement(), beforeId);
+				addBeforeBlockNode(document, commandBlock.getElement(),
+						beforeId);
 
 				bodyBlocks.add((BlockCommandModel) commandBlock);
 
-				beforeId = getBlockAttibuteByElement(commandBlock.getElement(), "id");
+				beforeId = getBlockAttibuteByElement(commandBlock.getElement(),
+						"id");
 			}
 		}
 
@@ -219,7 +231,8 @@ public class BlockGenerator {
 		return model;
 	}
 
-	public void addParameterSocketInfo(Document document, Element element, List<BlockProcParmModel> args) {
+	public void addParameterSocketInfo(Document document, Element element,
+			List<BlockProcParmModel> args) {
 		List<Element> paramElements = new ArrayList<>();
 		SocketsInfo socketsInfo = new SocketsInfo();
 
@@ -228,11 +241,15 @@ public class BlockGenerator {
 		}
 
 		for (int i = 0; i < paramElements.size(); i++) {
-			String label = BlockMapper.getChildNode(paramElements.get(i), "Label").getTextContent();
+			String label = BlockMapper
+					.getChildNode(paramElements.get(i), "Label")
+					.getTextContent();
 			String connecctorType = convertTypeToBlockConnectorType(
-					BlockMapper.getChildNode(paramElements.get(i), "Type").getTextContent());
+					BlockMapper.getChildNode(paramElements.get(i), "Type")
+							.getTextContent());
 
-			socketsInfo.addSocketInfo(new SocketInfo(label, "single", connecctorType, connecctorType));
+			socketsInfo.addSocketInfo(new SocketInfo(label, "single",
+					connecctorType, connecctorType));
 		}
 
 		socketsInfo.addSocketInfo(new SocketInfo("", "single", "poly", "poly"));
@@ -242,7 +259,8 @@ public class BlockGenerator {
 		addSocketsNode(paramElements, document, element, socketsInfo);
 	}
 
-	public List<BlockProcParmModel> parseFunctionArgs(Document document, List<UniArg> args, Element parent) {
+	public List<BlockProcParmModel> parseFunctionArgs(Document document,
+			List<UniArg> args, Element parent) {
 		List<BlockProcParmModel> argModels = new ArrayList<>();
 		if (args != null) {
 			for (UniArg arg : args) {
@@ -252,12 +270,15 @@ public class BlockGenerator {
 		return argModels;
 	}
 
-	public BlockProcParmModel parseFunctionArg(Document document, UniArg arg, Element parent) {
+	public BlockProcParmModel parseFunctionArg(Document document, UniArg arg,
+			Element parent) {
 		String genusName = this.resolver.getFunctionArgBlockName(arg.type);
 		if (genusName == null) {
-			throw new RuntimeException("the parameter type can't use at BlockEditor");
+			throw new RuntimeException(
+					"the parameter type can't use at BlockEditor");
 		}
-		Element element = createBlockElement(document, genusName, ID_COUNTER++, "param");
+		Element element = createBlockElement(document, genusName, ID_COUNTER++,
+				"param");
 		// label
 		addElement("Label", document, arg.name, element);
 		// name
@@ -265,7 +286,8 @@ public class BlockGenerator {
 		// type
 		addElement("Type", document, arg.type, element);
 		// plug
-		addPlugElement(document, element, parent, convertTypeToBlockConnectorType(arg.type), "single");
+		addPlugElement(document, element, parent,
+				convertTypeToBlockConnectorType(arg.type), "single");
 
 		vnResolver.addLocalVariable(arg.name, element);
 
@@ -273,7 +295,8 @@ public class BlockGenerator {
 	}
 
 	public boolean hasBody(UniMethodDec funcDec) {
-		if (funcDec.block != null && funcDec.block.body != null && funcDec.block.body.size() > 0) {
+		if (funcDec.block != null && funcDec.block.body != null
+				&& funcDec.block.body.size() > 0) {
 			return true;
 		} else {
 			return false;
@@ -283,7 +306,8 @@ public class BlockGenerator {
 	/*
 	 * ノードから属性値を取得する
 	 */
-	public String getBlockAttibuteByElement(Element element, String attributeName) {
+	public String getBlockAttibuteByElement(Element element,
+			String attributeName) {
 		if (element.getNodeName().equals("BlockStub")) {
 			Node blockNode = BlockMapper.getChildNode(element, "Block");
 			return BlockMapper.getAttribute(blockNode, attributeName);
@@ -295,7 +319,8 @@ public class BlockGenerator {
 	/*
 	 * AfterBlockノードを追加する
 	 */
-	public static void addAfterBlockNode(Document document, Element blockNode, String id) {
+	public static void addAfterBlockNode(Document document, Element blockNode,
+			String id) {
 		Element element = document.createElement("AfterBlockId");
 		element.setTextContent(id);
 
@@ -306,7 +331,8 @@ public class BlockGenerator {
 		}
 	}
 
-	public static void addBeforeBlockNode(Document document, Element blockNode, String id) {
+	public static void addBeforeBlockNode(Document document, Element blockNode,
+			String id) {
 		Element element = document.createElement("BeforeBlockId");
 		element.setTextContent(id);
 
@@ -317,18 +343,21 @@ public class BlockGenerator {
 		}
 	}
 
-	public BlockElementModel parseExpr(UniExpr expr, Document document, Element parent) {
+	public BlockElementModel parseExpr(UniExpr expr, Document document,
+			Element parent) {
 		BlockElementModel model = null;
 		if (expr instanceof UniMethodCall) {
 			model = parseMethodCall((UniMethodCall) expr, document, parent);
 		} else if (expr instanceof UniStringLiteral) {
-			model = parseStringLiteral((UniStringLiteral) expr, document, parent);
+			model = parseStringLiteral((UniStringLiteral) expr, document,
+					parent);
 		} else if (expr instanceof UniIntLiteral) {
 			model = parseIntLiteral((UniIntLiteral) expr, document, parent);
 		} else if (expr instanceof UniBoolLiteral) {
 			model = parseBoolLiteral((UniBoolLiteral) expr, document, parent);
 		} else if (expr instanceof UniDoubleLiteral) {
-			model = parseDoubleLiteral((UniDoubleLiteral) expr, document, parent);
+			model = parseDoubleLiteral((UniDoubleLiteral) expr, document,
+					parent);
 		} else if (expr instanceof UniIf) {
 			model = parseIf((UniIf) expr, document, parent);
 		} else if (expr instanceof UniWhile) {
@@ -362,7 +391,8 @@ public class BlockGenerator {
 		return model;
 	}
 
-	public BlockElementModel parseIdent(UniIdent expr, Document document, Node parent) {
+	public BlockElementModel parseIdent(UniIdent expr, Document document,
+			Node parent) {
 		Node varDecNode = vnResolver.getVariableNode(expr.name);
 		if (varDecNode != null) {
 			String genusName = "getter";
@@ -371,12 +401,14 @@ public class BlockGenerator {
 			Element stubElement = createBlockStubNode(document, expr.name,
 					BlockMapper.getAttribute(varDecNode, "genus-name"));
 			// Blockノード作成
-			Element blockElement = createVariableBlockNode(document, genusName, expr.name, "data");
+			Element blockElement = createVariableBlockNode(document, genusName,
+					expr.name, "data");
 
-			List<Node> socketNodes = resolver
-					.getSocketNodes(genusName.substring("setter".length(), genusName.length()));
-			addPlugElement(document, blockElement, parent,
-					BlockMapper.getAttribute(socketNodes.get(0), "connector-type"), "mirror");
+			List<Node> socketNodes = resolver.getSocketNodes(
+					genusName.substring("setter".length(), genusName.length()));
+			addPlugElement(document, blockElement, parent, BlockMapper
+					.getAttribute(socketNodes.get(0), "connector-type"),
+					"mirror");
 
 			stubElement.appendChild(blockElement);
 			return new BlockVariableGetterModel(stubElement);
@@ -385,7 +417,8 @@ public class BlockGenerator {
 		}
 	}
 
-	public BlockElementModel parseFor(UniFor forExpr, Document document, Node parent) {
+	public BlockElementModel parseFor(UniFor forExpr, Document document,
+			Node parent) {
 		// whileをもつ抽象化ブロックを作成して返す
 		UniBlock forBlock = new UniBlock(new ArrayList<>(), null);
 		if (forExpr.init != null) {
@@ -404,12 +437,17 @@ public class BlockGenerator {
 		return parseExpr(forBlock, document, null);
 	}
 
-	public BlockElementModel parseDoWhile(UniDoWhile doWhileExpr, Document document, Node parent) {
-		Element blockElement = createBlockElement(document, "dowhile", ID_COUNTER++, "command");
-		BlockElementModel socket = parseExpr(doWhileExpr.cond, document, blockElement);
-		List<BlockCommandModel> trueBlocks = parseBody(document, blockElement, doWhileExpr.statement);
+	public BlockElementModel parseDoWhile(UniDoWhile doWhileExpr,
+			Document document, Node parent) {
+		Element blockElement = createBlockElement(document, "dowhile",
+				ID_COUNTER++, "command");
+		BlockElementModel socket = parseExpr(doWhileExpr.cond, document,
+				blockElement);
+		List<BlockCommandModel> trueBlocks = parseBody(document, blockElement,
+				doWhileExpr.statement);
 
-		BlockDoWhileModel model = new BlockDoWhileModel(blockElement, (BlockExprModel) socket, trueBlocks);
+		BlockDoWhileModel model = new BlockDoWhileModel(blockElement,
+				(BlockExprModel) socket, trueBlocks);
 
 		List<Element> blockSockets = new ArrayList<>();
 		if (trueBlocks.size() > 0) {
@@ -430,11 +468,16 @@ public class BlockGenerator {
 		return model;
 	}
 
-	public BlockAbstractBlockModel parseBlock(UniBlock blockExpr, Document document, Node parent) {
-		Element blockElement = createBlockElement(document, "abstraction", ID_COUNTER++, "command");
-		BlockAbstractBlockModel model = new BlockAbstractBlockModel(blockElement);
-		List<BlockCommandModel> commands = parseBody(document, blockElement, blockExpr);
-		SocketsInfo socketsInfo = calcSocketsInfo(resolver.getSocketNodes("abstraction"));
+	public BlockAbstractBlockModel parseBlock(UniBlock blockExpr,
+			Document document, Node parent) {
+		Element blockElement = createBlockElement(document, "abstraction",
+				ID_COUNTER++, "command");
+		BlockAbstractBlockModel model = new BlockAbstractBlockModel(
+				blockElement);
+		List<BlockCommandModel> commands = parseBody(document, blockElement,
+				blockExpr);
+		SocketsInfo socketsInfo = calcSocketsInfo(
+				resolver.getSocketNodes("abstraction"));
 
 		List<Element> bodyTopElement = new ArrayList<>();
 		if (commands.size() > 0) {
@@ -452,27 +495,36 @@ public class BlockGenerator {
 		return model;
 	}
 
-	public BlockElementModel parseReturn(UniReturn returnExpr, Document document, Node parent) {
-		Element blockElement = createBlockElement(document, "return", ID_COUNTER++, "command");
+	public BlockElementModel parseReturn(UniReturn returnExpr,
+			Document document, Node parent) {
+		Element blockElement = createBlockElement(document, "return",
+				ID_COUNTER++, "command");
 
-		BlockElementModel returnValue = parseExpr(returnExpr.value, document, blockElement);
+		BlockElementModel returnValue = parseExpr(returnExpr.value, document,
+				blockElement);
 		if (returnExpr.value != null) {
 			List<Element> arg = new ArrayList<>();
 			arg.add(returnValue.getElement());
 
 			SocketsInfo sockets = new SocketsInfo();
-			Node returnBlock = resolver.getBlockNode(BlockMapper.getAttribute(returnValue.getElement(), "genus-name"));
-			sockets.addSocketInfo(new SocketInfo("", "single",
-					convertTypeToBlockConnectorType(BlockMapper.getChildNode(returnBlock, "Type").getTextContent()),
-					"poly"));
+			Node returnBlock = resolver.getBlockNode(BlockMapper
+					.getAttribute(returnValue.getElement(), "genus-name"));
+			sockets.addSocketInfo(
+					new SocketInfo("", "single",
+							convertTypeToBlockConnectorType(BlockMapper
+									.getChildNode(returnBlock, "Type")
+									.getTextContent()),
+							"poly"));
 
 			// socketの追加
 			addSocketsNode(arg, document, blockElement, sockets);
 
-			return new BlockReturnModel(blockElement, (BlockExprModel) returnValue);
+			return new BlockReturnModel(blockElement,
+					(BlockExprModel) returnValue);
 		} else {
 			List<Element> arg = new ArrayList<>();
-			SocketsInfo sockets = calcSocketsInfo(resolver.getSocketNodes("return"));
+			SocketsInfo sockets = calcSocketsInfo(
+					resolver.getSocketNodes("return"));
 			arg.add(null);
 			addSocketsNode(arg, document, blockElement, sockets);
 
@@ -481,8 +533,10 @@ public class BlockGenerator {
 
 	}
 
-	public BlockLocalVarDecModel parseVarDec(UniVariableDec varDec, Document document, Element parent) {
-		BlockLocalVarDecModel model = parseVarDec(varDec.type, varDec.name, document, parent);
+	public BlockLocalVarDecModel parseVarDec(UniVariableDec varDec,
+			Document document, Element parent) {
+		BlockLocalVarDecModel model = parseVarDec(varDec.type, varDec.name,
+				document, parent);
 		BlockElementModel initializer = null;
 		if (varDec.value != null) {
 			initializer = parseExpr(varDec.value, document, model.getElement());
@@ -490,7 +544,8 @@ public class BlockGenerator {
 
 		model.setInitializer((BlockExprModel) initializer);
 
-		List<Node> socketNodes = resolver.getSocketNodes(model.getElement().getAttribute("genus-name"));
+		List<Node> socketNodes = resolver
+				.getSocketNodes(model.getElement().getAttribute("genus-name"));
 
 		SocketsInfo sockets = calcSocketsInfo(socketNodes);
 
@@ -514,17 +569,22 @@ public class BlockGenerator {
 			SocketsInfo sockets = new SocketsInfo();
 
 			for (int i = 0; i < socketNodes.size(); i++) {
-				String label = BlockMapper.getAttribute(socketNodes.get(i), "label");
-				String positionType = BlockMapper.getAttribute(socketNodes.get(i), "position-type");
-				String connectorType = BlockMapper.getAttribute(socketNodes.get(i), "connector-type");
+				String label = BlockMapper.getAttribute(socketNodes.get(i),
+						"label");
+				String positionType = BlockMapper
+						.getAttribute(socketNodes.get(i), "position-type");
+				String connectorType = BlockMapper
+						.getAttribute(socketNodes.get(i), "connector-type");
 
-				sockets.addSocketInfo(new SocketInfo(label, positionType, connectorType, connectorType));
+				sockets.addSocketInfo(new SocketInfo(label, positionType,
+						connectorType, connectorType));
 			}
 			return sockets;
 		}
 	}
 
-	public Map<String, String[]> calcSocketsInfoByElement(List<Element> socketNodes) {
+	public Map<String, String[]> calcSocketsInfoByElement(
+			List<Element> socketNodes) {
 		if (socketNodes.size() <= 0) {
 			return null;
 		} else {
@@ -534,9 +594,12 @@ public class BlockGenerator {
 			String[] socketPositionTypes = new String[socketNodes.size()];
 
 			for (int i = 0; i < socketNodes.size(); i++) {
-				socketLabels[i] = BlockMapper.getAttribute(socketNodes.get(i), "label");
-				socketTypes[i] = BlockMapper.getAttribute(socketNodes.get(i), "connector-type");
-				socketPositionTypes[i] = BlockMapper.getAttribute(socketNodes.get(i), "position-type");
+				socketLabels[i] = BlockMapper.getAttribute(socketNodes.get(i),
+						"label");
+				socketTypes[i] = BlockMapper.getAttribute(socketNodes.get(i),
+						"connector-type");
+				socketPositionTypes[i] = BlockMapper
+						.getAttribute(socketNodes.get(i), "position-type");
 			}
 
 			socketsInfo.put("label", socketLabels);
@@ -559,7 +622,8 @@ public class BlockGenerator {
 
 			plugLabel = BlockMapper.getAttribute(plugNode, "label");
 			socketTypes = BlockMapper.getAttribute(plugNode, "connector-type");
-			socketPositionTypes = BlockMapper.getAttribute(plugNode, "position-type");
+			socketPositionTypes = BlockMapper.getAttribute(plugNode,
+					"position-type");
 
 			socketsInfo.put("label", plugLabel);
 			socketsInfo.put("connector-type", socketTypes);
@@ -569,16 +633,19 @@ public class BlockGenerator {
 		}
 	}
 
-	public BlockLocalVarDecModel parseVarDec(String type, String name, Document document, Element parent) {
+	public BlockLocalVarDecModel parseVarDec(String type, String name,
+			Document document, Element parent) {
 		if (vnResolver.getVariableNode(name) == null) {
-			Element blockElement = createBlockElement(document, "local-var-" + convertBlockTypeName(type), ID_COUNTER++,
+			Element blockElement = createBlockElement(document,
+					"local-var-" + convertBlockTypeName(type), ID_COUNTER++,
 					"local-variable");
 
 			addElement("Label", document, name, blockElement);
 			addElement("Name", document, name, blockElement);
 			addElement("Type", document, type, blockElement);
 
-			BlockLocalVarDecModel model = new BlockLocalVarDecModel(blockElement);
+			BlockLocalVarDecModel model = new BlockLocalVarDecModel(
+					blockElement);
 			vnResolver.addLocalVariable(name, blockElement);
 
 			return model;
@@ -617,14 +684,17 @@ public class BlockGenerator {
 		}
 	}
 
-	public BlockElementModel parseUnaryOperator(UniUnaryOp uniOp, Document document, Node parent) {
+	public BlockElementModel parseUnaryOperator(UniUnaryOp uniOp,
+			Document document, Node parent) {
 		// !,++,--,+,-
 		List<Element> elements = new ArrayList<Element>();
 		if ("!".equals(uniOp.operator)) {
-			Element blockElement = createBlockElement(document, "not", ID_COUNTER++, "function");
+			Element blockElement = createBlockElement(document, "not",
+					ID_COUNTER++, "function");
 			addPlugElement(document, blockElement, parent, "boolean", "single");
 
-			BlockElementModel value = parseExpr(uniOp.expr, document, blockElement);
+			BlockElementModel value = parseExpr(uniOp.expr, document,
+					blockElement);
 			List<Element> args = new ArrayList<>();
 			args.add(value.getElement());
 
@@ -632,8 +702,10 @@ public class BlockGenerator {
 			SocketsInfo sockets = calcSocketsInfo(socketNodes);
 			addSocketsNode(args, document, blockElement, sockets);
 
-			return new BlockNotOperatorModel(blockElement, (BlockExprModel) value);
-		} else if ("_++".equals(uniOp.operator) || "_--".equals(uniOp.operator) || "++_".equals(uniOp.operator)
+			return new BlockNotOperatorModel(blockElement,
+					(BlockExprModel) value);
+		} else if ("_++".equals(uniOp.operator) || "_--".equals(uniOp.operator)
+				|| "++_".equals(uniOp.operator)
 				|| "--_".equals(uniOp.operator)) {
 			String genusName = "setter";
 			UniIdent ident = (UniIdent) uniOp.expr;
@@ -651,18 +723,22 @@ public class BlockGenerator {
 				// i++;とか i = i+1に変換
 				genusName += BlockMapper.getAttribute(varDecNode, "genus-name");
 				// BlockStubノード作成
-				Element blockStubElement = createBlockStubNode(document, ident.name,
+				Element blockStubElement = createBlockStubNode(document,
+						ident.name,
 						BlockMapper.getAttribute(varDecNode, "genus-name"));
 				// Blockノード作成
-				Element blockElement = createVariableBlockNode(document, genusName, ident.name, "command");
+				Element blockElement = createVariableBlockNode(document,
+						genusName, ident.name, "command");
 
-				List<Node> socketNodes = resolver
-						.getSocketNodes(genusName.substring("setter".length(), genusName.length()));
+				List<Node> socketNodes = resolver.getSocketNodes(genusName
+						.substring("setter".length(), genusName.length()));
 				SocketsInfo sockets = calcSocketsInfo(socketNodes);
 
 				BlockElementModel right = parseExpr(
-						(UniExpr) (new UniBinOp(operator, new UniIdent(ident.name), new UniIntLiteral(1))), document,
-						blockElement);
+						(UniExpr) (new UniBinOp(operator,
+								new UniIdent(ident.name),
+								new UniIntLiteral(1))),
+						document, blockElement);
 
 				List<Element> rightElement = new ArrayList<>();
 				rightElement.add(right.getElement());
@@ -672,7 +748,8 @@ public class BlockGenerator {
 				// BlockStubノードにBlockノードを追加する
 				blockStubElement.appendChild(blockElement);
 
-				return new BlockVariableSetterModel(blockStubElement, (BlockExprModel) right);
+				return new BlockVariableSetterModel(blockStubElement,
+						(BlockExprModel) right);
 			} else {
 				// i = i++;
 				if (uniOp.operator.equals("_++")) {
@@ -685,11 +762,14 @@ public class BlockGenerator {
 					genusName = "predec";
 				}
 
-				Element blockStubElement = createBlockStubNode(document, ident.name,
+				Element blockStubElement = createBlockStubNode(document,
+						ident.name,
 						BlockMapper.getAttribute(varDecNode, "genus-name"));
 				// Blockノード作成
-				Element blockElement = createVariableBlockNode(document,
-						genusName + BlockMapper.getAttribute(varDecNode, "genus-name"), ident.name, "command");
+				Element blockElement = createVariableBlockNode(
+						document, genusName + BlockMapper
+								.getAttribute(varDecNode, "genus-name"),
+						ident.name, "command");
 				// BlockStubノードにBlockノードを追加する
 				blockStubElement.appendChild(blockElement);
 				elements.add(blockStubElement);
@@ -701,74 +781,99 @@ public class BlockGenerator {
 		}
 	}
 
-	public Element createVariableBlockNode(Document document, String genusName, String name, String kind) {
-		Element blockElement = createBlockElement(document, genusName, ID_COUNTER++, kind);
+	public Element createVariableBlockNode(Document document, String genusName,
+			String name, String kind) {
+		Element blockElement = createBlockElement(document, genusName,
+				ID_COUNTER++, kind);
 		addElement("Label", document, name, blockElement);
 		addElement("Name", document, name, blockElement);
 		return blockElement;
 	}
 
-	public Element createBlockStubNode(Document document, String parentName, String parentGenusName) {
+	public Element createBlockStubNode(Document document, String parentName,
+			String parentGenusName) {
 		Element blockStubElement = document.createElement("BlockStub");
 		addElement("StubParentName", document, parentName, blockStubElement);
-		addElement("StubParentGenus", document, parentGenusName, blockStubElement);
+		addElement("StubParentGenus", document, parentGenusName,
+				blockStubElement);
 		return blockStubElement;
 	}
 
-	public BlockCommandModel parseContinueBreak(String name, Document document, Node parent) {
-		BlockCommandModel model = new BlockCommandModel(createBlockElement(document, name, ID_COUNTER++, "command"));
+	public BlockCommandModel parseContinueBreak(String name, Document document,
+			Node parent) {
+		BlockCommandModel model = new BlockCommandModel(
+				createBlockElement(document, name, ID_COUNTER++, "command"));
 		return model;
 	}
 
-	public BlockElementModel parseBinOp(UniBinOp binopExpr, Document document, Node parent) {
+	public BlockElementModel parseBinOp(UniBinOp binopExpr, Document document,
+			Node parent) {
 		Element blockElement;
 		String type = getExprType(binopExpr.left, binopExpr.right);// 左右を先読みして，何型の演算か取得
 
 		if (binopExpr.operator.equals("=")) {// 他の二項演算と扱いが別（ソケットが一つのみ）
 			return createEqualOperatorModel(binopExpr, document);
 		} else if (binopExpr.operator.equals("&&")) {
-			blockElement = createBlockElement(document, "and", ID_COUNTER++, "function");
+			blockElement = createBlockElement(document, "and", ID_COUNTER++,
+					"function");
 		} else if (binopExpr.operator.equals("||")) {
-			blockElement = createBlockElement(document, "or", ID_COUNTER++, "function");
-		} else if (binopExpr.operator.equals("==") || binopExpr.operator.equals("!=")) {
-			blockElement = createBlockElement(document, calcEqualsOperatorGenusName(binopExpr, type), ID_COUNTER++,
+			blockElement = createBlockElement(document, "or", ID_COUNTER++,
 					"function");
-		} else if (binopExpr.operator.equals(">=") || binopExpr.operator.equals(">") || binopExpr.operator.equals("<=")
+		} else if (binopExpr.operator.equals("==")
+				|| binopExpr.operator.equals("!=")) {
+			blockElement = createBlockElement(document,
+					calcEqualsOperatorGenusName(binopExpr, type), ID_COUNTER++,
+					"function");
+		} else if (binopExpr.operator.equals(">=")
+				|| binopExpr.operator.equals(">")
+				|| binopExpr.operator.equals("<=")
 				|| binopExpr.operator.equals("<")) {
-			blockElement = createBlockElement(document, calcCompareOperatorGenusName(binopExpr, type), ID_COUNTER++,
+			blockElement = createBlockElement(document,
+					calcCompareOperatorGenusName(binopExpr, type), ID_COUNTER++,
 					"function");
-		} else if (binopExpr.operator.equals("+") || binopExpr.operator.equals("-") || binopExpr.operator.equals("*")
-				|| binopExpr.operator.equals("/") || binopExpr.operator.equals("%")) {
+		} else
+			if (binopExpr.operator.equals("+") || binopExpr.operator.equals("-")
+					|| binopExpr.operator.equals("*")
+					|| binopExpr.operator.equals("/")
+					|| binopExpr.operator.equals("%")) {
 			// 左右の型に応じてブロックの名前を変える(number or double-number)
-			blockElement = createBlockElement(document, calcCalcuratorOperationGenusName(binopExpr, type), ID_COUNTER++,
-					"function");
+			blockElement = createBlockElement(document,
+					calcCalcuratorOperationGenusName(binopExpr, type),
+					ID_COUNTER++, "function");
 		} else {
 			throw new RuntimeException("unequipment operator");
 		}
 
-		Node plugNode = resolver.getPlugElement(blockElement.getAttribute("genus-name"));
-		addPlugElement(document, blockElement, parent, BlockMapper.getAttribute(plugNode, "connector-type"),
+		Node plugNode = resolver
+				.getPlugElement(blockElement.getAttribute("genus-name"));
+		addPlugElement(document, blockElement, parent,
+				BlockMapper.getAttribute(plugNode, "connector-type"),
 				BlockMapper.getAttribute(plugNode, "position-type"));
 
-		BlockElementModel leftBlock = parseExpr(binopExpr.left, document, blockElement);
-		BlockElementModel rightBlock = parseExpr(binopExpr.right, document, blockElement);
+		BlockElementModel leftBlock = parseExpr(binopExpr.left, document,
+				blockElement);
+		BlockElementModel rightBlock = parseExpr(binopExpr.right, document,
+				blockElement);
 
 		List<Element> args = new ArrayList<Element>();
 		args.add(leftBlock.getElement());
 		args.add(rightBlock.getElement());
 
-		List<Node> socketNodes = resolver.getSocketNodes(blockElement.getAttribute("genus-name"));
+		List<Node> socketNodes = resolver
+				.getSocketNodes(blockElement.getAttribute("genus-name"));
 		SocketsInfo sockets = calcSocketsInfo(socketNodes);
 		addSocketsNode(args, document, blockElement, sockets);
 
-		return new BlockBinaryOperatorModel(blockElement, (BlockExprModel) leftBlock, (BlockExprModel) rightBlock);
+		return new BlockBinaryOperatorModel(blockElement,
+				(BlockExprModel) leftBlock, (BlockExprModel) rightBlock);
 	}
 
 	public void addParsedModel(UniNode model, Element element) {
 		addedModels.put(Integer.toString(model.hashCode()), element);
 	}
 
-	public String calcCompareOperatorGenusName(UniBinOp binopExpr, String type) {
+	public String calcCompareOperatorGenusName(UniBinOp binopExpr,
+			String type) {
 		String genusName;
 		if (binopExpr.operator.equals(">=") || binopExpr.operator.equals(">")) {
 			genusName = "greaterthan";
@@ -780,7 +885,8 @@ public class BlockGenerator {
 			} else if ("double".equals(type)) {
 				genusName += "-double";
 			} else {
-				throw new RuntimeException(type + "is not supported type yet at " + binopExpr.operator);
+				throw new RuntimeException(type
+						+ "is not supported type yet at " + binopExpr.operator);
 			}
 			return genusName;
 		} else {
@@ -793,7 +899,8 @@ public class BlockGenerator {
 			} else if ("double".equals(type)) {
 				genusName += "-double";
 			} else {
-				throw new RuntimeException(type + "is not supported type yet at " + binopExpr.operator);
+				throw new RuntimeException(type
+						+ "is not supported type yet at " + binopExpr.operator);
 			}
 			return genusName;
 		}
@@ -814,12 +921,14 @@ public class BlockGenerator {
 		} else if ("boolean".equals(type)) {
 			genusName += "boolean";
 		} else {
-			throw new RuntimeException(type + "is not supported type yet at " + binopExpr.operator);
+			throw new RuntimeException(type + "is not supported type yet at "
+					+ binopExpr.operator);
 		}
 		return genusName;
 	}
 
-	public String calcCalcuratorOperationGenusName(UniBinOp binopExpr, String type) {
+	public String calcCalcuratorOperationGenusName(UniBinOp binopExpr,
+			String type) {
 		String genusName = "sum";
 		if (binopExpr.operator.equals("-")) {
 			genusName = "difference";
@@ -838,21 +947,25 @@ public class BlockGenerator {
 			} else if ("String".equals(type)) {
 				genusName = "string-append";
 			} else {
-				throw new RuntimeException(type + " is not supported type yet at " + binopExpr.operator);
+				throw new RuntimeException(
+						type + " is not supported type yet at "
+								+ binopExpr.operator);
 			}
 		} else {
 			if ("int".equals(type)) {
 			} else if ("double".equals(type)) {
 				genusName += "-double";
 			} else {
-				throw new RuntimeException(type + "is not supported type yet at " + binopExpr.operator);
+				throw new RuntimeException(type
+						+ "is not supported type yet at " + binopExpr.operator);
 			}
 		}
 
 		return genusName;
 	}
 
-	public BlockElementModel createEqualOperatorModel(UniBinOp binopExpr, Document document) {
+	public BlockElementModel createEqualOperatorModel(UniBinOp binopExpr,
+			Document document) {
 		if (binopExpr.left instanceof UniIdent) {
 			String genusName = "setter";
 			UniIdent ident = (UniIdent) binopExpr.left;
@@ -864,12 +977,14 @@ public class BlockGenerator {
 					BlockMapper.getAttribute(varDecNode, "genus-name"));
 
 			// Blockノード作成
-			Element blockElement = createVariableBlockNode(document, genusName, ident.name, "command");
+			Element blockElement = createVariableBlockNode(document, genusName,
+					ident.name, "command");
 
 			// 右辺のモデルの生成
-			BlockElementModel right = parseExpr(binopExpr.right, document, blockElement);
-			List<Node> socketNodes = resolver
-					.getSocketNodes(genusName.substring("setter".length(), genusName.length()));
+			BlockElementModel right = parseExpr(binopExpr.right, document,
+					blockElement);
+			List<Node> socketNodes = resolver.getSocketNodes(
+					genusName.substring("setter".length(), genusName.length()));
 
 			// ソケット情報を付与して返す
 			if (socketNodes != null) {
@@ -882,9 +997,11 @@ public class BlockGenerator {
 				// BlockStubノードにBlockノードを追加する
 				blockStubElement.appendChild(blockElement);
 
-				return new BlockVariableSetterModel(blockStubElement, (BlockExprModel) right);
+				return new BlockVariableSetterModel(blockStubElement,
+						(BlockExprModel) right);
 			} else {
-				throw new RuntimeException("illegal right element:" + binopExpr.right);
+				throw new RuntimeException(
+						"illegal right element:" + binopExpr.right);
 			}
 		} else {
 			throw new RuntimeException("illegal left op:" + binopExpr.left);
@@ -936,7 +1053,8 @@ public class BlockGenerator {
 		} else if (expr instanceof UniMethodCall) {
 			throw new RuntimeException("not supported yet");
 		} else if (expr instanceof UniIdent) {
-			type = BlockMapper.getChildNode(vnResolver.getVariableNode(((UniIdent) expr).name), "Type")
+			type = BlockMapper.getChildNode(
+					vnResolver.getVariableNode(((UniIdent) expr).name), "Type")
 					.getTextContent();
 		} else if (expr instanceof UniBinOp) {
 			type = getExprType(((UniBinOp) expr).left, ((UniBinOp) expr).right);
@@ -955,15 +1073,19 @@ public class BlockGenerator {
 		return socketLabels;
 	}
 
-	public BlockWhileModel parseWhile(UniWhile whileExpr, Document document, Node parent) {
+	public BlockWhileModel parseWhile(UniWhile whileExpr, Document document,
+			Node parent) {
 		BlockWhileModel model = new BlockWhileModel();
-		Element blockElement = createBlockElement(document, "while", ID_COUNTER++, "command");
+		Element blockElement = createBlockElement(document, "while",
+				ID_COUNTER++, "command");
 		model.setElement(blockElement);
 
-		BlockElementModel socket = parseExpr(whileExpr.cond, document, blockElement);
+		BlockElementModel socket = parseExpr(whileExpr.cond, document,
+				blockElement);
 		model.addSocketBlock((BlockExprModel) socket);
 
-		List<BlockCommandModel> trueBlock = parseBody(document, blockElement, whileExpr.statement);
+		List<BlockCommandModel> trueBlock = parseBody(document, blockElement,
+				whileExpr.statement);
 		model.setTrueBlocks(trueBlock);
 
 		List<Element> blockSockets = new ArrayList<>();
@@ -984,28 +1106,41 @@ public class BlockGenerator {
 		return model;
 	}
 
-	public BlockLiteralModel parseBoolLiteral(UniBoolLiteral boolexpr, Document document, Node parent) {
+	public BlockLiteralModel parseBoolLiteral(UniBoolLiteral boolexpr,
+			Document document, Node parent) {
 		if (boolexpr.value) {
-			return new BlockLiteralModel(createLiteralElement(document, parent, "true",
-					BlockMapper.getAttribute(resolver.getBlockNode("true"), "initlabel"), boolexpr.hashCode()));
+			return new BlockLiteralModel(
+					createLiteralElement(document, parent, "true",
+							BlockMapper.getAttribute(
+									resolver.getBlockNode("true"), "initlabel"),
+					boolexpr.hashCode()));
 		} else {
-			return new BlockLiteralModel(createLiteralElement(document, parent, "true",
-					BlockMapper.getAttribute(resolver.getBlockNode("true"), "initlabel"), boolexpr.hashCode()));
+			return new BlockLiteralModel(
+					createLiteralElement(document, parent, "true",
+							BlockMapper.getAttribute(
+									resolver.getBlockNode("true"), "initlabel"),
+					boolexpr.hashCode()));
 		}
 	}
 
-	public Element createLiteralElement(Document document, Node parent, String genusName, String label, int hash) {
-		Element blockElement = createBlockElement(document, genusName, ID_COUNTER++,
-				BlockMapper.getAttribute(resolver.getBlockNode(genusName), "kind"));
+	public Element createLiteralElement(Document document, Node parent,
+			String genusName, String label, int hash) {
+		Element blockElement = createBlockElement(document, genusName,
+				ID_COUNTER++, BlockMapper.getAttribute(
+						resolver.getBlockNode(genusName), "kind"));
 
 		addElement("Label", document, label, blockElement);
 		addElement("Type", document,
-				BlockMapper.getChildNode(resolver.getBlockNode(genusName), "Type").getTextContent(), blockElement);
+				BlockMapper
+						.getChildNode(resolver.getBlockNode(genusName), "Type")
+						.getTextContent(),
+				blockElement);
 
 		Node plugNode = resolver.getPlugElement(genusName);
 		Map<String, String> plugInfo = calcPlugInfo(plugNode);
 
-		addPlugElement(document, blockElement, parent, plugInfo.get("connector-type"), plugInfo.get("position-type"));
+		addPlugElement(document, blockElement, parent,
+				plugInfo.get("connector-type"), plugInfo.get("position-type"));
 
 		return blockElement;
 	}
@@ -1013,14 +1148,17 @@ public class BlockGenerator {
 	public BlockIfModel parseIf(UniIf ifexpr, Document document, Node parent) {
 		// //BlockModelのifモデルを作成する．（Xml Element）
 		BlockIfModel ifBlockModel = new BlockIfModel();
-		Element ifElement = createBlockElement(document, "ifelse", ID_COUNTER++, "command");
+		Element ifElement = createBlockElement(document, "ifelse", ID_COUNTER++,
+				"command");
 		ifBlockModel.setElement(ifElement);
 
 		// Universal Modelの条件式，真ブロック式，偽ブロック式をそれぞれ解析し，BlockModel（xml
 		// Element）を作成する
 		BlockElementModel socket = parseExpr(ifexpr.cond, document, ifElement);
-		List<BlockCommandModel> trueBlock = parseBody(document, ifElement, ifexpr.trueStatement);
-		List<BlockCommandModel> falseBlock = parseBody(document, ifElement, ifexpr.falseStatement);
+		List<BlockCommandModel> trueBlock = parseBody(document, ifElement,
+				ifexpr.trueStatement);
+		List<BlockCommandModel> falseBlock = parseBody(document, ifElement,
+				ifexpr.falseStatement);
 
 		// if式のソケット情報を付与
 		addIfSocketInfo(document, ifElement, socket, trueBlock, falseBlock);
@@ -1033,8 +1171,9 @@ public class BlockGenerator {
 		return ifBlockModel;
 	}
 
-	public void addIfSocketInfo(Document document, Element ifElement, BlockElementModel socket,
-			List<BlockCommandModel> trueBlock, List<BlockCommandModel> falseBlock) {
+	public void addIfSocketInfo(Document document, Element ifElement,
+			BlockElementModel socket, List<BlockCommandModel> trueBlock,
+			List<BlockCommandModel> falseBlock) {
 
 		List<Element> blockSockets = new ArrayList<>();
 
@@ -1059,28 +1198,33 @@ public class BlockGenerator {
 		addSocketsNode(blockSockets, document, ifElement, socketsInfo);
 	}
 
-	public BlockLiteralModel parseIntLiteral(UniIntLiteral num, Document document, Node parent) {
+	public BlockLiteralModel parseIntLiteral(UniIntLiteral num,
+			Document document, Node parent) {
 		BlockLiteralModel numberLiteral = new BlockLiteralModel(
-				createLiteralElement(document, parent, "number", Integer.toString(num.value), num.hashCode()));
+				createLiteralElement(document, parent, "number",
+						Integer.toString(num.value), num.hashCode()));
 		return numberLiteral;
 	}
 
-	public BlockLiteralModel parseDoubleLiteral(UniDoubleLiteral num, Document document, Node parent) {
-		return new BlockLiteralModel(
-				createLiteralElement(document, parent, "double-number", Double.toString(num.value), num.hashCode()));
+	public BlockLiteralModel parseDoubleLiteral(UniDoubleLiteral num,
+			Document document, Node parent) {
+		return new BlockLiteralModel(createLiteralElement(document, parent,
+				"double-number", Double.toString(num.value), num.hashCode()));
 	}
 
-	public BlockLiteralModel parseStringLiteral(UniStringLiteral str, Document document, Node parent) {
-		return new BlockLiteralModel(
-				createLiteralElement(document, parent, "string", str.value, ((UniNode) str).hashCode()));
+	public BlockLiteralModel parseStringLiteral(UniStringLiteral str,
+			Document document, Node parent) {
+		return new BlockLiteralModel(createLiteralElement(document, parent,
+				"string", str.value, ((UniNode) str).hashCode()));
 	}
 
-	public static void addPlugElement(Document document, Element target, Node parentBlockNode, String plugType,
-			String positionType) {
+	public static void addPlugElement(Document document, Element target,
+			Node parentBlockNode, String plugType, String positionType) {
 		Element plugNode = document.createElement("Plug");
 		Element blockConnectorNode = document.createElement("BlockConnector");
 
-		blockConnectorNode.setAttribute("con-block-id", BlockMapper.getAttribute(parentBlockNode, "id"));
+		blockConnectorNode.setAttribute("con-block-id",
+				BlockMapper.getAttribute(parentBlockNode, "id"));
 		blockConnectorNode.setAttribute("connector-kind", "plug");
 		blockConnectorNode.setAttribute("connector-type", plugType);
 		blockConnectorNode.setAttribute("init-type", plugType);
@@ -1092,7 +1236,8 @@ public class BlockGenerator {
 		target.appendChild(plugNode);
 	}
 
-	public BlockElementModel parseMethodCall(UniMethodCall method, Document document, Node parent) {
+	public BlockElementModel parseMethodCall(UniMethodCall method,
+			Document document, Node parent) {
 		// ユーザメソッド、返り値ありはまだ
 		UniIdent receiver = (UniIdent) method.receiver;
 		if (method.receiver == null || "MyLib".equals(receiver.name)) {
@@ -1103,11 +1248,14 @@ public class BlockGenerator {
 				String kind = "command";
 				BlockExCallerModel caller = new BlockExCallerModel();
 
-				Element element = createBlockElement(document, genusName, ID_COUNTER++, kind);
+				Element element = createBlockElement(document, genusName,
+						ID_COUNTER++, kind);
 				caller.setElement(element);
 
-				BlockExprModel receiverModel = (BlockExprModel) parseExpr(method.receiver, document, element);
-				BlockElementModel callMethodModel = createMethodCallModel(method, document, element);
+				BlockExprModel receiverModel = (BlockExprModel) parseExpr(
+						method.receiver, document, element);
+				BlockElementModel callMethodModel = createMethodCallModel(
+						method, document, element);
 				List<Element> sockets = new ArrayList<>();
 
 				caller.addSocketBlock(receiverModel);
@@ -1116,7 +1264,8 @@ public class BlockGenerator {
 				sockets.add(receiverModel.getElement());
 				sockets.add(callMethodModel.getElement());
 
-				List<Node> socketNodes = resolver.getSocketNodes("callActionMethod2");
+				List<Node> socketNodes = resolver
+						.getSocketNodes("callActionMethod2");
 				SocketsInfo socketsInfo = calcSocketsInfo(socketNodes);
 
 				// ソケットの出力
@@ -1130,13 +1279,16 @@ public class BlockGenerator {
 		}
 	}
 
-	public BlockElementModel createMethodCallModel(UniMethodCall method, Document document, Node parent) {
+	public BlockElementModel createMethodCallModel(UniMethodCall method,
+			Document document, Node parent) {
 		String genusName = calcMethodCallGenusName(method);
 		List<Element> exprs = new ArrayList<Element>();
 		List<BlockExprModel> argModels = new ArrayList<>();
-		String kind = BlockMapper.getAttribute(resolver.getBlockNode(genusName), "kind");
+		String kind = BlockMapper.getAttribute(resolver.getBlockNode(genusName),
+				"kind");
 
-		Element element = createBlockElement(document, genusName, ID_COUNTER++, kind);
+		Element element = createBlockElement(document, genusName, ID_COUNTER++,
+				kind);
 		addElement("Name", document, method.methodName, element);
 
 		if (method.args != null) {
@@ -1147,7 +1299,8 @@ public class BlockGenerator {
 					argModels.add((BlockExprModel) arg);
 					exprs.add(arg.getElement());
 				} else {
-					throw new RuntimeException("can not use the expression" + expr.toString());
+					throw new RuntimeException(
+							"can not use the expression" + expr.toString());
 				}
 			}
 		}
@@ -1162,7 +1315,9 @@ public class BlockGenerator {
 			Node plugNode = resolver.getPlugElement(genusName);
 			Map<String, String> plugInfo = calcPlugInfo(plugNode);
 
-			addPlugElement(document, element, parent, plugInfo.get("connector-type"), plugInfo.get("position-type"));
+			addPlugElement(document, element, parent,
+					plugInfo.get("connector-type"),
+					plugInfo.get("position-type"));
 
 			caller.setElement(element);
 			return caller;
@@ -1210,29 +1365,33 @@ public class BlockGenerator {
 		} else if (param instanceof UniIntLiteral) {
 			type = "number";
 		} else if (param instanceof UniIdent) {
-			type = BlockMapper.getChildNode(vnResolver.getVariableNode(((UniIdent) param).name), "Type")
+			type = BlockMapper.getChildNode(
+					vnResolver.getVariableNode(((UniIdent) param).name), "Type")
 					.getTextContent();
 		} else {
-			throw new RuntimeException(param.toString() + "has not been supported yet.");
+			throw new RuntimeException(
+					param.toString() + "has not been supported yet.");
 		}
 		return type;
 	}
 
-	public static void addSocketsNode(List<Element> args, Document document, Element blockNode,
-			SocketsInfo socketsInfo) {
+	public static void addSocketsNode(List<Element> args, Document document,
+			Element blockNode, SocketsInfo socketsInfo) {
 		if (args.size() > 0) {
 			Element sockets = document.createElement("Sockets");
 			sockets.setAttribute("num-sockets", String.valueOf(args.size()));
 			for (int i = 0; i < args.size(); i++) {
 				SocketInfo socketInfo = socketsInfo.getSockets().get(i);
 				socketInfo.setConnectorBlockID(getIdFromElement(args.get(i)));
-				addSocketNode(document, sockets, socketsInfo.getSockets().get(i));
+				addSocketNode(document, sockets,
+						socketsInfo.getSockets().get(i));
 			}
 			blockNode.appendChild(sockets);
 		}
 	}
 
-	public static void addSocketNode(Document document, Node socketsNode, SocketInfo socketInfo) {
+	public static void addSocketNode(Document document, Node socketsNode,
+			SocketInfo socketInfo) {
 		Element connector = document.createElement("BlockConnector");
 
 		connector.setAttribute("connector-kind", "socket");
@@ -1240,11 +1399,14 @@ public class BlockGenerator {
 		connector.setAttribute("label", socketInfo.getLabel());
 
 		if (!"-1".equals(socketInfo.getConnectorBlockID())) {
-			connector.setAttribute("con-block-id", socketInfo.getConnectorBlockID());
-			connector.setAttribute("connector-type", socketInfo.getConnectorType());
+			connector.setAttribute("con-block-id",
+					socketInfo.getConnectorBlockID());
+			connector.setAttribute("connector-type",
+					socketInfo.getConnectorType());
 			connector.setAttribute("init-type", socketInfo.getInitType());
 		} else {
-			connector.setAttribute("connector-type", socketInfo.getConnectorType());
+			connector.setAttribute("connector-type",
+					socketInfo.getConnectorType());
 			connector.setAttribute("init-type", socketInfo.getInitType());
 		}
 
@@ -1256,7 +1418,8 @@ public class BlockGenerator {
 			return "-1";
 		}
 		if ("BlockStub".equals(element.getNodeName())) {
-			return BlockMapper.getAttribute(BlockMapper.getChildNode(element, "Block"), "id");
+			return BlockMapper.getAttribute(
+					BlockMapper.getChildNode(element, "Block"), "id");
 		} else {
 			return BlockMapper.getAttribute(element, "id");
 		}
@@ -1270,7 +1433,8 @@ public class BlockGenerator {
 		}
 	}
 
-	public static void addLocationElement(Document document, String x, String y, Element blockElement) {
+	public static void addLocationElement(Document document, String x, String y,
+			Element blockElement) {
 		Element locationElement = document.createElement("Location");
 		Element xElement = document.createElement("X");
 		Element yElement = document.createElement("Y");
@@ -1284,13 +1448,15 @@ public class BlockGenerator {
 		blockElement.appendChild(locationElement);
 	}
 
-	public static void addElement(String elementName, Document document, String name, Element blockElement) {
+	public static void addElement(String elementName, Document document,
+			String name, Element blockElement) {
 		Element element = document.createElement(elementName);
 		element.setTextContent(name);
 		blockElement.appendChild(element);
 	}
 
-	public static Element createBlockElement(Document document, String genusName, long id, String kind) {
+	public static Element createBlockElement(Document document,
+			String genusName, long id, String kind) {
 		Element element = document.createElement("Block");
 		element.setAttribute("genus-name", genusName);
 		element.setAttribute("id", String.valueOf(id));
@@ -1304,10 +1470,12 @@ public class BlockGenerator {
 			Node node = getSaveNode(classDec);
 
 			StringWriter writer = new StringWriter();
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			TransformerFactory transformerFactory = TransformerFactory
+					.newInstance();
 			Transformer transformer = transformerFactory.newTransformer();
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			transformer.transform(new DOMSource(node), new StreamResult(writer));
+			transformer.transform(new DOMSource(node),
+					new StreamResult(writer));
 			return writer.toString();
 		} catch (TransformerConfigurationException e) {
 			throw new RuntimeException(e);
@@ -1318,16 +1486,20 @@ public class BlockGenerator {
 
 	public Node getSaveNode(UniClassDec classDec) {
 		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilderFactory factory = DocumentBuilderFactory
+					.newInstance();
 			factory.setNamespaceAware(true);
 
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			Document document = builder.newDocument();
 
-			Element documentElement = document.createElementNS(XML_CODEBLOCKS_NS, "cb:CODEBLOCKS");
+			Element documentElement = document
+					.createElementNS(XML_CODEBLOCKS_NS, "cb:CODEBLOCKS");
 
 			// schema reference
-			documentElement.setAttributeNS(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "xsi:schemaLocation",
+			documentElement.setAttributeNS(
+					XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
+					"xsi:schemaLocation",
 					XML_CODEBLOCKS_NS + " " + XML_CODEBLOCKS_SCHEMA_URI);
 
 			// Pagesノードの作成
