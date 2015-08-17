@@ -8,6 +8,7 @@ import net.unicoen.node.UniBinOp
 import net.unicoen.node.UniBlock
 import net.unicoen.node.UniBoolLiteral
 import net.unicoen.node.UniClassDec
+import net.unicoen.node.UniDoubleLiteral
 import net.unicoen.node.UniExpr
 import net.unicoen.node.UniIdent
 import net.unicoen.node.UniIf
@@ -285,7 +286,6 @@ class JavaScriptMapper extends ECMAScriptBaseVisitor<Object> {
 	override public visitVariableDeclaration(VariableDeclarationContext ctx) {
 		var dec = new UniVariableDec
 		dec.modifiers = new ArrayList
-		dec.type = "int"
 		for (ParseTree node : ctx.children) {
 			if (node instanceof TerminalNodeImpl) {
 				dec.name = node.text
@@ -293,6 +293,20 @@ class JavaScriptMapper extends ECMAScriptBaseVisitor<Object> {
 				dec.value = node.visit as UniExpr
 			}
 		}
+		
+		// TODO: Improve type inference routine
+		if (dec.value == null) {
+			dec.type = "Object"
+		} else if (dec.value instanceof UniIntLiteral) {
+			dec.type = "int"
+		} else if (dec.value instanceof UniStringLiteral) {
+			dec.type = "String"
+		} else if (dec.value instanceof UniDoubleLiteral) {
+			dec.type = "double"
+		} else {
+			dec.type = "Turtle"
+		}
+
 		dec
 	}
 

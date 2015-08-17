@@ -47,7 +47,7 @@ class ConversionTest {
 		convert(java, js)
 	}
 
-	@Test @Ignore
+	@Test
 	def void convertTurtleDemoWithTurtleObject() {
 		val java = new StringBuilder()
 		java.append("class Test {")
