@@ -14,16 +14,16 @@ import static org.hamcrest.Matchers.*
 import static org.junit.Assert.*
 
 class JavaMapperTest {
+	val mapper = new JavaMapper()
+
 	@Test
 	def void parseClass() {
-		val mapper = new JavaMapper()
 		val classDec = mapper.parse("public class A {}") as UniClassDec
 		assertThat(classDec.className, equalTo("A"))
 	}
 
 	@Test
 	def void parseMainMethod() {
-		val mapper = new JavaMapper()
 		val sb = new StringBuilder()
 
 		sb.append("class A {")
@@ -38,7 +38,6 @@ class JavaMapperTest {
 
 	@Test
 	def void parseLiteral() {
-		val mapper = new JavaMapper();
 		{
 			val literal = mapper.parse("1", [p|p.literal])
 			assertThat(literal, equalTo(lit(1)))
@@ -59,14 +58,12 @@ class JavaMapperTest {
 
 	@Test
 	def void parseFuncCall() {
-		val mapper = new JavaMapper();
 		val literal = mapper.parse("f()", [p|p.methodInvocation])
 		assertThat(literal, equalTo(new UniMethodCall(null, "f", list())))
 	}
 
 	@Test
 	def void parseIfStatement() {
-		val mapper = new JavaMapper();
 		val literal = mapper.parse("if(false) { f(); }", [p|p.ifThenStatement])
 
 		val body = block(new UniMethodCall(null, "f", list()))
@@ -85,12 +82,7 @@ class JavaMapperTest {
 		sb.append("    }")
 		sb.append("  }")
 		sb.append("}")
-		val code = normalize(sb.toString())
-
-		val mapper = new JavaMapper()
-		val classDec = mapper.parse(sb.toString()) as UniClassDec
-		val generatedCode = JavaGenerator.generate(classDec);
-		assertThat(normalize(generatedCode), equalTo(normalize(code)))
+		regenerate(sb)
 	}
 
 	@Test
@@ -101,12 +93,7 @@ class JavaMapperTest {
 		sb.append("    Turtle t = new Turtle();")
 		sb.append("  }")
 		sb.append("}")
-		val code = normalize(sb.toString())
-
-		val mapper = new JavaMapper()
-		val classDec = mapper.parse(sb.toString()) as UniClassDec
-		val generatedCode = JavaGenerator.generate(classDec);
-		assertThat(normalize(generatedCode), equalTo(normalize(code)))
+		regenerate(sb)
 	}
 
 	@Test
@@ -149,23 +136,12 @@ class JavaMapperTest {
 	}
 
 	def regenerate(StringBuilder sb) {
-		val code = normalize(sb.toString())
-		val mapper = new JavaMapper()
-		val classDec = mapper.parse(sb.toString()) as UniClassDec
+		val code = sb.toString()
+		val classDec = mapper.parse(code) as UniClassDec
 		val generatedCode = JavaGenerator.generate(classDec);
-		assertThat(normalize(generatedCode), equalTo(normalize(code)))
-	}
-
-	def normalize(String code) {
-		val firstCode = code.replace("\r", " ").replace("\n", " ").replace("\t", " ").trim
-		var lastCode = firstCode
-		while (true) {
-			var newCode = lastCode.replace("  ", " ")
-			if (newCode.equals(lastCode)) {
-				return lastCode.replace(" (", "(").replace(" {", "{").replace(" }", "}")
-			}
-			lastCode = newCode
-		}
+		assertThat(MapperTestUtil.normalize(generatedCode), equalTo(MapperTestUtil.normalize(code)))
+		assertThat(MapperTestUtil.normalize(JavaGenerator.generate(mapper.parse(generatedCode) as UniClassDec)),
+			equalTo(MapperTestUtil.normalize(code)))
 	}
 
 	def asBlock(UniExpr expr) {

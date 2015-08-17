@@ -8,6 +8,8 @@ import static org.hamcrest.Matchers.*
 import static org.junit.Assert.*
 
 class JavaScriptMapperTest {
+	val mapper = new JavaScriptMapper()
+
 	@Test
 	def void regenerateEmptyFunction() {
 		val sb = new StringBuilder()
@@ -51,22 +53,11 @@ class JavaScriptMapperTest {
 	}
 
 	def regenerate(StringBuilder sb) {
-		val code = normalize(sb.toString())
-		val mapper = new JavaScriptMapper()
-		val classDec = mapper.parse(sb.toString()) as UniClassDec
+		val code = sb.toString()
+		val classDec = mapper.parse(code) as UniClassDec
 		val generatedCode = JavaScriptGenerator.generate(classDec);
-		assertThat(normalize(generatedCode), equalTo(normalize(code)))
-	}
-
-	def normalize(String code) {
-		val firstCode = code.replace("\r", " ").replace("\n", " ").replace("\t", " ").trim
-		var lastCode = firstCode
-		while (true) {
-			var newCode = lastCode.replace("  ", " ")
-			if (newCode.equals(lastCode)) {
-				return lastCode.replace(" (", "(").replace(" {", "{").replace(" }", "}")
-			}
-			lastCode = newCode
-		}
+		assertThat(MapperTestUtil.normalize(generatedCode), equalTo(MapperTestUtil.normalize(code)))
+		assertThat(MapperTestUtil.normalize(JavaScriptGenerator.generate(mapper.parse(generatedCode) as UniClassDec)),
+			equalTo(MapperTestUtil.normalize(code)))
 	}
 }
