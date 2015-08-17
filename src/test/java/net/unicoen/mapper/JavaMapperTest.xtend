@@ -1,7 +1,6 @@
 package net.unicoen.mapper
 
 import net.unicoen.generator.JavaGenerator
-import net.unicoen.generator.JavaGeneratorTest
 import net.unicoen.node.UniBlock
 import net.unicoen.node.UniClassDec
 import net.unicoen.node.UniExpr
@@ -86,7 +85,7 @@ class JavaMapperTest {
 		sb.append("    }")
 		sb.append("  }")
 		sb.append("}")
-		val code = JavaGeneratorTest.normalize(sb.toString())
+		val code = normalize(sb.toString())
 
 		val mapper = new JavaMapper()
 		val classDec = mapper.parse(sb.toString()) as UniClassDec
@@ -102,7 +101,7 @@ class JavaMapperTest {
 		sb.append("    Turtle t = new Turtle();")
 		sb.append("  }")
 		sb.append("}")
-		val code = JavaGeneratorTest.normalize(sb.toString())
+		val code = normalize(sb.toString())
 
 		val mapper = new JavaMapper()
 		val classDec = mapper.parse(sb.toString()) as UniClassDec
@@ -115,7 +114,26 @@ class JavaMapperTest {
 		val sb = new StringBuilder()
 		sb.append("public class A {")
 		sb.append("  public static void main () {")
-		sb.append("    Turtle t = new Turtle();")
+		sb.append("    int i = 0;")
+		sb.append("    while (i < 4) {")
+		sb.append("      fd(100);")
+		sb.append("      rt(90);")
+		sb.append("      if (i == 1) {")
+		sb.append("        rt(30);")
+		sb.append("      }")
+		sb.append("      i = i + 1;")
+		sb.append("    }")
+		sb.append("  }")
+		sb.append("}")
+		regenerate(sb)
+	}
+
+	@Test
+	def void regenerateTurtleDemoWithTurtleObject() {
+		val sb = new StringBuilder()
+		sb.append("public class A {")
+		sb.append("  public static void main () {")
+		sb.append("    Turtle t = createTurtle();")
 		sb.append("    int i = 0;")
 		sb.append("    while (i < 4) {")
 		sb.append("      t.fd(100);")
@@ -127,8 +145,11 @@ class JavaMapperTest {
 		sb.append("    }")
 		sb.append("  }")
 		sb.append("}")
-		val code = JavaGeneratorTest.normalize(sb.toString())
-		
+		regenerate(sb)
+	}
+
+	def regenerate(StringBuilder sb) {
+		val code = normalize(sb.toString())
 		val mapper = new JavaMapper()
 		val classDec = mapper.parse(sb.toString()) as UniClassDec
 		val generatedCode = JavaGenerator.generate(classDec);

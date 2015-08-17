@@ -40,6 +40,7 @@ import net.unicoen.parser.ECMAScriptParser.MemberDotExpressionContext
 import net.unicoen.parser.ECMAScriptParser.MultiplicativeExpressionContext
 import net.unicoen.parser.ECMAScriptParser.NotExpressionContext
 import net.unicoen.parser.ECMAScriptParser.NumericLiteralContext
+import net.unicoen.parser.ECMAScriptParser.PostDecreaseExpressionContext
 import net.unicoen.parser.ECMAScriptParser.PostIncrementExpressionContext
 import net.unicoen.parser.ECMAScriptParser.RelationalExpressionContext
 import net.unicoen.parser.ECMAScriptParser.SingleExpressionContext
@@ -58,7 +59,6 @@ import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.TerminalNode
 import org.antlr.v4.runtime.tree.TerminalNodeImpl
-import net.unicoen.parser.ECMAScriptParser.PostDecreaseExpressionContext
 
 class JavaScriptMapper extends ECMAScriptBaseVisitor<Object> {
 
@@ -72,8 +72,8 @@ class JavaScriptMapper extends ECMAScriptBaseVisitor<Object> {
 
 	def parseFile(String path) {
 		var file = new File(path)
-		className = file.name.substring(0,file.name.indexOf("."))
-		
+		className = file.name.substring(0, file.name.indexOf("."))
+
 		val inputStream = new FileInputStream(path);
 		try {
 			parseCore(new ANTLRInputStream(inputStream));
@@ -171,7 +171,11 @@ class JavaScriptMapper extends ECMAScriptBaseVisitor<Object> {
 			if (node instanceof FormalParameterListContext) {
 				// メソッド引数のパース return List<UniArg>
 			} else if (node instanceof FunctionBodyContext) {
-				dec.block = node.children.get(0).visit as UniBlock
+				dec.block = if (node.children != null) {
+					node.children.get(0).visit as UniBlock
+				} else {
+					new UniBlock(Lists.newArrayList, null)
+				}
 			} else if (node instanceof TerminalNodeImpl) {
 				// 終端記号TerminalNodeImplのリストはECMAScriptParserに
 				if (node.symbol.type == ECMAScriptParser.Identifier) {
@@ -367,13 +371,13 @@ class JavaScriptMapper extends ECMAScriptBaseVisitor<Object> {
 	override public visitAssignmentExpression(AssignmentExpressionContext ctx) {
 		return parseBinaryOp(ctx)
 	}
-	
-	override public visitPostIncrementExpression(PostIncrementExpressionContext ctx){
+
+	override public visitPostIncrementExpression(PostIncrementExpressionContext ctx) {
 		var op = new UniUnaryOp("_++", ctx.children.get(0).visit as UniExpr)
 		return op
 	}
 
-	override public visitPostDecreaseExpression(PostDecreaseExpressionContext ctx){
+	override public visitPostDecreaseExpression(PostDecreaseExpressionContext ctx) {
 		var op = new UniUnaryOp("_--", ctx.children.get(0).visit as UniExpr)
 		return op
 	}
@@ -396,102 +400,103 @@ class JavaScriptMapper extends ECMAScriptBaseVisitor<Object> {
 		}
 		binOp
 	}
-		
-	def public isBinaryOperator(int type){
-		isAddapitiveOperator(type) || isRelationalOperator(type) || isAssignOperator(type) || isMultiplicativeOperator(type)
+
+	def public isBinaryOperator(int type) {
+		isAddapitiveOperator(type) || isRelationalOperator(type) || isAssignOperator(type) ||
+			isMultiplicativeOperator(type)
 	}
 
 	// +, -かどうか
 	def public isAddapitiveOperator(int type) {
 		type == ECMAScriptParser.Plus || type == ECMAScriptParser.Minus
 	}
-	
-	def public isMultiplicativeOperator(int type){
+
+	def public isMultiplicativeOperator(int type) {
 		type == ECMAScriptParser.Divide || type == ECMAScriptParser.Multiply || type == ECMAScriptParser.Modulus
 	}
-	
-	
-	//=かどうか
-	def public isAssignOperator(int type){
+
+	// =かどうか
+	def public isAssignOperator(int type) {
 		type == ECMAScriptParser.Assign
 	}
-	
-	//>=,>,<.<=, ==かどうかを返す
+
+	// >=,>,<.<=, ==かどうかを返す
 	def public isRelationalOperator(int type) {
 		type == ECMAScriptParser.LessThanEquals || type == ECMAScriptParser.LessThan ||
-			type == ECMAScriptParser.MoreThan || type == ECMAScriptParser.GreaterThanEquals || type == ECMAScriptParser.Equals
+			type == ECMAScriptParser.MoreThan || type == ECMAScriptParser.GreaterThanEquals ||
+			type == ECMAScriptParser.Equals
 	}
-	//EqualityExpression
 
-	// singleExpression arguments
-	override public visitArgumentsExpression(ECMAScriptParser.ArgumentsExpressionContext ctx) {
-		var caller = new UniMethodCall
-		for (ParseTree node : ctx.children) {
-			if (node instanceof MemberDotExpressionContext) {
-				caller = visit(node) as UniMethodCall
-			} else if (node instanceof ECMAScriptParser.IdentifierExpressionContext) {
-				caller.methodName = node.text
-			} else if (node instanceof ArgumentsContext) {
-				caller.args = visit(node) as ArrayList<UniExpr>
+			// EqualityExpression
+			// singleExpression arguments
+			override public visitArgumentsExpression(ECMAScriptParser.ArgumentsExpressionContext ctx) {
+				var caller = new UniMethodCall
+				for (ParseTree node : ctx.children) {
+					if (node instanceof MemberDotExpressionContext) {
+						caller = visit(node) as UniMethodCall
+					} else if (node instanceof ECMAScriptParser.IdentifierExpressionContext) {
+						caller.methodName = node.text
+					} else if (node instanceof ArgumentsContext) {
+						caller.args = visit(node) as ArrayList<UniExpr>
+					}
+				}
+				caller
 			}
-		}
-		caller
-	}
 
-	override public visitArguments(ArgumentsContext ctx) {
-		var args = Lists.newArrayList
+			override public visitArguments(ArgumentsContext ctx) {
+				var args = Lists.newArrayList
 
-		for (ParseTree node : ctx.children) {
-			if (node instanceof ECMAScriptParser.ArgumentListContext) {
-				args = node.visit as ArrayList<UniExpr>
+				for (ParseTree node : ctx.children) {
+					if (node instanceof ECMAScriptParser.ArgumentListContext) {
+						args = node.visit as ArrayList<UniExpr>
+					}
+				}
+
+				args
 			}
-		}
 
-		args
-	}
-
-	override public visitArgumentList(ArgumentListContext ctx) {
-		var ret = Lists.newArrayList
-		for (ParseTree node : ctx.children) {
-			ret.add(node.visit as UniExpr)
-		}
-		ret
-	}
-
-	// DotExpression : singleExpression.identifierName
-	override public visitMemberDotExpression(MemberDotExpressionContext ctx) {
-		var ret = new UniMethodCall
-		for (ParseTree node : ctx.children) {
-			if (node instanceof IdentifierNameContext) {
-				ret.methodName = node.text
-			} else if (node instanceof IdentifierExpressionContext) {
-				ret.receiver = new UniIdent(node.text)
+			override public visitArgumentList(ArgumentListContext ctx) {
+				var ret = Lists.newArrayList
+				for (ParseTree node : ctx.children) {
+					ret.add(node.visit as UniExpr)
+				}
+				ret
 			}
-		}
-		ret
-	}
 
-	// Literal
-	override public visitLiteral(LiteralContext ctx) {
-		var node = ctx.children.get(0)
-
-		if (node instanceof NumericLiteralContext) {
-			return new UniIntLiteral(Integer.parseInt(ctx.text))
-		} else if (node instanceof TerminalNodeImpl) {
-			if (node.symbol.type == ECMAScriptParser.BooleanLiteral) {
-				return new UniBoolLiteral(Boolean.valueOf(node.text))
-			} else if (node.symbol.type == ECMAScriptParser.StringLiteral) {
-				return new UniStringLiteral(node.text)
-			} else {
-				throw new RuntimeException(ctx.text + "is not implemented yet")
+			// DotExpression : singleExpression.identifierName
+			override public visitMemberDotExpression(MemberDotExpressionContext ctx) {
+				var ret = new UniMethodCall
+				for (ParseTree node : ctx.children) {
+					if (node instanceof IdentifierNameContext) {
+						ret.methodName = node.text
+					} else if (node instanceof IdentifierExpressionContext) {
+						ret.receiver = new UniIdent(node.text)
+					}
+				}
+				ret
 			}
-		} else {
-			return node.visit as UniExpr
+
+			// Literal
+			override public visitLiteral(LiteralContext ctx) {
+				var node = ctx.children.get(0)
+
+				if (node instanceof NumericLiteralContext) {
+					return new UniIntLiteral(Integer.parseInt(ctx.text))
+				} else if (node instanceof TerminalNodeImpl) {
+					if (node.symbol.type == ECMAScriptParser.BooleanLiteral) {
+						return new UniBoolLiteral(Boolean.valueOf(node.text))
+					} else if (node.symbol.type == ECMAScriptParser.StringLiteral) {
+						return new UniStringLiteral(node.text)
+					} else {
+						throw new RuntimeException(ctx.text + "is not implemented yet")
+					}
+				} else {
+					return node.visit as UniExpr
+				}
+			}
+
+			override public visitIdentifierExpression(ECMAScriptParser.IdentifierExpressionContext ctx) {
+				return new UniIdent(ctx.text)
+			}
+
 		}
-	}
-
-	override public visitIdentifierExpression(ECMAScriptParser.IdentifierExpressionContext ctx) {
-		return new UniIdent(ctx.text)
-	}
-
-}

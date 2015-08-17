@@ -693,6 +693,36 @@ class JavaMapper extends Java8BaseVisitor<UniNode> {
 		throw new RuntimeException("Not implemented")
 	}
 
+	override visitMethodInvocation_lfno_primary(Java8Parser.MethodInvocation_lfno_primaryContext ctx) {
+		// methodInvocation_lfno_primary
+		// :	methodName '(' argumentList? ')'
+		// |	typeName '.' typeArguments? Identifier '(' argumentList? ')'
+		// |	expressionName '.' typeArguments? Identifier '(' argumentList? ')'
+		// |	'super' '.' typeArguments? Identifier '(' argumentList? ')'
+		// |	typeName '.' 'super' '.' typeArguments? Identifier '(' argumentList? ')'
+		val nodes = createNodeMap(ctx)
+		val texts = createTextMap(ctx)
+		val argumentList = if (nodes.containsKey(Java8Parser.RULE_argumentList)) {
+				nodes.getOneNode(Java8Parser.RULE_argumentList).flattenForBuilding
+			} else {
+				Collections.emptyList()
+			}
+		if (nodes.containsKey(Java8Parser.RULE_methodName)) {
+			val methodName = nodes.getOneNode(Java8Parser.RULE_methodName)
+			// TODO parse "argumentList"
+			return new UniMethodCall(null, methodName.toString, argumentList)
+		}
+		if (nodes.containsKey(Java8Parser.RULE_typeName)) {
+			val typeName = nodes.getOneNode(Java8Parser.RULE_typeName)
+			if (!texts.containsKey(-Java8Parser.SUPER)) {
+				// TODO parse "argumentList"
+				return new UniMethodCall(typeName, texts.identifierStr, argumentList)
+			} else {
+			}
+		}
+		throw new RuntimeException("Not implemented")
+	}
+
 	override visitExpressionStatement(Java8Parser.ExpressionStatementContext ctx) {
 		// expressionStatement
 		// :	statementExpression ';'
