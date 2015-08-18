@@ -54,8 +54,7 @@ public class DolittleGenerator extends Traverser {
 	}
 
 	public static String generate(UniClassDec dec) {
-		try (ByteArrayOutputStream out = new ByteArrayOutputStream();
-				PrintStream printer = new PrintStream(out)) {
+		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); PrintStream printer = new PrintStream(out)) {
 			generate(dec, printer);
 			return out.toString();
 		} catch (IOException e) {
@@ -200,19 +199,31 @@ public class DolittleGenerator extends Traverser {
 		print("「");
 		traverseExpr(node.cond);
 		print("」！なら");
+		if (node.trueStatement != null) {
+			UniBlock block = (UniBlock) node.trueStatement;
+			// @TODO blockのなかで「」を作りたい．
+			print("「");
+			traverseBlock(block);
+			print("」");
+		}
 		if (node.falseStatement != null) {
 			UniBlock block = (UniBlock) node.falseStatement;
-			if (block.body != null && block.body.size() > 0) {
-				parseElseStatement((UniBlock) node.falseStatement);
-			}
+			// @TODO blockのなかで「」を作りたい．
+			print("「");
+			traverseBlock(block);
+			print("」");
 		}
 		print("実行");
 
 	}
 
-	public void parseElseStatement(UniBlock falseBlock) {
-		// if(falseBlock.body)
-	}
+	// private void traverseBlock(UniBlock block){
+	// print("「");
+	// for (UniExpr expr : block.body) {
+	// traverseExpr(expr);
+	// print("。");
+	// }
+	// }
 
 	@Override
 	public void traverseFor(UniFor node) {
@@ -227,14 +238,15 @@ public class DolittleGenerator extends Traverser {
 		print("「");
 		traverseExpr(node.cond);
 		print("」！の間");
+		print("\n");
 
 		// body
 		print("「");
-		for (UniExpr expr : block.body) {
-			traverseExpr(expr);
-			print("。");
-		}
-		print("」実行");
+		print("\n");
+		traverseBlock(block);
+		print("」");
+		print("\n");
+		print("実行");
 	}
 
 	@Override
