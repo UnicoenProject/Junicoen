@@ -445,6 +445,8 @@ public class BlockMapper {
 					} else {
 						args.add(parseBody(realArgNode, map));
 					}
+				}else{
+					return null;
 				}
 			}
 		}
@@ -453,20 +455,25 @@ public class BlockMapper {
 
 	private UniIf parseIfBlock(Node node, HashMap<String, Node> map) {
 		Node argsNode = getChildNode(node, "Sockets");
-		List<UniExpr> args = parseSocket(argsNode, map);
-		UniBlock trueBlock = null;
-		UniBlock falseBlock = null;
-
-		for(int i =1;i< args.size(); i++){
-			if (i == 1 && args.get(1) != null && args.get(1) instanceof UniBlock) {
-				trueBlock = (UniBlock) args.get(1);
+		List<UniExpr> args = new ArrayList<UniExpr>();
+		int i = 0;
+		//ifブロックのソケットのノードからUniExprを作成
+		for (Node argNode : eachChild(argsNode)) {
+			String argElemId = getAttribute(argNode, "con-block-id");
+			Node realArgNode = map.get(argElemId);
+			if(realArgNode != null){
+				if(i == 0 ){
+					args.add(parseToExpr(realArgNode, map));
+				}else{
+					args.add(parseBody(realArgNode, map));
+				}
+			}else{
+				args.add(null);
 			}
-			if (i == 2 && args.get(2) != null && args.get(2) instanceof UniBlock) {
-				falseBlock = (UniBlock) args.get(2);
-			}
+			i++;
 		}
 
-		return new UniIf(args.get(0), trueBlock, falseBlock);
+		return new UniIf(args.get(0), args.get(1), args.get(2));
 	}
 
 	private UniExpr parseCommand(Node node, HashMap<String, Node> map) {
