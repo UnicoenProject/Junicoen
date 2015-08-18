@@ -439,7 +439,8 @@ public class BlockMapper {
 				Node realArgNode = map.get(argElemId);
 				if (realArgNode != null) {
 					// beforeを持たないElementNodeは引数なので，引数の解析
-					if (getChildText(realArgNode, "BeforeBlockId") == null) {
+					Node beforeBlock = map.get(getChildText(realArgNode, "BeforeBlockId"));
+					if (getChildText(realArgNode, "BeforeBlockId") == null || getAttribute(beforeBlock, "genus-name").equals("callActionMethod2")) {
 						args.add(parseToExpr(realArgNode, map));
 					} else {
 						args.add(parseBody(realArgNode, map));

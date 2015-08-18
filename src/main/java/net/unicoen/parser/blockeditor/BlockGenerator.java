@@ -1250,14 +1250,13 @@ public class BlockGenerator {
 				String kind = "command";
 				BlockExCallerModel caller = new BlockExCallerModel();
 
-				Element element = createBlockElement(document, genusName,
-						ID_COUNTER++, kind);
+				Element element = createBlockElement(document, genusName,ID_COUNTER++, kind);
 				caller.setElement(element);
 
 				BlockExprModel receiverModel = (BlockExprModel) parseExpr(
 						method.receiver, document, element);
-				BlockElementModel callMethodModel = createMethodCallModel(
-						method, document, element);
+				BlockElementModel callMethodModel = createMethodCallModel(method, document, element);
+//				addElement("BeforeBlockID", document, , callMethodModel);
 				List<Element> sockets = new ArrayList<>();
 
 				caller.addSocketBlock(receiverModel);
@@ -1286,12 +1285,14 @@ public class BlockGenerator {
 		String genusName = calcMethodCallGenusName(method);
 		List<Element> exprs = new ArrayList<Element>();
 		List<BlockExprModel> argModels = new ArrayList<>();
-		String kind = BlockMapper.getAttribute(resolver.getBlockNode(genusName),
-				"kind");
+		String kind = BlockMapper.getAttribute(resolver.getBlockNode(genusName),"kind");
 
-		Element element = createBlockElement(document, genusName, ID_COUNTER++,
-				kind);
+		Element element = createBlockElement(document, genusName, ID_COUNTER++, kind);
 		addElement("Name", document, method.methodName, element);
+
+		if(kind.equals("command") && parent != null){
+			addBeforeBlockNode(document, element, BlockMapper.getAttribute(parent, "id"));
+		}
 
 		if (method.args != null) {
 			// 引数パース
