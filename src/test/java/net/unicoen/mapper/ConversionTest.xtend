@@ -5,7 +5,6 @@ import net.unicoen.generator.JavaScriptGenerator
 import net.unicoen.node.UniBlock
 import net.unicoen.node.UniClassDec
 import net.unicoen.node.UniExpr
-import org.junit.Ignore
 import org.junit.Test
 
 import static org.hamcrest.Matchers.*
