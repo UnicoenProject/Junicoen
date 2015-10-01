@@ -13,8 +13,9 @@ class ExtendedExpressionMapperTest extends MapperTest {
 	@Test @Ignore
 	def void parseSimpleIfStatement() {
 		val node = mapper.parse("public class A{void f(int i){if(3>2){}else{}}}")
-		evaluateClass(node, "A", "public")
-//		val methods = (node as UniClassDec).members
+		node.evaluateClass("A", null, null)
+
+	//		val methods = (node as UniClassDec).members
 	}
 
 	@Test @Ignore
@@ -26,7 +27,7 @@ class ExtendedExpressionMapperTest extends MapperTest {
 
 	@Test @Ignore
 	def void parseAddExpression() {
-//		val node = mapper.parse("class Main{public static void main(int args){int a = 1+2+3+4+5;}}")
+		//		val node = mapper.parse("class Main{public static void main(int args){int a = 1+2+3+4+5;}}")
 	}
 
 	@Test @Ignore
