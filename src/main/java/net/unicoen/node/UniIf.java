@@ -35,8 +35,8 @@ public class UniIf extends UniExpr {
 		if (obj == null || !(obj instanceof UniIf))
 			return false;
 		UniIf that = (UniIf) obj;
-		return (this.cond == null ? that.cond == null
-				: this.cond.equals(that.cond))
+		return (this.cond == null ? that.cond == null : this.cond
+				.equals(that.cond))
 				&& (this.trueStatement == null ? that.trueStatement == null
 						: this.trueStatement.equals(that.trueStatement))
 				&& (this.falseStatement == null ? that.falseStatement == null

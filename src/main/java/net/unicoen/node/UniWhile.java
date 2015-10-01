@@ -30,8 +30,8 @@ public class UniWhile extends UniExpr {
 		if (obj == null || !(obj instanceof UniWhile))
 			return false;
 		UniWhile that = (UniWhile) obj;
-		return (this.cond == null ? that.cond == null
-				: this.cond.equals(that.cond))
+		return (this.cond == null ? that.cond == null : this.cond
+				.equals(that.cond))
 				&& (this.statement == null ? that.statement == null
 						: this.statement.equals(that.statement));
 	}

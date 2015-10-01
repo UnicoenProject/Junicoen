@@ -51,8 +51,8 @@ public class UniClassDec extends UniNode {
 				: this.className.equals(that.className))
 				&& (this.modifiers == null ? that.modifiers == null
 						: this.modifiers.equals(that.modifiers))
-				&& (this.members == null ? that.members == null
-						: this.members.equals(that.members))
+				&& (this.members == null ? that.members == null : this.members
+						.equals(that.members))
 				&& (this.superClass == null ? that.superClass == null
 						: this.superClass.equals(that.superClass))
 				&& (this.interfaces == null ? that.interfaces == null
@@ -66,35 +66,35 @@ public class UniClassDec extends UniNode {
 			this.className = that.className;
 		}
 		if (that.modifiers != null) {
-			if (this.modifiers != null) {
+			if (this.modifiers == null) {
 				this.modifiers = that.modifiers;
 			} else {
 				this.modifiers.addAll(that.modifiers);
 			}
 		}
 		if (that.members != null) {
-			if (this.members != null) {
+			if (this.members == null) {
 				this.members = that.members;
 			} else {
 				this.members.addAll(that.members);
 			}
 		}
 		if (that.superClass != null) {
-			if (this.superClass != null) {
+			if (this.superClass == null) {
 				this.superClass = that.superClass;
 			} else {
 				this.superClass.addAll(that.superClass);
 			}
 		}
 		if (that.interfaces != null) {
-			if (this.interfaces != null) {
+			if (this.interfaces == null) {
 				this.interfaces = that.interfaces;
 			} else {
 				this.interfaces.addAll(that.interfaces);
 			}
 		}
 		if (that.innerClasses != null) {
-			if (this.innerClasses != null) {
+			if (this.innerClasses == null) {
 				this.innerClasses = that.innerClasses;
 			} else {
 				this.innerClasses.addAll(that.innerClasses);

@@ -34,8 +34,8 @@ public class UniTernaryOp extends UniExpr {
 		if (obj == null || !(obj instanceof UniTernaryOp))
 			return false;
 		UniTernaryOp that = (UniTernaryOp) obj;
-		return (this.cond == null ? that.cond == null
-				: this.cond.equals(that.cond))
+		return (this.cond == null ? that.cond == null : this.cond
+				.equals(that.cond))
 				&& (this.trueExpr == null ? that.trueExpr == null
 						: this.trueExpr.equals(that.trueExpr))
 				&& (this.falseExpr == null ? that.falseExpr == null

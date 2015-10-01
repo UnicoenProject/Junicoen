@@ -36,12 +36,12 @@ public class UniNewArray extends UniExpr {
 		if (obj == null || !(obj instanceof UniNewArray))
 			return false;
 		UniNewArray that = (UniNewArray) obj;
-		return (this.type == null ? that.type == null
-				: this.type.equals(that.type))
+		return (this.type == null ? that.type == null : this.type
+				.equals(that.type))
 				&& (this.elementsNum == null ? that.elementsNum == null
 						: this.elementsNum.equals(that.elementsNum))
-				&& (this.value == null ? that.value == null
-						: this.value.equals(that.value));
+				&& (this.value == null ? that.value == null : this.value
+						.equals(that.value));
 	}
 
 	@Override
@@ -54,7 +54,7 @@ public class UniNewArray extends UniExpr {
 			this.type = that.type;
 		}
 		if (that.elementsNum != null) {
-			if (this.elementsNum != null) {
+			if (this.elementsNum == null) {
 				this.elementsNum = that.elementsNum;
 			} else {
 				this.elementsNum.addAll(that.elementsNum);

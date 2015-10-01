@@ -32,10 +32,10 @@ public class UniNew extends UniExpr {
 		if (obj == null || !(obj instanceof UniNew))
 			return false;
 		UniNew that = (UniNew) obj;
-		return (this.type == null ? that.type == null
-				: this.type.equals(that.type))
-				&& (this.args == null ? that.args == null
-						: this.args.equals(that.args));
+		return (this.type == null ? that.type == null : this.type
+				.equals(that.type))
+				&& (this.args == null ? that.args == null : this.args
+						.equals(that.args));
 	}
 
 	@Override
@@ -48,7 +48,7 @@ public class UniNew extends UniExpr {
 			this.type = that.type;
 		}
 		if (that.args != null) {
-			if (this.args != null) {
+			if (this.args == null) {
 				this.args = that.args;
 			} else {
 				this.args.addAll(that.args);

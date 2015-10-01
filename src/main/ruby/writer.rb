@@ -282,7 +282,7 @@ module Writer
         else
           w.block "if (that.#{name} != null)" do
             if opt[:list]
-              w << "if (this.#{name} != null) {"
+              w << "if (this.#{name} == null) {"
               w.with_indent do
                 w << "this.#{name} = that.#{name};"
               end

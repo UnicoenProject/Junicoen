@@ -31,10 +31,10 @@ public class UniUnaryOp extends UniExpr {
 		if (obj == null || !(obj instanceof UniUnaryOp))
 			return false;
 		UniUnaryOp that = (UniUnaryOp) obj;
-		return (this.operator == null ? that.operator == null
-				: this.operator.equals(that.operator))
-				&& (this.expr == null ? that.expr == null
-						: this.expr.equals(that.expr));
+		return (this.operator == null ? that.operator == null : this.operator
+				.equals(that.operator))
+				&& (this.expr == null ? that.expr == null : this.expr
+						.equals(that.expr));
 	}
 
 	@Override

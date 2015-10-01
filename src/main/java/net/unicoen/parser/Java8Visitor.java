@@ -277,6 +277,12 @@ public interface Java8Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitClassName(Java8Parser.ClassNameContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Java8Parser#classModifiers}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitClassModifiers(Java8Parser.ClassModifiersContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Java8Parser#classModifier}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

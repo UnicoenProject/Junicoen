@@ -52,7 +52,7 @@ import net.unicoen.parser.ECMAScriptParser.VariableDeclarationContext
 import net.unicoen.parser.ECMAScriptParser.VariableDeclarationListContext
 import net.unicoen.parser.ECMAScriptParser.VariableStatementContext
 import net.unicoen.parser.ECMAScriptParser.WhileStatementContext
-import net.unicoen.parser.Java8Parser.FormalParameterListContext
+import net.unicoen.parser.ECMAScriptParser.FormalParameterListContext
 import org.antlr.v4.runtime.ANTLRInputStream
 import org.antlr.v4.runtime.CharStream
 import org.antlr.v4.runtime.CommonTokenStream

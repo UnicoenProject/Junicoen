@@ -48,10 +48,10 @@ public class UniMethodDec extends UniMemberDec {
 						: this.modifiers.equals(that.modifiers))
 				&& (this.returnType == null ? that.returnType == null
 						: this.returnType.equals(that.returnType))
-				&& (this.args == null ? that.args == null
-						: this.args.equals(that.args))
-				&& (this.block == null ? that.block == null
-						: this.block.equals(that.block));
+				&& (this.args == null ? that.args == null : this.args
+						.equals(that.args))
+				&& (this.block == null ? that.block == null : this.block
+						.equals(that.block));
 	}
 
 	public void merge(UniMethodDec that) {
@@ -59,7 +59,7 @@ public class UniMethodDec extends UniMemberDec {
 			this.methodName = that.methodName;
 		}
 		if (that.modifiers != null) {
-			if (this.modifiers != null) {
+			if (this.modifiers == null) {
 				this.modifiers = that.modifiers;
 			} else {
 				this.modifiers.addAll(that.modifiers);
@@ -69,7 +69,7 @@ public class UniMethodDec extends UniMemberDec {
 			this.returnType = that.returnType;
 		}
 		if (that.args != null) {
-			if (this.args != null) {
+			if (this.args == null) {
 				this.args = that.args;
 			} else {
 				this.args.addAll(that.args);

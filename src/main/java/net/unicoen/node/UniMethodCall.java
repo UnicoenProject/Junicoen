@@ -11,8 +11,7 @@ public class UniMethodCall extends UniExpr {
 	public UniMethodCall() {
 	}
 
-	public UniMethodCall(UniExpr receiver, String methodName,
-			List<UniExpr> args) {
+	public UniMethodCall(UniExpr receiver, String methodName, List<UniExpr> args) {
 		this.receiver = receiver;
 		this.methodName = methodName;
 		this.args = args;
@@ -37,12 +36,12 @@ public class UniMethodCall extends UniExpr {
 		if (obj == null || !(obj instanceof UniMethodCall))
 			return false;
 		UniMethodCall that = (UniMethodCall) obj;
-		return (this.receiver == null ? that.receiver == null
-				: this.receiver.equals(that.receiver))
+		return (this.receiver == null ? that.receiver == null : this.receiver
+				.equals(that.receiver))
 				&& (this.methodName == null ? that.methodName == null
 						: this.methodName.equals(that.methodName))
-				&& (this.args == null ? that.args == null
-						: this.args.equals(that.args));
+				&& (this.args == null ? that.args == null : this.args
+						.equals(that.args));
 	}
 
 	@Override
@@ -58,7 +57,7 @@ public class UniMethodCall extends UniExpr {
 			this.methodName = that.methodName;
 		}
 		if (that.args != null) {
-			if (this.args != null) {
+			if (this.args == null) {
 				this.args = that.args;
 			} else {
 				this.args.addAll(that.args);
