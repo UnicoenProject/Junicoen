@@ -149,10 +149,6 @@ expressionName
 	|	ambiguousName '.' Identifier 
 	;
 
-methodName
-	:	Identifier 
-	;
-
 ambiguousName
 	:	Identifier 
 	|	ambiguousName '.' Identifier 
@@ -267,7 +263,11 @@ classMemberDeclaration
 	;
 
 fieldDeclaration
-	:	fieldModifier* unannType variableDeclaratorList ';' 
+	:	fieldModifiers unannType variableDeclaratorList ';' 
+	;
+
+fieldModifiers
+	:	fieldModifier* 
 	;
 
 fieldModifier
@@ -381,7 +381,11 @@ result
 	;
 
 methodDeclarator
-	:	Identifier '(' formalParameterList? ')' dims? 
+	:	methodName '(' formalParameterList? ')' dims? 
+	;
+
+methodName
+	:	Identifier 
 	;
 
 formalParameterList
@@ -395,7 +399,15 @@ formalParameters
 	;
 
 formalParameter
-	:	variableModifier* unannType variableDeclaratorId 
+	:	variableModifier* unannType parameterDeclaratorId 
+	;
+
+parameterDeclaratorId
+	:	parameterName dims? 
+	;
+
+parameterName
+	:	Identifier 
 	;
 
 variableModifier
@@ -462,7 +474,7 @@ constructorBody
 	;
 
 explicitConstructorInvocation
-	:	typeArguments? 'this' '(' argumentList? ')' '1;' 
+	:	typeArguments? 'this' '(' argumentList? ')' ';' 
 	|	typeArguments? 'super' '(' argumentList? ')' ';' 
 	|	expressionName '.' typeArguments? 'super' '(' argumentList? ')' ';' 
 	|	primary '.' typeArguments? 'super' '(' argumentList? ')' ';' 
@@ -1679,7 +1691,7 @@ StringCharacter
 
 fragment
 EscapeSequence
-	:	'\\' [btnfr"'\\] 
+	:	'\\' [btnfr'"\\] 
 	|	OctalEscape 
 	|	UnicodeEscape 
 	;

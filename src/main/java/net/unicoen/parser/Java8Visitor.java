@@ -193,12 +193,6 @@ public interface Java8Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitExpressionName(Java8Parser.ExpressionNameContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Java8Parser#methodName}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitMethodName(Java8Parser.MethodNameContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link Java8Parser#ambiguousName}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -343,6 +337,12 @@ public interface Java8Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFieldDeclaration(Java8Parser.FieldDeclarationContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Java8Parser#fieldModifiers}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFieldModifiers(Java8Parser.FieldModifiersContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Java8Parser#fieldModifier}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -475,6 +475,12 @@ public interface Java8Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitMethodDeclarator(Java8Parser.MethodDeclaratorContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Java8Parser#methodName}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMethodName(Java8Parser.MethodNameContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Java8Parser#formalParameterList}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -492,6 +498,18 @@ public interface Java8Visitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitFormalParameter(Java8Parser.FormalParameterContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Java8Parser#parameterDeclaratorId}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitParameterDeclaratorId(Java8Parser.ParameterDeclaratorIdContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Java8Parser#parameterName}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitParameterName(Java8Parser.ParameterNameContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Java8Parser#variableModifier}.
 	 * @param ctx the parse tree
