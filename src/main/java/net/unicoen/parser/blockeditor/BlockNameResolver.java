@@ -18,7 +18,7 @@ public class BlockNameResolver {
 
 	private Map<String, String> turtleMethods = new HashMap<String, String>();
 	private Map<String, Node> allAvailableBlocks = new HashMap<String, Node>();
-	private Map<String, String> availableLocalVariableDecralationTypes = new HashMap<>();
+	private Map<String, String> availableLocalVariableDecralationTypes = new HashMap<>();//key:variable type , value: genusName
 	private Map<String, String> availableFieldVariableDecralationTypes = new HashMap<>();
 	private Map<String, String> availableFunctionArgsTypes = new HashMap<>();
 
@@ -56,10 +56,8 @@ public class BlockNameResolver {
 		// lang_def.xmlを読み込む
 		try {
 			parser.parse(langdefRootPath + "lang_def.xml");
-
 			Document doc = parser.getDocument();
 			Element root = doc.getDocumentElement();
-
 			NodeList genusNodes = root.getElementsByTagName("BlockGenus");
 
 			// 利用可能ブロックの登録
@@ -67,40 +65,25 @@ public class BlockNameResolver {
 				Node node = genusNodes.item(i);
 
 				// 全ブロック情報のマップに登録
-				allAvailableBlocks.put(BlockMapper.getAttribute(node, "name"),
-						node);
-
-				// 利用可能な変数型リストに登録
-				if ("param".equals(BlockMapper.getAttribute(node, "kind"))) {
-
-					this.availableFunctionArgsTypes.put(
-							BlockMapper.getChildNode(node, "Type")
-									.getTextContent(),
-							BlockMapper.getAttribute(node, "name"));
-				}
-
-				// 利用可能な関数の引数の型リストに登録
-				if ("local-variable"
-						.equals(BlockMapper.getAttribute(node, "kind"))) {
-					this.availableLocalVariableDecralationTypes.put(
-							BlockMapper.getChildNode(node, "Type")
-									.getTextContent(),
-							BlockMapper.getAttribute(node, "name"));
-				}
-
-				// 利用可能な関数の引数の型リストに登録
-				if ("global-variable"
-						.equals(BlockMapper.getAttribute(node, "kind"))) {
-					this.availableFieldVariableDecralationTypes.put(
-							BlockMapper.getChildNode(node, "Type")
-									.getTextContent(),
-							BlockMapper.getAttribute(node, "genus-name"));
-				}
+				allAvailableBlocks.put(BlockMapper.getAttribute(node, "name"),node);
+				addAvaiableVariableTypeToMap(node);
 			}
 		} catch (SAXException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+
+	public void addAvaiableVariableTypeToMap(Node node){
+		// 利用可能な変数型リストに登録
+		if ("param".equals(BlockMapper.getAttribute(node, "kind"))) {
+			this.availableFunctionArgsTypes.put(BlockMapper.getChildNode(node, "Type").getTextContent(),BlockMapper.getAttribute(node, "name"));
+		}else if("local-variable".equals(BlockMapper.getAttribute(node, "kind"))){
+			// 利用可能な関数の引数の型マップに登録
+			this.availableLocalVariableDecralationTypes.put(BlockMapper.getChildNode(node, "Type").getTextContent(), BlockMapper.getAttribute(node, "name"));
+		}else if ("global-variable".equals(BlockMapper.getAttribute(node, "kind"))) {
+			this.availableFieldVariableDecralationTypes.put(BlockMapper.getChildNode(node, "Type").getTextContent(), BlockMapper.getAttribute(node, "genus-name"));
 		}
 	}
 
@@ -119,10 +102,7 @@ public class BlockNameResolver {
 				Node node = genusNodes.item(i);
 
 				if (BlockMapper.getChildNode(node, "Name") != null) {
-					turtleMethods.put(
-							convertMethodName(
-									BlockMapper.getAttribute(node, "name")),
-							getNameSpaceString(node));
+					turtleMethods.put(convertMethodName(BlockMapper.getAttribute(node, "name")), getNameSpaceString(node));
 				}
 			}
 		} catch (SAXException e) {

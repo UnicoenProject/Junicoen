@@ -12,7 +12,7 @@
 	<description>Junicoen is a new version of UNICOEN written in Java.</description>
 	<inceptionYear>2014</inceptionYear>
 
-	<!-- General settings -->
+	<!-- General settings -->an
 	<properties>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.source>1.8</maven.compiler.source>

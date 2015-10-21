@@ -337,7 +337,7 @@ public class BlockMapper {
 		}
 	}
 
-	private boolean isNewInstanceCreation(String blockType) {
+	public boolean isNewInstanceCreation(String blockType) {
 		return blockType.startsWith("new-");
 	}
 
@@ -404,7 +404,7 @@ public class BlockMapper {
 				|| "remainder-double".endsWith(blockType);
 	}
 
-	private boolean isUnaryOp(String blockType) {
+	public boolean isUnaryOp(String blockType) {
 		if ("not".equals(blockType)) {
 			return true;
 		} else {
@@ -412,7 +412,7 @@ public class BlockMapper {
 		}
 	}
 
-	private boolean isBinOp(String blockType) {
+	public boolean isBinOp(String blockType) {
 		if (isEqualsOperator(blockType) || isNotEqualsOperator(blockType)
 				|| isLessThanOperator(blockType)
 				|| isLessThanOrEqualOperator(blockType)
