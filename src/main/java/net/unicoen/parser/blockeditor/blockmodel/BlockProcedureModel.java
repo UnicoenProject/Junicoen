@@ -19,7 +19,7 @@ public class BlockProcedureModel extends BlockElementModel {
 	}
 
 	public void initialize(UniMethodDec funcDec, Document document, Long ID_COUNTER){
-		Element procedureElement = createBlockElement(document, "procedure", ID_COUNTER++, "procedure");
+		Element procedureElement = createBlockElement(document, "procedure", ID_COUNTER, "procedure");
 
 		addElement("Label", document, funcDec.methodName, procedureElement);
 		addElement("ReturnType", document, funcDec.returnType, procedureElement);

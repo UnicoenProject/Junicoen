@@ -50,13 +50,16 @@ import net.unicoen.node.UniUnaryOp;
 import net.unicoen.node.UniVariableDec;
 import net.unicoen.node.UniWhile;
 import net.unicoen.parser.blockeditor.blockmodel.BlockAbstractBlockModel;
+import net.unicoen.parser.blockeditor.blockmodel.BlockBooleanLiteralModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockClassModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockCommandModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockDoWhileModel;
+import net.unicoen.parser.blockeditor.blockmodel.BlockDoubleLiteralModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockElementModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockExCallerModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockExprModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockIfModel;
+import net.unicoen.parser.blockeditor.blockmodel.BlockIntLiteralModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockLiteralModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockLocalVarDecModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockNotOperatorModel;
@@ -64,6 +67,7 @@ import net.unicoen.parser.blockeditor.blockmodel.BlockPrePostModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockProcParmModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockProcedureModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockReturnModel;
+import net.unicoen.parser.blockeditor.blockmodel.BlockStringLiteralModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockVariableGetterModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockVariableSetterModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockWhileModel;
@@ -204,12 +208,14 @@ public class BlockGenerator {
 				if (!(command instanceof BlockCommandModel)) {
 					throw new RuntimeException("cant use the expression" + expr.toString());
 				}
+
 				addBeforeBlockNode(document, command.getElement(), beforeId);
 
 				if (i + 1 < statementBlock.body.size()) {
 					addAfterBlockNode(document, command.getElement(), String.valueOf(ID_COUNTER));
 					beforeId = command.getElement().getAttribute("id");
 				}
+
 				blocks.add((BlockCommandModel) command);
 			}
 		}
@@ -220,7 +226,7 @@ public class BlockGenerator {
 	 * 関数の解析
 	 */
 	public BlockProcedureModel parseFunctionDec(UniMethodDec funcDec, Document document) {
-		BlockProcedureModel model = new BlockProcedureModel(funcDec, document, ID_COUNTER);
+		BlockProcedureModel model = new BlockProcedureModel(funcDec, document, ID_COUNTER++);
 		// //引数を解析して引数モデルを生成
 		model.setParams(parseFunctionArgs(document, funcDec.args, model.getElement()));
 
@@ -544,6 +550,7 @@ public class BlockGenerator {
 		}
 	}
 
+	//TODO should rmeove after refactoring
 	public Map<String, String> calcPlugInfo(Node plugNode) {
 		if (plugNode == null) {
 			return null;
@@ -965,25 +972,7 @@ public class BlockGenerator {
 	}
 
 	public BlockLiteralModel parseBoolLiteral(UniBoolLiteral boolexpr, Document document, Node parent) {
-		if (boolexpr.value) {
-			return new BlockLiteralModel(createLiteralElement(document, parent, "true", BlockMapper.getAttribute(resolver.getBlockNode("true"), "initlabel"), boolexpr.hashCode()));
-		} else {
-			return new BlockLiteralModel(createLiteralElement(document, parent, "true", BlockMapper.getAttribute(resolver.getBlockNode("true"), "initlabel"), boolexpr.hashCode()));
-		}
-	}
-
-	public Element createLiteralElement(Document document, Node parent, String genusName, String label, int hash) {
-		Element blockElement = createBlockElement(document, genusName, ID_COUNTER++, BlockMapper.getAttribute(resolver.getBlockNode(genusName), "kind"));
-
-		addElement("Label", document, label, blockElement);
-		addElement("Type", document, BlockMapper.getChildNode(resolver.getBlockNode(genusName), "Type").getTextContent(), blockElement);
-
-		Node plugNode = resolver.getPlugElement(genusName);
-		Map<String, String> plugInfo = calcPlugInfo(plugNode);
-
-		addPlugElement(document, blockElement, parent, plugInfo.get("connector-type"), plugInfo.get("position-type"));
-
-		return blockElement;
+			return new BlockBooleanLiteralModel(boolexpr, document, parent, ID_COUNTER++, resolver);
 	}
 
 	public BlockIfModel parseIf(UniIf ifexpr, Document document, Node parent) {
@@ -1035,16 +1024,15 @@ public class BlockGenerator {
 	}
 
 	public BlockLiteralModel parseIntLiteral(UniIntLiteral num, Document document, Node parent) {
-		BlockLiteralModel numberLiteral = new BlockLiteralModel(createLiteralElement(document, parent, "number", Integer.toString(num.value), num.hashCode()));
-		return numberLiteral;
+		return new BlockIntLiteralModel(String.valueOf(num.value), document, parent, ID_COUNTER++, resolver);
 	}
 
 	public BlockLiteralModel parseDoubleLiteral(UniDoubleLiteral num, Document document, Node parent) {
-		return new BlockLiteralModel(createLiteralElement(document, parent, "double-number", Double.toString(num.value), num.hashCode()));
+		return new BlockDoubleLiteralModel(num, document, parent, ID_COUNTER++, resolver);
 	}
 
 	public BlockLiteralModel parseStringLiteral(UniStringLiteral str, Document document, Node parent) {
-		return new BlockLiteralModel(createLiteralElement(document, parent, "string", str.value, ((UniNode) str).hashCode()));
+		return new BlockStringLiteralModel(str.value, document, parent, ID_COUNTER++, resolver);
 	}
 
 	public static void addPlugElement(Document document, Element target, Node parentBlockNode, String plugType, String positionType) {
