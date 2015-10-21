@@ -80,7 +80,7 @@ public class BlockGenerator {
 	/** Location of schema */
 	private static String XML_CODEBLOCKS_SCHEMA_URI = "http://education.mit.edu/openblocks/codeblocks.xsd";
 
-	private long ID_COUNTER = 1000;
+	private Long ID_COUNTER = (long) 1000;
 
 	private BlockNameResolver resolver;
 	private VariableNameResolver vnResolver = new VariableNameResolver();
@@ -220,27 +220,16 @@ public class BlockGenerator {
 	 * 関数の解析
 	 */
 	public BlockProcedureModel parseFunctionDec(UniMethodDec funcDec, Document document) {
-		BlockProcedureModel model = new BlockProcedureModel();
-
-		Element procedureElement = createBlockElement(document, "procedure", ID_COUNTER++, "procedure");
-
-		addElement("Label", document, funcDec.methodName, procedureElement);
-		addElement("ReturnType", document, funcDec.returnType, procedureElement);
-		addLocationElement(document, "50", "50", procedureElement);
-
-		model.setProcedureElement(procedureElement);
-
+		BlockProcedureModel model = new BlockProcedureModel(funcDec, document, ID_COUNTER);
 		// //引数を解析して引数モデルを生成
-		model.setParams(parseFunctionArgs(document, funcDec.args, procedureElement));
-
-		addParameterSocketInfo(document, procedureElement, model.getParams());
+		model.setParams(parseFunctionArgs(document, funcDec.args, model.getElement()));
 
 		List<BlockCommandModel> bodyBlocks = new ArrayList<>();
 		model.setBodyBlocks(bodyBlocks);
 		// funcDec.body ボディのパース
 		if (hasBody(funcDec)) {
-			addAfterBlockNode(document, procedureElement, String.valueOf(ID_COUNTER));
-			String beforeId = procedureElement.getAttribute("id");
+			addAfterBlockNode(document, model.getElement(), String.valueOf(ID_COUNTER));
+			String beforeId = model.getElement().getAttribute("id");
 			List<UniExpr> body = funcDec.block.body;
 			for (int i = 0; i < body.size(); i++) {
 				// expressionの解析 行き掛け順
@@ -266,28 +255,6 @@ public class BlockGenerator {
 		vnResolver.resetLocalVariables();
 
 		return model;
-	}
-
-	public void addParameterSocketInfo(Document document, Element element, List<BlockProcParmModel> args) {
-		List<Element> paramElements = new ArrayList<>();
-		SocketsInfo socketsInfo = new SocketsInfo();
-
-		for (BlockProcParmModel param : args) {
-			paramElements.add(param.getElement());
-		}
-
-		for (int i = 0; i < paramElements.size(); i++) {
-			String label = BlockMapper.getChildNode(paramElements.get(i), "Label").getTextContent();
-			String connecctorType = convertTypeToBlockConnectorType(BlockMapper.getChildNode(paramElements.get(i), "Type").getTextContent());
-
-			socketsInfo.addSocketInfo(new SocketInfo(label, "single", connecctorType, connecctorType));
-		}
-
-		socketsInfo.addSocketInfo(new SocketInfo("", "single", "poly", "poly"));
-
-		paramElements.add(null);
-
-		addSocketsNode(paramElements, document, element, socketsInfo);
 	}
 
 	public List<BlockProcParmModel> parseFunctionArgs(Document document, List<UniArg> args, Element parent) {
@@ -504,26 +471,10 @@ public class BlockGenerator {
 
 		BlockElementModel returnValue = parseExpr(returnExpr.value, document, blockElement);
 		if (returnExpr.value != null) {
-			List<Element> arg = new ArrayList<>();
-			arg.add(returnValue.getElement());
-
-			SocketsInfo sockets = new SocketsInfo();
-			Node returnBlock = resolver.getBlockNode(BlockMapper.getAttribute(returnValue.getElement(), "genus-name"));
-			sockets.addSocketInfo(new SocketInfo("", "single", convertTypeToBlockConnectorType(BlockMapper.getChildNode(returnBlock, "Type").getTextContent()), "poly"));
-
-			// socketの追加
-			addSocketsNode(arg, document, blockElement, sockets);
-
-			return new BlockReturnModel(blockElement, (BlockExprModel) returnValue);
+			return new BlockReturnModel(blockElement, (BlockExprModel) returnValue, document);
 		} else {
-			List<Element> arg = new ArrayList<>();
-			SocketsInfo sockets = calcSocketsInfo(resolver.getSocketNodes("return"));
-			arg.add(null);
-			addSocketsNode(arg, document, blockElement, sockets);
-
-			return new BlockReturnModel(blockElement, null);
+			return new BlockReturnModel(blockElement, null,document);
 		}
-
 	}
 
 	public BlockLocalVarDecModel parseVarDec(UniVariableDec varDec, Document document, Element parent) {
@@ -562,8 +513,9 @@ public class BlockGenerator {
 				String label = BlockMapper.getAttribute(socketNodes.get(i), "label");
 				String positionType = BlockMapper.getAttribute(socketNodes.get(i), "position-type");
 				String connectorType = BlockMapper.getAttribute(socketNodes.get(i), "connector-type");
+				String connectorID = BlockMapper.getAttribute(socketNodes.get(i), "con-block-id");
 
-				sockets.addSocketInfo(new SocketInfo(label, positionType, connectorType, connectorType));
+				sockets.addSocketInfo(new SocketInfo(label, positionType, connectorType, connectorType, connectorID));
 			}
 			return sockets;
 		}
@@ -646,6 +598,7 @@ public class BlockGenerator {
 		}
 	}
 
+	//TODO should remove after refactoring
 	public String convertTypeToBlockConnectorType(String type) {
 		switch (type) {
 		case "int":
@@ -1240,6 +1193,9 @@ public class BlockGenerator {
 		return type;
 	}
 
+	/*
+	 * blockNodeにソケット情報を追加する TODO should remove after refactoring
+	 */
 	public static void addSocketsNode(List<Element> args, Document document, Element blockNode, SocketsInfo socketsInfo) {
 		if (args.size() > 0) {
 			Element sockets = document.createElement("Sockets");
@@ -1253,6 +1209,7 @@ public class BlockGenerator {
 		}
 	}
 
+	//TODO should remove after refactoring
 	public static void addSocketNode(Document document, Node socketsNode, SocketInfo socketInfo) {
 		Element connector = document.createElement("BlockConnector");
 
