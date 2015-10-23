@@ -14,11 +14,11 @@ public class BlockBooleanLiteralModel extends BlockLiteralModel {
 	private static String TRUELITERAL_GENUS_NAME = "true";
 	private static String FALSELITERAL_GENUS_NAME = "false";
 
-	public BlockBooleanLiteralModel(UniBoolLiteral model, Document document, Node parent, Long ID_COUNTER, BlockNameResolver resolver) {
+	public BlockBooleanLiteralModel(UniBoolLiteral model, Document document, String parent, Long ID_COUNTER, BlockNameResolver resolver) {
 		super(String.valueOf(model.value), BlockMapper.getAttribute(resolver.getBlockNode(String.valueOf(model.value)), "initlabel"), document, parent, ID_COUNTER, resolver);
 	}
 
-	public Element createLiteralElement(String label, Document document, Node parent, Long ID_COUNTER, BlockNameResolver resolver) {
+	public Element createLiteralElement(String label, Document document, String parent, Long ID_COUNTER, BlockNameResolver resolver) {
 		String genusName = TRUELITERAL_GENUS_NAME;
 		if (!Boolean.valueOf(getGenusName())) {
 			genusName = FALSELITERAL_GENUS_NAME;

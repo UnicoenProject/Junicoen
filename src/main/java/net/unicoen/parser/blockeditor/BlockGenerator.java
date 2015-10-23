@@ -43,6 +43,7 @@ import net.unicoen.node.UniLongLiteral;
 import net.unicoen.node.UniMemberDec;
 import net.unicoen.node.UniMethodCall;
 import net.unicoen.node.UniMethodDec;
+import net.unicoen.node.UniNew;
 import net.unicoen.node.UniNode;
 import net.unicoen.node.UniReturn;
 import net.unicoen.node.UniStringLiteral;
@@ -62,6 +63,7 @@ import net.unicoen.parser.blockeditor.blockmodel.BlockIfModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockIntLiteralModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockLiteralModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockLocalVarDecModel;
+import net.unicoen.parser.blockeditor.blockmodel.BlockNewModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockNotOperatorModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockPrePostModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockProcParmModel;
@@ -345,13 +347,13 @@ public class BlockGenerator {
 		} else if (expr instanceof UniIdent) {
 			model = parseIdent((UniIdent) expr, document, parent);
 		} else if (expr instanceof UniStringLiteral) {
-			model = parseStringLiteral((UniStringLiteral) expr, document, parent);
+			model = parseStringLiteral((UniStringLiteral) expr, document, BlockMapper.getAttribute(parent, "id"));
 		} else if (expr instanceof UniIntLiteral) {
-			model = parseIntLiteral((UniIntLiteral) expr, document, parent);
+			model = parseIntLiteral((UniIntLiteral) expr, document, BlockMapper.getAttribute(parent, "id"));
 		} else if (expr instanceof UniBoolLiteral) {
-			model = parseBoolLiteral((UniBoolLiteral) expr, document, parent);
+			model = parseBoolLiteral((UniBoolLiteral) expr, document, BlockMapper.getAttribute(parent, "id"));
 		} else if (expr instanceof UniDoubleLiteral) {
-			model = parseDoubleLiteral((UniDoubleLiteral) expr, document, parent);
+			model = parseDoubleLiteral((UniDoubleLiteral) expr, document, BlockMapper.getAttribute(parent, "id"));
 		} else if (expr instanceof UniIf) {
 			model = parseIf((UniIf) expr, document, parent);
 		} else if (expr instanceof UniWhile) {
@@ -378,11 +380,17 @@ public class BlockGenerator {
 			model = parseDoWhile((UniDoWhile) expr, document, parent);
 		} else if (expr instanceof UniFor) {
 			model = parseFor((UniFor) expr, document, parent);
+		}else if(expr instanceof UniNew){
+			model = parseUniNew((UniNew)expr, document, BlockMapper.getAttribute(parent, "id"));
 		}
 
 		addParsedModel((UniNode) expr, model.getElement());
 
 		return model;
+	}
+
+	public BlockElementModel parseUniNew(UniNew expr, Document document, String parent){
+		return new BlockNewModel(expr, parent, document, ID_COUNTER++, resolver);
 	}
 
 	public BlockElementModel parseIdent(UniIdent expr, Document document, Node parent) {
@@ -971,7 +979,7 @@ public class BlockGenerator {
 		return model;
 	}
 
-	public BlockLiteralModel parseBoolLiteral(UniBoolLiteral boolexpr, Document document, Node parent) {
+	public BlockLiteralModel parseBoolLiteral(UniBoolLiteral boolexpr, Document document, String parent) {
 			return new BlockBooleanLiteralModel(boolexpr, document, parent, ID_COUNTER++, resolver);
 	}
 
@@ -1023,15 +1031,15 @@ public class BlockGenerator {
 		addSocketsNode(blockSockets, document, ifElement, socketsInfo);
 	}
 
-	public BlockLiteralModel parseIntLiteral(UniIntLiteral num, Document document, Node parent) {
+	public BlockLiteralModel parseIntLiteral(UniIntLiteral num, Document document, String parent) {
 		return new BlockIntLiteralModel(String.valueOf(num.value), document, parent, ID_COUNTER++, resolver);
 	}
 
-	public BlockLiteralModel parseDoubleLiteral(UniDoubleLiteral num, Document document, Node parent) {
+	public BlockLiteralModel parseDoubleLiteral(UniDoubleLiteral num, Document document, String parent) {
 		return new BlockDoubleLiteralModel(num, document, parent, ID_COUNTER++, resolver);
 	}
 
-	public BlockLiteralModel parseStringLiteral(UniStringLiteral str, Document document, Node parent) {
+	public BlockLiteralModel parseStringLiteral(UniStringLiteral str, Document document, String parent) {
 		return new BlockStringLiteralModel(str.value, document, parent, ID_COUNTER++, resolver);
 	}
 
@@ -1234,20 +1242,6 @@ public class BlockGenerator {
 		} else {
 			return kind;
 		}
-	}
-
-	public static void addLocationElement(Document document, String x, String y, Element blockElement) {
-		Element locationElement = document.createElement("Location");
-		Element xElement = document.createElement("X");
-		Element yElement = document.createElement("Y");
-
-		xElement.setTextContent(x);
-		yElement.setTextContent(y);
-
-		locationElement.appendChild(xElement);
-		locationElement.appendChild(yElement);
-
-		blockElement.appendChild(locationElement);
 	}
 
 	public static void addElement(String elementName, Document document, String name, Element blockElement) {

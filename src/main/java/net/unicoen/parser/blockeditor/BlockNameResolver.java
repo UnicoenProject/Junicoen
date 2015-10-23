@@ -140,14 +140,11 @@ public class BlockNameResolver {
 		if (genusNode == null) {
 			return null;
 		} else {
-			Node socketConnectors = BlockMapper.getChildNode(genusNode,
-					"BlockConnectors");
+			Node socketConnectors = BlockMapper.getChildNode(genusNode,"BlockConnectors");
 			for (int i = 0; i < socketConnectors.getChildNodes()
 					.getLength(); i++) {
 				Node connector = socketConnectors.getChildNodes().item(i);
-				if (connector.getNodeName().equals("BlockConnector")
-						&& BlockMapper.getAttribute(connector, "connector-kind")
-								.equals("plug")) {
+				if (connector.getNodeName().equals("BlockConnector") && BlockMapper.getAttribute(connector, "connector-kind").equals("plug")) {
 					plugNode = connector;
 				}
 			}

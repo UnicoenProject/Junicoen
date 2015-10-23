@@ -12,16 +12,16 @@ import org.w3c.dom.Node;
 public class BlockLiteralModel extends BlockExprModel {
 	private String genusName;
 
-	public BlockLiteralModel(String genusName, String label, Document document, Node parent, Long ID_COUNTER, BlockNameResolver resolver ) {
+	public BlockLiteralModel(String genusName, String label, Document document, String parentBlockID, Long ID_COUNTER, BlockNameResolver resolver) {
 		this.genusName = genusName;
-		element = createLiteralElement(label,document, parent, ID_COUNTER, resolver);
+		element = createLiteralElement(label,document, parentBlockID, ID_COUNTER, resolver);
 	}
 
 	public String getGenusName(){
 		return this.genusName;
 	}
 
-	public Element createLiteralElement(String label, Document document, Node parent, Long ID_COUNTER, BlockNameResolver resolver) {
+	public Element createLiteralElement(String label, Document document, String parentBlockID, Long ID_COUNTER, BlockNameResolver resolver) {
 		Element blockElement = createBlockElement(document, getGenusName(), ID_COUNTER, BlockMapper.getAttribute(resolver.getBlockNode(getGenusName()), "kind"));
 
 		addElement("Label", document, label, blockElement);
@@ -30,7 +30,7 @@ public class BlockLiteralModel extends BlockExprModel {
 		Node plugNode = resolver.getPlugElement(getGenusName());
 		Map<String, String> plugInfo = calcPlugInfo(plugNode);
 
-		addPlugElement(document, blockElement, parent, plugInfo.get("connector-type"), plugInfo.get("position-type"));
+		addPlugElement(document, blockElement, parentBlockID, plugInfo.get("connector-type"), plugInfo.get("position-type"));
 
 		return blockElement;
 	}

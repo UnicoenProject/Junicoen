@@ -45,11 +45,11 @@ public class BlockExprModel extends BlockElementModel {
 		}
 	}
 
-	public void addPlugElement(Document document, Element target, Node parentBlockNode, String plugType, String positionType) {
+	public void addPlugElement(Document document, Element target, String parentBlockID, String plugType, String positionType) {
 		Element plugNode = document.createElement("Plug");
 		Element blockConnectorNode = document.createElement("BlockConnector");
 
-		blockConnectorNode.setAttribute("con-block-id", BlockMapper.getAttribute(parentBlockNode, "id"));
+		blockConnectorNode.setAttribute("con-block-id", parentBlockID);
 		blockConnectorNode.setAttribute("connector-kind", "plug");
 		blockConnectorNode.setAttribute("connector-type", plugType);
 		blockConnectorNode.setAttribute("init-type", plugType);
