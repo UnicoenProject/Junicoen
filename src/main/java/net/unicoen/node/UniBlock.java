@@ -32,8 +32,8 @@ public class UniBlock extends UniExpr {
 		if (obj == null || !(obj instanceof UniBlock))
 			return false;
 		UniBlock that = (UniBlock) obj;
-		return (this.body == null ? that.body == null
-				: this.body.equals(that.body))
+		return (this.body == null ? that.body == null : this.body
+				.equals(that.body))
 				&& (this.blockLabel == null ? that.blockLabel == null
 						: this.blockLabel.equals(that.blockLabel));
 	}
@@ -45,7 +45,7 @@ public class UniBlock extends UniExpr {
 
 	public void merge(UniBlock that) {
 		if (that.body != null) {
-			if (this.body != null) {
+			if (this.body == null) {
 				this.body = that.body;
 			} else {
 				this.body.addAll(that.body);

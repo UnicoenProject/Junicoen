@@ -27,8 +27,8 @@ public class UniArray extends UniExpr {
 		if (obj == null || !(obj instanceof UniArray))
 			return false;
 		UniArray that = (UniArray) obj;
-		return (this.items == null ? that.items == null
-				: this.items.equals(that.items));
+		return (this.items == null ? that.items == null : this.items
+				.equals(that.items));
 	}
 
 	@Override
@@ -38,7 +38,7 @@ public class UniArray extends UniExpr {
 
 	public void merge(UniArray that) {
 		if (that.items != null) {
-			if (this.items != null) {
+			if (this.items == null) {
 				this.items = that.items;
 			} else {
 				this.items.addAll(that.items);

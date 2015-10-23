@@ -25,8 +25,8 @@ public class UniReturn extends UniExpr {
 		if (obj == null || !(obj instanceof UniReturn))
 			return false;
 		UniReturn that = (UniReturn) obj;
-		return (this.value == null ? that.value == null
-				: this.value.equals(that.value));
+		return (this.value == null ? that.value == null : this.value
+				.equals(that.value));
 	}
 
 	@Override

@@ -24,19 +24,22 @@ class MapperTest {
 	 * @author J.Kobayashi
 	 * @param node 評価対象のノード({@link UniClassDec}であることを期待する.)
 	 * @param className 期待するクラス名.
-	 * @param modifiers 期待する修飾子.
+	 * @param superClass 期待するスーパークラス名(ない場合はnull.)
+	 * @param superInterfaces 期待する実装インタフェース名の配列(ない場合はnull.)
 	 */
-	def evaluateClass(Object node, String className, String... modifiers) {
+	def evaluateClass(Object node, String className, String superClass, List<String> superInterfaces) {
 		assertThat(node, instanceOf(typeof(UniClassDec)))
 		val cls = node as UniClassDec
+		assertNotNull("Class name cannot be null",className)
 		assertEquals(cls.className, className)
-		if (cls.modifiers == null) {
-			assertEquals(0, modifiers.length)
+		assertEquals(cls.superClass, superClass)
+		if(cls.interfaces == null){
+			assertNull(superInterfaces)
 			return
 		}
-		assertEquals(cls.modifiers.size, modifiers.length)
-		modifiers.forEach [ modifier |
-			assertTrue(cls.modifiers.contains(modifier))
+		assertEquals(cls.interfaces.size, superInterfaces.size)
+		superInterfaces.forEach[
+			assertTrue(cls.interfaces.contains(it))
 		]
 	}
 

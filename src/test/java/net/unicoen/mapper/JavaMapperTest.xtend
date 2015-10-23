@@ -136,7 +136,7 @@ class JavaMapperTest {
 	}
 
 	def regenerate(StringBuilder sb) {
-		val code = sb.toString()
+		val code = sb.toString
 		val classDec = mapper.parse(code) as UniClassDec
 		val generatedCode = JavaGenerator.generate(classDec);
 		assertThat(MapperTestUtil.normalize(generatedCode), equalTo(MapperTestUtil.normalize(code)))

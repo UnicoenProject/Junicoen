@@ -36,12 +36,12 @@ public class UniFor extends UniExpr {
 		if (obj == null || !(obj instanceof UniFor))
 			return false;
 		UniFor that = (UniFor) obj;
-		return (this.init == null ? that.init == null
-				: this.init.equals(that.init))
-				&& (this.cond == null ? that.cond == null
-						: this.cond.equals(that.cond))
-				&& (this.step == null ? that.step == null
-						: this.step.equals(that.step))
+		return (this.init == null ? that.init == null : this.init
+				.equals(that.init))
+				&& (this.cond == null ? that.cond == null : this.cond
+						.equals(that.cond))
+				&& (this.step == null ? that.step == null : this.step
+						.equals(that.step))
 				&& (this.statement == null ? that.statement == null
 						: this.statement.equals(that.statement));
 	}

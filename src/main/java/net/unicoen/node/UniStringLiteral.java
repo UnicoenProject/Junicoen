@@ -25,8 +25,8 @@ public class UniStringLiteral extends UniExpr {
 		if (obj == null || !(obj instanceof UniStringLiteral))
 			return false;
 		UniStringLiteral that = (UniStringLiteral) obj;
-		return (this.value == null ? that.value == null
-				: this.value.equals(that.value));
+		return (this.value == null ? that.value == null : this.value
+				.equals(that.value));
 	}
 
 	@Override

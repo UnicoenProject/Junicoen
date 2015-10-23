@@ -30,8 +30,8 @@ public class UniFieldAccess extends UniExpr {
 		if (obj == null || !(obj instanceof UniFieldAccess))
 			return false;
 		UniFieldAccess that = (UniFieldAccess) obj;
-		return (this.receiver == null ? that.receiver == null
-				: this.receiver.equals(that.receiver))
+		return (this.receiver == null ? that.receiver == null : this.receiver
+				.equals(that.receiver))
 				&& (this.fieldName == null ? that.fieldName == null
 						: this.fieldName.equals(that.fieldName));
 	}
