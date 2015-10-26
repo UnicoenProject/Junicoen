@@ -21,11 +21,16 @@ public class BlockNameResolver {
 	private Map<String, String> availableLocalVariableDecralationTypes = new HashMap<>();//key:variable type , value: genusName
 	private Map<String, String> availableFieldVariableDecralationTypes = new HashMap<>();
 	private Map<String, String> availableFunctionArgsTypes = new HashMap<>();
+	private VariableNameResolver vnResolver = new VariableNameResolver();
 
 	public BlockNameResolver(String langdefRootPath) {
 		this.langdefRootPath = langdefRootPath;
 		parseGnuses();
 		parseTurtleXml();
+	}
+
+	public VariableNameResolver getVariableNameResolver(){
+		return this.vnResolver;
 	}
 
 	public String getLocalVarDecBlockName(String type) {
@@ -63,16 +68,22 @@ public class BlockNameResolver {
 			// 利用可能ブロックの登録
 			for (int i = 0; i < genusNodes.getLength(); i++) {
 				Node node = genusNodes.item(i);
-
 				// 全ブロック情報のマップに登録
-				allAvailableBlocks.put(BlockMapper.getAttribute(node, "name"),node);
+				allAvailableBlocks.put(BlockMapper.getAttribute(node, "name"), node);
 				addAvaiableVariableTypeToMap(node);
+
+
 			}
 		} catch (SAXException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void putAvaiableNewInstanceCreationMap(Node node){
+//		String genusName = BlockMapper.getAttribute(node, "name");
+//		String type = BlockMapper.getChildNode(node, "Type").getTextContent();
 	}
 
 	public void addAvaiableVariableTypeToMap(Node node){
@@ -160,10 +171,8 @@ public class BlockNameResolver {
 		if (genusNode == null) {
 			return null;
 		} else {
-			Node socketConnectors = BlockMapper.getChildNode(genusNode,
-					"BlockConnectors");
-			for (int i = 0; i < socketConnectors.getChildNodes()
-					.getLength(); i++) {
+			Node socketConnectors = BlockMapper.getChildNode(genusNode,"BlockConnectors");
+			for (int i = 0; socketConnectors != null && i < socketConnectors.getChildNodes().getLength(); i++) {
 				Node connector = socketConnectors.getChildNodes().item(i);
 				if (connector.getNodeName().equals("BlockConnector")
 						&& BlockMapper.getAttribute(connector, "connector-kind")

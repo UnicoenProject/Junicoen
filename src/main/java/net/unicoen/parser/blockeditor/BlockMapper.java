@@ -251,11 +251,11 @@ public class BlockMapper {
 		String blockGenusName = getAttribute(node, "genus-name");
 
 		String type = getChildText(resolver.getBlockNode(blockGenusName), "Type");
-		String name = getChildText(node, "Label");// TODO should fix later
+		String name = getChildText(node, "Label");
 
 		variableResolver.addLocalVariable(getChildText(node, "Label"), node);
 
-		if (initValues.get(0) != null && initValues.size() > 0) {
+		if (!initValues.isEmpty() && initValues.get(0) != null && initValues.size() > 0) {
 			// 初期値あり
 			return new UniVariableDec(null, type, name, initValues.get(0));
 		} else {
@@ -405,7 +405,7 @@ public class BlockMapper {
 						args.add(parseBody(realArgNode, map));
 					}
 				} else {
-					return null;
+					return args;
 				}
 			}
 		}

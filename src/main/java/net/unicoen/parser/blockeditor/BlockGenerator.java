@@ -89,7 +89,6 @@ public class BlockGenerator {
 	private Long ID_COUNTER = (long) 1000;
 
 	private BlockNameResolver resolver;
-	private VariableNameResolver vnResolver = new VariableNameResolver();
 
 	private Map<String, Element> addedModels = new HashMap<String, Element>();
 
@@ -148,7 +147,7 @@ public class BlockGenerator {
 			List<PageModel> pages = new ArrayList<PageModel>();
 			pages.add(pageModel);
 
-			PagesModel pagesModel = new PagesModel(pages,document);
+			PagesModel pagesModel = new PagesModel(pages, document);
 
 			documentElement.appendChild(pagesModel.getPagesElement());
 			document.appendChild(documentElement);
@@ -260,7 +259,7 @@ public class BlockGenerator {
 			}
 		}
 
-		vnResolver.resetLocalVariables();
+		resolver.getVariableNameResolver().resetLocalVariables();
 
 		return model;
 	}
@@ -290,7 +289,7 @@ public class BlockGenerator {
 		// plug
 		addPlugElement(document, element, parent, convertTypeToBlockConnectorType(arg.type), "single");
 
-		vnResolver.addLocalVariable(arg.name, element);
+		resolver.getVariableNameResolver().addLocalVariable(arg.name, element);
 
 		return new BlockProcParmModel(element);
 	}
@@ -380,8 +379,8 @@ public class BlockGenerator {
 			model = parseDoWhile((UniDoWhile) expr, document, parent);
 		} else if (expr instanceof UniFor) {
 			model = parseFor((UniFor) expr, document, parent);
-		}else if(expr instanceof UniNew){
-			model = parseUniNew((UniNew)expr, document, BlockMapper.getAttribute(parent, "id"));
+		} else if (expr instanceof UniNew) {
+			model = parseNew((UniNew) expr, document, BlockMapper.getAttribute(parent, "id"));
 		}
 
 		addParsedModel((UniNode) expr, model.getElement());
@@ -389,12 +388,12 @@ public class BlockGenerator {
 		return model;
 	}
 
-	public BlockElementModel parseUniNew(UniNew expr, Document document, String parent){
+	public BlockElementModel parseNew(UniNew expr, Document document, String parent) {
 		return new BlockNewModel(expr, parent, document, ID_COUNTER++, resolver);
 	}
 
 	public BlockElementModel parseIdent(UniIdent expr, Document document, Node parent) {
-		Node varDecNode = vnResolver.getVariableNode(expr.name);
+		Node varDecNode = resolver.getVariableNameResolver().getVariableNode(expr.name);
 		if (varDecNode != null) {
 			String genusName = "getter";
 			genusName += BlockMapper.getAttribute(varDecNode, "genus-name");
@@ -487,7 +486,7 @@ public class BlockGenerator {
 		if (returnExpr.value != null) {
 			return new BlockReturnModel(blockElement, (BlockExprModel) returnValue, document);
 		} else {
-			return new BlockReturnModel(blockElement, null,document);
+			return new BlockReturnModel(blockElement, null, document);
 		}
 	}
 
@@ -558,7 +557,7 @@ public class BlockGenerator {
 		}
 	}
 
-	//TODO should rmeove after refactoring
+	// TODO should rmeove after refactoring
 	public Map<String, String> calcPlugInfo(Node plugNode) {
 		if (plugNode == null) {
 			return null;
@@ -582,38 +581,12 @@ public class BlockGenerator {
 	}
 
 	public BlockLocalVarDecModel parseVarDec(String type, String name, Document document, Element parent) {
-		if (vnResolver.getVariableNode(name) == null) {
-			Element blockElement = createBlockElement(document, "local-var-" + convertBlockTypeName(type), ID_COUNTER++, "local-variable");
-
-			addElement("Label", document, name, blockElement);
-			addElement("Name", document, name, blockElement);
-			addElement("Type", document, type, blockElement);
-
-			BlockLocalVarDecModel model = new BlockLocalVarDecModel(blockElement);
-			vnResolver.addLocalVariable(name, blockElement);
-
-			return model;
-		} else {
-			throw new RuntimeException(name + " is already defined");
-		}
+		BlockLocalVarDecModel model = new BlockLocalVarDecModel(type, name, document, resolver, ID_COUNTER++);
+		resolver.getVariableNameResolver().addLocalVariable(name, model.getElement());
+		return model;
 	}
 
-	public String convertBlockTypeName(String type) {
-		switch (type) {
-		case "int":
-			return "int-number";
-		case "double":
-			return "double-number";
-		case "String":
-			return type.toLowerCase();
-		case "boolean":
-			return type;
-		default:
-			return "object-" + type;
-		}
-	}
-
-	//TODO should remove after refactoring
+	// TODO should remove after refactoring
 	public String convertTypeToBlockConnectorType(String type) {
 		switch (type) {
 		case "int":
@@ -653,7 +626,7 @@ public class BlockGenerator {
 				operator = "-";
 			}
 
-			Node varDecNode = vnResolver.getLocalVariableID(ident.name);
+			Node varDecNode = resolver.getVariableNameResolver().getLocalVariableID(ident.name);
 			if (varDecNode == null) {
 				throw new RuntimeException(ident.name + " is not defined");
 			}
@@ -763,6 +736,9 @@ public class BlockGenerator {
 		return new BlockBinaryOperatorModel(blockElement, (BlockExprModel) leftBlock, (BlockExprModel) rightBlock);
 	}
 
+	/**
+	 * パースしたモデルを保存しておく　デバッガで利用するため
+	*/
 	public void addParsedModel(UniNode model, Element element) {
 		addedModels.put(Integer.toString(model.hashCode()), element);
 	}
@@ -855,7 +831,7 @@ public class BlockGenerator {
 		if (binopExpr.left instanceof UniIdent) {
 			String genusName = "setter";
 			UniIdent ident = (UniIdent) binopExpr.left;
-			Node varDecNode = vnResolver.getLocalVariableID(ident.name);
+			Node varDecNode = resolver.getVariableNameResolver().getLocalVariableID(ident.name);
 
 			genusName += BlockMapper.getAttribute(varDecNode, "genus-name");
 			// BlockStubノード作成
@@ -932,7 +908,7 @@ public class BlockGenerator {
 		} else if (expr instanceof UniMethodCall) {
 			throw new RuntimeException("not supported yet");
 		} else if (expr instanceof UniIdent) {
-			type = BlockMapper.getChildNode(vnResolver.getVariableNode(((UniIdent) expr).name), "Type").getTextContent();
+			type = BlockMapper.getChildNode(resolver.getVariableNameResolver().getVariableNode(((UniIdent) expr).name), "Type").getTextContent();
 		} else if (expr instanceof UniBinOp) {
 			type = getExprType(((UniBinOp) expr).left, ((UniBinOp) expr).right);
 		} else if (expr instanceof UniUnaryOp) {
@@ -980,7 +956,7 @@ public class BlockGenerator {
 	}
 
 	public BlockLiteralModel parseBoolLiteral(UniBoolLiteral boolexpr, Document document, String parent) {
-			return new BlockBooleanLiteralModel(boolexpr, document, parent, ID_COUNTER++, resolver);
+		return new BlockBooleanLiteralModel(boolexpr, document, parent, ID_COUNTER++, resolver);
 	}
 
 	public BlockIfModel parseIf(UniIf ifexpr, Document document, Node parent) {
@@ -1100,16 +1076,16 @@ public class BlockGenerator {
 
 	public BlockElementModel createMethodCallModel(UniMethodCall method, Document document, Node parent) {
 		String genusName = calcMethodCallGenusName(method);
-		List<Element> exprs = new ArrayList<Element>();
-		List<BlockExprModel> argModels = new ArrayList<>();
 		String kind = BlockMapper.getAttribute(resolver.getBlockNode(genusName), "kind");
-
 		Element element = createBlockElement(document, genusName, ID_COUNTER++, kind);
 		addElement("Name", document, method.methodName, element);
 
 		if (kind.equals("command") && parent != null) {
 			addBeforeBlockNode(document, element, BlockMapper.getAttribute(parent, "id"));
 		}
+
+		List<Element> exprs = new ArrayList<Element>();
+		List<BlockExprModel> argModels = new ArrayList<>();
 
 		if (method.args != null) {
 			// 引数パース
@@ -1123,10 +1099,9 @@ public class BlockGenerator {
 				}
 			}
 		}
-
 		List<Node> socketNodes = resolver.getSocketNodes(genusName);
 		SocketsInfo socketsInfo = calcSocketsInfo(socketNodes);
-		// socketの追加
+
 		addSocketsNode(exprs, document, element, socketsInfo);
 
 		if ("function".equals(kind)) {
@@ -1150,43 +1125,12 @@ public class BlockGenerator {
 		}
 	}
 
-	/*
-	 * UniMethodCallの関数名からBlockの名前を計算する
-	 */
-	private String calcMethodCallGenusName(UniMethodCall method) {
-		String genusName = method.methodName + "[";
-		// 名前空間補完}
-		for (UniExpr arg : method.args) {
-			genusName += "@" + convertParamTypeName(calcParamType(arg));
-		}
-
-		genusName += "]";
-
-		genusName = resolver.getNamespace(genusName) + genusName;
-
-		return genusName;
-	}
-
 	public static String convertParamTypeName(String name) {
 		if (name.equals("number") || name.equals("double-number")) {
 			return "int";
 		} else {
 			return name;
 		}
-	}
-
-	private String calcParamType(UniExpr param) {
-		String type = "";
-		if (param instanceof UniStringLiteral) {
-			type = "string";
-		} else if (param instanceof UniIntLiteral) {
-			type = "number";
-		} else if (param instanceof UniIdent) {
-			type = BlockMapper.getChildNode(vnResolver.getVariableNode(((UniIdent) param).name), "Type").getTextContent();
-		} else {
-			throw new RuntimeException(param.toString() + "has not been supported yet.");
-		}
-		return type;
 	}
 
 	/*
@@ -1205,7 +1149,7 @@ public class BlockGenerator {
 		}
 	}
 
-	//TODO should remove after refactoring
+	// TODO should remove after refactoring
 	public static void addSocketNode(Document document, Node socketsNode, SocketInfo socketInfo) {
 		Element connector = document.createElement("BlockConnector");
 

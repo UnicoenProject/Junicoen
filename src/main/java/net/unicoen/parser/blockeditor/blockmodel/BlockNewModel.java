@@ -18,9 +18,8 @@ public class BlockNewModel extends BlockExprModel{
 		element = createNewElement(newModel, document, parentBlockID, ID_COUNTER, resolver);
 	}
 
-
 	public Element createNewElement(UniNew newModel, Document document, String parentBlockID, Long ID_COUNTER, BlockNameResolver resolver){
-		String genusName = calcGesnuName(newModel.type);
+		String genusName = calcGesnuName(newModel, resolver);
 		Element blockElement = createBlockElement(document, genusName, ID_COUNTER, KIND);
 
 		addElement("Label", document, newModel.type, blockElement);
@@ -33,9 +32,7 @@ public class BlockNewModel extends BlockExprModel{
 		return blockElement;
 	}
 
-
-	public String calcGesnuName(String type){
-		//TODO should impl parameter resolve
-		return GENUSNAME_HEADER;
+	public String calcGesnuName(UniNew type, BlockNameResolver resolver){
+		return GENUSNAME_HEADER + "-" + type.type + calcParameterFooter(type.args, resolver);
 	}
 }
