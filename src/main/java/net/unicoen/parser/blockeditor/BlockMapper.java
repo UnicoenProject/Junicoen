@@ -43,10 +43,10 @@ public class BlockMapper {
 
 	private VariableNameResolver variableResolver = new VariableNameResolver();
 	private HashMap<String, Node> map = new HashMap<>();// Blockのidをキー該当ノードをvalueとして全てのBlockNodeを保持する変数
-	private BlockNameResolver resolver;
+	private BlockResolver resolver;
 
 	public BlockMapper(String langdefRootPath) {
-		resolver = new BlockNameResolver(langdefRootPath);
+		resolver = new BlockResolver(langdefRootPath);
 	}
 
 	public UniClassDec parse(File xmlFile) {

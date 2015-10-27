@@ -1,0 +1,56 @@
+package net.unicoen.parser.blockeditor.blockmodel;
+
+import net.unicoen.parser.blockeditor.BlockMapper;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+public class PlugInfo {
+
+	private String label = "";
+	private String connectorType = "object";
+	private String positionType = "single";
+	private String connectorBlockID = "-1";
+
+	public PlugInfo(Node plugNode, String connectorID) {
+			this.label = BlockMapper.getAttribute(plugNode, "label");
+			this.connectorType = BlockMapper.getAttribute(plugNode, "connector-type");
+			this.positionType = BlockMapper.getAttribute(plugNode, "position-type");
+			this.connectorBlockID = connectorID;
+	}
+
+	public String getLabel(){
+		return this.label;
+	}
+
+	public String getConnectorType(){
+		return this.connectorType;
+	}
+
+	public String getPositionType(){
+		return this.positionType;
+	}
+
+	public String getConnectorBlockID(){
+		return this.connectorBlockID;
+	}
+
+	public Element createElemnet(Document document){
+		Element plugNode = document.createElement("Plug");
+		Element blockConnectorNode = document.createElement("BlockConnector");
+
+		blockConnectorNode.setAttribute("con-block-id", this.connectorBlockID);
+		blockConnectorNode.setAttribute("connector-kind", "plug");
+		blockConnectorNode.setAttribute("connector-type", this.connectorType);
+		blockConnectorNode.setAttribute("init-type", this.connectorType);
+		blockConnectorNode.setAttribute("label", "");
+		blockConnectorNode.setAttribute("position-type", positionType);
+
+		plugNode.appendChild(blockConnectorNode);
+
+		return plugNode;
+	}
+
+
+}

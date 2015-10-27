@@ -7,6 +7,10 @@ import org.w3c.dom.Element;
 
 public class BlockWhileModel extends BlockCommandModel {
 
+	public BlockWhileModel(Element element) {
+		this.element = element;
+	}
+
 	private List<BlockCommandModel> trueBlocks = new ArrayList<>();
 
 	public void setTrueBlocks(List<BlockCommandModel> trueBlocks) {

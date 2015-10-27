@@ -3,7 +3,7 @@ package net.unicoen.parser.blockeditor.blockmodel;
 import java.util.Map;
 
 import net.unicoen.node.UniNew;
-import net.unicoen.parser.blockeditor.BlockNameResolver;
+import net.unicoen.parser.blockeditor.BlockResolver;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -14,11 +14,11 @@ public class BlockNewModel extends BlockExprModel{
 	private static String KIND = "function";
 	private static String GENUSNAME_HEADER = "new-object";
 
-	public BlockNewModel(UniNew newModel, String parentBlockID, Document document, Long ID_COUNTER, BlockNameResolver resolver){
+	public BlockNewModel(UniNew newModel, String parentBlockID, Document document, Long ID_COUNTER, BlockResolver resolver){
 		element = createNewElement(newModel, document, parentBlockID, ID_COUNTER, resolver);
 	}
 
-	public Element createNewElement(UniNew newModel, Document document, String parentBlockID, Long ID_COUNTER, BlockNameResolver resolver){
+	public Element createNewElement(UniNew newModel, Document document, String parentBlockID, Long ID_COUNTER, BlockResolver resolver){
 		String genusName = calcGesnuName(newModel, resolver);
 		Element blockElement = createBlockElement(document, genusName, ID_COUNTER, KIND);
 
@@ -32,7 +32,7 @@ public class BlockNewModel extends BlockExprModel{
 		return blockElement;
 	}
 
-	public String calcGesnuName(UniNew type, BlockNameResolver resolver){
+	public String calcGesnuName(UniNew type, BlockResolver resolver){
 		return GENUSNAME_HEADER + "-" + type.type + calcParameterFooter(type.args, resolver);
 	}
 }

@@ -13,19 +13,20 @@ public class BlockProcedureModel extends BlockElementModel {
 
 	private List<BlockProcParmModel> params = new ArrayList<>();
 	private List<BlockCommandModel> bodyBlocks = new ArrayList<>();
+	private static String GENUS_NAME = "procedure";
 
 	public BlockProcedureModel(UniMethodDec dec, Document document, Long ID_COUNTER) {
 		initialize(dec, document, ID_COUNTER);
 	}
 
 	public void initialize(UniMethodDec funcDec, Document document, Long ID_COUNTER){
-		Element procedureElement = createBlockElement(document, "procedure", ID_COUNTER, "procedure");
+		Element procedureElement = createBlockElement(document, GENUS_NAME, ID_COUNTER, GENUS_NAME);
 
 		addElement("Label", document, funcDec.methodName, procedureElement);
 		addElement("ReturnType", document, funcDec.returnType, procedureElement);
 		addLocationElement(document, "50", "50", procedureElement);
 
-		setProcedureElement(procedureElement);
+		this.element = procedureElement;
 	}
 
 	public BlockProcedureModel(Element procedureElement,
@@ -34,10 +35,6 @@ public class BlockProcedureModel extends BlockElementModel {
 		element = procedureElement;
 		this.params = params;
 		this.bodyBlocks = bodyBlocks;
-	}
-
-	public void setProcedureElement(Element element) {
-		this.element = element;
 	}
 
 	public void setParams(List<BlockProcParmModel> params) {
@@ -69,9 +66,7 @@ public class BlockProcedureModel extends BlockElementModel {
 				node.appendChild(element);
 			}
 		}
-
 	}
-
 
 	public void addParameterSocketInfo(Document document, Element element, List<BlockProcParmModel> args) {
 		List<SocketInfo> sockets = new ArrayList<SocketInfo>();
@@ -80,8 +75,9 @@ public class BlockProcedureModel extends BlockElementModel {
 			addSocketInfoToList(sockets, param);
 		}
 
+		//procedureは空のソケットを1つ持っていなければいけない
 		addSocketInfoToList(sockets, null);
 
-		addSocketsNode(document, element, sockets);
+		addSocketsNode(document, new SocketsInfo(sockets));
 	}
 }

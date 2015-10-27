@@ -3,7 +3,7 @@ package net.unicoen.parser.blockeditor.blockmodel;
 import java.util.Map;
 
 import net.unicoen.parser.blockeditor.BlockMapper;
-import net.unicoen.parser.blockeditor.BlockNameResolver;
+import net.unicoen.parser.blockeditor.BlockResolver;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -12,7 +12,7 @@ import org.w3c.dom.Node;
 public class BlockLiteralModel extends BlockExprModel {
 	private String genusName;
 
-	public BlockLiteralModel(String genusName, String label, Document document, String parentBlockID, Long ID_COUNTER, BlockNameResolver resolver) {
+	public BlockLiteralModel(String genusName, String label, Document document, String parentBlockID, Long ID_COUNTER, BlockResolver resolver) {
 		this.genusName = genusName;
 		element = createLiteralElement(label,document, parentBlockID, ID_COUNTER, resolver);
 	}
@@ -21,7 +21,7 @@ public class BlockLiteralModel extends BlockExprModel {
 		return this.genusName;
 	}
 
-	public Element createLiteralElement(String label, Document document, String parentBlockID, Long ID_COUNTER, BlockNameResolver resolver) {
+	public Element createLiteralElement(String label, Document document, String parentBlockID, Long ID_COUNTER, BlockResolver resolver) {
 		Element blockElement = createBlockElement(document, getGenusName(), ID_COUNTER, BlockMapper.getAttribute(resolver.getBlockNode(getGenusName()), "kind"));
 
 		addElement("Label", document, label, blockElement);

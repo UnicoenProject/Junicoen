@@ -9,6 +9,10 @@ public class BlockExCallerModel extends BlockCommandModel {
 
 	private BlockCommandModel methodBlock;
 
+	public BlockExCallerModel(Element element) {
+		this.element = element;
+	}
+
 	public void setCallMethod(BlockCommandModel method) {
 		this.methodBlock = method;
 	}

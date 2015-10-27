@@ -12,7 +12,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-public class BlockNameResolver {
+public class BlockResolver {
 
 	private String langdefRootPath = "not available";
 
@@ -23,7 +23,7 @@ public class BlockNameResolver {
 	private Map<String, String> availableFunctionArgsTypes = new HashMap<>();
 	private VariableNameResolver vnResolver = new VariableNameResolver();
 
-	public BlockNameResolver(String langdefRootPath) {
+	public BlockResolver(String langdefRootPath) {
 		this.langdefRootPath = langdefRootPath;
 		parseGnuses();
 		parseTurtleXml();

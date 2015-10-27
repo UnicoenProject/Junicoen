@@ -10,6 +10,10 @@ public class BlockIfModel extends BlockCommandModel {
 	private List<BlockCommandModel> trueBlocks = new ArrayList<>();
 	private List<BlockCommandModel> falseBlocks = new ArrayList<>();
 
+	public BlockIfModel(Element element) {
+		this.element = element;
+	}
+
 	public List<Element> getCommandBlockElements() {
 		List<Element> elements = new ArrayList<>();
 

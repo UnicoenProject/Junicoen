@@ -14,7 +14,7 @@ public class BlockReturnModel extends BlockCommandModel {
 		//returnのソケットブロックを，resolverからコピーしてtype取得したほうが良いかも
 		addSocketInfoToList(sockets, socket);
 
-		addSocketsNode(document, element, sockets);
+		addSocketsNode(document, new SocketsInfo(sockets));
 		addSocketBlock(socket);
 	}
 }

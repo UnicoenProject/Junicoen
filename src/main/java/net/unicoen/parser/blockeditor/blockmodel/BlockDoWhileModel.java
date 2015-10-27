@@ -9,8 +9,7 @@ public class BlockDoWhileModel extends BlockCommandModel {
 
 	private List<BlockCommandModel> trueBlocks = new ArrayList<>();
 
-	public BlockDoWhileModel(Element whileElement, BlockExprModel initializer,
-			List<BlockCommandModel> trueBlocks) {
+	public BlockDoWhileModel(Element whileElement, BlockExprModel initializer, List<BlockCommandModel> trueBlocks) {
 		this.element = whileElement;
 		addSocketBlock(initializer);
 		this.trueBlocks = trueBlocks;

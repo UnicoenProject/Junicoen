@@ -3,7 +3,7 @@ package net.unicoen.parser.blockeditor.blockmodel;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.unicoen.parser.blockeditor.BlockNameResolver;
+import net.unicoen.parser.blockeditor.BlockResolver;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -13,7 +13,7 @@ public class BlockLocalVarDecModel extends BlockCommandModel {
 	private BlockExprModel initializer;
 	private static String KIND = "local-variable";
 
-	public BlockLocalVarDecModel(String type, String name, Document document, BlockNameResolver resolver, Long ID_COUNTER) {
+	public BlockLocalVarDecModel(String type, String name, Document document, BlockResolver resolver, Long ID_COUNTER) {
 		element = createLocalVaribleElement(type, name, document, resolver, ID_COUNTER);
 	}
 
@@ -21,7 +21,7 @@ public class BlockLocalVarDecModel extends BlockCommandModel {
 		this.initializer = initializer;
 	}
 
-	public Element createLocalVaribleElement(String type, String name, Document document, BlockNameResolver resolver, Long ID_COUNTER){
+	public Element createLocalVaribleElement(String type, String name, Document document, BlockResolver resolver, Long ID_COUNTER){
 		Element blockElement = createBlockElement(document, resolver.getLocalVarDecBlockName(type), ID_COUNTER++, KIND);
 
 		addElement("Label", document, name, blockElement);

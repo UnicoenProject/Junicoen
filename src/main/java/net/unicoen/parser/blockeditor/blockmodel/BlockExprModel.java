@@ -5,13 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.unicoen.node.UniDoubleLiteral;
 import net.unicoen.node.UniExpr;
-import net.unicoen.node.UniIdent;
-import net.unicoen.node.UniIntLiteral;
-import net.unicoen.node.UniStringLiteral;
 import net.unicoen.parser.blockeditor.BlockMapper;
-import net.unicoen.parser.blockeditor.BlockNameResolver;
+import net.unicoen.parser.blockeditor.BlockResolver;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -67,7 +63,7 @@ public class BlockExprModel extends BlockElementModel {
 		target.appendChild(plugNode);
 	}
 
-	public String calcParameterFooter(List<UniExpr> args, BlockNameResolver resolver){
+	public String calcParameterFooter(List<UniExpr> args, BlockResolver resolver){
 		String footer = "[";
 
 		for(UniExpr arg : args){
@@ -77,20 +73,5 @@ public class BlockExprModel extends BlockElementModel {
 		return footer += "]";
 	}
 
-	private String calcParamType(UniExpr param, BlockNameResolver resolver) {
-		String type = "";
-		if (param instanceof UniStringLiteral) {
-			type = "string";
-		} else if (param instanceof UniIntLiteral) {
-			type = "number";
-		} else if (param instanceof UniIdent) {
-			type = BlockMapper.getChildNode(resolver.getVariableNameResolver().getVariableNode(((UniIdent) param).name), "Type").getTextContent();
-		} else if(param instanceof UniDoubleLiteral){
-			type = "double-number";
-		} else {
-			throw new RuntimeException(param.toString() + "has not been supported yet.");
-		}
-		return type;
-	}
 
 }
