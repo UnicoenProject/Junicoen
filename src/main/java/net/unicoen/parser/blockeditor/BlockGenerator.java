@@ -289,12 +289,14 @@ public class BlockGenerator {
 		addElement("Name", document, arg.name, element);
 		// type
 		addElement("Type", document, arg.type, element);
-		// plug
-		addPlugElement(document, element, parent, convertTypeToBlockConnectorType(arg.type), "single");
+		BlockProcParmModel model = new BlockProcParmModel(element);
+
+		PlugInfo plugInfo = new PlugInfo(resolver.getPlugElement(genusName), BlockMapper.getAttribute(parent, "id"));
+		model.setPlugElement(document, plugInfo);
 
 		resolver.getVariableNameResolver().addLocalVariable(arg.name, element);
 
-		return new BlockProcParmModel(element);
+		return model;
 	}
 
 	public boolean hasBody(UniMethodDec funcDec) {
@@ -405,12 +407,13 @@ public class BlockGenerator {
 			Element stubElement = createBlockStubNode(document, expr.name, BlockMapper.getAttribute(varDecNode, "genus-name"));
 			// Blockノード作成
 			Element blockElement = createVariableBlockNode(document, genusName, expr.name, "data");
-
-			List<Node> socketNodes = resolver.getSocketNodes(genusName.substring("setter".length(), genusName.length()));
-			addPlugElement(document, blockElement, parent, BlockMapper.getAttribute(socketNodes.get(0), "connector-type"), "mirror");
-
 			stubElement.appendChild(blockElement);
-			return new BlockVariableGetterModel(stubElement);
+
+			BlockVariableGetterModel getterModel = new BlockVariableGetterModel(stubElement);
+			PlugInfo plugInfo = new PlugInfo("初期値", BlockMapper.getAttribute(varDecNode, "id"), "mirror", BlockMapper.getAttribute(parent, "id"));
+			getterModel.setPlugElement(document, plugInfo);
+
+			return getterModel;
 		} else {
 			throw new RuntimeException("illegal variable:" + expr.name);
 		}
@@ -614,9 +617,10 @@ public class BlockGenerator {
 		List<Element> elements = new ArrayList<Element>();
 		if ("!".equals(uniOp.operator)) {
 			Element blockElement = createBlockElement(document, "not", ID_COUNTER++, "function");
-			addPlugElement(document, blockElement, parent, "boolean", "single");
-
 			BlockElementModel value = parseExpr(uniOp.expr, document, blockElement);
+
+			BlockNotOperatorModel model = new BlockNotOperatorModel(blockElement, (BlockExprModel) value);
+
 			List<Element> args = new ArrayList<>();
 			args.add(value.getElement());
 
@@ -624,7 +628,10 @@ public class BlockGenerator {
 			SocketsInfo sockets = calcSocketsInfo(socketNodes);
 			addSocketsNode(args, document, blockElement, sockets);
 
-			return new BlockNotOperatorModel(blockElement, (BlockExprModel) value);
+			PlugInfo plugInfo = new PlugInfo(resolver.getPlugElement(model.getGenusName()), BlockMapper.getAttribute(parent, "id"));
+			model.setPlugElement(document, plugInfo);
+
+			return model;
 		} else if ("_++".equals(uniOp.operator) || "_--".equals(uniOp.operator) || "++_".equals(uniOp.operator) || "--_".equals(uniOp.operator)) {
 			String genusName = "setter";
 			UniIdent ident = (UniIdent) uniOp.expr;
@@ -726,21 +733,21 @@ public class BlockGenerator {
 			throw new RuntimeException("unequipment operator");
 		}
 
-		Node plugNode = resolver.getPlugElement(blockElement.getAttribute("genus-name"));
-		addPlugElement(document, blockElement, parent, BlockMapper.getAttribute(plugNode, "connector-type"), BlockMapper.getAttribute(plugNode, "position-type"));
-
 		BlockElementModel leftBlock = parseExpr(binopExpr.left, document, blockElement);
 		BlockElementModel rightBlock = parseExpr(binopExpr.right, document, blockElement);
 
-		List<Element> args = new ArrayList<Element>();
-		args.add(leftBlock.getElement());
-		args.add(rightBlock.getElement());
+		BlockBinaryOperatorModel binOpModel = new BlockBinaryOperatorModel(blockElement, (BlockExprModel) leftBlock, (BlockExprModel) rightBlock);
 
+		//plugの追加
+		PlugInfo plugInfo = new PlugInfo(resolver.getPlugElement(blockElement.getAttribute("genus-name")), BlockMapper.getAttribute(parent, "id"));
+		binOpModel.setPlugElement(document, plugInfo);
+
+		//socketの追加
 		List<Node> socketNodes = resolver.getSocketNodes(blockElement.getAttribute("genus-name"));
 		SocketsInfo sockets = calcSocketsInfo(socketNodes);
-		addSocketsNode(args, document, blockElement, sockets);
+		binOpModel.addSocketsNode(document, sockets);
 
-		return new BlockBinaryOperatorModel(blockElement, (BlockExprModel) leftBlock, (BlockExprModel) rightBlock);
+		return binOpModel;
 	}
 
 	/**
@@ -1026,24 +1033,8 @@ public class BlockGenerator {
 		return new BlockStringLiteralModel(str.value, document, parent, ID_COUNTER++, resolver);
 	}
 
-	public static void addPlugElement(Document document, Element target, Node parentBlockNode, String plugType, String positionType) {
-		Element plugNode = document.createElement("Plug");
-		Element blockConnectorNode = document.createElement("BlockConnector");
-
-		blockConnectorNode.setAttribute("con-block-id", BlockMapper.getAttribute(parentBlockNode, "id"));
-		blockConnectorNode.setAttribute("connector-kind", "plug");
-		blockConnectorNode.setAttribute("connector-type", plugType);
-		blockConnectorNode.setAttribute("init-type", plugType);
-		blockConnectorNode.setAttribute("label", "");
-		blockConnectorNode.setAttribute("position-type", positionType);
-
-		plugNode.appendChild(blockConnectorNode);
-
-		target.appendChild(plugNode);
-	}
-
 	public BlockElementModel parseMethodCall(UniMethodCall method, Document document, Node parent) {
-		// ユーザメソッド、返り値ありはまだ
+		//TODO ユーザメソッド，返り値への対応
 		UniIdent receiver = (UniIdent) method.receiver;
 		if (method.receiver == null || "MyLib".equals(receiver.name)) {
 			return createMethodCallModel(method, document, parent);
@@ -1057,24 +1048,19 @@ public class BlockGenerator {
 
 				BlockExprModel receiverModel = (BlockExprModel) parseExpr(method.receiver, document, element);
 				BlockElementModel callMethodModel = createMethodCallModel(method, document, element);
-				// addElement("BeforeBlockID", document, , callMethodModel);
-				List<Element> sockets = new ArrayList<>();
 
+				//モデルにソケットに結合されるモデルを追加
 				caller.addSocketBlock(receiverModel);
 				caller.setCallMethod((BlockCommandModel) callMethodModel);
 
-				sockets.add(receiverModel.getElement());
-				sockets.add(callMethodModel.getElement());
-
+				// ソケットノードルの作成
 				List<Node> socketNodes = resolver.getSocketNodes("callActionMethod2");
 				SocketsInfo socketsInfo = calcSocketsInfo(socketNodes);
-
-				// ソケットの出力
-				addSocketsNode(sockets, document, element, socketsInfo);
+				caller.addSocketsNode(document, socketsInfo);
 
 				return caller;
-
 			} else {
+				//TODO 返り値ありメソッド
 				throw new RuntimeException("method call not supported yet");
 			}
 		}

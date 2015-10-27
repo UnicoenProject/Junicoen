@@ -20,20 +20,11 @@ public class PlugInfo {
 			this.connectorBlockID = connectorID;
 	}
 
-	public String getLabel(){
-		return this.label;
-	}
-
-	public String getConnectorType(){
-		return this.connectorType;
-	}
-
-	public String getPositionType(){
-		return this.positionType;
-	}
-
-	public String getConnectorBlockID(){
-		return this.connectorBlockID;
+	public PlugInfo(String label, String connectorType, String positionType, String connectorID){
+		this.label = label;
+		this.connectorBlockID = connectorID;
+		this.positionType = positionType;
+		this.connectorType = connectorType;
 	}
 
 	public Element createElemnet(Document document){
@@ -44,7 +35,7 @@ public class PlugInfo {
 		blockConnectorNode.setAttribute("connector-kind", "plug");
 		blockConnectorNode.setAttribute("connector-type", this.connectorType);
 		blockConnectorNode.setAttribute("init-type", this.connectorType);
-		blockConnectorNode.setAttribute("label", "");
+		blockConnectorNode.setAttribute("label", label);
 		blockConnectorNode.setAttribute("position-type", positionType);
 
 		plugNode.appendChild(blockConnectorNode);

@@ -18,10 +18,10 @@ public class BlockElementModel {
 
 	protected Long id;
 	protected Element element;
-	private static String NODE_NAME = "Block";
-	private static String GENUS_NAME_ATTRIBUTE_TAG = "genus-name";
-	private static String ID_ATTRIBUTE_TAG = "id";
-	private static String KIND_ATTRIBUTE_TAG = "kind";
+	public static String NODE_NAME = "Block";
+	public static String GENUS_NAME_ATTRIBUTE_TAG = "genus-name";
+	public static String ID_ATTRIBUTE_TAG = "id";
+	public static String KIND_ATTRIBUTE_TAG = "kind";
 
 	public BlockElementModel() {
 	}
