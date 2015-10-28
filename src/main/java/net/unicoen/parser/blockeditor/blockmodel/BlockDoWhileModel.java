@@ -3,6 +3,7 @@ package net.unicoen.parser.blockeditor.blockmodel;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class BlockDoWhileModel extends BlockCommandModel {
@@ -11,24 +12,28 @@ public class BlockDoWhileModel extends BlockCommandModel {
 
 	public BlockDoWhileModel(Element whileElement, BlockExprModel initializer, List<BlockCommandModel> trueBlocks) {
 		this.element = whileElement;
-		addSocketBlock(initializer);
 		this.trueBlocks = trueBlocks;
 	}
 
-	public List<Element> getCommandBlockElements() {
+	public List<Element> getBlockElements() {
 		List<Element> commandBlocks = new ArrayList<>();
 
 		commandBlocks.add(getElement());
 
 		for (BlockCommandModel model : trueBlocks) {
-			commandBlocks.addAll(model.getCommandBlockElements());
+			commandBlocks.addAll(model.getBlockElements());
 		}
 
-		for (BlockExprModel socket : getSocketBlocks()) {
-			commandBlocks.addAll(socket.getExprElements());
+		for (BlockElementModel socket : getSocketBlocks()) {
+			commandBlocks.addAll(socket.getBlockElements());
 		}
 
 		return commandBlocks;
+	}
+
+	public void addSocketsAndNodes(List<BlockElementModel> socketBlocks, List<BlockCommandModel> commands, Document document, SocketsInfo sockets){
+		addSocketsAndNodes(socketBlocks, document, sockets);
+		this.trueBlocks = commands;
 	}
 
 }

@@ -9,9 +9,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+
 public class BlockProcedureModel extends BlockElementModel {
 
-	private List<BlockProcParmModel> params = new ArrayList<>();
 	private List<BlockCommandModel> bodyBlocks = new ArrayList<>();
 	private static String GENUS_NAME = "procedure";
 
@@ -29,24 +31,8 @@ public class BlockProcedureModel extends BlockElementModel {
 		this.element = procedureElement;
 	}
 
-	public BlockProcedureModel(Element procedureElement,
-			List<BlockProcParmModel> params,
-			List<BlockCommandModel> bodyBlocks) {
-		element = procedureElement;
-		this.params = params;
-		this.bodyBlocks = bodyBlocks;
-	}
-
-	public void setParams(List<BlockProcParmModel> params) {
-		this.params = params;
-	}
-
 	public void setBodyBlocks(List<BlockCommandModel> bodyBlocks) {
 		this.bodyBlocks = bodyBlocks;
-	}
-
-	public List<BlockProcParmModel> getParams() {
-		return this.params;
 	}
 
 	public List<BlockCommandModel> getBodyBlocks() {
@@ -57,18 +43,18 @@ public class BlockProcedureModel extends BlockElementModel {
 
 		node.appendChild(element);
 
-		for (BlockProcParmModel param : params) {
-			node.appendChild(param.getParmElement());
+		for (BlockElementModel param : getSocketBlocks()) {
+			node.appendChild(param.getElement());
 		}
 
 		for (BlockCommandModel model : bodyBlocks) {
-			for (Element element : model.getCommandBlockElements()) {
+			for (Element element : model.getBlockElements()) {
 				node.appendChild(element);
 			}
 		}
 	}
 
-	public void addParameterSocketInfo(Document document, Element element, List<BlockProcParmModel> args) {
+	public void addSockets(Document document, List<BlockProcParmModel> args) {
 		List<SocketInfo> sockets = new ArrayList<SocketInfo>();
 
 		for (BlockProcParmModel param : args) {
@@ -78,6 +64,13 @@ public class BlockProcedureModel extends BlockElementModel {
 		//procedureは空のソケットを1つ持っていなければいけない
 		addSocketInfoToList(sockets, null);
 
-		addSocketsNode(document, new SocketsInfo(sockets));
+		List<BlockElementModel> argElements = Lists.transform(args, new Function<BlockProcParmModel, BlockElementModel>() {
+			@Override
+			public BlockElementModel apply(BlockProcParmModel input) {
+				return (BlockElementModel)input;
+			}
+		});
+
+		addSocketsAndNodes(argElements, document, new SocketsInfo(sockets));
 	}
 }

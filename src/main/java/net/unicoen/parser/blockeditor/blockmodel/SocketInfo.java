@@ -33,6 +33,10 @@ public class SocketInfo {
 		this.connectorBlockID = id;
 	}
 
+	public void setConnectorType(String type) {
+		this.connectorType = type;
+	}
+
 	public String getConnectorKind() {
 		return this.connectorKind;
 	}

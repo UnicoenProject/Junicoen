@@ -6,6 +6,8 @@ import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.google.common.collect.Lists;
+
 public class BlockReturnModel extends BlockCommandModel {
 
 	public BlockReturnModel(Element element, BlockExprModel socket, Document document) {
@@ -13,8 +15,6 @@ public class BlockReturnModel extends BlockCommandModel {
 		List<SocketInfo> sockets = new ArrayList<SocketInfo>();
 		//returnのソケットブロックを，resolverからコピーしてtype取得したほうが良いかも
 		addSocketInfoToList(sockets, socket);
-
-		addSocketsNode(document, new SocketsInfo(sockets));
-		addSocketBlock(socket);
+		addSocketsAndNodes(Lists.newArrayList((BlockElementModel)socket), document, new SocketsInfo(sockets));;
 	}
 }

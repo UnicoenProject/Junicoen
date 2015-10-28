@@ -81,11 +81,6 @@ public class BlockResolver {
 		}
 	}
 
-	public void putAvaiableNewInstanceCreationMap(Node node){
-//		String genusName = BlockMapper.getAttribute(node, "name");
-//		String type = BlockMapper.getChildNode(node, "Type").getTextContent();
-	}
-
 	public void addAvaiableVariableTypeToMap(Node node){
 		// 利用可能な変数型リストに登録
 		if ("param".equals(BlockMapper.getAttribute(node, "kind"))) {
@@ -185,4 +180,12 @@ public class BlockResolver {
 		return socketsNode;
 	}
 
+	public String getType(String genusName){
+		Node typeNode = BlockMapper.getChildNode(allAvailableBlocks.get(genusName), "Type");
+		if(typeNode == null){
+			return "void";
+		}else{
+			return typeNode.getTextContent();
+		}
+	}
 }

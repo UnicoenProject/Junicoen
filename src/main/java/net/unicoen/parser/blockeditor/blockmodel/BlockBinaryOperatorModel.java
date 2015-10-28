@@ -1,11 +1,9 @@
-package net.unicoen.parser.blockeditor;
+package net.unicoen.parser.blockeditor.blockmodel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.w3c.dom.Element;
-
-import net.unicoen.parser.blockeditor.blockmodel.BlockExprModel;
 
 public class BlockBinaryOperatorModel extends BlockExprModel {
 
@@ -19,11 +17,11 @@ public class BlockBinaryOperatorModel extends BlockExprModel {
 		this.right = right;
 	}
 
-	public List<Element> getExprElements() {
+	public List<Element> getElements() {
 		List<Element> elements = new ArrayList<Element>();
 		elements.add(getElement());
-		elements.addAll(left.getExprElements());
-		elements.addAll(right.getExprElements());
+		elements.addAll(left.getBlockElements());
+		elements.addAll(right.getBlockElements());
 
 		return elements;
 	}

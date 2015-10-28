@@ -14,10 +14,10 @@ public class BlockNotOperatorModel extends BlockExprModel {
 		this.value = value;
 	}
 
-	public List<Element> getExprElements() {
+	public List<Element> getElements() {
 		List<Element> elements = new ArrayList<Element>();
 		elements.add(getElement());
-		elements.addAll(value.getExprElements());
+		elements.addAll(value.getBlockElements());
 
 		return elements;
 	}

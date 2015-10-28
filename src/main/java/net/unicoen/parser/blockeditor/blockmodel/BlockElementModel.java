@@ -1,5 +1,6 @@
 package net.unicoen.parser.blockeditor.blockmodel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.unicoen.node.UniDoubleLiteral;
@@ -23,6 +24,8 @@ public class BlockElementModel {
 	public static String ID_ATTRIBUTE_TAG = "id";
 	public static String KIND_ATTRIBUTE_TAG = "kind";
 
+	private List<BlockElementModel> socketBlocksElements = new ArrayList<>();
+
 	public BlockElementModel() {
 	}
 
@@ -44,6 +47,34 @@ public class BlockElementModel {
 
 	public String getKind() {
 		return BlockMapper.getAttribute(this.element, KIND_ATTRIBUTE_TAG);
+	}
+
+	public String getType(){
+		Node typeNode = BlockMapper.getChildNode(getElement(), "Type");
+		if(typeNode == null){
+			return null;
+		}else{
+			return typeNode.getTextContent();
+		}
+	}
+
+	public List<Element> getBlockElements() {
+		List<Element> commandBlocks = new ArrayList<>();
+
+		commandBlocks.add(getElement());
+		for (BlockElementModel socket : socketBlocksElements) {
+			commandBlocks.addAll(socket.getBlockElements());
+		}
+
+		return commandBlocks;
+	}
+
+	protected void addSocketBlock(BlockElementModel socket) {
+		this.socketBlocksElements.add(socket);
+	}
+
+	public List<BlockElementModel> getSocketBlocks() {
+		return this.socketBlocksElements;
 	}
 
 	public String getIdFromElement(Element element) {
@@ -113,12 +144,28 @@ public class BlockElementModel {
 		}
 	}
 
+	/**
+	 * ブロックモデルにソケットに結合されるBlockモデルを追加し，ブロックモデルにソケットノードを追加する
+	 * @param socketBlocks
+	 * @param document
+	 * @param sockets
+	 */
+	public void addSocketsAndNodes(List<BlockElementModel> socketBlocks, Document document, SocketsInfo sockets){
+		for(BlockElementModel socket : socketBlocks){
+			addSocketBlock(socket);
+		}
+		addSocketsNode(document, sockets);
+	}
+
 	public void addSocketsNode(Document document, SocketsInfo sockets) {
 		if (sockets.getSockets().size() > 0) {
 			Element socketsElement = document.createElement("Sockets");
 			socketsElement.setAttribute("num-sockets", String.valueOf(sockets.getSockets().size()));
-			for (SocketInfo socket : sockets.getSockets()) {
-				addSocketNode(document, socketsElement, socket);
+			for (int i = 0;i<sockets.getSockets().size();i++) {
+				if(getSocketBlocks().size() > i && getSocketBlocks().get(i)!= null){
+					sockets.getSockets().get(i).setConnectorBlockID(getSocketBlocks().get(i).getBlockID());
+				}
+				addSocketNode(document, socketsElement, sockets.getSockets().get(i));
 			}
 			this.element.appendChild(socketsElement);
 		}
@@ -160,6 +207,9 @@ public class BlockElementModel {
 		}
 	}
 
+	/**
+	 * このブロックのノードにPlugノードを追加する
+	 */
 	public void setPlugElement(Document document, PlugInfo plugInfo) {
 		this.element.appendChild(plugInfo.createElemnet(document));
 	}

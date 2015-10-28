@@ -13,6 +13,11 @@ public class PlugInfo {
 	private String positionType = "single";
 	private String connectorBlockID = "-1";
 
+	/**
+	 *
+	 * @param plugNode Plugを追加するブロックのオリジナルのPlugノード
+	 * @param connectorID Plugの結合先のID
+	 */
 	public PlugInfo(Node plugNode, String connectorID) {
 			this.label = BlockMapper.getAttribute(plugNode, "label");
 			this.connectorType = BlockMapper.getAttribute(plugNode, "connector-type");

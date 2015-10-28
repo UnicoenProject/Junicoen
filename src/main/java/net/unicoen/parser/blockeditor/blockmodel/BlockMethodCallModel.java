@@ -25,6 +25,10 @@ public class BlockMethodCallModel extends BlockCommandModel{
 			addBeforeBlockNode(document, element, BlockMapper.getAttribute(parent, "id"));
 		}
 
+		if(!"void".equals(resolver.getType(genusName))){
+			addElement("Tyoe", document, resolver.getType(genusName), element);
+		}
+
 		return element;
 	}
 

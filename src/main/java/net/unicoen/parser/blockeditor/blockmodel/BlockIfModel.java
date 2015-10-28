@@ -14,24 +14,24 @@ public class BlockIfModel extends BlockCommandModel {
 		this.element = element;
 	}
 
-	public List<Element> getCommandBlockElements() {
+	public List<Element> getBlockElements() {
 		List<Element> elements = new ArrayList<>();
 
 		elements.add(getElement());
 
 		// 条件式
-		for (BlockExprModel socket : getSocketBlocks()) {
-			elements.addAll(socket.getExprElements());
+		for (BlockElementModel socket : getSocketBlocks()) {
+			elements.addAll(socket.getBlockElements());
 		}
 
 		// 真ブロック
 		for (BlockCommandModel model : trueBlocks) {
-			elements.addAll(model.getCommandBlockElements());
+			elements.addAll(model.getBlockElements());
 		}
 
 		// 偽ブロック
 		for (BlockCommandModel model : falseBlocks) {
-			elements.addAll(model.getCommandBlockElements());
+			elements.addAll(model.getBlockElements());
 		}
 
 		return elements;

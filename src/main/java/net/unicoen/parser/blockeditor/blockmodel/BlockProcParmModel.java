@@ -8,8 +8,4 @@ public class BlockProcParmModel extends BlockExprModel {
 		element = paramElement;
 	}
 
-	public Element getParmElement() {
-		return element;
-	}
-
 }

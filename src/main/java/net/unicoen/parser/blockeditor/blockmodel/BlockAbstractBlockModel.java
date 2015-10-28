@@ -3,30 +3,49 @@ package net.unicoen.parser.blockeditor.blockmodel;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class BlockAbstractBlockModel extends BlockCommandModel {
 
-	private List<BlockCommandModel> sockets = new ArrayList<>();
+	private List<BlockElementModel> commandBlocks = new ArrayList<>();
 
 	public BlockAbstractBlockModel(Element element) {
 		this.element = element;
 	}
 
-	public List<Element> getCommandBlockElements() {
+	public List<Element> getBlockElements() {
 		List<Element> elements = new ArrayList<>();
 
 		// Blockの中身を出力
-		for (BlockCommandModel socket : sockets) {
-			elements.addAll(socket.getCommandBlockElements());
+		for (BlockElementModel socket : commandBlocks) {
+			elements.addAll(socket.getBlockElements());
 		}
 
 		elements.add(getElement());
 		return elements;
 	}
 
-	public void setSockets(List<BlockCommandModel> sockets) {
-		this.sockets = sockets;
+	@Override
+	public void addSocketsAndNodes(List<BlockElementModel> socketBlocks, Document document, SocketsInfo sockets) {
+		this.commandBlocks = socketBlocks;
+		if(socketBlocks.size()>0){
+			addSocketBlock(socketBlocks.get(0));
+		}
+		addSocketsNode(document, sockets);
+	}
+
+	@Override
+	public void addSocketsNode(Document document, SocketsInfo sockets) {
+		if (sockets.getSockets().size() > 0) {
+			Element socketsElement = document.createElement("Sockets");
+			socketsElement.setAttribute("num-sockets", String.valueOf(sockets.getSockets().size()));
+			for (int i = 0; i < sockets.getSockets().size(); i++) {
+				sockets.getSockets().get(i).setConnectorBlockID(getSocketBlocks().get(i).getBlockID());
+				addSocketNode(document, socketsElement, sockets.getSockets().get(i));
+			}
+			this.element.appendChild(socketsElement);
+		}
 	}
 
 }
