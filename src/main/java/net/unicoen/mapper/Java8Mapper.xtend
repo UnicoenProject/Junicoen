@@ -348,10 +348,9 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				switch (it as RuleContext).invokingState {
 					case 1081: {
 						if (bind.modifiers == null) {
-							bind.modifiers = it.visit as java.util.List<java.lang.String>
-						} else {
-							bind.modifiers += it.visit as java.util.List<java.lang.String>
+							bind.modifiers = new ArrayList<String>
 						}
+						bind.modifiers += it.visit as String
 					}
 					case 1087: {
 						val child = it.visit as UniMethodDec
@@ -367,16 +366,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 	}
 
 	override public visitMethodModifier(Java8Parser.MethodModifierContext ctx) {
-		val list = new ArrayList<String>
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				if (it instanceof RuleContext) {
-					switch (it as RuleContext).invokingState {
-					}
-				}
-			]
-		}
-		list
+		ctx.text
 	}
 
 	override public visitMethodHeader(Java8Parser.MethodHeaderContext ctx) {
