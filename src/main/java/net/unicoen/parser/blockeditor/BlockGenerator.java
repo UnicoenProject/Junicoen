@@ -455,7 +455,6 @@ public class BlockGenerator {
 		SocketsInfo socketsInfo = calcSocketsInfo(whileSocketNodes);
 
 		// ソケットの出力
-		// TODO setsocketblock?
 		model.addSocketsAndNodes(blockSockets, trueBlocks, document, socketsInfo);
 
 		return model;
@@ -566,49 +565,10 @@ public class BlockGenerator {
 		}
 	}
 
-	// TODO should rmeove after refactoring
-	public Map<String, String> calcPlugInfo(Node plugNode) {
-		if (plugNode == null) {
-			return null;
-		} else {
-			Map<String, String> socketsInfo = new HashMap<>();
-
-			String plugLabel;
-			String socketTypes;
-			String socketPositionTypes;
-
-			plugLabel = BlockMapper.getAttribute(plugNode, "label");
-			socketTypes = BlockMapper.getAttribute(plugNode, "connector-type");
-			socketPositionTypes = BlockMapper.getAttribute(plugNode, "position-type");
-
-			socketsInfo.put("label", plugLabel);
-			socketsInfo.put("connector-type", socketTypes);
-			socketsInfo.put("position-type", socketPositionTypes);
-
-			return socketsInfo;
-		}
-	}
-
 	public BlockLocalVarDecModel parseVarDec(String type, String name, Document document, Element parent) {
 		BlockLocalVarDecModel model = new BlockLocalVarDecModel(type, name, document, resolver, ID_COUNTER++);
 		resolver.getVariableNameResolver().addLocalVariable(name, model.getElement());
 		return model;
-	}
-
-	// TODO should remove after refactoring
-	public String convertTypeToBlockConnectorType(String type) {
-		switch (type) {
-		case "int":
-			return "number";
-		case "double":
-			return "double-number";
-		case "String":
-			return type.toLowerCase();
-		case "boolean":
-			return type;
-		default:
-			return "object";
-		}
 	}
 
 	public BlockElementModel parseUnaryOperator(UniUnaryOp uniOp, Document document, Node parent) {
@@ -936,15 +896,6 @@ public class BlockGenerator {
 		return type;
 	}
 
-	public static String[] createStringArray(String... labels) {
-		String[] socketLabels = new String[labels.length];
-		for (int i = 0; i < labels.length; i++) {
-			socketLabels[i] = labels[i];
-		}
-
-		return socketLabels;
-	}
-
 	public BlockWhileModel parseWhile(UniWhile whileExpr, Document document, Node parent) {
 
 		Element blockElement = createBlockElement(document, "while", ID_COUNTER++, "command");
@@ -1106,45 +1057,6 @@ public class BlockGenerator {
 		return caller;
 	}
 
-	public static String convertParamTypeName(String name) {
-		if (name.equals("number") || name.equals("double-number")) {
-			return "int";
-		} else {
-			return name;
-		}
-	}
-
-	// TODO should remove after refactoring
-	public static void addSocketNode(Document document, Node socketsNode, SocketInfo socketInfo) {
-		Element connector = document.createElement("BlockConnector");
-
-		connector.setAttribute("connector-kind", "socket");
-		connector.setAttribute("position-type", socketInfo.getPositionType());
-		connector.setAttribute("label", socketInfo.getLabel());
-
-		if (!"-1".equals(socketInfo.getConnectorBlockID())) {
-			connector.setAttribute("con-block-id", socketInfo.getConnectorBlockID());
-			connector.setAttribute("connector-type", socketInfo.getConnectorType());
-			connector.setAttribute("init-type", socketInfo.getInitType());
-		} else {
-			connector.setAttribute("connector-type", socketInfo.getConnectorType());
-			connector.setAttribute("init-type", socketInfo.getInitType());
-		}
-
-		socketsNode.appendChild(connector);
-	}
-
-	public static String getIdFromElement(Element element) {
-		if (element == null) {
-			return "-1";
-		}
-		if ("BlockStub".equals(element.getNodeName())) {
-			return BlockMapper.getAttribute(BlockMapper.getChildNode(element, "Block"), BlockElementModel.ID_ATTRIBUTE_TAG);
-		} else {
-			return BlockMapper.getAttribute(element, BlockElementModel.ID_ATTRIBUTE_TAG);
-		}
-	}
-
 	public static void addElement(String elementName, Document document, String name, Element blockElement) {
 		Element element = document.createElement(elementName);
 		element.setTextContent(name);
@@ -1156,7 +1068,6 @@ public class BlockGenerator {
 		element.setAttribute("genus-name", genusName);
 		element.setAttribute(BlockElementModel.ID_ATTRIBUTE_TAG, String.valueOf(id));
 		element.setAttribute("kind", kind);
-
 		return element;
 	}
 
