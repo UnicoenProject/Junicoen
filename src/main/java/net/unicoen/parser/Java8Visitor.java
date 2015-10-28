@@ -19,6 +19,66 @@ public interface Java8Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitLiteral(Java8Parser.LiteralContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Java8Parser#integerLiteral}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIntegerLiteral(Java8Parser.IntegerLiteralContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Java8Parser#integerLiteralValue}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIntegerLiteralValue(Java8Parser.IntegerLiteralValueContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Java8Parser#floatingPointLiteral}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFloatingPointLiteral(Java8Parser.FloatingPointLiteralContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Java8Parser#floatingPointLiteralValue}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFloatingPointLiteralValue(Java8Parser.FloatingPointLiteralValueContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Java8Parser#booleanLiteral}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBooleanLiteral(Java8Parser.BooleanLiteralContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Java8Parser#booleanLiteralValue}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBooleanLiteralValue(Java8Parser.BooleanLiteralValueContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Java8Parser#stringLiteral}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStringLiteral(Java8Parser.StringLiteralContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Java8Parser#stringLiteralValue}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStringLiteralValue(Java8Parser.StringLiteralValueContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Java8Parser#characterLiteral}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCharacterLiteral(Java8Parser.CharacterLiteralContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Java8Parser#nullLiteral}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNullLiteral(Java8Parser.NullLiteralContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Java8Parser#type}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -348,6 +408,42 @@ public interface Java8Visitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitFieldModifier(Java8Parser.FieldModifierContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Java8Parser#fieldVariableDeclaratorList}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFieldVariableDeclaratorList(Java8Parser.FieldVariableDeclaratorListContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Java8Parser#fieldVariableDeclarator}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFieldVariableDeclarator(Java8Parser.FieldVariableDeclaratorContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Java8Parser#fieldVariableDeclaratorId}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFieldVariableDeclaratorId(Java8Parser.FieldVariableDeclaratorIdContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Java8Parser#fieldVariableInitializer}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFieldVariableInitializer(Java8Parser.FieldVariableInitializerContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Java8Parser#fieldAssignmentExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFieldAssignmentExpression(Java8Parser.FieldAssignmentExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Java8Parser#fieldArrayInitializer}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFieldArrayInitializer(Java8Parser.FieldArrayInitializerContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Java8Parser#variableDeclaratorList}.
 	 * @param ctx the parse tree
