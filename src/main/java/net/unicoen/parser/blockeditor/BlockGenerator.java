@@ -218,10 +218,10 @@ public class BlockGenerator {
 					throw new RuntimeException("cant use the expression" + expr.toString());
 				}
 
-				addBeforeBlockNode(document, command.getElement(), beforeId);
+				command.addBeforeBlockNode(document, beforeId);
 
 				if (i + 1 < statementBlock.body.size()) {
-					addAfterBlockNode(document, command.getElement(), String.valueOf(ID_COUNTER));
+					command.addAfterBlockNode(document, String.valueOf(ID_COUNTER));
 					beforeId = command.getElement().getAttribute(BlockElementModel.ID_ATTRIBUTE_TAG);
 				}
 
@@ -243,7 +243,7 @@ public class BlockGenerator {
 		model.setBodyBlocks(bodyBlocks);
 		// funcDec.body ボディのパース
 		if (hasBody(funcDec)) {
-			addAfterBlockNode(document, model.getElement(), String.valueOf(ID_COUNTER));
+			model.addAfterBlockNode(document,  String.valueOf(ID_COUNTER));
 			String beforeId = model.getElement().getAttribute(BlockElementModel.ID_ATTRIBUTE_TAG);
 			List<UniExpr> body = funcDec.block.body;
 			for (int i = 0; i < body.size(); i++) {
@@ -252,11 +252,11 @@ public class BlockGenerator {
 					BlockElementModel commandBlock = parseExpr(body.get(i), document, null);// 木で返す．
 
 					if (i + 1 < body.size()) {
-						addAfterBlockNode(document, commandBlock.getElement(), String.valueOf(ID_COUNTER));
+						commandBlock.addAfterBlockNode(document, String.valueOf(ID_COUNTER));
 					}
 
 					// 左辺ブロックに直前のブロックのIDを追加する
-					addBeforeBlockNode(document, commandBlock.getElement(), beforeId);
+					commandBlock.addBeforeBlockNode(document, beforeId);
 
 					bodyBlocks.add((BlockCommandModel) commandBlock);
 					beforeId = commandBlock.getBlockID();
@@ -309,32 +309,6 @@ public class BlockGenerator {
 			return DOMUtil.getAttribute(blockNode, attributeName);
 		} else {
 			return element.getAttribute(attributeName);
-		}
-	}
-
-	/*
-	 * AfterBlockノードを追加する
-	 */
-	public static void addAfterBlockNode(Document document, Element blockNode, String id) {
-		Element element = document.createElement("AfterBlockId");
-		element.setTextContent(id);
-
-		if (blockNode.getNodeName().equals("BlockStub")) {
-			DOMUtil.getChildNode(blockNode, "Block").appendChild(element);
-		} else {
-			blockNode.appendChild(element);
-		}
-	}
-
-	// TODO should remove after refactoring
-	public static void addBeforeBlockNode(Document document, Element blockNode, String id) {
-		Element element = document.createElement("BeforeBlockId");
-		element.setTextContent(id);
-
-		if (blockNode.getNodeName().equals("BlockStub")) {
-			DOMUtil.getChildNode(blockNode, "Block").appendChild(element);
-		} else {
-			blockNode.appendChild(element);
 		}
 	}
 
@@ -828,20 +802,6 @@ public class BlockGenerator {
 			}
 		} else {
 			throw new RuntimeException("illegal left op:" + binopExpr.left);
-		}
-	}
-
-	public String getBlockTypeName(String type) {
-		if ("int".equals(type)) {
-			return "int-number";
-		} else if ("String".equals(type)) {
-			return "string";
-		} else if ("double".equals(type)) {
-			return "double-number";
-		} else if ("boolean".equals(type)) {
-			return "boolean";
-		} else {
-			return type;
 		}
 	}
 

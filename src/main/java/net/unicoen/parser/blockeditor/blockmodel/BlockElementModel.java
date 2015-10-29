@@ -214,5 +214,19 @@ public class BlockElementModel {
 		this.element.appendChild(plugInfo.createElemnet(document));
 	}
 
+	public void addBeforeBlockNode(Document document, String id) {
+		Element element = document.createElement("BeforeBlockId");
+		element.setTextContent(id);
+		getElement().appendChild(element);
+	}
+
+	/*
+	 * AfterBlockノードを追加する
+	 */
+	public void addAfterBlockNode(Document document, String id) {
+		Element element = document.createElement("AfterBlockId");
+		element.setTextContent(id);
+		getElement().appendChild(element);
+	}
 
 }

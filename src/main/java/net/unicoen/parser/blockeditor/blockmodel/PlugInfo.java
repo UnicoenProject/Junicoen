@@ -6,12 +6,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-public class PlugInfo {
-
-	private String label = "";
-	private String connectorType = "object";
-	private String positionType = "single";
-	private String connectorBlockID = "-1";
+public class PlugInfo extends BlockConnectorInfo{
 
 	/**
 	 *
@@ -19,9 +14,9 @@ public class PlugInfo {
 	 * @param connectorID Plugの結合先のID
 	 */
 	public PlugInfo(Node plugNode, String connectorID) {
-			this.label = DOMUtil.getAttribute(plugNode, "label");
-			this.connectorType = DOMUtil.getAttribute(plugNode, "connector-type");
-			this.positionType = DOMUtil.getAttribute(plugNode, "position-type");
+			this.label = DOMUtil.getAttribute(plugNode, CONNECTOR_LABEL_TAG);
+			this.connectorType = DOMUtil.getAttribute(plugNode, CONNECTOR_TYPE_TAG);
+			this.positionType = DOMUtil.getAttribute(plugNode, CONNECTOR_POSITION_TYPE_TAG);
 			this.connectorBlockID = connectorID;
 	}
 
@@ -36,17 +31,15 @@ public class PlugInfo {
 		Element plugNode = document.createElement("Plug");
 		Element blockConnectorNode = document.createElement("BlockConnector");
 
-		blockConnectorNode.setAttribute("con-block-id", this.connectorBlockID);
-		blockConnectorNode.setAttribute("connector-kind", "plug");
-		blockConnectorNode.setAttribute("connector-type", this.connectorType);
-		blockConnectorNode.setAttribute("init-type", this.connectorType);
-		blockConnectorNode.setAttribute("label", label);
-		blockConnectorNode.setAttribute("position-type", positionType);
+		blockConnectorNode.setAttribute(CONNECTOR_BLOCK_ID_TAG, this.connectorBlockID);
+		blockConnectorNode.setAttribute(CONNECTOR_KIND_TAG , "plug");
+		blockConnectorNode.setAttribute(CONNECTOR_TYPE_TAG, this.connectorType);
+		blockConnectorNode.setAttribute(CONNECTOR_INIT_TYPE_TAG, this.connectorType);
+		blockConnectorNode.setAttribute(CONNECTOR_LABEL_TAG, label);
+		blockConnectorNode.setAttribute(CONNECTOR_POSITION_TYPE_TAG, positionType);
 
 		plugNode.appendChild(blockConnectorNode);
 
 		return plugNode;
 	}
-
-
 }

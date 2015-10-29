@@ -20,9 +20,10 @@ public class BlockMethodCallModel extends BlockCommandModel{
 		String kind = DOMUtil.getAttribute(resolver.getBlockNode(genusName), "kind");
 		Element element = createBlockElement(document, genusName, ID_COUNTER, kind);
 		addElement("Name", document, method.methodName, element);
+		this.element = element;
 
 		if (kind.equals("command") && parent != null) {
-			addBeforeBlockNode(document, element, DOMUtil.getAttribute(parent, "id"));
+			addBeforeBlockNode(document, DOMUtil.getAttribute(parent, "id"));
 		}
 
 		if(!"void".equals(resolver.getType(genusName))){

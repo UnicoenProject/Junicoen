@@ -4,14 +4,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 
-public class SocketInfo {
-
-	private String connectorKind = "socket";
-	private String positionType;
-	private String label;
-	private String connectorBlockID = "-1";
-	private String connectorType;
-	private String initType;
+public class SocketInfo extends BlockConnectorInfo{
 
 	public SocketInfo(BlockExprModel param) {
 		this.label = param.getLabel();
@@ -59,21 +52,6 @@ public class SocketInfo {
 
 	public String getInitType() {
 		return this.initType;
-	}
-
-	public String convertTypeToBlockConnectorType(String type) {
-		switch (type) {
-		case "int":
-			return "number";
-		case "double":
-			return "double-number";
-		case "String":
-			return type.toLowerCase();
-		case "boolean":
-			return type;
-		default:
-			return "object";
-		}
 	}
 
 	public Element createBlockConnectorElement(Document document){
