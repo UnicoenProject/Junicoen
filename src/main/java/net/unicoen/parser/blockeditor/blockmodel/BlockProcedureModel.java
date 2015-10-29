@@ -58,7 +58,7 @@ public class BlockProcedureModel extends BlockElementModel {
 		List<SocketInfo> sockets = new ArrayList<SocketInfo>();
 
 		for (BlockProcParmModel param : args) {
-			addSocketInfoToList(sockets, param);
+			addSocketInfoToList(sockets, (BlockElementModel)param);
 		}
 
 		//procedureは空のソケットを1つ持っていなければいけない
@@ -73,4 +73,5 @@ public class BlockProcedureModel extends BlockElementModel {
 
 		addSocketsAndNodes(argElements, document, new SocketsInfo(sockets));
 	}
+
 }

@@ -1,6 +1,6 @@
 package net.unicoen.parser.blockeditor.blockmodel;
 
-import net.unicoen.parser.blockeditor.BlockMapper;
+import net.unicoen.parser.blockeditor.DOMUtil;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -19,9 +19,9 @@ public class PlugInfo {
 	 * @param connectorID Plugの結合先のID
 	 */
 	public PlugInfo(Node plugNode, String connectorID) {
-			this.label = BlockMapper.getAttribute(plugNode, "label");
-			this.connectorType = BlockMapper.getAttribute(plugNode, "connector-type");
-			this.positionType = BlockMapper.getAttribute(plugNode, "position-type");
+			this.label = DOMUtil.getAttribute(plugNode, "label");
+			this.connectorType = DOMUtil.getAttribute(plugNode, "connector-type");
+			this.positionType = DOMUtil.getAttribute(plugNode, "position-type");
 			this.connectorBlockID = connectorID;
 	}
 

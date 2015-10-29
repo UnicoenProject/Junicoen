@@ -2,8 +2,8 @@ package net.unicoen.parser.blockeditor.blockmodel;
 
 import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniMethodCall;
-import net.unicoen.parser.blockeditor.BlockMapper;
 import net.unicoen.parser.blockeditor.BlockResolver;
+import net.unicoen.parser.blockeditor.DOMUtil;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -17,12 +17,12 @@ public class BlockMethodCallModel extends BlockCommandModel{
 
 	public Element createPrototypeElement(UniMethodCall method, Document document, BlockResolver resolver, Long ID_COUNTER, Node parent){
 		String genusName = calcMethodCallGenusName(method, resolver);
-		String kind = BlockMapper.getAttribute(resolver.getBlockNode(genusName), "kind");
+		String kind = DOMUtil.getAttribute(resolver.getBlockNode(genusName), "kind");
 		Element element = createBlockElement(document, genusName, ID_COUNTER, kind);
 		addElement("Name", document, method.methodName, element);
 
 		if (kind.equals("command") && parent != null) {
-			addBeforeBlockNode(document, element, BlockMapper.getAttribute(parent, "id"));
+			addBeforeBlockNode(document, element, DOMUtil.getAttribute(parent, "id"));
 		}
 
 		if(!"void".equals(resolver.getType(genusName))){

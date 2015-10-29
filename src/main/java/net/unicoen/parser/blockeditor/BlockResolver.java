@@ -69,7 +69,7 @@ public class BlockResolver {
 			for (int i = 0; i < genusNodes.getLength(); i++) {
 				Node node = genusNodes.item(i);
 				// 全ブロック情報のマップに登録
-				allAvailableBlocks.put(BlockMapper.getAttribute(node, "name"), node);
+				allAvailableBlocks.put(DOMUtil.getAttribute(node, "name"), node);
 				addAvaiableVariableTypeToMap(node);
 
 
@@ -83,13 +83,13 @@ public class BlockResolver {
 
 	public void addAvaiableVariableTypeToMap(Node node){
 		// 利用可能な変数型リストに登録
-		if ("param".equals(BlockMapper.getAttribute(node, "kind"))) {
-			this.availableFunctionArgsTypes.put(BlockMapper.getChildNode(node, "Type").getTextContent(),BlockMapper.getAttribute(node, "name"));
-		}else if("local-variable".equals(BlockMapper.getAttribute(node, "kind"))){
+		if ("param".equals(DOMUtil.getAttribute(node, "kind"))) {
+			this.availableFunctionArgsTypes.put(DOMUtil.getChildNode(node, "Type").getTextContent(),DOMUtil.getAttribute(node, "name"));
+		}else if("local-variable".equals(DOMUtil.getAttribute(node, "kind"))){
 			// 利用可能な関数の引数の型マップに登録
-			this.availableLocalVariableDecralationTypes.put(BlockMapper.getChildNode(node, "Type").getTextContent(), BlockMapper.getAttribute(node, "name"));
-		}else if ("global-variable".equals(BlockMapper.getAttribute(node, "kind"))) {
-			this.availableFieldVariableDecralationTypes.put(BlockMapper.getChildNode(node, "Type").getTextContent(), BlockMapper.getAttribute(node, "genus-name"));
+			this.availableLocalVariableDecralationTypes.put(DOMUtil.getChildNode(node, "Type").getTextContent(), DOMUtil.getAttribute(node, "name"));
+		}else if ("global-variable".equals(DOMUtil.getAttribute(node, "kind"))) {
+			this.availableFieldVariableDecralationTypes.put(DOMUtil.getChildNode(node, "Type").getTextContent(), DOMUtil.getAttribute(node, "genus-name"));
 		}
 	}
 
@@ -107,8 +107,8 @@ public class BlockResolver {
 			for (int i = 0; i < genusNodes.getLength(); i++) { // find them
 				Node node = genusNodes.item(i);
 
-				if (BlockMapper.getChildNode(node, "Name") != null) {
-					turtleMethods.put(convertMethodName(BlockMapper.getAttribute(node, "name")), getNameSpaceString(node));
+				if (DOMUtil.getChildNode(node, "Name") != null) {
+					turtleMethods.put(convertMethodName(DOMUtil.getAttribute(node, "name")), getNameSpaceString(node));
 				}
 			}
 		} catch (SAXException e) {
@@ -119,7 +119,7 @@ public class BlockResolver {
 	}
 
 	public static String getNameSpaceString(Node node) {
-		String name = BlockMapper.getAttribute(node, "name");
+		String name = DOMUtil.getAttribute(node, "name");
 		return name.substring(0, name.indexOf("-"));
 	}
 
@@ -146,11 +146,11 @@ public class BlockResolver {
 		if (genusNode == null) {
 			return null;
 		} else {
-			Node socketConnectors = BlockMapper.getChildNode(genusNode,"BlockConnectors");
+			Node socketConnectors = DOMUtil.getChildNode(genusNode,"BlockConnectors");
 			for (int i = 0; i < socketConnectors.getChildNodes()
 					.getLength(); i++) {
 				Node connector = socketConnectors.getChildNodes().item(i);
-				if (connector.getNodeName().equals("BlockConnector") && BlockMapper.getAttribute(connector, "connector-kind").equals("plug")) {
+				if (connector.getNodeName().equals("BlockConnector") && DOMUtil.getAttribute(connector, "connector-kind").equals("plug")) {
 					plugNode = connector;
 				}
 			}
@@ -166,11 +166,11 @@ public class BlockResolver {
 		if (genusNode == null) {
 			return null;
 		} else {
-			Node socketConnectors = BlockMapper.getChildNode(genusNode,"BlockConnectors");
+			Node socketConnectors = DOMUtil.getChildNode(genusNode,"BlockConnectors");
 			for (int i = 0; socketConnectors != null && i < socketConnectors.getChildNodes().getLength(); i++) {
 				Node connector = socketConnectors.getChildNodes().item(i);
 				if (connector.getNodeName().equals("BlockConnector")
-						&& BlockMapper.getAttribute(connector, "connector-kind")
+						&& DOMUtil.getAttribute(connector, "connector-kind")
 								.equals("socket")) {
 					socketsNode.add(connector);
 				}
@@ -181,7 +181,7 @@ public class BlockResolver {
 	}
 
 	public String getType(String genusName){
-		Node typeNode = BlockMapper.getChildNode(allAvailableBlocks.get(genusName), "Type");
+		Node typeNode = DOMUtil.getChildNode(allAvailableBlocks.get(genusName), "Type");
 		if(typeNode == null){
 			return "void";
 		}else{

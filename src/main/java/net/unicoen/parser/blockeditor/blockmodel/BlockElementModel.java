@@ -8,8 +8,8 @@ import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniIdent;
 import net.unicoen.node.UniIntLiteral;
 import net.unicoen.node.UniStringLiteral;
-import net.unicoen.parser.blockeditor.BlockMapper;
 import net.unicoen.parser.blockeditor.BlockResolver;
+import net.unicoen.parser.blockeditor.DOMUtil;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -38,19 +38,19 @@ public class BlockElementModel {
 	}
 
 	public String getBlockID() {
-		return BlockMapper.getAttribute(this.element, ID_ATTRIBUTE_TAG);
+		return DOMUtil.getAttribute(this.element, ID_ATTRIBUTE_TAG);
 	}
 
 	public String getGenusName() {
-		return BlockMapper.getAttribute(this.element,GENUS_NAME_ATTRIBUTE_TAG);
+		return DOMUtil.getAttribute(this.element,GENUS_NAME_ATTRIBUTE_TAG);
 	}
 
 	public String getKind() {
-		return BlockMapper.getAttribute(this.element, KIND_ATTRIBUTE_TAG);
+		return DOMUtil.getAttribute(this.element, KIND_ATTRIBUTE_TAG);
 	}
 
 	public String getType(){
-		Node typeNode = BlockMapper.getChildNode(getElement(), "Type");
+		Node typeNode = DOMUtil.getChildNode(getElement(), "Type");
 		if(typeNode == null){
 			return null;
 		}else{
@@ -82,9 +82,9 @@ public class BlockElementModel {
 			return "-1";
 		}
 		if ("BlockStub".equals(element.getNodeName())) {
-			return BlockMapper.getAttribute(BlockMapper.getChildNode(element, NODE_NAME), ID_ATTRIBUTE_TAG);
+			return DOMUtil.getAttribute(DOMUtil.getChildNode(element, NODE_NAME), ID_ATTRIBUTE_TAG);
 		} else {
-			return BlockMapper.getAttribute(element, ID_ATTRIBUTE_TAG);
+			return DOMUtil.getAttribute(element, ID_ATTRIBUTE_TAG);
 		}
 	}
 
@@ -97,7 +97,7 @@ public class BlockElementModel {
 	}
 
 	public String getLabel() {
-		return BlockMapper.getChildNode(element, "Label").getTextContent();
+		return DOMUtil.getChildNode(element, "Label").getTextContent();
 	}
 
 	public void addLocationElement(Document document, String x, String y, Element blockElement) {
@@ -171,7 +171,7 @@ public class BlockElementModel {
 		}
 	}
 
-	public void addSocketInfoToList(List<SocketInfo> sockets, BlockExprModel param) {
+	public void addSocketInfoToList(List<SocketInfo> sockets, BlockElementModel param) {
 		if (param != null) {
 			sockets.add(new SocketInfo("", "single", convertTypeToBlockConnectorType(param.getType()), "poly", param.getBlockID()));
 		} else {
@@ -190,7 +190,7 @@ public class BlockElementModel {
 		} else if (param instanceof UniIntLiteral) {
 			type = "number";
 		} else if (param instanceof UniIdent) {
-			type = BlockMapper.getChildNode(resolver.getVariableNameResolver().getVariableNode(((UniIdent) param).name), "Type").getTextContent();
+			type = DOMUtil.getChildNode(resolver.getVariableNameResolver().getVariableNode(((UniIdent) param).name), "Type").getTextContent();
 		} else if (param instanceof UniDoubleLiteral) {
 			type = "double-number";
 		} else {
@@ -213,4 +213,6 @@ public class BlockElementModel {
 	public void setPlugElement(Document document, PlugInfo plugInfo) {
 		this.element.appendChild(plugInfo.createElemnet(document));
 	}
+
+
 }

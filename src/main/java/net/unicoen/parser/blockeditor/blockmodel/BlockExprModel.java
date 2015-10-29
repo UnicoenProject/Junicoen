@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import net.unicoen.node.UniExpr;
-import net.unicoen.parser.blockeditor.BlockMapper;
 import net.unicoen.parser.blockeditor.BlockResolver;
+import net.unicoen.parser.blockeditor.DOMUtil;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -24,9 +24,9 @@ public class BlockExprModel extends BlockElementModel {
 			String socketTypes;
 			String socketPositionTypes;
 
-			plugLabel = BlockMapper.getAttribute(plugNode, "label");
-			socketTypes = BlockMapper.getAttribute(plugNode, "connector-type");
-			socketPositionTypes = BlockMapper.getAttribute(plugNode, "position-type");
+			plugLabel = DOMUtil.getAttribute(plugNode, "label");
+			socketTypes = DOMUtil.getAttribute(plugNode, "connector-type");
+			socketPositionTypes = DOMUtil.getAttribute(plugNode, "position-type");
 
 			socketsInfo.put("label", plugLabel);
 			socketsInfo.put("connector-type", socketTypes);

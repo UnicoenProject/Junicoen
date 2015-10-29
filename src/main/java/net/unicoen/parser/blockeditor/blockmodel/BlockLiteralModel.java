@@ -2,8 +2,8 @@ package net.unicoen.parser.blockeditor.blockmodel;
 
 import java.util.Map;
 
-import net.unicoen.parser.blockeditor.BlockMapper;
 import net.unicoen.parser.blockeditor.BlockResolver;
+import net.unicoen.parser.blockeditor.DOMUtil;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -22,10 +22,10 @@ public class BlockLiteralModel extends BlockExprModel {
 	}
 
 	public Element createLiteralElement(String label, Document document, String parentBlockID, Long ID_COUNTER, BlockResolver resolver) {
-		Element blockElement = createBlockElement(document, getGenusName(), ID_COUNTER, BlockMapper.getAttribute(resolver.getBlockNode(getGenusName()), "kind"));
+		Element blockElement = createBlockElement(document, getGenusName(), ID_COUNTER, DOMUtil.getAttribute(resolver.getBlockNode(getGenusName()), "kind"));
 
 		addElement("Label", document, label, blockElement);
-		addElement("Type", document, BlockMapper.getChildNode(resolver.getBlockNode(getGenusName()), "Type").getTextContent(), blockElement);
+		addElement("Type", document, DOMUtil.getChildNode(resolver.getBlockNode(getGenusName()), "Type").getTextContent(), blockElement);
 
 		Node plugNode = resolver.getPlugElement(getGenusName());
 		Map<String, String> plugInfo = calcPlugInfo(plugNode);
