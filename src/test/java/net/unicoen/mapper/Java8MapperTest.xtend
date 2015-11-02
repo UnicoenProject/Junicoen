@@ -1,11 +1,12 @@
 package net.unicoen.mapper
 
 import net.unicoen.node.UniClassDec
+import net.unicoen.node.UniMethodDec
 import org.junit.Test
 
+import static net.unicoen.node_helper.Builder.*
 import static org.hamcrest.Matchers.*
 import static org.junit.Assert.*
-import net.unicoen.node.UniMethodDec
 
 class Java8MapperTest extends MapperTest {
 	val mapper = new Java8Mapper(true)
@@ -39,6 +40,26 @@ class Java8MapperTest extends MapperTest {
 		val classDec = mapper.parse(sb.toString()) as UniClassDec
 		val mainMethodDec = classDec.members.get(0) as UniMethodDec
 		assertThat(mainMethodDec.methodName, equalTo("main"))
+	}
+
+	@Test
+	def void parseLiteral() {
+		{
+			val literal = mapper.parse("1", [p|p.literal])
+			assertThat(literal, equalTo(lit(1)))
+		}
+		{
+			val literal = mapper.parse("1.0", [p|p.literal])
+			assertThat(literal, equalTo(lit(1.0)))
+		}
+		{
+			val literal = mapper.parse("true", [p|p.literal])
+			assertThat(literal, equalTo(lit(true)))
+		}
+		{
+			val literal = mapper.parse("\"Hello\"", [p|p.literal])
+			assertThat(literal, equalTo(lit("Hello")))
+		}
 	}
 
 // @Test
