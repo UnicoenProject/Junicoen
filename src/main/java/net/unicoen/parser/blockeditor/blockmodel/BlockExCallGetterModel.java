@@ -11,14 +11,14 @@ public class BlockExCallGetterModel extends BlockExprModel {
 	private static String GENUS_NAME = "callGetterMethod2";
 	private static String KIND = "function";
 
-	private BlockMethodCallModel methodBlock;
+	private BlockElementModel methodBlock;
 
 	public BlockExCallGetterModel(Document document, Long id){
 		this.element = createBlockElement(document, GENUS_NAME, id, KIND);
 	}
 
-	public void setCalleMethod(BlockMethodCallModel methodBlock){
-		this.methodBlock = methodBlock;
+	public void setCalleMethod(BlockElementModel callMethodModel){
+		this.methodBlock = callMethodModel;
 	}
 
 	// @override
@@ -42,7 +42,6 @@ public class BlockExCallGetterModel extends BlockExprModel {
 		}
 		addSocketsNode(document, sockets);
 	}
-
 
 	@Override
 	public void addSocketsNode(Document document, SocketsInfo sockets) {

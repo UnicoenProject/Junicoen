@@ -9,13 +9,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
-
 public class BlockProcedureModel extends BlockElementModel {
 
 	private List<BlockCommandModel> bodyBlocks = new ArrayList<>();
-	private static String GENUS_NAME = "procedure";
+	public static String GENUS_NAME = "procedure";
 
 	public BlockProcedureModel(UniMethodDec dec, Document document, Long ID_COUNTER) {
 		initialize(dec, document, ID_COUNTER);
@@ -54,24 +51,15 @@ public class BlockProcedureModel extends BlockElementModel {
 		}
 	}
 
-	public void addSockets(Document document, List<BlockProcParmModel> args) {
-		List<SocketInfo> sockets = new ArrayList<SocketInfo>();
-
-		for (BlockProcParmModel param : args) {
-			addSocketInfoToList(sockets, (BlockElementModel)param);
+	public void addSocketsAndNodes(List<BlockElementModel> socketBlocks, Document document, SocketsInfo sockets){
+		//SocketsInfoの作成
+		List<SocketInfo> socketsInfo = new ArrayList<SocketInfo>();
+		for (BlockElementModel param : socketBlocks) {
+			addSocketInfoToList(socketsInfo, (BlockElementModel)param);
 		}
-
 		//procedureは空のソケットを1つ持っていなければいけない
-		addSocketInfoToList(sockets, null);
+		addSocketInfoToList(socketsInfo, null);
 
-		List<BlockElementModel> argElements = Lists.transform(args, new Function<BlockProcParmModel, BlockElementModel>() {
-			@Override
-			public BlockElementModel apply(BlockProcParmModel input) {
-				return (BlockElementModel)input;
-			}
-		});
-
-		addSocketsAndNodes(argElements, document, new SocketsInfo(sockets));
+		super.addSocketsAndNodes(socketBlocks, document, new SocketsInfo(socketsInfo));
 	}
-
 }

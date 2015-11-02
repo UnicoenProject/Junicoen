@@ -19,10 +19,15 @@ public class BlockElementModel {
 
 	protected Long id;
 	protected Element element;
-	public static String NODE_NAME = "Block";
+	public static String BLOCK_NODE_NAME = "Block";
 	public static String GENUS_NAME_ATTRIBUTE_TAG = "genus-name";
 	public static String ID_ATTRIBUTE_TAG = "id";
 	public static String KIND_ATTRIBUTE_TAG = "kind";
+	public static String TYPE_NODE_NAME = "Type";
+	public static String LABEL_NODE_NAME = "Label";
+	public static String NAME_NODE_NAME = "Name";
+	public static String LOCATION_NODE_NAME = "Location";
+	public static String BLOCK_STUB_NODE_NAME = "BlockStub";
 
 	private List<BlockElementModel> socketBlocksElements = new ArrayList<>();
 
@@ -52,7 +57,7 @@ public class BlockElementModel {
 	public String getType(){
 		Node typeNode = DOMUtil.getChildNode(getElement(), "Type");
 		if(typeNode == null){
-			return null;
+			return "Object";
 		}else{
 			return typeNode.getTextContent();
 		}
@@ -82,7 +87,7 @@ public class BlockElementModel {
 			return "-1";
 		}
 		if ("BlockStub".equals(element.getNodeName())) {
-			return DOMUtil.getAttribute(DOMUtil.getChildNode(element, NODE_NAME), ID_ATTRIBUTE_TAG);
+			return DOMUtil.getAttribute(DOMUtil.getChildNode(element, BLOCK_NODE_NAME), ID_ATTRIBUTE_TAG);
 		} else {
 			return DOMUtil.getAttribute(element, ID_ATTRIBUTE_TAG);
 		}
@@ -121,7 +126,7 @@ public class BlockElementModel {
 	}
 
 	public Element createBlockElement(Document document, String genusName, long id, String kind) {
-		Element element = document.createElement(NODE_NAME);
+		Element element = document.createElement(BLOCK_NODE_NAME);
 		element.setAttribute(GENUS_NAME_ATTRIBUTE_TAG, genusName);
 		element.setAttribute(ID_ATTRIBUTE_TAG, String.valueOf(id));
 		element.setAttribute(KIND_ATTRIBUTE_TAG, kind);
@@ -157,6 +162,7 @@ public class BlockElementModel {
 		addSocketsNode(document, sockets);
 	}
 
+
 	public void addSocketsNode(Document document, SocketsInfo sockets) {
 		if (sockets.getSockets().size() > 0) {
 			Element socketsElement = document.createElement("Sockets");
@@ -183,7 +189,7 @@ public class BlockElementModel {
 		socketsNode.appendChild(socketInfo.createBlockConnectorElement(document));
 	}
 
-	public String calcParamType(UniExpr param, BlockResolver resolver) {
+	public static String calcParamType(UniExpr param, BlockResolver resolver) {
 		String type = "";
 		if (param instanceof UniStringLiteral) {
 			type = "string";
@@ -193,7 +199,8 @@ public class BlockElementModel {
 			type = DOMUtil.getChildNode(resolver.getVariableNameResolver().getVariableNode(((UniIdent) param).name), "Type").getTextContent();
 		} else if (param instanceof UniDoubleLiteral) {
 			type = "double-number";
-		} else {
+		}
+		else {
 			throw new RuntimeException(param.toString() + "has not been supported yet.");
 		}
 		return type;
@@ -220,13 +227,9 @@ public class BlockElementModel {
 		getElement().appendChild(element);
 	}
 
-	/*
-	 * AfterBlockノードを追加する
-	 */
 	public void addAfterBlockNode(Document document, String id) {
 		Element element = document.createElement("AfterBlockId");
 		element.setTextContent(id);
 		getElement().appendChild(element);
 	}
-
 }

@@ -14,7 +14,7 @@ public class BlockVariableSetterModel extends BlockCommandModel {
 	public void addBeforeBlockNode(Document document, String id) {
 		Element element = document.createElement("BeforeBlockId");
 		element.setTextContent(id);
-		DOMUtil.getChildNode(getElement(), BlockElementModel.NODE_NAME).appendChild(element);
+		DOMUtil.getChildNode(getElement(), BlockElementModel.BLOCK_NODE_NAME).appendChild(element);
 	}
 
 	public void addAfterBlockNode(Document document, String id) {

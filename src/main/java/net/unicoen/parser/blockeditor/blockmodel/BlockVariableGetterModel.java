@@ -21,23 +21,23 @@ public class BlockVariableGetterModel extends BlockExprModel {
 	}
 
 	public void setPlugElement(Document document, PlugInfo plugInfo){
-		DOMUtil.getChildNode(this.element, BlockElementModel.NODE_NAME).appendChild(plugInfo.createElemnet(document));
+		DOMUtil.getChildNode(this.element, BlockElementModel.BLOCK_NODE_NAME).appendChild(plugInfo.createElemnet(document));
 	}
 
 	public String getBlockID() {
-		return DOMUtil.getAttribute(DOMUtil.getChildNode(this.element, BlockElementModel.NODE_NAME), ID_ATTRIBUTE_TAG);
+		return DOMUtil.getAttribute(DOMUtil.getChildNode(this.element, BlockElementModel.BLOCK_NODE_NAME), ID_ATTRIBUTE_TAG);
 	}
 
 	public String getGenusName() {
-		return DOMUtil.getAttribute(DOMUtil.getChildNode(this.element, BlockElementModel.NODE_NAME),GENUS_NAME_ATTRIBUTE_TAG);
+		return DOMUtil.getAttribute(DOMUtil.getChildNode(this.element, BlockElementModel.BLOCK_NODE_NAME),GENUS_NAME_ATTRIBUTE_TAG);
 	}
 
 	public String getKind() {
-		return DOMUtil.getAttribute(DOMUtil.getChildNode(this.element, BlockElementModel.NODE_NAME), KIND_ATTRIBUTE_TAG);
+		return DOMUtil.getAttribute(DOMUtil.getChildNode(this.element, BlockElementModel.BLOCK_NODE_NAME), KIND_ATTRIBUTE_TAG);
 	}
 
 	public String getType(){
-		Node blockElement = DOMUtil.getChildNode(this.element, BlockElementModel.NODE_NAME);
+		Node blockElement = DOMUtil.getChildNode(this.element, BlockElementModel.BLOCK_NODE_NAME);
 		return DOMUtil.getChildNode(blockElement, "Type").getTextContent();
 	}
 

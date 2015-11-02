@@ -3,7 +3,10 @@ package net.unicoen.parser.blockeditor;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import net.unicoen.parser.blockeditor.blockmodel.BlockElementModel;
 
 import org.apache.xerces.parsers.DOMParser;
 import org.w3c.dom.Document;
@@ -22,6 +25,7 @@ public class BlockResolver {
 	private Map<String, String> availableFieldVariableDecralationTypes = new HashMap<>();
 	private Map<String, String> availableFunctionArgsTypes = new HashMap<>();
 	private VariableNameResolver vnResolver = new VariableNameResolver();
+	private FieldMethodResolver fieldMethodResolver = new FieldMethodResolver();
 
 	public BlockResolver(String langdefRootPath) {
 		this.langdefRootPath = langdefRootPath;
@@ -53,6 +57,14 @@ public class BlockResolver {
 		return allAvailableBlocks.get(genusName);
 	}
 
+	public void addFieldMethodInfo(String methodNameWithParam, FieldMethodInfo info){
+		this.fieldMethodResolver.addUserMethod(methodNameWithParam, info);
+	}
+
+	public FieldMethodResolver getFieldMethodInfo(){
+		return this.fieldMethodResolver;
+	}
+
 	/*
 	 * 全ブロックをハッシュマップに登録する キー：genus-name 値:ノード
 	 */
@@ -71,8 +83,6 @@ public class BlockResolver {
 				// 全ブロック情報のマップに登録
 				allAvailableBlocks.put(DOMUtil.getAttribute(node, "name"), node);
 				addAvaiableVariableTypeToMap(node);
-
-
 			}
 		} catch (SAXException e) {
 			e.printStackTrace();
@@ -187,5 +197,17 @@ public class BlockResolver {
 		}else{
 			return typeNode.getTextContent();
 		}
+	}
+
+	public boolean isTurtleMethod(String methodName, List<String> argTypes){
+		String genusName = methodName + "[";
+		// 名前空間補完}
+		for (String arg : argTypes) {
+			genusName += "@" + BlockElementModel.convertParamTypeName(arg);
+		}
+
+		genusName += "]";
+
+		return turtleMethods.containsKey(genusName);
 	}
 }
