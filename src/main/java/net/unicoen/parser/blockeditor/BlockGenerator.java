@@ -70,6 +70,7 @@ import net.unicoen.parser.blockeditor.blockmodel.BlockProcedureModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockReturnModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockStringLiteralModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockUserMethodCallModel;
+import net.unicoen.parser.blockeditor.blockmodel.BlockUserMethodCallWithReturnModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockVariableGetterModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockVariableSetterModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockWhileModel;
@@ -961,10 +962,7 @@ public class BlockGenerator {
 	}
 
 	public BlockElementModel parseMethodCall(UniMethodCall method, Document document, Node parent) {
-		// TODO ユーザメソッドへの対応
 		UniIdent receiver = (UniIdent) method.receiver;
-
-		// タートルライブラリメソッドなら
 
 		if (isLibraryMethod(method)) {
 			return createLibraryMethodCallModel(method, document, parent);
@@ -987,18 +985,24 @@ public class BlockGenerator {
 
 	public BlockElementModel createDefinedMethodCallerModel(UniMethodCall method, Document document, Node parent) {
 		// TODO 継承メソッドかどうか判断
-		// 返り値あり?
 		String returnType = resolver.getFieldMethodInfo().getReturnType(BlockMethodCallModel.calcMethodCallGenusName(method.methodName, BlockMethodCallModel.transformArgToString(method.args, resolver), resolver));
 		if ("void".equals(returnType)) {
+			//返り値無しメソッド呼び出しモデルの作成
 			BlockUserMethodCallModel model = new BlockUserMethodCallModel(method, document, resolver, ID_COUNTER++, parent);
 
 			List<BlockExprModel> argModels = parseArguments(method, document, model.getBlockElement());
 			model.addSocketsAndNodes(transformToBlockElementModel(argModels), document, null);
-
 			return model;
 		} else {
-			// TODO should impl
-			throw new RuntimeException("not imple yet: method call with return value");
+			BlockUserMethodCallWithReturnModel model = new BlockUserMethodCallWithReturnModel(method, document, resolver, ID_COUNTER++, parent);
+
+			List<BlockExprModel> argModels = parseArguments(method, document, model.getBlockElement());
+			model.addSocketsAndNodes(transformToBlockElementModel(argModels), document, null);
+
+			PlugInfo plug = new PlugInfo("", model.convertTypeToBlockConnectorType(model.getType()), "single", DOMUtil.getAttribute(parent, BlockElementModel.ID_ATTRIBUTE_TAG));
+			model.setPlugElement(document, plug);
+
+			return model;
 		}
 	}
 
@@ -1008,7 +1012,8 @@ public class BlockGenerator {
 			BlockExCallerModel caller = new BlockExCallerModel(document, ID_COUNTER++);
 
 			BlockExprModel receiverModel = (BlockExprModel) parseExpr(method.receiver, document, caller.getElement());
-			BlockElementModel callMethodModel = createLibraryMethodCallModel(method, document, caller.getElement());
+			//TODO should fix
+			BlockElementModel callMethodModel = parseMethodCall(method, document, caller.getElement());
 
 			// モデルにソケットに結合されるモデルを追加
 			caller.setCallMethod((BlockCommandModel) callMethodModel);
@@ -1024,7 +1029,7 @@ public class BlockGenerator {
 			BlockExCallGetterModel caller = new BlockExCallGetterModel(document, ID_COUNTER++);
 
 			BlockExprModel receiverModel = (BlockExprModel) parseExpr(method.receiver, document, caller.getElement());
-			BlockElementModel callMethodModel = createLibraryMethodCallModel(method, document, caller.getElement());
+			BlockElementModel callMethodModel = parseMethodCall(method, document, caller.getElement());
 			caller.setCalleMethod(callMethodModel);
 
 			// socketノードの作成

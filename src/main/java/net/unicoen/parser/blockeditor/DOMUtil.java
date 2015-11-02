@@ -6,6 +6,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import net.unicoen.parser.blockeditor.blockmodel.BlockElementModel;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -14,6 +16,10 @@ public class DOMUtil {
 	public static String getAttribute(Node node, String attributeName) {
 		assert node != null;
 		assert attributeName != null;
+
+		if(BlockElementModel.BLOCK_STUB_NODE_NAME.equals(node.getNodeName())){
+			node = getChildNode(node, BlockElementModel.BLOCK_NODE_NAME);
+		}
 
 		Node attrNode = node.getAttributes().getNamedItem(attributeName);
 		if (attrNode == null)
@@ -90,4 +96,5 @@ public class DOMUtil {
 		Document document = builder.newDocument();
 		return document;
 	}
+
 }

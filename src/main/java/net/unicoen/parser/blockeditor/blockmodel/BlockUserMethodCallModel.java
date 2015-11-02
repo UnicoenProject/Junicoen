@@ -17,7 +17,7 @@ import com.google.common.collect.Lists;
 
 
 public class BlockUserMethodCallModel extends BlockCommandModel{
-	private static String GENUS_NAME = "callerprocedure";
+	public static String GENUS_NAME = "callerprocedure";
 	private static String KIND = "command";
 
 	public BlockUserMethodCallModel(UniMethodCall method, Document document, BlockResolver resolver, Long ID_COUNTER, Node parent) {
@@ -32,11 +32,10 @@ public class BlockUserMethodCallModel extends BlockCommandModel{
 		addElement(BlockElementModel.LABEL_NODE_NAME, document, method.methodName, element);
 
 		root.appendChild(element);
-		this.element = root;
 		return root;
 	}
 
-	public List<String> transformListToString(List<UniExpr> args, BlockResolver resolver){
+	public static List<String> transformListToString(List<UniExpr> args, BlockResolver resolver){
 		if(args == null){
 			return new ArrayList<String>();
 		}else{

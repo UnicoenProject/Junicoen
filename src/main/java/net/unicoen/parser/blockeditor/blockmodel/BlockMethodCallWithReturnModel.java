@@ -27,7 +27,7 @@ public class BlockMethodCallWithReturnModel extends BlockExprModel {
 		addElement("Name", document, method.methodName, element);
 
 		if(!"void".equals(resolver.getType(genusName))){
-			addElement("Tyoe", document, resolver.getType(genusName), element);
+			addElement("Type", document, resolver.getType(genusName), element);
 		}
 
 		return element;
