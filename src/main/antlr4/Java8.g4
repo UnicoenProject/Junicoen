@@ -1,16 +1,56 @@
 grammar Java8;
 
-@header{
+@header {
 	package net.unicoen.parser;
 }
 
 literal
+	:	integerLiteral 
+	|	floatingPointLiteral 
+	|	booleanLiteral 
+	|	characterLiteral 
+	|	stringLiteral 
+	|	nullLiteral 
+	;
+
+integerLiteral
+	:	integerLiteralValue 
+	;
+
+integerLiteralValue
 	:	IntegerLiteral 
-	|	FloatingPointLiteral 
-	|	BooleanLiteral 
-	|	CharacterLiteral 
-	|	StringLiteral 
-	|	NullLiteral 
+	;
+
+floatingPointLiteral
+	:	floatingPointLiteralValue 
+	;
+
+floatingPointLiteralValue
+	:	FloatingPointLiteral 
+	;
+
+booleanLiteral
+	:	booleanLiteralValue 
+	;
+
+booleanLiteralValue
+	:	BooleanLiteral 
+	;
+
+stringLiteral
+	:	stringLiteralValue 
+	;
+
+stringLiteralValue
+	:	StringLiteral 
+	;
+
+characterLiteral
+	:	CharacterLiteral 
+	;
+
+nullLiteral
+	:	NullLiteral 
 	;
 
 type
@@ -263,7 +303,7 @@ classMemberDeclaration
 	;
 
 fieldDeclaration
-	:	fieldModifiers unannType variableDeclaratorList ';' 
+	:	fieldModifiers unannType fieldVariableDeclaratorList ';' 
 	;
 
 fieldModifiers
@@ -279,6 +319,31 @@ fieldModifier
 	|	'final' 
 	|	'transient' 
 	|	'volatile' 
+	;
+
+fieldVariableDeclaratorList
+	:	fieldVariableDeclarator (',' fieldVariableDeclarator )* 
+	;
+
+fieldVariableDeclarator
+	:	fieldVariableDeclaratorId ('=' fieldVariableInitializer )? 
+	;
+
+fieldVariableDeclaratorId
+	:	Identifier dims? 
+	;
+
+fieldVariableInitializer
+	:	fieldAssignmentExpression 
+	|	fieldArrayInitializer 
+	;
+
+fieldAssignmentExpression
+	:	expression 
+	;
+
+fieldArrayInitializer
+	:	arrayInitializer 
 	;
 
 variableDeclaratorList

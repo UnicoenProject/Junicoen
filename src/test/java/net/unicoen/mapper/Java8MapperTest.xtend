@@ -1,18 +1,23 @@
 package net.unicoen.mapper
 
+import net.unicoen.node.UniClassDec
 import org.junit.Test
+
 import static org.hamcrest.Matchers.*
 import static org.junit.Assert.*
-import net.unicoen.node.UniClassDec
-import org.junit.Ignore
-import net.unicoen.node.UniFieldDec
+import net.unicoen.node.UniMethodDec
 
 class Java8MapperTest extends MapperTest {
 	val mapper = new Java8Mapper(true)
 
-	@Test @Ignore
+	@Test
 	def void parseClass() {
-		//Empty Class Declaration
+		val classDec = mapper.parse("public class A {}") as UniClassDec
+		assertThat(classDec.className, equalTo("A"))
+	}
+
+	@Test
+	def void parseClassWithExtendsAndImplements() {
 		val classDec = mapper.parse("public static class A extends SuperClass implements Interface {}")
 		assertThat(classDec, instanceOf(UniClassDec))
 		assertThat((classDec as UniClassDec).modifiers.get(0), equalTo("public"))
@@ -20,10 +25,23 @@ class Java8MapperTest extends MapperTest {
 		assertThat((classDec as UniClassDec).superClass.get(0), equalTo("SuperClass"))
 		assertThat((classDec as UniClassDec).interfaces.get(0), equalTo("Interface"))
 		assertThat((classDec as UniClassDec).className, equalTo("A"))
-		
 	}
 
-	//@Test
+	@Test
+	def void parseMainMethod() {
+		val sb = new StringBuilder()
+
+		sb.append("class A {")
+		sb.append("  public static void main(String[] args) {")
+		sb.append("  }")
+		sb.append("}");
+
+		val classDec = mapper.parse(sb.toString()) as UniClassDec
+		val mainMethodDec = classDec.members.get(0) as UniMethodDec
+		assertThat(mainMethodDec.methodName, equalTo("main"))
+	}
+
+// @Test
 //	def void parseVariableAttriDec(){
 //		val main = mapper.parse("public class A{public static final int temp = 5;}")
 //		assertThat(main, instanceOf(UniClassDec))
@@ -46,5 +64,4 @@ class Java8MapperTest extends MapperTest {
 //		cls.evaluateClass("Main", null, null)
 //		assertEquals(cls.members.size,1)
 //	}
-
 }
