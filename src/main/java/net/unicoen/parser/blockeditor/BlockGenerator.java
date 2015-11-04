@@ -236,8 +236,12 @@ public class BlockGenerator {
 	}
 
 	public List<BlockCommandModel> parseBody(Document document, Element parentElement, UniExpr statement) {
-		if (statement == null || !(statement instanceof UniBlock)) {
+		if (statement == null) {
 			return new ArrayList<>(); // can be Collections.emptyList();
+		}
+
+		if(!(statement instanceof UniBlock)){
+			return Lists.newArrayList((BlockCommandModel)parseExpr(statement, document, parentElement));
 		}
 
 		UniBlock statementBlock = (UniBlock) statement;
@@ -522,7 +526,7 @@ public class BlockGenerator {
 				String label = DOMUtil.getAttribute(socketNodes.get(i), "label");
 				String positionType = DOMUtil.getAttribute(socketNodes.get(i), "position-type");
 				String connectorType = DOMUtil.getAttribute(socketNodes.get(i), "connector-type");
-				String connectorID = DOMUtil.getAttribute(socketNodes.get(i), "con-block-id");
+				String connectorID = "-1";
 
 				sockets.add(new SocketInfo(label, positionType, connectorType, connectorType, connectorID));
 			}
@@ -667,35 +671,51 @@ public class BlockGenerator {
 
 	public BlockElementModel parseBinOp(UniBinOp binopExpr, Document document, Node parent) {
 		Element blockElement;
-		String type = getExprType(binopExpr.left, binopExpr.right);// 左右を先読みして，何型の演算か取得
 
-		// TODO should fix 先に左右を解析してから演算モデルを生成する
 		if (binopExpr.operator.equals("=")) {// 他の二項演算と扱いが別（ソケットが一つのみ）
 			return createEqualOperatorModel(binopExpr, document);
 		} else if (binopExpr.operator.equals("&&")) {
 			blockElement = createBlockElement(document, "and", ID_COUNTER++, "function");
 		} else if (binopExpr.operator.equals("||")) {
 			blockElement = createBlockElement(document, "or", ID_COUNTER++, "function");
-		} else if (binopExpr.operator.equals("==") || binopExpr.operator.equals("!=")) {
-			blockElement = createBlockElement(document, calcEqualsOperatorGenusName(binopExpr, type), ID_COUNTER++, "function");
-		} else if (binopExpr.operator.equals(">=") || binopExpr.operator.equals(">") || binopExpr.operator.equals("<=") || binopExpr.operator.equals("<")) {
-			blockElement = createBlockElement(document, calcCompareOperatorGenusName(binopExpr, type), ID_COUNTER++, "function");
-		} else if (binopExpr.operator.equals("+") || binopExpr.operator.equals("-") || binopExpr.operator.equals("*") || binopExpr.operator.equals("/") || binopExpr.operator.equals("%")) {
-			// 左右の型に応じてブロックの名前を変える(number or double-number)
-			blockElement = createBlockElement(document, calcCalcuratorOperationGenusName(binopExpr, type), ID_COUNTER++, "function");
-		} else {
+		} else if (binopExpr.operator.equals("==")) {
+			blockElement = createBlockElement(document, "equals-number", ID_COUNTER++, "function");
+		} else if(binopExpr.operator.equals("!=")){
+			blockElement = createBlockElement(document, "not-equals-number", ID_COUNTER++, "function");
+		} else if (binopExpr.operator.equals(">=") ) {
+			blockElement = createBlockElement(document, "greaterthanorequalto", ID_COUNTER++, "function");
+		} else if (binopExpr.operator.equals(">") ) {
+			blockElement = createBlockElement(document, "greaterthan", ID_COUNTER++, "function");
+		}  else if ( binopExpr.operator.equals("<=") ) {
+			blockElement = createBlockElement(document, "lessthanorequalto", ID_COUNTER++, "function");
+		}  else if (binopExpr.operator.equals("<")) {
+			blockElement = createBlockElement(document, "lessthan", ID_COUNTER++, "function");
+		}else if (binopExpr.operator.equals("+") ) {
+			blockElement = createBlockElement(document, "sum", ID_COUNTER++, "function");
+		}else if ( binopExpr.operator.equals("-")) {
+			blockElement = createBlockElement(document, "diference", ID_COUNTER++, "function");
+		}else if (binopExpr.operator.equals("*") ) {
+			blockElement = createBlockElement(document, "product", ID_COUNTER++, "function");
+		}else if (binopExpr.operator.equals("/") ) {
+			blockElement = createBlockElement(document, "quotient", ID_COUNTER++, "function");
+		}else if (binopExpr.operator.equals("%") ) {
+			blockElement = createBlockElement(document, "remainder", ID_COUNTER++, "function");
+		}
+
+		else {
 			throw new RuntimeException("unequipment operator");
 		}
 
 		BlockElementModel leftBlock = parseExpr(binopExpr.left, document, blockElement);
 		BlockElementModel rightBlock = parseExpr(binopExpr.right, document, blockElement);
 
-		BlockBinaryOperatorModel binOpModel = new BlockBinaryOperatorModel(blockElement, (BlockExprModel) leftBlock, (BlockExprModel) rightBlock);
+		BlockBinaryOperatorModel binOpModel = new BlockBinaryOperatorModel(binopExpr.operator, blockElement, leftBlock, rightBlock);
 
 		// plugの追加
 		PlugInfo plugInfo = new PlugInfo(resolver.getPlugElement(blockElement.getAttribute("genus-name")), DOMUtil.getAttribute(parent, BlockElementModel.ID_ATTRIBUTE_TAG));
 		binOpModel.setPlugElement(document, plugInfo);
 
+		System.out.println("");
 		// socketの追加
 		List<Node> socketNodes = resolver.getSocketNodes(blockElement.getAttribute("genus-name"));
 		SocketsInfo sockets = calcSocketsInfo(socketNodes);
@@ -709,90 +729,6 @@ public class BlockGenerator {
 	 */
 	public void addParsedModel(UniNode model, Element element) {
 		addedModels.put(Integer.toString(model.hashCode()), element);
-	}
-
-	public String calcCompareOperatorGenusName(UniBinOp binopExpr, String type) {
-		String genusName;
-		if (binopExpr.operator.equals(">=") || binopExpr.operator.equals(">")) {
-			genusName = "greaterthan";
-			if (binopExpr.operator.equals(">=")) {
-				genusName = "greaterthanorequalto";
-			}
-
-			if ("int".equals(type)) {
-			} else if ("double".equals(type)) {
-				genusName += "-double";
-			} else {
-				throw new RuntimeException(type + "is not supported type yet at " + binopExpr.operator);
-			}
-			return genusName;
-		} else {
-			genusName = "lessthan";
-			if (binopExpr.operator.equals("<=")) {
-				genusName = "lessthanorequalto";
-			}
-
-			if ("int".equals(type)) {
-			} else if ("double".equals(type)) {
-				genusName += "-double";
-			} else {
-				throw new RuntimeException(type + "is not supported type yet at " + binopExpr.operator);
-			}
-			return genusName;
-		}
-	}
-
-	public String calcEqualsOperatorGenusName(UniBinOp binopExpr, String type) {
-		String genusName = "equals-";
-		if (binopExpr.operator.equals("!=")) {
-			genusName = "not-" + genusName;
-		}
-		// 左右の型に応じてブロックの名前を変える(String, boolean, number, double number)
-		if ("int".equals(type)) {
-			genusName += "number";
-		} else if ("double".equals(type)) {
-			genusName += "number-double";
-		} else if ("String".equals(type)) {
-			genusName += "string";
-		} else if ("boolean".equals(type)) {
-			genusName += "boolean";
-		} else {
-			throw new RuntimeException(type + "is not supported type yet at " + binopExpr.operator);
-		}
-		return genusName;
-	}
-
-	public String calcCalcuratorOperationGenusName(UniBinOp binopExpr, String type) {
-		String genusName = "sum";
-		if (binopExpr.operator.equals("-")) {
-			genusName = "difference";
-		} else if (binopExpr.operator.equals("*")) {
-			genusName = "product";
-		} else if (binopExpr.operator.equals("/")) {
-			genusName = "quotient";
-		} else if (binopExpr.operator.equals("%")) {
-			genusName = "remainder";
-		}
-
-		if (genusName.equals("sum")) {
-			if ("int".equals(type)) {
-			} else if ("double".equals(type)) {
-				genusName += "-double";
-			} else if ("String".equals(type)) {
-				genusName = "string-append";
-			} else {
-				throw new RuntimeException(type + " is not supported type yet at " + binopExpr.operator);
-			}
-		} else {
-			if ("int".equals(type)) {
-			} else if ("double".equals(type)) {
-				genusName += "-double";
-			} else {
-				throw new RuntimeException(type + "is not supported type yet at " + binopExpr.operator);
-			}
-		}
-
-		return genusName;
 	}
 
 	public BlockElementModel createEqualOperatorModel(UniBinOp binopExpr, Document document) {
@@ -831,45 +767,6 @@ public class BlockGenerator {
 		} else {
 			throw new RuntimeException("illegal left op:" + binopExpr.left);
 		}
-	}
-
-	public String getExprType(UniExpr left, UniExpr right) {
-		// 二項演算の返り値の型を計算する
-		String leftType = getExprType(left);
-		String rightType = getExprType(right);
-		String returnType = null;
-		if (leftType.equals(rightType)) {
-			returnType = leftType;
-		} else if ((leftType.equals("int") && rightType.equals("double")) || (leftType.equals("double") && rightType.equals("int"))) {
-			returnType = "int";
-		} else {
-			// 強制的にintに
-			// TODO should fix
-			returnType = "int";
-		}
-		return returnType;
-	}
-
-	public String getExprType(UniExpr expr) {
-		String type = null;
-		if (expr instanceof UniIntLiteral) {
-			type = "int";
-		} else if (expr instanceof UniStringLiteral) {
-			type = "String";
-		} else if (expr instanceof UniBoolLiteral) {
-			type = "boolean";
-		} else if (expr instanceof UniDoubleLiteral) {
-			type = "double";
-		} else if (expr instanceof UniMethodCall) {
-			throw new RuntimeException("not supported yet");
-		} else if (expr instanceof UniIdent) {
-			type = DOMUtil.getChildNode(resolver.getVariableNameResolver().getVariableNode(((UniIdent) expr).name), "Type").getTextContent();
-		} else if (expr instanceof UniBinOp) {
-			type = getExprType(((UniBinOp) expr).left, ((UniBinOp) expr).right);
-		} else if (expr instanceof UniUnaryOp) {
-			type = getExprType(((UniUnaryOp) expr).expr);
-		}
-		return type;
 	}
 
 	public BlockWhileModel parseWhile(UniWhile whileExpr, Document document, Node parent) {
@@ -929,7 +826,7 @@ public class BlockGenerator {
 		List<BlockElementModel> blockSockets = new ArrayList<>();
 
 		blockSockets.add(socket);
-		//
+
 		if (trueBlock.size() > 0) {
 			blockSockets.add(trueBlock.get(0));
 		} else {
@@ -1053,6 +950,12 @@ public class BlockGenerator {
 		SocketsInfo socketsInfo = calcSocketsInfo(socketNodes);
 
 		caller.addSocketsAndNodes(transformToBlockElementModel(argModels), document, socketsInfo);
+
+		Node plugElement = resolver.getPlugElement(caller.getGenusName());
+		if(plugElement != null){
+			caller.setPlugElement(document, new PlugInfo(plugElement, DOMUtil.getAttribute(parent, BlockElementModel.ID_ATTRIBUTE_TAG)));
+		}
+
 
 		return caller;
 	}

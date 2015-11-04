@@ -30,6 +30,7 @@ import net.unicoen.node.UniStringLiteral;
 import net.unicoen.node.UniUnaryOp;
 import net.unicoen.node.UniVariableDec;
 import net.unicoen.node.UniWhile;
+import net.unicoen.parser.blockeditor.blockmodel.PageModel;
 
 import org.apache.xerces.parsers.DOMParser;
 import org.w3c.dom.Document;
@@ -142,12 +143,12 @@ public class BlockMapper {
 	public String getPageNameFromXML(File xmlFile) {
 		Document d = toXmlDoc(xmlFile);
 
-		NodeList list = d.getElementsByTagName("Page");
+		NodeList list = d.getElementsByTagName(PageModel.NODE_NAME);
 		if (list == null) {
 			throw new RuntimeException("page load error!");
 		}
 
-		return DOMUtil.getAttribute(list.item(0), "page-name");
+		return DOMUtil.getAttribute(list.item(0), PageModel.NODE_NAME);
 	}
 
 	private UniBlock parseBody(Node bodyNode, HashMap<String, Node> map) {
@@ -322,10 +323,6 @@ public class BlockMapper {
 	public boolean isNewInstanceCreation(String blockType) {
 		return blockType.startsWith("new-");
 	}
-
-	// private boolean isCast(String blockType) {
-	// return true;
-	// }
 
 	private boolean isLessThanOperator(String blockType) {
 		return "lessthan".equals(blockType) || "lessthan-double".equals(blockType);
@@ -533,6 +530,5 @@ public class BlockMapper {
 			throw new RuntimeException("Fail to parse", e);
 		}
 	}
-
 
 }

@@ -44,4 +44,8 @@ public class BlockVariableGetterModel extends BlockExprModel {
 	public String getConnectorKind(){
 		return convertTypeToBlockConnectorType(getType());
 	}
+
+	public Node getPlugNode(){
+		return DOMUtil.getChildNode(DOMUtil.getChildNode(this.element, BlockElementModel.BLOCK_NODE_NAME), "Plug");
+	}
 }

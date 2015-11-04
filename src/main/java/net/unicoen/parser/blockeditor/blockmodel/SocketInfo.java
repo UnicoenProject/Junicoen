@@ -16,7 +16,7 @@ public class SocketInfo extends BlockConnectorInfo{
 
 	public SocketInfo(String label, String positionType, String connectorType, String initType, String connectorBlockID) {
 		this.label = label;
-		this.positionType = "single";
+		this.positionType = positionType;
 		this.connectorType = connectorType;
 		this.initType = initType;
 		this.connectorBlockID = connectorBlockID;

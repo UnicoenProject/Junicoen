@@ -20,18 +20,20 @@ public class BlockIfModel extends BlockCommandModel {
 		elements.add(getElement());
 
 		// 条件式
-		for (BlockElementModel socket : getSocketBlocks()) {
-			elements.addAll(socket.getBlockElements());
-		}
+		elements.addAll(getSocketBlocks().get(0).getBlockElements());
 
 		// 真ブロック
 		for (BlockCommandModel model : trueBlocks) {
-			elements.addAll(model.getBlockElements());
+			if (model != null) {
+				elements.addAll(model.getBlockElements());
+			}
 		}
 
 		// 偽ブロック
 		for (BlockCommandModel model : falseBlocks) {
-			elements.addAll(model.getBlockElements());
+			if (model != null) {
+				elements.addAll(model.getBlockElements());
+			}
 		}
 
 		return elements;

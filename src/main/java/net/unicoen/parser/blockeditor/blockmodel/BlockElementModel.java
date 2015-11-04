@@ -232,4 +232,14 @@ public class BlockElementModel {
 		element.setTextContent(id);
 		getElement().appendChild(element);
 	}
+
+	public Node getPlugNode(){
+		return DOMUtil.getChildNode(this.element, "Plug");
+	}
+
+	public String getPlugAttribute(String attribute){
+		Node plugNode = getPlugNode();
+		Node con = DOMUtil.getChildNode(getPlugNode(), "BlockConnector");
+		return DOMUtil.getAttribute(con, attribute);
+	}
 }
