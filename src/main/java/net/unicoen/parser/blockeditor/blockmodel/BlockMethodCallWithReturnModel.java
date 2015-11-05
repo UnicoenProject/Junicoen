@@ -50,7 +50,7 @@ public class BlockMethodCallWithReturnModel extends BlockExprModel {
 		return genusName;
 	}
 
-	public List<Element> getElements() {
+	public List<Element> getBlockElements() {
 		List<Element> elements = new ArrayList<Element>();
 		elements.add(getElement());
 		for (BlockExprModel model : sockets) {

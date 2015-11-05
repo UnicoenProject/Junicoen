@@ -173,7 +173,7 @@ public class BlockElementModel {
 				}
 				addSocketNode(document, socketsElement, sockets.getSockets().get(i));
 			}
-			this.element.appendChild(socketsElement);
+			getBlockElement().appendChild(socketsElement);
 		}
 	}
 
@@ -238,8 +238,10 @@ public class BlockElementModel {
 	}
 
 	public String getPlugAttribute(String attribute){
-		Node plugNode = getPlugNode();
-		Node con = DOMUtil.getChildNode(getPlugNode(), "BlockConnector");
-		return DOMUtil.getAttribute(con, attribute);
+		return DOMUtil.getAttribute(DOMUtil.getChildNode(getPlugNode(), "BlockConnector"), attribute);
+	}
+
+	public Element getBlockElement(){
+		return this.getElement();
 	}
 }

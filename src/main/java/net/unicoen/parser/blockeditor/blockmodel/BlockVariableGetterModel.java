@@ -48,4 +48,8 @@ public class BlockVariableGetterModel extends BlockExprModel {
 	public Node getPlugNode(){
 		return DOMUtil.getChildNode(DOMUtil.getChildNode(this.element, BlockElementModel.BLOCK_NODE_NAME), "Plug");
 	}
+
+	public Element getBlockElement(){
+		return (Element)DOMUtil.getChildNode(this.getElement(), BlockElementModel.BLOCK_NODE_NAME);
+	}
 }

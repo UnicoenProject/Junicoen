@@ -14,7 +14,7 @@ public class BlockNotOperatorModel extends BlockExprModel {
 		this.value = value;
 	}
 
-	public List<Element> getElements() {
+	public List<Element> getBlockElements() {
 		List<Element> elements = new ArrayList<Element>();
 		elements.add(getElement());
 		elements.addAll(value.getBlockElements());

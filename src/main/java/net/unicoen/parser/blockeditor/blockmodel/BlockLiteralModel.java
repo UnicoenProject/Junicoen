@@ -26,6 +26,7 @@ public class BlockLiteralModel extends BlockExprModel {
 
 		addElement("Label", document, label, blockElement);
 		addElement("Type", document, DOMUtil.getChildNode(resolver.getBlockNode(getGenusName()), "Type").getTextContent(), blockElement);
+		addElement("ParentBlock", document, parentBlockID, blockElement);
 
 		Node plugNode = resolver.getPlugElement(getGenusName());
 		Map<String, String> plugInfo = calcPlugInfo(plugNode);

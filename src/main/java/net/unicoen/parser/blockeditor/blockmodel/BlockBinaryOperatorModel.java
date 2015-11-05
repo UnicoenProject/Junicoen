@@ -18,12 +18,11 @@ public class BlockBinaryOperatorModel extends BlockExprModel {
 		this.element.setAttribute(BlockElementModel.GENUS_NAME_ATTRIBUTE_TAG, calcGenusName(operator, left, right));
 	}
 
-	public List<Element> getElements() {
+	public List<Element> getBlockElements() {
 		List<Element> elements = new ArrayList<Element>();
-		elements.add(getElement());
 		elements.addAll(left.getBlockElements());
 		elements.addAll(right.getBlockElements());
-
+		elements.add(getElement());
 		return elements;
 	}
 
@@ -53,9 +52,9 @@ public class BlockBinaryOperatorModel extends BlockExprModel {
 		} else if (operator.equals("==") || operator.equals("!=")) {
 			return calcEqualsOperatorGenusName(operator, type);
 		} else if (operator.equals(">=") || operator.equals(">") || operator.equals("<=") || operator.equals("<")) {
-			return calcCompareOperatorGenusName(operator, "");
+			return calcCompareOperatorGenusName(operator, type);
 		} else if (operator.equals("+") || operator.equals("-") || operator.equals("*") || operator.equals("/") || operator.equals("%")) {
-			return calcCalcuratorOperationGenusName(operator, "");
+			return calcCalcuratorOperationGenusName(operator, type);
 		} else {
 			throw new RuntimeException("unequipment operator");
 		}

@@ -24,18 +24,21 @@ public class BlockWhileModel extends BlockCommandModel {
 		commandBlocks.add(getElement());
 
 		for (BlockElementModel socket : getSocketBlocks()) {
-			commandBlocks.addAll(socket.getBlockElements());
+			if (socket != null) {
+				commandBlocks.addAll(socket.getBlockElements());
+			}
 		}
 
 		for (BlockCommandModel model : trueBlocks) {
-			commandBlocks.addAll(model.getBlockElements());
+			if (model != null) {
+				commandBlocks.addAll(model.getBlockElements());
+			}
 		}
 
 		return commandBlocks;
 	}
 
-
-	public void addSocketsAndNodes(List<BlockElementModel> socketBlocks, List<BlockCommandModel> commands, Document document, SocketsInfo sockets){
+	public void addSocketsAndNodes(List<BlockElementModel> socketBlocks, List<BlockCommandModel> commands, Document document, SocketsInfo sockets) {
 		addSocketsAndNodes(socketBlocks, document, sockets);
 		this.trueBlocks = commands;
 	}

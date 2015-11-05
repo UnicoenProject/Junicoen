@@ -23,4 +23,7 @@ public class BlockVariableSetterModel extends BlockCommandModel {
 		DOMUtil.getChildNode(getElement(), "Block").appendChild(element);
 	}
 
+	public Element getBlockElement(){
+		return (Element)DOMUtil.getChildNode(this.getElement(), BlockElementModel.BLOCK_NODE_NAME);
+	}
 }
