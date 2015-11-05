@@ -7,6 +7,8 @@ import org.junit.Test
 import static net.unicoen.node_helper.Builder.*
 import static org.hamcrest.Matchers.*
 import static org.junit.Assert.*
+import net.unicoen.node.UniMethodCall
+import org.junit.Ignore
 
 class Java8MapperTest extends MapperTest {
 	val mapper = new Java8Mapper(true)
@@ -60,6 +62,12 @@ class Java8MapperTest extends MapperTest {
 			val literal = mapper.parse("\"Hello\"", [p|p.literal])
 			assertThat(literal, equalTo(lit("Hello")))
 		}
+	}
+
+	@Test @Ignore
+	def void parseFuncCall() {
+		val literal = mapper.parse("f()", [p|p.methodInvocation])
+		assertThat(literal, equalTo(new UniMethodCall(null, "f", list())))
 	}
 
 // @Test
