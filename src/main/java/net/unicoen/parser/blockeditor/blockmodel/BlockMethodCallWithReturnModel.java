@@ -3,7 +3,6 @@ package net.unicoen.parser.blockeditor.blockmodel;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniMethodCall;
 import net.unicoen.parser.blockeditor.BlockResolver;
 import net.unicoen.parser.blockeditor.DOMUtil;
@@ -21,7 +20,7 @@ public class BlockMethodCallWithReturnModel extends BlockExprModel {
 	}
 
 	public Element createPrototypeElement(UniMethodCall method, Document document, BlockResolver resolver, Long ID_COUNTER, Node parent){
-		String genusName = calcMethodCallGenusName(method, resolver);
+		String genusName = "";
 		String kind = DOMUtil.getAttribute(resolver.getBlockNode(genusName), "kind");
 		Element element = createBlockElement(document, genusName, ID_COUNTER, kind);
 		addElement("Name", document, method.methodName, element);
@@ -36,19 +35,19 @@ public class BlockMethodCallWithReturnModel extends BlockExprModel {
 	/*
 	 * UniMethodCallの関数名からBlockの名前を計算する
 	 */
-	private String calcMethodCallGenusName(UniMethodCall method, BlockResolver resolver) {
-		String genusName = method.methodName + "[";
-		// 名前空間補完}
-		for (UniExpr arg : method.args) {
-			genusName += "@" + convertParamTypeName(calcParamType(arg, resolver));
-		}
-
-		genusName += "]";
-
-		genusName = resolver.getNamespace(genusName) + genusName;
-
-		return genusName;
-	}
+//	private String calcMethodCallGenusName(UniMethodCall method, BlockResolver resolver) {
+//		String genusName = method.methodName + "[";
+//		// 名前空間補完}
+//		for (UniExpr arg : method.args) {
+//			genusName += "@" + convertParamTypeName(calcParamType(arg, resolver));
+//		}
+//
+//		genusName += "]";
+//
+//		genusName = resolver.getNamespace(genusName) + genusName;
+//
+//		return genusName;
+//	}
 
 	public List<Element> getBlockElements() {
 		List<Element> elements = new ArrayList<Element>();

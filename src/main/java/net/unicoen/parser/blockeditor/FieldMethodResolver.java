@@ -17,4 +17,8 @@ public class FieldMethodResolver {
 	public Long getId(String methodNameWithParam){
 		return fieldMethodMap.get(methodNameWithParam).getId();
 	}
+
+	public boolean isFieldMethod(String genusName){
+		return fieldMethodMap.containsKey(genusName);
+	}
 }

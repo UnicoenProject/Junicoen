@@ -22,15 +22,12 @@ public class BlockExCallerModel extends BlockCommandModel {
 
 	public List<Element> getBlockElements() {
 		List<Element> commandBlocks = new ArrayList<>();
-
 		commandBlocks.add(getElement());
-
 		for (BlockElementModel socket : getSocketBlocks()) {
 			commandBlocks.addAll(socket.getBlockElements());
 		}
 
 		commandBlocks.addAll(methodBlock.getBlockElements());
-
 		return commandBlocks;
 	}
 

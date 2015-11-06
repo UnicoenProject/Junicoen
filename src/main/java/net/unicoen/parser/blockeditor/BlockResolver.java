@@ -18,9 +18,10 @@ import org.xml.sax.SAXException;
 public class BlockResolver {
 
 	private String langdefRootPath = "not available";
+	public static final String ORIGIN_LANG_DEF_ROOT_PATH = "ext/block2/";
 
-	private Map<String, String> turtleMethods = new HashMap<String, String>();
-	private Map<String, Node> allAvailableBlocks = new HashMap<String, Node>();
+	private Map<String, String> turtleMethods = new HashMap<String, String>();//key:methodname, value:genusname
+	private Map<String, Node> allAvailableBlocks = new HashMap<String, Node>();//key:genusname, value:node
 	private Map<String, String> availableLocalVariableDecralationTypes = new HashMap<>();//key:variable type , value: genusName
 	private Map<String, String> availableFieldVariableDecralationTypes = new HashMap<>();
 	private Map<String, String> availableFunctionArgsTypes = new HashMap<>();
@@ -83,12 +84,29 @@ public class BlockResolver {
 				// 全ブロック情報のマップに登録
 				allAvailableBlocks.put(DOMUtil.getAttribute(node, "name"), node);
 				addAvaiableVariableTypeToMap(node);
+				addAvaiableMethodBlocks(node);
 			}
 		} catch (SAXException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void addAvaiableMethodBlocks(Node node){
+		String namespace = getNameSpaceString(node);
+		if (isCommandOrFunction(node) && DOMUtil.getChildNode(node, "Name") != null && namespace!=null) {
+				turtleMethods.put(convertMethodName(DOMUtil.getAttribute(node, "name")), namespace);
+		}
+	}
+
+	private boolean isCommandOrFunction(Node node){
+		String kind = DOMUtil.getAttribute(node, BlockElementModel.KIND_ATTRIBUTE_TAG);
+		if("function".equals(kind) || "command".equals(kind)){
+			return true;
+		}
+		return false;
+
 	}
 
 	public void addAvaiableVariableTypeToMap(Node node){
@@ -99,7 +117,7 @@ public class BlockResolver {
 			// 利用可能な関数の引数の型マップに登録
 			this.availableLocalVariableDecralationTypes.put(DOMUtil.getChildNode(node, "Type").getTextContent(), DOMUtil.getAttribute(node, "name"));
 		}else if ("global-variable".equals(DOMUtil.getAttribute(node, "kind"))) {
-			this.availableFieldVariableDecralationTypes.put(DOMUtil.getChildNode(node, "Type").getTextContent(), DOMUtil.getAttribute(node, "genus-name"));
+			this.availableFieldVariableDecralationTypes.put(DOMUtil.getChildNode(node, "Type").getTextContent(), DOMUtil.getAttribute(node, "name"));
 		}
 	}
 
@@ -107,7 +125,7 @@ public class BlockResolver {
 		DOMParser parser = new DOMParser();
 		// lang_def.xmlを読み込む
 		try {
-			parser.parse(langdefRootPath + "method_lang_def.xml");
+			parser.parse(ORIGIN_LANG_DEF_ROOT_PATH + "method_lang_def.xml");
 
 			Document doc = parser.getDocument();
 			Element root = doc.getDocumentElement();
@@ -130,7 +148,11 @@ public class BlockResolver {
 
 	public static String getNameSpaceString(Node node) {
 		String name = DOMUtil.getAttribute(node, "name");
-		return name.substring(0, name.indexOf("-"));
+		try{
+			return name.substring(0, name.indexOf("-"));
+		}catch(Exception e){
+			return null;
+		}
 	}
 
 	private static String convertMethodName(String methodName) {
@@ -157,6 +179,9 @@ public class BlockResolver {
 			return null;
 		} else {
 			Node socketConnectors = DOMUtil.getChildNode(genusNode,"BlockConnectors");
+			if(socketConnectors == null){
+				return null;
+			}
 			for (int i = 0; i < socketConnectors.getChildNodes()
 					.getLength(); i++) {
 				Node connector = socketConnectors.getChildNodes().item(i);
@@ -200,14 +225,19 @@ public class BlockResolver {
 	}
 
 	public boolean isTurtleMethod(String methodName, List<String> argTypes){
-		String genusName = methodName + "[";
-		// 名前空間補完}
-		for (String arg : argTypes) {
-			genusName += "@" + BlockElementModel.convertParamTypeName(arg);
-		}
-
-		genusName += "]";
+		String genusName = methodName + calcParamNameSpace(argTypes);
 
 		return turtleMethods.containsKey(genusName);
+	}
+
+	public String calcParamNameSpace(List<String> params){
+		String paramNameSpace = "[";
+		// 名前空間補完}
+		for (String arg : params) {
+			paramNameSpace += "@" + BlockElementModel.convertParamTypeName(arg);
+		}
+
+		paramNameSpace += "]";
+		return paramNameSpace;
 	}
 }

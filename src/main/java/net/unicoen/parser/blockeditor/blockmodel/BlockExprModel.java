@@ -1,11 +1,8 @@
 package net.unicoen.parser.blockeditor.blockmodel;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import net.unicoen.node.UniExpr;
-import net.unicoen.parser.blockeditor.BlockResolver;
 import net.unicoen.parser.blockeditor.DOMUtil;
 
 import org.w3c.dom.Document;
@@ -52,15 +49,15 @@ public class BlockExprModel extends BlockElementModel {
 		target.appendChild(plugNode);
 	}
 
-	public String calcParameterFooter(List<UniExpr> args, BlockResolver resolver){
-		String footer = "[";
-
-		for(UniExpr arg : args){
-			footer += ("@" + calcParamType(arg, resolver));
-		}
-
-		return footer += "]";
-	}
+//	public String calcParameterFooter(List<UniExpr> args, BlockResolver resolver){
+//		String footer = "[";
+//
+//		for(UniExpr arg : args){
+//			footer += ("@" + calcParamType(arg, resolver));
+//		}
+//
+//		return footer += "]";
+//	}
 
 
 	//以下　Stubクラスにまとめた方が良いかも

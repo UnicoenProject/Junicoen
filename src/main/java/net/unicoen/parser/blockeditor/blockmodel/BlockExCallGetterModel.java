@@ -36,27 +36,16 @@ public class BlockExCallGetterModel extends BlockExprModel {
 	}
 
 	@Override
-	public void addSocketsAndNodes(List<BlockElementModel> socketBlocks, Document document, SocketsInfo sockets){
-		for(BlockElementModel socket : socketBlocks){
-			addSocketBlock(socket);
-		}
-		addSocketsNode(document, sockets);
+	public String getType(){
+		return methodBlock.getType();
 	}
 
 	@Override
-	public void addSocketsNode(Document document, SocketsInfo sockets) {
-		Element socketsElement = document.createElement("Sockets");
-		socketsElement.setAttribute("num-sockets", String.valueOf(sockets.getSockets().size()));
-		for (int i = 0; i < getSocketBlocks().size(); i++) {
-			sockets.getSockets().get(i).setConnectorBlockID(getSocketBlocks().get(i).getBlockID());
-			sockets.getSockets().get(i).setConnectorType(convertTypeToBlockConnectorType(getSocketBlocks().get(i).getType()));
-			addSocketNode(document, socketsElement, sockets.getSockets().get(i));
-		}
-
-		sockets.getSockets().get(sockets.getSockets().size()-1).setConnectorBlockID(methodBlock.getBlockID());
-		addSocketNode(document, socketsElement, sockets.getSockets().get(sockets.getSockets().size()-1));
-
-		this.element.appendChild(socketsElement);
+	/**
+	 * このブロックのノードにPlugノードを追加する
+	 */
+	public void setPlugElement(Document document, PlugInfo plugInfo) {
+		plugInfo.connectorType = convertTypeToBlockConnectorType(getType());
+		this.element.appendChild(plugInfo.createElemnet(document));
 	}
-
 }

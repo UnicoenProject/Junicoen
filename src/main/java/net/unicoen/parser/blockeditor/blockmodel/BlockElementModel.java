@@ -3,17 +3,14 @@ package net.unicoen.parser.blockeditor.blockmodel;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.unicoen.node.UniDoubleLiteral;
-import net.unicoen.node.UniExpr;
-import net.unicoen.node.UniIdent;
-import net.unicoen.node.UniIntLiteral;
-import net.unicoen.node.UniStringLiteral;
-import net.unicoen.parser.blockeditor.BlockResolver;
 import net.unicoen.parser.blockeditor.DOMUtil;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 
 public class BlockElementModel {
 
@@ -134,7 +131,7 @@ public class BlockElementModel {
 		return element;
 	}
 
-	public String convertTypeToBlockConnectorType(String type) {
+	public static String convertTypeToBlockConnectorType(String type) {
 		switch (type) {
 		case "int":
 			return "number";
@@ -189,28 +186,17 @@ public class BlockElementModel {
 		socketsNode.appendChild(socketInfo.createBlockConnectorElement(document));
 	}
 
-	public static String calcParamType(UniExpr param, BlockResolver resolver) {
-		String type = "";
-		if (param instanceof UniStringLiteral) {
-			type = "string";
-		} else if (param instanceof UniIntLiteral) {
-			type = "number";
-		} else if (param instanceof UniIdent) {
-			type = DOMUtil.getChildNode(resolver.getVariableNameResolver().getVariableNode(((UniIdent) param).name), "Type").getTextContent();
-		} else if (param instanceof UniDoubleLiteral) {
-			type = "double-number";
-		}
-		else {
-			throw new RuntimeException(param.toString() + "has not been supported yet.");
-		}
-		return type;
+	public static String calcParamType(BlockElementModel param) {
+		return convertParamTypeName(param.getType());
 	}
 
 	public static String convertParamTypeName(String name) {
-		if (name.equals("number") || name.equals("double-number")) {
+		String s = new String(name);
+		s = convertTypeToBlockConnectorType(name);
+		if (s.equals("number") || s.equals("double-number")) {
 			return "int";
 		} else {
-			return name;
+			return s;
 		}
 	}
 
@@ -243,5 +229,13 @@ public class BlockElementModel {
 
 	public Element getBlockElement(){
 		return this.getElement();
+	}
+
+	public List<String> transformToTypeStringList(List<BlockElementModel> args){
+		return Lists.transform(args, new Function<BlockElementModel, String>() {
+			public String apply(BlockElementModel input) {
+				return input.getType();
+			}
+		});
 	}
 }

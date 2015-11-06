@@ -3,6 +3,8 @@ package net.unicoen.parser.blockeditor.blockmodel;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.unicoen.parser.blockeditor.BlockResolver;
+
 import org.w3c.dom.Element;
 
 public class BlockBinaryOperatorModel extends BlockExprModel {
@@ -10,7 +12,7 @@ public class BlockBinaryOperatorModel extends BlockExprModel {
 	private BlockElementModel left;
 	private BlockElementModel right;
 
-	public BlockBinaryOperatorModel(String operator, Element binOpElement, BlockElementModel left, BlockElementModel right) {
+	public BlockBinaryOperatorModel(String operator, Element binOpElement, BlockElementModel left, BlockElementModel right,BlockResolver resolver) {
 		this.element = binOpElement;
 		this.left = left;
 		this.right = right;

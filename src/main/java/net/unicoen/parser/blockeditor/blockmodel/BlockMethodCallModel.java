@@ -1,10 +1,7 @@
 package net.unicoen.parser.blockeditor.blockmodel;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import net.unicoen.node.UniExpr;
-import net.unicoen.node.UniMethodCall;
 import net.unicoen.parser.blockeditor.BlockResolver;
 import net.unicoen.parser.blockeditor.DOMUtil;
 
@@ -17,15 +14,21 @@ import com.google.common.collect.Lists;
 
 public class BlockMethodCallModel extends BlockCommandModel{
 
-	public BlockMethodCallModel(UniMethodCall method, Document document, BlockResolver resolver, Long ID_COUNTER, Node parent){
-		this.element = createPrototypeElement(method, document, resolver, ID_COUNTER, parent);
+	public BlockMethodCallModel(String methodName, List<BlockElementModel> sockets ,Document document, BlockResolver resolver, Long ID_COUNTER, Node parent){
+		this.element = createPrototypeElement(methodName, sockets, document, resolver, ID_COUNTER, parent);
 	}
 
-	public Element createPrototypeElement(UniMethodCall method, Document document, BlockResolver resolver, Long ID_COUNTER, Node parent){
-		String genusName = calcMethodCallGenusName(method.methodName, transformArgToString(method.args, resolver), resolver);
-		String kind = DOMUtil.getAttribute(resolver.getBlockNode(genusName), "kind");
+	public Element createPrototypeElement(String methodName, List<BlockElementModel> sockets,Document document, BlockResolver resolver, Long ID_COUNTER, Node parent){
+		List<String> socketTypes = Lists.transform(sockets, new Function<BlockElementModel, String>() {
+			public String apply(BlockElementModel input) {
+				return input.getType();
+			}
+		});
+		String genusName = calcMethodCallGenusName(methodName, socketTypes, resolver);
+
+		String kind = DOMUtil.getAttribute(resolver.getBlockNode(genusName), BlockElementModel.KIND_ATTRIBUTE_TAG);
 		Element element = createBlockElement(document, genusName, ID_COUNTER, kind);
-		addElement("Name", document, method.methodName, element);
+		addElement("Name", document, methodName, element);
 		this.element = element;
 
 		if (kind.equals("command") && parent != null) {
@@ -37,18 +40,6 @@ public class BlockMethodCallModel extends BlockCommandModel{
 		}
 
 		return element;
-	}
-
-	public static List<String> transformArgToString(List<UniExpr> args, BlockResolver resolver) {
-		if (args == null) {
-			return new ArrayList<String>();
-		} else {
-			return Lists.transform(args, new Function<UniExpr, String>() {
-				public String apply(UniExpr input) {
-					return BlockExprModel.convertParamTypeName(calcParamType(input, resolver));
-				}
-			});
-		}
 	}
 
 	/*

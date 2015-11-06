@@ -8,7 +8,7 @@ public class BlockStringLiteralModel extends BlockLiteralModel{
 	private static String STRINGLITERAL_GENUS_NAME = "string";
 
 	public BlockStringLiteralModel(String value, Document document, String parent, Long ID_COUNTER, BlockResolver resolver) {
-		super(STRINGLITERAL_GENUS_NAME, value, document, parent, ID_COUNTER, resolver);
+		super(STRINGLITERAL_GENUS_NAME, value.toString(), document, parent, ID_COUNTER, resolver);
 	}
 
 }
