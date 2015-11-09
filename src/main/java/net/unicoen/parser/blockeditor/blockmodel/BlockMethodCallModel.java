@@ -7,18 +7,17 @@ import net.unicoen.parser.blockeditor.DOMUtil;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 public class BlockMethodCallModel extends BlockCommandModel{
 
-	public BlockMethodCallModel(String methodName, List<BlockElementModel> sockets ,Document document, BlockResolver resolver, Long ID_COUNTER, Node parent){
-		this.element = createPrototypeElement(methodName, sockets, document, resolver, ID_COUNTER, parent);
+	public BlockMethodCallModel(String methodName, List<BlockElementModel> sockets ,Document document, BlockResolver resolver, Long ID_COUNTER, String parentId){
+		this.element = createPrototypeElement(methodName, sockets, document, resolver, ID_COUNTER, parentId);
 	}
 
-	public Element createPrototypeElement(String methodName, List<BlockElementModel> sockets,Document document, BlockResolver resolver, Long ID_COUNTER, Node parent){
+	public Element createPrototypeElement(String methodName, List<BlockElementModel> sockets,Document document, BlockResolver resolver, Long ID_COUNTER, String parentId){
 		List<String> socketTypes = Lists.transform(sockets, new Function<BlockElementModel, String>() {
 			public String apply(BlockElementModel input) {
 				return input.getType();
@@ -31,8 +30,8 @@ public class BlockMethodCallModel extends BlockCommandModel{
 		addElement("Name", document, methodName, element);
 		this.element = element;
 
-		if (kind.equals("command") && parent != null) {
-			addBeforeBlockNode(document, DOMUtil.getAttribute(parent, "id"));
+		if (kind.equals("command") && parentId != null) {
+			addBeforeBlockNode(document, parentId);
 		}
 
 		if(!"void".equals(resolver.getType(genusName))){

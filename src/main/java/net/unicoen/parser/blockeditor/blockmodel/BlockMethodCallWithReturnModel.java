@@ -32,23 +32,6 @@ public class BlockMethodCallWithReturnModel extends BlockExprModel {
 		return element;
 	}
 
-	/*
-	 * UniMethodCallの関数名からBlockの名前を計算する
-	 */
-//	private String calcMethodCallGenusName(UniMethodCall method, BlockResolver resolver) {
-//		String genusName = method.methodName + "[";
-//		// 名前空間補完}
-//		for (UniExpr arg : method.args) {
-//			genusName += "@" + convertParamTypeName(calcParamType(arg, resolver));
-//		}
-//
-//		genusName += "]";
-//
-//		genusName = resolver.getNamespace(genusName) + genusName;
-//
-//		return genusName;
-//	}
-
 	public List<Element> getBlockElements() {
 		List<Element> elements = new ArrayList<Element>();
 		elements.add(getElement());

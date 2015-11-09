@@ -8,17 +8,16 @@ import net.unicoen.parser.blockeditor.DOMUtil;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 public class BlockUserMethodCallWithReturnModel extends BlockExprModel {
 
 	private static String KIND = "function";
 
-	public BlockUserMethodCallWithReturnModel(String methodName, List<String> sockets, Document document, BlockResolver resolver, Long ID_COUNTER, Node parent) {
-		this.element = createPrototypeElement(methodName,sockets, document, resolver, ID_COUNTER, parent);
+	public BlockUserMethodCallWithReturnModel(String methodName, List<String> sockets, Document document, BlockResolver resolver, Long ID_COUNTER) {
+		this.element = createPrototypeElement(methodName,sockets, document, resolver, ID_COUNTER);
 	}
 
-	public Element createPrototypeElement(String methodName, List<String> sockets, Document document, BlockResolver resolver, Long ID_COUNTER, Node parent){
+	public Element createPrototypeElement(String methodName, List<String> sockets, Document document, BlockResolver resolver, Long ID_COUNTER){
 		String parentID =  resolver.getFieldMethodInfo().getId(BlockMethodCallModel.calcMethodCallGenusName(methodName, sockets, resolver)).toString();
 		Element root = createBlockStubNode(document, methodName, BlockProcedureModel.GENUS_NAME, parentID);
 		Element element = createBlockElement(document, BlockUserMethodCallModel.GENUS_NAME, ID_COUNTER, KIND);

@@ -8,18 +8,17 @@ import net.unicoen.parser.blockeditor.DOMUtil;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 
 public class BlockUserMethodCallModel extends BlockCommandModel{
 	public static String GENUS_NAME = "callerprocedure";
 	private static String KIND = "command";
 
-	public BlockUserMethodCallModel(String methodName, List<String> socketsTypes, Document document, BlockResolver resolver, Long ID_COUNTER, Node parent) {
-		this.element = createPrototypeElement(methodName, socketsTypes, document, resolver, ID_COUNTER, parent);
+	public BlockUserMethodCallModel(String methodName, List<String> socketsTypes, Document document, BlockResolver resolver, Long ID_COUNTER) {
+		this.element = createPrototypeElement(methodName, socketsTypes, document, resolver, ID_COUNTER);
 	}
 
-	public Element createPrototypeElement(String methodName, List<String> socketsTypes, Document document, BlockResolver resolver, Long ID_COUNTER, Node parent){
+	public Element createPrototypeElement(String methodName, List<String> socketsTypes, Document document, BlockResolver resolver, Long ID_COUNTER){
 		String parentID =  resolver.getFieldMethodInfo().getId(BlockMethodCallModel.calcMethodCallGenusName(methodName, socketsTypes, resolver)).toString();
 		Element root = createBlockStubNode(document, methodName, BlockProcedureModel.GENUS_NAME, parentID);
 		Element element = createBlockElement(document, GENUS_NAME, ID_COUNTER, KIND);
@@ -29,8 +28,6 @@ public class BlockUserMethodCallModel extends BlockCommandModel{
 		root.appendChild(element);
 		return root;
 	}
-
-
 
 	//TODO should fix Stubクラスを作ってまとめる?　
 	public Element createBlockStubNode(Document document, String parentName, String parentGenusName, String parentID) {
