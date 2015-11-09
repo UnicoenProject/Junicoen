@@ -14,34 +14,18 @@ literal
 	;
 
 integerLiteral
-	:	integerLiteralValue 
-	;
-
-integerLiteralValue
 	:	IntegerLiteral 
 	;
 
 floatingPointLiteral
-	:	floatingPointLiteralValue 
-	;
-
-floatingPointLiteralValue
 	:	FloatingPointLiteral 
 	;
 
 booleanLiteral
-	:	booleanLiteralValue 
-	;
-
-booleanLiteralValue
 	:	BooleanLiteral 
 	;
 
 stringLiteral
-	:	stringLiteralValue 
-	;
-
-stringLiteralValue
 	:	StringLiteral 
 	;
 
