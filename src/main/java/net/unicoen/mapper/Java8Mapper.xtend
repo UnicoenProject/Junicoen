@@ -3,6 +3,10 @@ package net.unicoen.mapper
 import java.io.FileInputStream
 import java.util.ArrayList
 import java.util.List
+import net.unicoen.node.*
+import net.unicoen.parser.Java8Lexer
+import net.unicoen.parser.Java8Parser
+import net.unicoen.parser.Java8BaseVisitor
 import org.antlr.v4.runtime.ANTLRInputStream
 import org.antlr.v4.runtime.CharStream
 import org.antlr.v4.runtime.CommonTokenStream
@@ -11,10 +15,8 @@ import org.antlr.v4.runtime.RuleContext
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.RuleNode
 import org.antlr.v4.runtime.tree.TerminalNode
-import net.unicoen.parser.Java8Lexer
-import net.unicoen.parser.Java8Parser
-import net.unicoen.parser.Java8BaseVisitor
-import net.unicoen.node.*
+import org.antlr.v4.runtime.tree.TerminalNodeImpl
+import org.eclipse.xtext.xbase.lib.Functions.Function1
 
 class Java8Mapper extends Java8BaseVisitor<Object> {
 	var _isDebugMode = false
@@ -23,25 +25,41 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		_isDebugMode = isDebugMode
 	}
 
+	def parse(String code) {
+		parseCore(new ANTLRInputStream(code));
+	}
+
 	def parseFile(String path) {
-		val inputStream = new FileInputStream(path)
+		val inputStream = new FileInputStream(path);
 		try {
-			parseCore(new ANTLRInputStream(inputStream))
+			parseCore(new ANTLRInputStream(inputStream));
 		} finally {
-			inputStream.close
+			inputStream.close();
 		}
 	}
 
-	def parse(String code) {
-		parseCore(new ANTLRInputStream(code))
+	def parseCore(CharStream chars) {
+		parseCore(chars, [parser|parser.compilationUnit()])
 	}
 
-	def parseCore(CharStream chars) {
-		val lexer = new Java8Lexer(chars)
-		val tokens = new CommonTokenStream(lexer)
-		val parser = new Java8Parser(tokens)
-		val tree = parser.compilationUnit
+	def parse(String code, Function1<Java8Parser, ParseTree> parseAction) {
+		parseCore(new ANTLRInputStream(code), parseAction);
+	}
 
+	def parseFile(String path, Function1<Java8Parser, ParseTree> parseAction) {
+		val inputStream = new FileInputStream(path);
+		try {
+			parseCore(new ANTLRInputStream(inputStream), parseAction);
+		} finally {
+			inputStream.close();
+		}
+	}
+
+	def parseCore(CharStream chars, Function1<Java8Parser, ParseTree> parseAction) {
+		val lexer = new Java8Lexer(chars);
+		val tokens = new CommonTokenStream(lexer);
+		val parser = new Java8Parser(tokens);
+		val tree = parseAction.apply(parser) // parse
 		tree.visit
 	}
 
@@ -74,7 +92,59 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		}
 	}
 
+	override public visitIntegerLiteral(Java8Parser.IntegerLiteralContext ctx) {
+		val text = ctx.children.findFirst[
+			if (it instanceof TerminalNodeImpl) {
+				if (it.symbol.type == Java8Parser.IntegerLiteral) {
+					return true;
+				}
+			}
+			return false;
+		].text
+		return new UniIntLiteral(Integer.parseInt(text))
+	}
+
+	override public visitFloatingPointLiteral(Java8Parser.FloatingPointLiteralContext ctx) {
+		val text = ctx.children.findFirst[
+			if (it instanceof TerminalNodeImpl) {
+				if (it.symbol.type == Java8Parser.FloatingPointLiteral) {
+					return true;
+				}
+			}
+			return false;
+		].text
+		return new UniDoubleLiteral(Double.parseDouble(text))
+	}
+
+	override public visitBooleanLiteral(Java8Parser.BooleanLiteralContext ctx) {
+		val text = ctx.children.findFirst[
+			if (it instanceof TerminalNodeImpl) {
+				if (it.symbol.type == Java8Parser.BooleanLiteral) {
+					return true;
+				}
+			}
+			return false;
+		].text
+		return new UniBoolLiteral("true" == text)
+	}
+
+	override public visitStringLiteral(Java8Parser.StringLiteralContext ctx) {
+		val text = ctx.children.findFirst[
+			if (it instanceof TerminalNodeImpl) {
+				if (it.symbol.type == Java8Parser.StringLiteral) {
+					return true;
+				}
+			}
+			return false;
+		].text
+		return new UniStringLiteral(text.substring(1, text.length - 1))
+	}
+
 	override public visitClassType(Java8Parser.ClassTypeContext ctx) {
+		ctx.text
+	}
+
+	override public visitInterfaceType(Java8Parser.InterfaceTypeContext ctx) {
 		ctx.text
 	}
 
@@ -86,8 +156,8 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val bind = new UniClassDec
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
-				switch (it as RuleContext).invokingState {
-					case 736: {
+				switch it.invokingState {
+					case 776: {
 						val child = it.visit as UniClassDec
 						bind.merge(child)
 					}
@@ -101,8 +171,12 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val bind = new UniClassDec
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
-				switch (it as RuleContext).invokingState {
-					case 791: {
+				switch it.invokingState {
+					case 831: {
+						val child = it.visit as UniClassDec
+						bind.merge(child)
+					}
+					case 832: {
 						val child = it.visit as UniClassDec
 						bind.merge(child)
 					}
@@ -116,8 +190,8 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val bind = new UniClassDec
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
-				switch (it as RuleContext).invokingState {
-					case 796: {
+				switch it.invokingState {
+					case 836: {
 						val child = it.visit as UniClassDec
 						bind.merge(child)
 					}
@@ -131,32 +205,32 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val bind = new UniClassDec
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
-				switch (it as RuleContext).invokingState {
-					case 800: {
+				switch it.invokingState {
+					case 840: {
 						if (bind.modifiers == null) {
 							bind.modifiers = it.visit as java.util.List<java.lang.String>
 						} else {
 							bind.modifiers += it.visit as java.util.List<java.lang.String>
 						}
 					}
-					case 802: {
+					case 842: {
 						bind.className = it.visit as java.lang.String
 					}
-					case 806: {
+					case 846: {
 						if (bind.superClass == null) {
 							bind.superClass = it.visit as java.util.List<java.lang.String>
 						} else {
 							bind.superClass += it.visit as java.util.List<java.lang.String>
 						}
 					}
-					case 809: {
+					case 849: {
 						if (bind.interfaces == null) {
 							bind.interfaces = it.visit as java.util.List<java.lang.String>
 						} else {
 							bind.interfaces += it.visit as java.util.List<java.lang.String>
 						}
 					}
-					case 812: {
+					case 852: {
 						if (bind.members == null) {
 							bind.members = it.visit as java.util.List<net.unicoen.node.UniMemberDec>
 						} else {
@@ -178,8 +252,8 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		if (ctx.children != null) {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
-					switch (it as RuleContext).invokingState {
-						case 816: {
+					switch it.invokingState {
+						case 856: {
 							list += it.visit as String
 						}
 					}
@@ -198,8 +272,8 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		if (ctx.children != null) {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
-					switch (it as RuleContext).invokingState {
-						case 845: {
+					switch it.invokingState {
+						case 885: {
 							list += it.visit as String
 						}
 					}
@@ -214,9 +288,9 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		if (ctx.children != null) {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
-					switch (it as RuleContext).invokingState {
-						case 848: {
-							list += it.visit as String
+					switch it.invokingState {
+						case 888: {
+							list += it.visit as List<String>
 						}
 					}
 				}
@@ -226,7 +300,22 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 	}
 
 	override public visitInterfaceTypeList(Java8Parser.InterfaceTypeListContext ctx) {
-		ctx.text
+		val list = new ArrayList<String>
+		if (ctx.children != null) {
+			ctx.children.forEach [
+				if (it instanceof RuleContext) {
+					switch it.invokingState {
+						case 890: {
+							list += it.visit as String
+						}
+						case 892: {
+							list += it.visit as String
+						}
+					}
+				}
+			]
+		}
+		list
 	}
 
 	override public visitClassBody(Java8Parser.ClassBodyContext ctx) {
@@ -234,9 +323,47 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		if (ctx.children != null) {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
-					switch (it as RuleContext).invokingState {
-						case 859: {
-							list += it.visit as UniMemberDec
+					switch it.invokingState {
+						case 899: {
+							list += it.visit as List<UniMemberDec>
+						}
+					}
+				}
+			]
+		}
+		list
+	}
+
+	override public visitClassBodyDeclaration(Java8Parser.ClassBodyDeclarationContext ctx) {
+		val list = new ArrayList<UniMemberDec>
+		if (ctx.children != null) {
+			ctx.children.forEach [
+				if (it instanceof RuleContext) {
+					switch it.invokingState {
+						case 907: {
+							list += it.visit as List<UniMemberDec>
+						}
+						case 910: {
+							list += it.visit as UniMethodDec
+						}
+					}
+				}
+			]
+		}
+		list
+	}
+
+	override public visitClassMemberDeclaration(Java8Parser.ClassMemberDeclarationContext ctx) {
+		val list = new ArrayList<UniMemberDec>
+		if (ctx.children != null) {
+			ctx.children.forEach [
+				if (it instanceof RuleContext) {
+					switch it.invokingState {
+						case 913: {
+							list += it.visit as List<UniFieldDec>
+						}
+						case 914: {
+							list += it.visit as UniMethodDec
 						}
 					}
 				}
@@ -246,28 +373,29 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 	}
 
 	override public visitFieldDeclaration(Java8Parser.FieldDeclarationContext ctx) {
-		val bind = new UniFieldDec
-		ctx.children.forEach [
-			if (it instanceof RuleContext) {
-				switch (it as RuleContext).invokingState {
-					case 880: {
-						if (bind.modifiers == null) {
-							bind.modifiers = it.visit as java.util.List<java.lang.String>
-						} else {
-							bind.modifiers += it.visit as java.util.List<java.lang.String>
+		val list = new ArrayList<UniFieldDec>
+		val tNode = new UniFieldDec
+		if (ctx.children != null) {
+			ctx.children.forEach [
+				if (it instanceof RuleContext) {
+					switch it.invokingState {
+						case 920: {
+							tNode.modifiers = it.visit as java.util.List<java.lang.String>
+						}
+						case 921: {
+							tNode.type = it.visit as java.lang.String
+						}
+						case 922: {
+							list += it.visit as List<UniFieldDec>
 						}
 					}
-					case 881: {
-						bind.type = it.visit as java.lang.String
-					}
-					case 882: {
-						val child = it.visit as UniFieldDec
-						bind.merge(child)
-					}
 				}
-			}
+			]
+		}
+		list.forEach [
+			it.merge(tNode)
 		]
-		bind
+		list
 	}
 
 	override public visitFieldModifiers(Java8Parser.FieldModifiersContext ctx) {
@@ -275,8 +403,8 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		if (ctx.children != null) {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
-					switch (it as RuleContext).invokingState {
-						case 885: {
+					switch it.invokingState {
+						case 925: {
 							list += it.visit as String
 						}
 					}
@@ -291,26 +419,33 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 	}
 
 	override public visitVariableDeclaratorList(Java8Parser.VariableDeclaratorListContext ctx) {
-		val bind = new UniFieldDec
-		ctx.children.forEach [
-			if (it instanceof RuleContext) {
-				switch (it as RuleContext).invokingState {
+		val list = new ArrayList<UniFieldDec>
+		if (ctx.children != null) {
+			ctx.children.forEach [
+				if (it instanceof RuleContext) {
+					switch it.invokingState {
+						case 941: {
+							list += it.visit as UniFieldDec
+						}
+						case 943: {
+							list += it.visit as UniFieldDec
+						}
+					}
 				}
-			}
-		]
-		bind
+			]
+		}
+		list
 	}
 
 	override public visitVariableDeclarator(Java8Parser.VariableDeclaratorContext ctx) {
 		val bind = new UniFieldDec
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
-				switch (it as RuleContext).invokingState {
-					case 909: {
-						val child = it.visit as UniFieldDec
-						bind.merge(child)
+				switch it.invokingState {
+					case 949: {
+						bind.name = it.visit as java.lang.String
 					}
-					case 911: {
+					case 951: {
 						bind.value = it.visit as net.unicoen.node.UniExpr
 					}
 				}
@@ -320,17 +455,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 	}
 
 	override public visitVariableDeclaratorId(Java8Parser.VariableDeclaratorIdContext ctx) {
-		val bind = new UniFieldDec
-		ctx.children.forEach [
-			if (it instanceof RuleContext) {
-				switch (it as RuleContext).invokingState {
-					case 915: {
-						bind.type = it.visit as java.lang.String
-					}
-				}
-			}
-		]
-		bind
+		ctx.text
 	}
 
 	override public visitUnannType(Java8Parser.UnannTypeContext ctx) {
@@ -341,24 +466,38 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val bind = new UniMethodDec
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
-				switch (it as RuleContext).invokingState {
-					case 998: {
+				switch it.invokingState {
+					case 1038: {
 						if (bind.modifiers == null) {
-							bind.modifiers = new ArrayList<String>
+							bind.modifiers = it.visit as java.util.List<java.lang.String>
+						} else {
+							bind.modifiers += it.visit as java.util.List<java.lang.String>
 						}
-						bind.modifiers += it.visit as java.util.List<java.lang.String>
 					}
-					case 1004: {
+					case 1039: {
 						val child = it.visit as UniMethodDec
 						bind.merge(child)
 					}
-					case 1005: {
+					case 1040: {
 						bind.block = it.visit as net.unicoen.node.UniBlock
 					}
 				}
 			}
 		]
 		bind
+	}
+
+	override public visitMethodModifiers(Java8Parser.MethodModifiersContext ctx) {
+		val list = new ArrayList<String>
+		if (ctx.children != null) {
+			ctx.children.forEach [
+				if (it instanceof RuleContext) {
+					switch it.invokingState {
+					}
+				}
+			]
+		}
+		list
 	}
 
 	override public visitMethodModifier(Java8Parser.MethodModifierContext ctx) {
@@ -369,18 +508,18 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val bind = new UniMethodDec
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
-				switch (it as RuleContext).invokingState {
-					case 1019: {
+				switch it.invokingState {
+					case 1060: {
 						bind.returnType = it.visit as java.lang.String
 					}
-					case 1020: {
+					case 1061: {
 						val child = it.visit as UniMethodDec
 						bind.merge(child)
 					}
-					case 1031: {
+					case 1072: {
 						bind.returnType = it.visit as java.lang.String
 					}
-					case 1032: {
+					case 1073: {
 						val child = it.visit as UniMethodDec
 						bind.merge(child)
 					}
@@ -398,18 +537,18 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val bind = new UniMethodDec
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
-				switch (it as RuleContext).invokingState {
-					case 1042: {
+				switch it.invokingState {
+					case 1083: {
 						bind.methodName = it.visit as java.lang.String
 					}
-					case 1044: {
+					case 1085: {
 						if (bind.args == null) {
 							bind.args = it.visit as java.util.List<net.unicoen.node.UniArg>
 						} else {
 							bind.args += it.visit as java.util.List<net.unicoen.node.UniArg>
 						}
 					}
-					case 1048: {
+					case 1089: {
 						bind.returnType = it.visit as java.lang.String
 					}
 				}
@@ -427,14 +566,14 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		if (ctx.children != null) {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
-					switch (it as RuleContext).invokingState {
-						case 1053: {
+					switch it.invokingState {
+						case 1094: {
 							list += it.visit as List<UniArg>
 						}
-						case 1055: {
+						case 1096: {
 							list += it.visit as UniArg
 						}
-						case 1057: {
+						case 1098: {
 							list += it.visit as UniArg
 						}
 					}
@@ -449,11 +588,11 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		if (ctx.children != null) {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
-					switch (it as RuleContext).invokingState {
-						case 1060: {
+					switch it.invokingState {
+						case 1101: {
 							list += it.visit as UniArg
 						}
-						case 1062: {
+						case 1103: {
 							list += it.visit as UniArg
 						}
 					}
@@ -467,11 +606,11 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val bind = new UniArg
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
-				switch (it as RuleContext).invokingState {
-					case 1084: {
+				switch it.invokingState {
+					case 1125: {
 						bind.type = it.visit as java.lang.String
 					}
-					case 1085: {
+					case 1126: {
 						val child = it.visit as UniArg
 						bind.merge(child)
 					}
@@ -485,11 +624,11 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val bind = new UniArg
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
-				switch (it as RuleContext).invokingState {
-					case 1087: {
+				switch it.invokingState {
+					case 1128: {
 						bind.name = it.visit as java.lang.String
 					}
-					case 1088: {
+					case 1129: {
 						bind.type = it.visit as java.lang.String
 					}
 				}
@@ -502,4 +641,319 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.text
 	}
 
+	override public visitConstructorDeclaration(Java8Parser.ConstructorDeclarationContext ctx) {
+		val bind = new UniMethodDec
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 1194: {
+						if (bind.modifiers == null) {
+							bind.modifiers = it.visit as java.util.List<java.lang.String>
+						} else {
+							bind.modifiers += it.visit as java.util.List<java.lang.String>
+						}
+					}
+					case 1200: {
+						val child = it.visit as UniMethodDec
+						bind.merge(child)
+					}
+					case 1204: {
+						bind.block = it.visit as net.unicoen.node.UniBlock
+					}
+				}
+			}
+		]
+		bind
+	}
+
+	override public visitConstructorModifier(Java8Parser.ConstructorModifierContext ctx) {
+		val list = new ArrayList<String>
+		if (ctx.children != null) {
+			ctx.children.forEach [
+				if (it instanceof RuleContext) {
+					switch it.invokingState {
+					}
+				}
+			]
+		}
+		list
+	}
+
+	override public visitConstructorDeclarator(Java8Parser.ConstructorDeclaratorContext ctx) {
+		val bind = new UniMethodDec
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 1215: {
+						bind.methodName = it.visit as java.lang.String
+					}
+					case 1217: {
+						if (bind.args == null) {
+							bind.args = it.visit as java.util.List<net.unicoen.node.UniArg>
+						} else {
+							bind.args += it.visit as java.util.List<net.unicoen.node.UniArg>
+						}
+					}
+				}
+			}
+		]
+		bind
+	}
+
+	override public visitSimpleTypeName(Java8Parser.SimpleTypeNameContext ctx) {
+		ctx.text
+	}
+
+	override public visitInterfaceDeclaration(Java8Parser.InterfaceDeclarationContext ctx) {
+		val bind = new UniClassDec
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 1340: {
+						val child = it.visit as UniClassDec
+						bind.merge(child)
+					}
+				}
+			}
+		]
+		bind
+	}
+
+	override public visitNormalInterfaceDeclaration(Java8Parser.NormalInterfaceDeclarationContext ctx) {
+		val bind = new UniClassDec
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 1344: {
+						if (bind.modifiers == null) {
+							bind.modifiers = it.visit as java.util.List<java.lang.String>
+						} else {
+							bind.modifiers += it.visit as java.util.List<java.lang.String>
+						}
+					}
+					case 1346: {
+						bind.className = it.visit as java.lang.String
+					}
+					case 1350: {
+						if (bind.interfaces == null) {
+							bind.interfaces = it.visit as java.util.List<java.lang.String>
+						} else {
+							bind.interfaces += it.visit as java.util.List<java.lang.String>
+						}
+					}
+					case 1353: {
+						if (bind.members == null) {
+							bind.members = it.visit as java.util.List<net.unicoen.node.UniMemberDec>
+						} else {
+							bind.members += it.visit as java.util.List<net.unicoen.node.UniMemberDec>
+						}
+					}
+				}
+			}
+		]
+		bind
+	}
+
+	override public visitInterfaceModifiers(Java8Parser.InterfaceModifiersContext ctx) {
+		val list = new ArrayList<String>
+		if (ctx.children != null) {
+			ctx.children.forEach [
+				if (it instanceof RuleContext) {
+					switch it.invokingState {
+						case 1355: {
+							list += it.visit as String
+						}
+					}
+				}
+			]
+		}
+		list
+	}
+
+	override public visitInterfaceName(Java8Parser.InterfaceNameContext ctx) {
+		ctx.text
+	}
+
+	override public visitInterfaceModifier(Java8Parser.InterfaceModifierContext ctx) {
+		ctx.text
+	}
+
+	override public visitExtendsInterfaces(Java8Parser.ExtendsInterfacesContext ctx) {
+		val list = new ArrayList<String>
+		if (ctx.children != null) {
+			ctx.children.forEach [
+				if (it instanceof RuleContext) {
+					switch it.invokingState {
+						case 1373: {
+							list += it.visit as List<String>
+						}
+					}
+				}
+			]
+		}
+		list
+	}
+
+	override public visitInterfaceBody(Java8Parser.InterfaceBodyContext ctx) {
+		val list = new ArrayList<UniMemberDec>
+		if (ctx.children != null) {
+			ctx.children.forEach [
+				if (it instanceof RuleContext) {
+					switch it.invokingState {
+						case 1376: {
+							list += it.visit as List<UniMemberDec>
+						}
+					}
+				}
+			]
+		}
+		list
+	}
+
+	override public visitInterfaceMemberDeclaration(Java8Parser.InterfaceMemberDeclarationContext ctx) {
+		val list = new ArrayList<UniMemberDec>
+		if (ctx.children != null) {
+			ctx.children.forEach [
+				if (it instanceof RuleContext) {
+					switch it.invokingState {
+						case 1384: {
+							list += it.visit as List<UniFieldDec>
+						}
+						case 1385: {
+							list += it.visit as UniMethodDec
+						}
+					}
+				}
+			]
+		}
+		list
+	}
+
+	override public visitConstantDeclaration(Java8Parser.ConstantDeclarationContext ctx) {
+		val list = new ArrayList<UniFieldDec>
+		val tNode = new UniFieldDec
+		if (ctx.children != null) {
+			ctx.children.forEach [
+				if (it instanceof RuleContext) {
+					switch it.invokingState {
+						case 1391: {
+							tNode.modifiers = it.visit as java.util.List<java.lang.String>
+						}
+						case 1392: {
+							tNode.type = it.visit as java.lang.String
+						}
+						case 1393: {
+							list += it.visit as List<UniFieldDec>
+						}
+					}
+				}
+			]
+		}
+		list.forEach [
+			it.merge(tNode)
+		]
+		list
+	}
+
+	override public visitConstantModifiers(Java8Parser.ConstantModifiersContext ctx) {
+		val list = new ArrayList<String>
+		if (ctx.children != null) {
+			ctx.children.forEach [
+				if (it instanceof RuleContext) {
+					switch it.invokingState {
+						case 1396: {
+							list += it.visit as String
+						}
+					}
+				}
+			]
+		}
+		list
+	}
+
+	override public visitConstantModifier(Java8Parser.ConstantModifierContext ctx) {
+		ctx.text
+	}
+
+	override public visitInterfaceMethodDeclaration(Java8Parser.InterfaceMethodDeclarationContext ctx) {
+		val bind = new UniMethodDec
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 1408: {
+						if (bind.modifiers == null) {
+							bind.modifiers = it.visit as java.util.List<java.lang.String>
+						} else {
+							bind.modifiers += it.visit as java.util.List<java.lang.String>
+						}
+					}
+					case 1409: {
+						val child = it.visit as UniMethodDec
+						bind.merge(child)
+					}
+					case 1410: {
+						bind.block = it.visit as net.unicoen.node.UniBlock
+					}
+				}
+			}
+		]
+		bind
+	}
+
+	override public visitInterfaceMethodModifiers(Java8Parser.InterfaceMethodModifiersContext ctx) {
+		val list = new ArrayList<String>
+		if (ctx.children != null) {
+			ctx.children.forEach [
+				if (it instanceof RuleContext) {
+					switch it.invokingState {
+						case 1412: {
+							list += it.visit as String
+						}
+					}
+				}
+			]
+		}
+		list
+	}
+
+	override public visitInterfaceMethodModifier(Java8Parser.InterfaceMethodModifierContext ctx) {
+		ctx.text
+	}
+
+	override public visitArrayInitializer(Java8Parser.ArrayInitializerContext ctx) {
+		val bind = new UniArray
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 1536: {
+						if (bind.items == null) {
+							bind.items = it.visit as java.util.List<net.unicoen.node.UniExpr>
+						} else {
+							bind.items += it.visit as java.util.List<net.unicoen.node.UniExpr>
+						}
+					}
+				}
+			}
+		]
+		bind
+	}
+
+	override public visitVariableInitializerList(Java8Parser.VariableInitializerListContext ctx) {
+		val list = new ArrayList<UniExpr>
+		if (ctx.children != null) {
+			ctx.children.forEach [
+				if (it instanceof RuleContext) {
+					switch it.invokingState {
+						case 1544: {
+							list += it.visit as UniExpr
+						}
+						case 1546: {
+							list += it.visit as UniExpr
+						}
+					}
+				}
+			]
+		}
+		list
+	}
 }

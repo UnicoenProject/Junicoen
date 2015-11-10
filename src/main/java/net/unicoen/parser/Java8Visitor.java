@@ -19,6 +19,42 @@ public interface Java8Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitLiteral(Java8Parser.LiteralContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Java8Parser#integerLiteral}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIntegerLiteral(Java8Parser.IntegerLiteralContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Java8Parser#floatingPointLiteral}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFloatingPointLiteral(Java8Parser.FloatingPointLiteralContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Java8Parser#booleanLiteral}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBooleanLiteral(Java8Parser.BooleanLiteralContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Java8Parser#stringLiteral}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStringLiteral(Java8Parser.StringLiteralContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Java8Parser#characterLiteral}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCharacterLiteral(Java8Parser.CharacterLiteralContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Java8Parser#nullLiteral}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNullLiteral(Java8Parser.NullLiteralContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Java8Parser#type}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -451,6 +487,12 @@ public interface Java8Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitMethodDeclaration(Java8Parser.MethodDeclarationContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Java8Parser#methodModifiers}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMethodModifiers(Java8Parser.MethodModifiersContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Java8Parser#methodModifier}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -649,6 +691,18 @@ public interface Java8Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitNormalInterfaceDeclaration(Java8Parser.NormalInterfaceDeclarationContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Java8Parser#interfaceModifiers}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInterfaceModifiers(Java8Parser.InterfaceModifiersContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Java8Parser#interfaceName}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInterfaceName(Java8Parser.InterfaceNameContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Java8Parser#interfaceModifier}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -679,6 +733,12 @@ public interface Java8Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitConstantDeclaration(Java8Parser.ConstantDeclarationContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Java8Parser#constantModifiers}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitConstantModifiers(Java8Parser.ConstantModifiersContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Java8Parser#constantModifier}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -690,6 +750,12 @@ public interface Java8Visitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitInterfaceMethodDeclaration(Java8Parser.InterfaceMethodDeclarationContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Java8Parser#interfaceMethodModifiers}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInterfaceMethodModifiers(Java8Parser.InterfaceMethodModifiersContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Java8Parser#interfaceMethodModifier}.
 	 * @param ctx the parse tree

@@ -1,16 +1,40 @@
 grammar Java8;
 
-@header{
+@header {
 	package net.unicoen.parser;
 }
 
 literal
+	:	integerLiteral 
+	|	floatingPointLiteral 
+	|	booleanLiteral 
+	|	characterLiteral 
+	|	stringLiteral 
+	|	nullLiteral 
+	;
+
+integerLiteral
 	:	IntegerLiteral 
-	|	FloatingPointLiteral 
-	|	BooleanLiteral 
-	|	CharacterLiteral 
-	|	StringLiteral 
-	|	NullLiteral 
+	;
+
+floatingPointLiteral
+	:	FloatingPointLiteral 
+	;
+
+booleanLiteral
+	:	BooleanLiteral 
+	;
+
+stringLiteral
+	:	StringLiteral 
+	;
+
+characterLiteral
+	:	CharacterLiteral 
+	;
+
+nullLiteral
+	:	NullLiteral 
 	;
 
 type
@@ -354,7 +378,11 @@ unannArrayType
 	;
 
 methodDeclaration
-	:	methodModifier* methodHeader methodBody 
+	:	methodModifiers methodHeader methodBody 
+	;
+
+methodModifiers
+	:	methodModifier* 
 	;
 
 methodModifier
@@ -510,7 +538,15 @@ interfaceDeclaration
 	;
 
 normalInterfaceDeclaration
-	:	interfaceModifier* 'interface' Identifier typeParameters? extendsInterfaces? interfaceBody 
+	:	interfaceModifiers 'interface' interfaceName typeParameters? extendsInterfaces? interfaceBody 
+	;
+
+interfaceModifiers
+	:	interfaceModifier* 
+	;
+
+interfaceName
+	:	Identifier 
 	;
 
 interfaceModifier
@@ -540,7 +576,11 @@ interfaceMemberDeclaration
 	;
 
 constantDeclaration
-	:	constantModifier* unannType variableDeclaratorList ';' 
+	:	constantModifiers unannType variableDeclaratorList ';' 
+	;
+
+constantModifiers
+	:	constantModifier* 
 	;
 
 constantModifier
@@ -551,7 +591,11 @@ constantModifier
 	;
 
 interfaceMethodDeclaration
-	:	interfaceMethodModifier* methodHeader methodBody 
+	:	interfaceMethodModifiers methodHeader methodBody 
+	;
+
+interfaceMethodModifiers
+	:	interfaceMethodModifier* 
 	;
 
 interfaceMethodModifier
