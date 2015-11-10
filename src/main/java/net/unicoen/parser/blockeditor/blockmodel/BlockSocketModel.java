@@ -4,9 +4,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 
-public class SocketInfo extends BlockConnectorInfo{
+public class BlockSocketModel extends BlockConnectorInfo{
 
-	public SocketInfo(BlockExprModel param) {
+	public BlockSocketModel(BlockExprModel param) {
 		this.label = param.getLabel();
 		this.positionType = "single";
 		this.connectorType = convertTypeToBlockConnectorType(param.getType());
@@ -14,7 +14,7 @@ public class SocketInfo extends BlockConnectorInfo{
 		this.connectorBlockID = param.getBlockID();
 	}
 
-	public SocketInfo(String label, String positionType, String connectorType, String initType, String connectorBlockID) {
+	public BlockSocketModel(String label, String positionType, String connectorType, String initType, String connectorBlockID) {
 		this.label = label;
 		this.positionType = positionType;
 		this.connectorType = connectorType;

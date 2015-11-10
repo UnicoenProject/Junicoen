@@ -6,21 +6,22 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-public class PlugInfo extends BlockConnectorInfo{
+public class BlockPlugModel extends BlockConnectorInfo{
 
+	public static String NODE_NAME = "Plug";
 	/**
 	 *
 	 * @param plugNode Plugを追加するブロックのオリジナルのPlugノード
 	 * @param connectorID Plugの結合先のID
 	 */
-	public PlugInfo(Node plugNode, String connectorID) {
+	public BlockPlugModel(Node plugNode, String connectorID) {
 			this.label = DOMUtil.getAttribute(plugNode, CONNECTOR_LABEL_TAG);
 			this.connectorType = DOMUtil.getAttribute(plugNode, CONNECTOR_TYPE_TAG);
 			this.positionType = DOMUtil.getAttribute(plugNode, CONNECTOR_POSITION_TYPE_TAG);
 			this.connectorBlockID = connectorID;
 	}
 
-	public PlugInfo(String label, String connectorType, String positionType, String connectorID){
+	public BlockPlugModel(String label, String connectorType, String positionType, String connectorID){
 		this.label = label;
 		this.connectorBlockID = connectorID;
 		this.positionType = positionType;

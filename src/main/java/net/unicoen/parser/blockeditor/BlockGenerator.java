@@ -76,9 +76,9 @@ import net.unicoen.parser.blockeditor.blockmodel.BlockVariableSetterModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockWhileModel;
 import net.unicoen.parser.blockeditor.blockmodel.PageModel;
 import net.unicoen.parser.blockeditor.blockmodel.PagesModel;
-import net.unicoen.parser.blockeditor.blockmodel.PlugInfo;
-import net.unicoen.parser.blockeditor.blockmodel.SocketInfo;
-import net.unicoen.parser.blockeditor.blockmodel.SocketsInfo;
+import net.unicoen.parser.blockeditor.blockmodel.BlockPlugModel;
+import net.unicoen.parser.blockeditor.blockmodel.BlockSocketModel;
+import net.unicoen.parser.blockeditor.blockmodel.BlockSocketsModel;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -179,18 +179,31 @@ public class BlockGenerator {
 
 		parseFieldVariable(classDec, model);
 
-		for (UniMemberDec member : classDec.members) {
+		for (int i = 0 ; i < classDec.members.size(); i++) {
+			UniMemberDec member = classDec.members.get(i);
 			// フィールドメソッドの解析
 			if (member instanceof UniMemberDec) {
 				UniMethodDec mDec = (UniMethodDec) member;
 				ID_COUNTER = resolver.getFieldMethodInfo().getId(BlockMethodCallModel.calcMethodCallGenusName(mDec.methodName, transformArgToString(mDec.args), resolver));
 
 				if (!isMainMethod(mDec)) {
-					model.addMethod(parseFunctionDec(mDec, document));
+					BlockProcedureModel blockMethodCall = parseFunctionDec(mDec, document);
+					model.addMethod(blockMethodCall);
+					addLocation(blockMethodCall, document, i);
 				}
 			}
 		}
 		return model;
+	}
+
+	public void addLocation(BlockElementModel mDec, Document document, int size){
+		int x = 50 + 100 * size;
+		int y = 50;
+		if(size % 6 == 0 && size!=0){
+			y = 100 + 200 * (size/6);
+		}
+
+		mDec.addLocationElement(document, Integer.toString(x), Integer.toString(y), mDec.getBlockElement());
 	}
 
 	public void parseFieldVariable(UniClassDec classDec, BlockClassModel model) {
@@ -330,7 +343,7 @@ public class BlockGenerator {
 	public BlockProcParmModel parseFunctionArg(Document document, UniArg arg, String parent) {
 		BlockProcParmModel model = new BlockProcParmModel(arg.type, arg.name, document, resolver, ID_COUNTER++);
 
-		PlugInfo plugInfo = new PlugInfo(resolver.getPlugElement(model.getGenusName()), parent);
+		BlockPlugModel plugInfo = new BlockPlugModel(resolver.getPlugElement(model.getGenusName()), parent);
 		model.setPlugElement(document, plugInfo);
 
 		resolver.getVariableNameResolver().addLocalVariable(arg.name, model.getElement());
@@ -406,7 +419,7 @@ public class BlockGenerator {
 		BlockElementModel model = new BlockNewModel(expr, socketModels, parentID, document, id, resolver);
 
 		List<Node> socketNodes = resolver.getSocketNodes(model.getGenusName());
-		SocketsInfo socketsInfo = calcSocketsInfo(socketNodes);
+		BlockSocketsModel socketsInfo = calcSocketsInfo(socketNodes);
 		model.addSocketsAndNodes(socketModels, document, socketsInfo);
 
 		return model;
@@ -416,7 +429,7 @@ public class BlockGenerator {
 		Node varDecNode = resolver.getVariableNameResolver().getVariableNode(expr.name);
 		if (varDecNode != null) {
 			BlockVariableGetterModel getterModel = new BlockVariableGetterModel(expr, varDecNode, document, ID_COUNTER++);
-			PlugInfo plugInfo = new PlugInfo("", getterModel.getConnectorKind(), "mirror", parent);
+			BlockPlugModel plugInfo = new BlockPlugModel("", getterModel.getConnectorKind(), "mirror", parent);
 			getterModel.setPlugElement(document, plugInfo);
 
 			return getterModel;
@@ -461,7 +474,7 @@ public class BlockGenerator {
 
 		// genusnameからソケットのラベルとポジションタイプを作成
 		List<Node> whileSocketNodes = resolver.getSocketNodes("dowhile");
-		SocketsInfo socketsInfo = calcSocketsInfo(whileSocketNodes);
+		BlockSocketsModel socketsInfo = calcSocketsInfo(whileSocketNodes);
 
 		// ソケットの出力
 		model.addSocketsAndNodes(blockSockets, trueBlocks, document, socketsInfo);
@@ -473,7 +486,7 @@ public class BlockGenerator {
 		Element blockElement = createBlockElement(document, "abstraction", ID_COUNTER++, "command");
 		BlockAbstractBlockModel model = new BlockAbstractBlockModel(blockElement);
 		List<BlockCommandModel> commands = parseBody(document, DOMUtil.getAttribute(blockElement, BlockElementModel.ID_ATTRIBUTE_TAG), blockExpr);
-		SocketsInfo socketsInfo = calcSocketsInfo(resolver.getSocketNodes("abstraction"));
+		BlockSocketsModel socketsInfo = calcSocketsInfo(resolver.getSocketNodes("abstraction"));
 
 		List<BlockElementModel> bodyTopElement = new ArrayList<>();
 		if (commands.size() > 0) {
@@ -514,7 +527,7 @@ public class BlockGenerator {
 
 		List<Node> socketNodes = resolver.getSocketNodes(model.getElement().getAttribute("genus-name"));
 
-		SocketsInfo sockets = calcSocketsInfo(socketNodes);
+		BlockSocketsModel sockets = calcSocketsInfo(socketNodes);
 
 		List<BlockElementModel> args = new ArrayList<>();
 		if (initializer != null) {
@@ -533,21 +546,21 @@ public class BlockGenerator {
 	/*
 	 * ブロック定義ファイルのソケットノードから，ソケット情報を作成する
 	 */
-	public SocketsInfo calcSocketsInfo(List<Node> socketNodes) {
+	public BlockSocketsModel calcSocketsInfo(List<Node> socketNodes) {
 		if (socketNodes == null || socketNodes.size() <= 0) {
-			return new SocketsInfo(new ArrayList<SocketInfo>());
+			return new BlockSocketsModel(new ArrayList<BlockSocketModel>());
 		} else {
-			List<SocketInfo> sockets = new ArrayList<SocketInfo>();
+			List<BlockSocketModel> sockets = new ArrayList<BlockSocketModel>();
 			for (int i = 0; i < socketNodes.size(); i++) {
 				String label = DOMUtil.getAttribute(socketNodes.get(i), "label");
 				String positionType = DOMUtil.getAttribute(socketNodes.get(i), "position-type");
 				String connectorType = DOMUtil.getAttribute(socketNodes.get(i), "connector-type");
 				String connectorID = "-1";
 
-				sockets.add(new SocketInfo(label, positionType, connectorType, connectorType, connectorID));
+				sockets.add(new BlockSocketModel(label, positionType, connectorType, connectorType, connectorID));
 			}
 
-			return new SocketsInfo(sockets);
+			return new BlockSocketsModel(sockets);
 		}
 	}
 
@@ -592,12 +605,12 @@ public class BlockGenerator {
 			List<BlockElementModel> args = Lists.newArrayList(value);
 
 			List<Node> socketNodes = resolver.getSocketNodes("not");
-			SocketsInfo sockets = calcSocketsInfo(socketNodes);
+			BlockSocketsModel sockets = calcSocketsInfo(socketNodes);
 
 			model.addSocketsAndNodes(args, document, sockets);
 
 			// setPlug
-			PlugInfo plugInfo = new PlugInfo(resolver.getPlugElement(model.getGenusName()), parent);
+			BlockPlugModel plugInfo = new BlockPlugModel(resolver.getPlugElement(model.getGenusName()), parent);
 			model.setPlugElement(document, plugInfo);
 
 			return model;
@@ -623,7 +636,7 @@ public class BlockGenerator {
 				Element blockElement = createVariableBlockNode(document, genusName, ident.name, "command");
 
 				List<Node> socketNodes = resolver.getSocketNodes(genusName.substring("setter".length(), genusName.length()));
-				SocketsInfo sockets = calcSocketsInfo(socketNodes);
+				BlockSocketsModel sockets = calcSocketsInfo(socketNodes);
 
 				BlockElementModel right = parseExpr((UniExpr) (new UniBinOp(operator, new UniIdent(ident.name), new UniIntLiteral(1))), document, DOMUtil.getAttribute(blockElement, BlockElementModel.ID_ATTRIBUTE_TAG));
 
@@ -729,12 +742,12 @@ public class BlockGenerator {
 		binOpModel.addElement(BlockElementModel.TYPE_NODE_NAME, document, resolver.getType(binOpModel.getGenusName()), blockElement);
 
 		// plugの追加
-		PlugInfo plugInfo = new PlugInfo(resolver.getPlugElement(blockElement.getAttribute("genus-name")), parent);
+		BlockPlugModel plugInfo = new BlockPlugModel(resolver.getPlugElement(blockElement.getAttribute("genus-name")), parent);
 		binOpModel.setPlugElement(document, plugInfo);
 
 		// socketの追加
 		List<Node> socketNodes = resolver.getSocketNodes(blockElement.getAttribute("genus-name"));
-		SocketsInfo sockets = calcSocketsInfo(socketNodes);
+		BlockSocketsModel sockets = calcSocketsInfo(socketNodes);
 		binOpModel.addSocketsAndNodes(Lists.newArrayList(leftBlock, rightBlock), document, sockets);
 
 		return binOpModel;
@@ -766,7 +779,7 @@ public class BlockGenerator {
 
 			// ソケット情報を付与して返す
 			if (socketNodes != null) {
-				SocketsInfo sockets = calcSocketsInfo(socketNodes);
+				BlockSocketsModel sockets = calcSocketsInfo(socketNodes);
 				List<BlockElementModel> rightElement = new ArrayList<>();
 				rightElement.add(right);
 
@@ -805,7 +818,7 @@ public class BlockGenerator {
 		}
 		// genusnameからソケットのラベルとポジションタイプを作成
 		List<Node> whileSocketNodes = resolver.getSocketNodes("while");
-		SocketsInfo socketsInfo = calcSocketsInfo(whileSocketNodes);
+		BlockSocketsModel socketsInfo = calcSocketsInfo(whileSocketNodes);
 
 		model.addSocketsAndNodes(blockSockets, trueBlocks, document, socketsInfo);
 
@@ -856,7 +869,7 @@ public class BlockGenerator {
 		}
 
 		List<Node> ifSocketNodes = resolver.getSocketNodes("ifelse");
-		SocketsInfo socketsInfo = calcSocketsInfo(ifSocketNodes);
+		BlockSocketsModel socketsInfo = calcSocketsInfo(ifSocketNodes);
 
 		// ソケットの出力
 		model.addSocketsAndNodes(blockSockets, document, socketsInfo);
@@ -921,7 +934,7 @@ public class BlockGenerator {
 
 			model.addSocketsAndNodes(sockets, document, null);
 
-			PlugInfo plug = new PlugInfo("", BlockElementModel.convertTypeToBlockConnectorType(model.getType()), "single", parent);
+			BlockPlugModel plug = new BlockPlugModel("", BlockElementModel.convertTypeToBlockConnectorType(model.getType()), "single", parent);
 			model.setPlugElement(document, plug);
 
 			return model;
@@ -959,7 +972,7 @@ public class BlockGenerator {
 
 			// ソケットノードの作成
 			List<Node> socketNodes = resolver.getSocketNodes(caller.getGenusName());
-			SocketsInfo socketsInfo = calcSocketsInfo(socketNodes);
+			BlockSocketsModel socketsInfo = calcSocketsInfo(socketNodes);
 			caller.addSocketsAndNodes(Lists.newArrayList((BlockElementModel) receiverModel, (BlockElementModel) callMethodModel), document, socketsInfo);
 
 			return caller;
@@ -980,11 +993,11 @@ public class BlockGenerator {
 
 			// socketノードの作成
 			List<Node> socketNodes = resolver.getSocketNodes(caller.getGenusName());
-			SocketsInfo socketsInfo = calcSocketsInfo(socketNodes);
+			BlockSocketsModel socketsInfo = calcSocketsInfo(socketNodes);
 			caller.addSocketsAndNodes(Lists.newArrayList((BlockElementModel) receiverModel, (BlockElementModel) callMethodModel), document, socketsInfo);
 
 			// plugノードの追加
-			PlugInfo plug = new PlugInfo(resolver.getPlugElement(caller.getGenusName()), parent);
+			BlockPlugModel plug = new BlockPlugModel(resolver.getPlugElement(caller.getGenusName()), parent);
 			caller.setPlugElement(document, plug);
 			return caller;
 		}
@@ -994,13 +1007,13 @@ public class BlockGenerator {
 		BlockMethodCallModel caller = new BlockMethodCallModel(methodName, argModels, document, resolver, id,parentId);
 
 		List<Node> socketNodes = resolver.getSocketNodes(caller.getGenusName());
-		SocketsInfo socketsInfo = calcSocketsInfo(socketNodes);
+		BlockSocketsModel socketsInfo = calcSocketsInfo(socketNodes);
 
 		caller.addSocketsAndNodes(argModels, document, socketsInfo);
 
 		Node plugElement = resolver.getPlugElement(caller.getGenusName());
 		if (plugElement != null) {
-			caller.setPlugElement(document, new PlugInfo(plugElement, parentId));
+			caller.setPlugElement(document, new BlockPlugModel(plugElement, parentId));
 		}
 
 		return caller;

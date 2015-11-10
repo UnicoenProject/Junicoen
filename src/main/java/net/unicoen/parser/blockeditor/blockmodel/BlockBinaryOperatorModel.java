@@ -44,7 +44,7 @@ public class BlockBinaryOperatorModel extends BlockExprModel {
 	}
 
 	public String calcGenusName(String operator, BlockElementModel left, BlockElementModel right){
-		String type = calcConnectorType(left.getPlugAttribute(PlugInfo.CONNECTOR_TYPE_TAG), right.getPlugAttribute(PlugInfo.CONNECTOR_TYPE_TAG));
+		String type = calcConnectorType(left.getPlugAttribute(BlockPlugModel.CONNECTOR_TYPE_TAG), right.getPlugAttribute(BlockPlugModel.CONNECTOR_TYPE_TAG));
 		if (operator.equals("=")) {// 他の二項演算と扱いが別（ソケットが一つのみ）
 			return "";
 		} else if (operator.equals("&&")) {

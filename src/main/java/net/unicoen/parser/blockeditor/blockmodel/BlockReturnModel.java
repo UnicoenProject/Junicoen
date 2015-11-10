@@ -12,9 +12,9 @@ public class BlockReturnModel extends BlockCommandModel {
 
 	public BlockReturnModel(Element element, BlockExprModel socket, Document document) {
 		this.element = element;
-		List<SocketInfo> sockets = new ArrayList<SocketInfo>();
+		List<BlockSocketModel> sockets = new ArrayList<BlockSocketModel>();
 		//returnのソケットブロックを，resolverからコピーしてtype取得したほうが良いかも
 		addSocketInfoToList(sockets, socket);
-		addSocketsAndNodes(Lists.newArrayList((BlockElementModel)socket), document, new SocketsInfo(sockets));;
+		addSocketsAndNodes(Lists.newArrayList((BlockElementModel)socket), document, new BlockSocketsModel(sockets));;
 	}
 }

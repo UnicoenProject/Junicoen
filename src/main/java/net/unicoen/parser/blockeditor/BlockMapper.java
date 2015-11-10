@@ -32,8 +32,9 @@ import net.unicoen.node.UniVariableDec;
 import net.unicoen.node.UniWhile;
 import net.unicoen.parser.blockeditor.blockmodel.BlockElementModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockExCallGetterModel;
+import net.unicoen.parser.blockeditor.blockmodel.BlockProcedureModel;
 import net.unicoen.parser.blockeditor.blockmodel.PageModel;
-import net.unicoen.parser.blockeditor.blockmodel.SocketsInfo;
+import net.unicoen.parser.blockeditor.blockmodel.BlockSocketsModel;
 
 import org.apache.xerces.parsers.DOMParser;
 import org.w3c.dom.Document;
@@ -110,22 +111,22 @@ public class BlockMapper {
 			String name = node.getNodeName();
 			if (name.startsWith("#")) {
 				continue;
-			} else if (name.equals("BlockStub")) {
-				node = DOMUtil.getChildNode(node, "Block");
+			} else if (name.equals(BlockElementModel.BLOCK_STUB_NODE_NAME)) {
+				node = DOMUtil.getChildNode(node, BlockElementModel.BLOCK_NODE_NAME);
 			}
 
-			String nodeId = DOMUtil.getAttribute(node, "id");
-			String blockType = DOMUtil.getAttribute(node, "genus-name");
+			String nodeId = DOMUtil.getAttribute(node, BlockElementModel.ID_ATTRIBUTE_TAG);
+			String genusName = DOMUtil.getAttribute(node, BlockElementModel.GENUS_NAME_ATTRIBUTE_TAG);
 			map.put(nodeId, node);
-			if ("procedure".equals(blockType)) {
+			if (BlockProcedureModel.GENUS_NAME.equals(genusName)) {
 				procs.add(node);
 				if (returnTypes.get(nodeId) == null) {
 					returnTypes.put(nodeId, "void");
 				}
 			}
 
-			if ("return".equals(blockType)) {
-				Node socketNode = DOMUtil.getChildNode(DOMUtil.getChildNode(node, "Sockets"), "BlockConnector");
+			if ("return".equals(genusName)) {
+				Node socketNode = DOMUtil.getChildNode(getSocketsNode(node), "BlockConnector");
 				returnTypes.put(DOMUtil.getChildText(node, "ParentMethod"), getSocketType(socketNode));
 			}
 
@@ -137,7 +138,7 @@ public class BlockMapper {
 		String id = DOMUtil.getAttribute(node, "con-block-id");
 
 		if (id != null) {
-			type = DOMUtil.getChildText(map.get(id), "Type");
+			type = DOMUtil.getChildText(map.get(id), BlockElementModel.TYPE_NODE_NAME);
 		}
 
 		return type;
@@ -159,7 +160,7 @@ public class BlockMapper {
 
 		body.add(parseToExpr(bodyNode, map));
 
-		String nextNodeId = DOMUtil.getChildText(bodyNode, "AfterBlockId");
+		String nextNodeId = DOMUtil.getChildText(bodyNode, BlockElementModel.AFTERBLOCKID_NODE_NAME);
 		while (true) {
 			if (nextNodeId == null)
 				break;
@@ -167,7 +168,7 @@ public class BlockMapper {
 			// add body
 			UniExpr expr = parseToExpr(next, map);
 			body.add(expr);
-			nextNodeId = DOMUtil.getChildText(next, "AfterBlockId");
+			nextNodeId = DOMUtil.getChildText(next, BlockElementModel.AFTERBLOCKID_NODE_NAME);
 		}
 
 		UniBlock block = new UniBlock(body, null);
@@ -314,6 +315,8 @@ public class BlockMapper {
 			return binOp;
 		} else if (isNewInstanceCreation(blockGenusName)) {
 			UniNew uniNewModel = new UniNew(DOMUtil.getChildText(node, "Type"), new ArrayList<UniExpr>());
+			List<UniExpr> sockets = parseSocket(getSocketsNode(node), map);
+			uniNewModel.args = sockets;
 			return uniNewModel;
 		} else if(isExCallerGetterModel(blockGenusName)){
 			Node sockets= getSocketsNode(node);
@@ -545,7 +548,7 @@ public class BlockMapper {
 	}
 
 	public Node getSocketsNode(Node node){
-		return DOMUtil.getChildNode(node, SocketsInfo.NODE_NAME);
+		return DOMUtil.getChildNode(node, BlockSocketsModel.NODE_NAME);
 	}
 
 }

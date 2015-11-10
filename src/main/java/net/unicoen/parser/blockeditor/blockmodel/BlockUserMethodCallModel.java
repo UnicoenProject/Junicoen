@@ -42,14 +42,14 @@ public class BlockUserMethodCallModel extends BlockCommandModel{
 		return (Element) DOMUtil.getChildNode(getElement(), BlockElementModel.BLOCK_NODE_NAME);
 	}
 
-	public void addSocketsAndNodes(List<BlockElementModel> socketBlocks, Document document, SocketsInfo sockets){
+	public void addSocketsAndNodes(List<BlockElementModel> socketBlocks, Document document, BlockSocketsModel sockets){
 		//SocketsInfoの作成
-		List<SocketInfo> socketsInfo = new ArrayList<SocketInfo>();
+		List<BlockSocketModel> socketsInfo = new ArrayList<BlockSocketModel>();
 		for (BlockElementModel param : socketBlocks) {
 			addSocketInfoToList(socketsInfo, (BlockElementModel)param);
 		}
 
-		super.addSocketsAndNodes(socketBlocks, document, new SocketsInfo(socketsInfo));
+		super.addSocketsAndNodes(socketBlocks, document, new BlockSocketsModel(socketsInfo));
 	}
 
 }

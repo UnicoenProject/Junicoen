@@ -38,7 +38,7 @@ public class BlockWhileModel extends BlockCommandModel {
 		return commandBlocks;
 	}
 
-	public void addSocketsAndNodes(List<BlockElementModel> socketBlocks, List<BlockCommandModel> commands, Document document, SocketsInfo sockets) {
+	public void addSocketsAndNodes(List<BlockElementModel> socketBlocks, List<BlockCommandModel> commands, Document document, BlockSocketsModel sockets) {
 		addSocketsAndNodes(socketBlocks, document, sockets);
 		this.trueBlocks = commands;
 	}

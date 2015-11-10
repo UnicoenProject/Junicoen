@@ -25,6 +25,8 @@ public class BlockElementModel {
 	public static String NAME_NODE_NAME = "Name";
 	public static String LOCATION_NODE_NAME = "Location";
 	public static String BLOCK_STUB_NODE_NAME = "BlockStub";
+	public static String AFTERBLOCKID_NODE_NAME = "AfterBlockId";
+	public static String BEFOREBLOCKID_NODE_NAME = "BeforeBlockId";
 
 	private List<BlockElementModel> socketBlocksElements = new ArrayList<>();
 
@@ -152,7 +154,7 @@ public class BlockElementModel {
 	 * @param document
 	 * @param sockets
 	 */
-	public void addSocketsAndNodes(List<BlockElementModel> socketBlocks, Document document, SocketsInfo sockets){
+	public void addSocketsAndNodes(List<BlockElementModel> socketBlocks, Document document, BlockSocketsModel sockets){
 		for(BlockElementModel socket : socketBlocks){
 			addSocketBlock(socket);
 		}
@@ -160,7 +162,7 @@ public class BlockElementModel {
 	}
 
 
-	public void addSocketsNode(Document document, SocketsInfo sockets) {
+	public void addSocketsNode(Document document, BlockSocketsModel sockets) {
 		if (sockets.getSockets().size() > 0) {
 			Element socketsElement = document.createElement("Sockets");
 			socketsElement.setAttribute("num-sockets", String.valueOf(sockets.getSockets().size()));
@@ -174,15 +176,15 @@ public class BlockElementModel {
 		}
 	}
 
-	public void addSocketInfoToList(List<SocketInfo> sockets, BlockElementModel param) {
+	public void addSocketInfoToList(List<BlockSocketModel> sockets, BlockElementModel param) {
 		if (param != null) {
-			sockets.add(new SocketInfo("", "single", convertTypeToBlockConnectorType(param.getType()), "poly", param.getBlockID()));
+			sockets.add(new BlockSocketModel("", "single", convertTypeToBlockConnectorType(param.getType()), "poly", param.getBlockID()));
 		} else {
-			sockets.add(new SocketInfo("", "single", "poly", "poly", "-1"));
+			sockets.add(new BlockSocketModel("", "single", "poly", "poly", "-1"));
 		}
 	}
 
-	public void addSocketNode(Document document, Node socketsNode, SocketInfo socketInfo) {
+	public void addSocketNode(Document document, Node socketsNode, BlockSocketModel socketInfo) {
 		socketsNode.appendChild(socketInfo.createBlockConnectorElement(document));
 	}
 
@@ -203,7 +205,7 @@ public class BlockElementModel {
 	/**
 	 * このブロックのノードにPlugノードを追加する
 	 */
-	public void setPlugElement(Document document, PlugInfo plugInfo) {
+	public void setPlugElement(Document document, BlockPlugModel plugInfo) {
 		this.element.appendChild(plugInfo.createElemnet(document));
 	}
 

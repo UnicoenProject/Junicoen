@@ -20,7 +20,7 @@ public class BlockVariableGetterModel extends BlockExprModel {
 		this.element = stubElement;
 	}
 
-	public void setPlugElement(Document document, PlugInfo plugInfo){
+	public void setPlugElement(Document document, BlockPlugModel plugInfo){
 		DOMUtil.getChildNode(this.element, BlockElementModel.BLOCK_NODE_NAME).appendChild(plugInfo.createElemnet(document));
 	}
 

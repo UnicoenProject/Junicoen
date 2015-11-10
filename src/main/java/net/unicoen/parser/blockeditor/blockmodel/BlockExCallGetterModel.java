@@ -44,8 +44,24 @@ public class BlockExCallGetterModel extends BlockExprModel {
 	/**
 	 * このブロックのノードにPlugノードを追加する
 	 */
-	public void setPlugElement(Document document, PlugInfo plugInfo) {
+	public void setPlugElement(Document document, BlockPlugModel plugInfo) {
 		plugInfo.connectorType = convertTypeToBlockConnectorType(getType());
 		this.element.appendChild(plugInfo.createElemnet(document));
+	}
+
+	@Override
+	public void addSocketsNode(Document document, BlockSocketsModel sockets) {
+		if (sockets.getSockets().size() > 0) {
+			Element socketsElement = document.createElement("Sockets");
+			socketsElement.setAttribute("num-sockets", String.valueOf(sockets.getSockets().size()));
+			for (int i = 0;i<sockets.getSockets().size();i++) {
+				if(getSocketBlocks().size() > i && getSocketBlocks().get(i)!= null){
+					sockets.getSockets().get(i).setConnectorBlockID(getSocketBlocks().get(i).getBlockID());
+					sockets.getSockets().get(i).connectorType = convertTypeToBlockConnectorType(getSocketBlocks().get(i).getType());
+				}
+				addSocketNode(document, socketsElement, sockets.getSockets().get(i));
+			}
+			getBlockElement().appendChild(socketsElement);
+		}
 	}
 }
