@@ -8,7 +8,7 @@ import org.w3c.dom.Element;
 
 public class BlockExCallGetterModel extends BlockExprModel {
 
-	private static String GENUS_NAME = "callGetterMethod2";
+	public static String GENUS_NAME = "callGetterMethod2";
 	private static String KIND = "function";
 
 	private BlockElementModel methodBlock;

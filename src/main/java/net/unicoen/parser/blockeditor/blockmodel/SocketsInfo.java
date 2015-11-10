@@ -8,6 +8,8 @@ import org.w3c.dom.Element;
 
 public class SocketsInfo {
 
+	public static String NODE_NAME = "Sockets";
+
 	private List<SocketInfo> sockets = new ArrayList<>();
 
 	public SocketsInfo(List<SocketInfo> sockets){
@@ -23,7 +25,7 @@ public class SocketsInfo {
 	}
 
 	public Element createSocketsElement(Document document){
-		Element socketsElement = document.createElement("Sockets");
+		Element socketsElement = document.createElement(NODE_NAME);
 		socketsElement.setAttribute("num-sockets", String.valueOf(sockets.size()));
 		for (SocketInfo socket : sockets) {
 			socketsElement.appendChild(socket.createBlockConnectorElement(document));

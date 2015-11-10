@@ -30,7 +30,10 @@ import net.unicoen.node.UniStringLiteral;
 import net.unicoen.node.UniUnaryOp;
 import net.unicoen.node.UniVariableDec;
 import net.unicoen.node.UniWhile;
+import net.unicoen.parser.blockeditor.blockmodel.BlockElementModel;
+import net.unicoen.parser.blockeditor.blockmodel.BlockExCallGetterModel;
 import net.unicoen.parser.blockeditor.blockmodel.PageModel;
+import net.unicoen.parser.blockeditor.blockmodel.SocketsInfo;
 
 import org.apache.xerces.parsers.DOMParser;
 import org.w3c.dom.Document;
@@ -85,7 +88,7 @@ public class BlockMapper {
 
 	public UniClassDec createProcotypeClassModel(File xmlFile) {
 		UniClassDec classDec = new UniClassDec();
-		classDec.className = getPageNameFromXML(xmlFile);
+		classDec.className = xmlFile.getName().substring(0, xmlFile.getName().indexOf(".xml"));
 		classDec.modifiers = new ArrayList<String>();
 		classDec.modifiers.add("");
 
@@ -312,12 +315,22 @@ public class BlockMapper {
 		} else if (isNewInstanceCreation(blockGenusName)) {
 			UniNew uniNewModel = new UniNew(DOMUtil.getChildText(node, "Type"), new ArrayList<UniExpr>());
 			return uniNewModel;
+		} else if(isExCallerGetterModel(blockGenusName)){
+			Node sockets= getSocketsNode(node);
+			List<UniExpr> args = parseSocket(sockets, map);
+			UniMethodCall method = (UniMethodCall)args.get(1);
+			method.receiver = args.get(0);
+			return method;
 		} else {
 			// MethodCallとする
 			// TODO should fix
-			UniMethodCall call = new UniMethodCall(null, DOMUtil.getChildText(resolver.getBlockNode(blockGenusName), "Name"), functionArgs);
+			UniMethodCall call = new UniMethodCall(null, DOMUtil.getChildText(resolver.getBlockNode(blockGenusName), BlockElementModel.NAME_NODE_NAME), functionArgs);
 			return call;
 		}
+	}
+
+	public boolean isExCallerGetterModel(String genusName){
+		return genusName.equals(BlockExCallGetterModel.GENUS_NAME);
 	}
 
 	public boolean isNewInstanceCreation(String blockType) {
@@ -529,6 +542,10 @@ public class BlockMapper {
 			e.printStackTrace();
 			throw new RuntimeException("Fail to parse", e);
 		}
+	}
+
+	public Node getSocketsNode(Node node){
+		return DOMUtil.getChildNode(node, SocketsInfo.NODE_NAME);
 	}
 
 }
