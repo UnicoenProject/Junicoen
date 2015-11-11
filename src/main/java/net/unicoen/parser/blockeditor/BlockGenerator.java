@@ -178,9 +178,7 @@ public class BlockGenerator {
 		addUserDefineMethodToResolver(classDec);
 
 		parseFieldVariable(classDec, model);
-
-		for (int i = 0 ; i < classDec.members.size(); i++) {
-			UniMemberDec member = classDec.members.get(i);
+		for (UniMemberDec member : classDec.members) {
 			// フィールドメソッドの解析
 			if (member instanceof UniMemberDec) {
 				UniMethodDec mDec = (UniMethodDec) member;
@@ -188,8 +186,8 @@ public class BlockGenerator {
 
 				if (!isMainMethod(mDec)) {
 					BlockProcedureModel blockMethodCall = parseFunctionDec(mDec, document);
+					addLocation(blockMethodCall, document, model.getMethods().size());
 					model.addMethod(blockMethodCall);
-					addLocation(blockMethodCall, document, i);
 				}
 			}
 		}
@@ -197,7 +195,7 @@ public class BlockGenerator {
 	}
 
 	public void addLocation(BlockElementModel mDec, Document document, int size){
-		int x = 50 + 100 * size;
+		int x = 50 + 200 * size;
 		int y = 50;
 		if(size % 6 == 0 && size!=0){
 			y = 100 + 200 * (size/6);

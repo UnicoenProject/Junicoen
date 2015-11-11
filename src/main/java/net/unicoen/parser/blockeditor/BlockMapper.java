@@ -62,22 +62,25 @@ public class BlockMapper {
 		Map<String, String> methodsReturnTypes = new HashMap<>();// 返り値の型を保持する
 
 		// mapに全てのBlockNodeを,procsに全てのメソッド定義のBlockNodeを保存する
-		putAllBlockNodes(pageBlock, procs, methodsReturnTypes);
+		putAllBlockNodes(pageBlock, procs);
+
+		putReturnTypesToMap(pageBlock, procs, methodsReturnTypes);
 
 		List<UniMemberDec> ret = new ArrayList<>();
 		for (Node procNode : procs) {
-			UniMethodDec d = new UniMethodDec(DOMUtil.getChildText(procNode, "Label"), new ArrayList<>(), methodsReturnTypes.get(DOMUtil.getAttribute(procNode, "id")), new ArrayList<>(), null);
+			UniMethodDec d = new UniMethodDec(DOMUtil.getChildText(procNode, BlockElementModel.LABEL_NODE_NAME), new ArrayList<>(), methodsReturnTypes.get(DOMUtil.getAttribute(procNode, BlockElementModel.ID_ATTRIBUTE_TAG)), new ArrayList<>(), null);
 			d.modifiers.add("public");
 			d.args = new ArrayList<>();
 
 			UniBlock body = new UniBlock(new ArrayList<>(), null);
 
-			String nextNodeId = DOMUtil.getChildText(procNode, "AfterBlockId");
+			String nextNodeId = DOMUtil.getChildText(procNode, BlockElementModel.AFTERBLOCKID_NODE_NAME);
 			if (nextNodeId != null) {
 				body = parseBody(map.get(nextNodeId), map);
 			}
 
 			d.block = body;
+			d.returnType = methodsReturnTypes.get(DOMUtil.getAttribute(procNode, BlockElementModel.ID_ATTRIBUTE_TAG));
 			ret.add(d);
 			variableResolver.resetLocalVariables();
 		}
@@ -85,6 +88,32 @@ public class BlockMapper {
 		classDec.members = ret;
 
 		return classDec;
+	}
+
+	public void putReturnTypesToMap(Node pageBlock, ArrayList<Node> procs, Map<String, String> returnTypes){
+		// xmlのPageの子ノードから，メソッド定義のBlockノードのみを抽出する
+		for (Node node : DOMUtil.eachChild(pageBlock)) {
+			String name = node.getNodeName();
+			if (name.startsWith("#")) {
+				continue;
+			} else if (name.equals(BlockElementModel.BLOCK_STUB_NODE_NAME)) {
+				node = DOMUtil.getChildNode(node, BlockElementModel.BLOCK_NODE_NAME);
+			}
+			String genusName = DOMUtil.getAttribute(node, BlockElementModel.GENUS_NAME_ATTRIBUTE_TAG);
+			String nodeId = DOMUtil.getAttribute(node, BlockElementModel.ID_ATTRIBUTE_TAG);
+
+			if (BlockProcedureModel.GENUS_NAME.equals(genusName)) {
+				procs.add(node);
+				if (returnTypes.get(nodeId) == null) {
+					returnTypes.put(nodeId, "void");
+				}
+			}
+
+			if ("return".equals(genusName)) {
+				Node socketNode = DOMUtil.getChildNode(getSocketsNode(node), "BlockConnector");
+				returnTypes.put(DOMUtil.getAttribute(getTopBlockNode(node), BlockElementModel.ID_ATTRIBUTE_TAG), getSocketType(socketNode));
+			}
+		}
 	}
 
 	public UniClassDec createProcotypeClassModel(File xmlFile) {
@@ -105,7 +134,7 @@ public class BlockMapper {
 		return d;
 	}
 
-	public void putAllBlockNodes(Node pageBlock, ArrayList<Node> procs, Map<String, String> returnTypes) {
+	public void putAllBlockNodes(Node pageBlock, ArrayList<Node> procs) {
 		// xmlのPageの子ノードから，メソッド定義のBlockノードのみを抽出する
 		for (Node node : DOMUtil.eachChild(pageBlock)) {
 			String name = node.getNodeName();
@@ -116,21 +145,25 @@ public class BlockMapper {
 			}
 
 			String nodeId = DOMUtil.getAttribute(node, BlockElementModel.ID_ATTRIBUTE_TAG);
-			String genusName = DOMUtil.getAttribute(node, BlockElementModel.GENUS_NAME_ATTRIBUTE_TAG);
 			map.put(nodeId, node);
-			if (BlockProcedureModel.GENUS_NAME.equals(genusName)) {
-				procs.add(node);
-				if (returnTypes.get(nodeId) == null) {
-					returnTypes.put(nodeId, "void");
-				}
-			}
-
-			if ("return".equals(genusName)) {
-				Node socketNode = DOMUtil.getChildNode(getSocketsNode(node), "BlockConnector");
-				returnTypes.put(DOMUtil.getChildText(node, "ParentMethod"), getSocketType(socketNode));
-			}
-
 		}
+	}
+
+	public Node getTopBlockNode(Node node){
+		if(BlockProcedureModel.GENUS_NAME.equals(DOMUtil.getAttribute(node, BlockElementModel.GENUS_NAME_ATTRIBUTE_TAG))){
+			return node;
+		}
+		Node tmpNode = node;
+
+		while(tmpNode != null){
+			if(DOMUtil.getChildNode(tmpNode, BlockElementModel.BEFOREBLOCKID_NODE_NAME) == null){
+				return tmpNode;
+			}
+			String beforeBlockID = DOMUtil.getChildText(node, BlockElementModel.BEFOREBLOCKID_NODE_NAME);
+			tmpNode = map.get(beforeBlockID);
+		}
+
+		return tmpNode;
 	}
 
 	public String getSocketType(Node node) {

@@ -21,6 +21,10 @@ public class BlockClassModel {
 		return pageBlocksElement;
 	}
 
+	public List<BlockProcedureModel> getMethods(){
+		return this.methods;
+	}
+
 	public void addMethod(BlockProcedureModel method) {
 		this.methods.add(method);
 	}
