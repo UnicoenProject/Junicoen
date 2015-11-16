@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<cb:CODEBLOCKS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://education.mit.edu/openblocks/ns http://education.mit.edu/openblocks/codeblocks.xsd" xmlns:cb="http://education.mit.edu/openblocks/ns">
+<Pages collapsible-pages="no">
+<Page page-color="40 40 40" page-drawer="" page-infullview="yew" page-name="Special" page-width="1366">
+<PageBlocks>
+<Block genus-name="procedure" id="2000" kind="procedure">
+<Label>start</Label>
+<ReturnType>void</ReturnType>
+<Location>
+<X>50</X>
+<Y>50</Y>
+</Location>
+<Sockets num-sockets="1">
+<BlockConnector connector-kind="socket" connector-type="poly" init-type="poly" label="" position-type="single"/>
+</Sockets>
+<AfterBlockId>2001</AfterBlockId>
+<Location>
+<X>50</X>
+<Y>50</Y>
+</Location>
+</Block>
+<Block genus-name="special" id="2001" kind="local-variable">
+<Label>Long型の変数を作り、lと名付ける</Label>
+<Name>l</Name>
+<Type>Long</Type>
+<AfterBlockId>2002</AfterBlockId>
+<BeforeBlockId>2000</BeforeBlockId>
+</Block>
+<Block genus-name="local-var-int-number" id="2002" kind="local-variable">
+<Label>i</Label>
+<Name>i</Name>
+<Type>int</Type>
+<Sockets num-sockets="1">
+<BlockConnector connector-kind="socket" connector-type="number" init-type="number" label="初期値" position-type="single"/>
+</Sockets>
+<BeforeBlockId>2001</BeforeBlockId>
+</Block>
+</PageBlocks>
+</Page>
+</Pages>
+</cb:CODEBLOCKS>

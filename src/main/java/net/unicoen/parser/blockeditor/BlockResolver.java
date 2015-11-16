@@ -19,6 +19,7 @@ public class BlockResolver {
 
 	private String langdefRootPath = "not available";
 	public static final String ORIGIN_LANG_DEF_ROOT_PATH = "ext/block2/";
+	public static final String ORIGIN_LANG_DEF_ROOT_PATH_FOR_UNI = "blockeditor/blocks/";
 
 	private Map<String, String> turtleMethods = new HashMap<String, String>();//key:methodname, value:genusname
 	private Map<String, Node> allAvailableBlocks = new HashMap<String, Node>();//key:genusname, value:node
@@ -28,10 +29,14 @@ public class BlockResolver {
 	private VariableNameResolver vnResolver = new VariableNameResolver();
 	private FieldMethodResolver fieldMethodResolver = new FieldMethodResolver();
 
-	public BlockResolver(String langdefRootPath) {
+	public BlockResolver(String langdefRootPath, boolean isTest) {
 		this.langdefRootPath = langdefRootPath;
 		parseGnuses();
-		parseTurtleXml();
+		if(!isTest){
+			parseTurtleXml(ORIGIN_LANG_DEF_ROOT_PATH + "method_lang_def.xml");
+		}else{
+			parseTurtleXml(ORIGIN_LANG_DEF_ROOT_PATH_FOR_UNI + "method_lang_def.xml");
+		}
 	}
 
 	public VariableNameResolver getVariableNameResolver(){
@@ -113,7 +118,7 @@ public class BlockResolver {
 		// 利用可能な変数型リストに登録
 		if ("param".equals(DOMUtil.getAttribute(node, "kind"))) {
 			this.availableFunctionArgsTypes.put(DOMUtil.getChildNode(node, "Type").getTextContent(),DOMUtil.getAttribute(node, "name"));
-		}else if("local-variable".equals(DOMUtil.getAttribute(node, "kind"))){
+		}else if("local-variable".equals(DOMUtil.getAttribute(node, "kind")) && !"special-local-var".equals(DOMUtil.getAttribute(node, "genus-name"))){
 			// 利用可能な関数の引数の型マップに登録
 			this.availableLocalVariableDecralationTypes.put(DOMUtil.getChildNode(node, "Type").getTextContent(), DOMUtil.getAttribute(node, "name"));
 		}else if ("global-variable".equals(DOMUtil.getAttribute(node, "kind"))) {
@@ -121,11 +126,11 @@ public class BlockResolver {
 		}
 	}
 
-	public void parseTurtleXml() {
+	public void parseTurtleXml(String methodLangDefPath) {
 		DOMParser parser = new DOMParser();
 		// lang_def.xmlを読み込む
 		try {
-			parser.parse(ORIGIN_LANG_DEF_ROOT_PATH + "method_lang_def.xml");
+			parser.parse(methodLangDefPath);
 
 			Document doc = parser.getDocument();
 			Element root = doc.getDocumentElement();

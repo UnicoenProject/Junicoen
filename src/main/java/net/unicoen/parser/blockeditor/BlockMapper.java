@@ -33,8 +33,8 @@ import net.unicoen.node.UniWhile;
 import net.unicoen.parser.blockeditor.blockmodel.BlockElementModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockExCallGetterModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockProcedureModel;
-import net.unicoen.parser.blockeditor.blockmodel.PageModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockSocketsModel;
+import net.unicoen.parser.blockeditor.blockmodel.PageModel;
 
 import org.apache.xerces.parsers.DOMParser;
 import org.w3c.dom.Document;
@@ -50,7 +50,7 @@ public class BlockMapper {
 	private BlockResolver resolver;
 
 	public BlockMapper(String langdefRootPath) {
-		resolver = new BlockResolver(langdefRootPath);
+		resolver = new BlockResolver(langdefRootPath, false);
 	}
 
 	public UniClassDec parse(File xmlFile) {

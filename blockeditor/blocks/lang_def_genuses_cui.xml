@@ -77,12 +77,12 @@
 <BlockGenus name="local-var-object-Scanner" kind="local-variable"
 	initlabel="scanner" header-label="Scanner型の変数を作り、" footer-label="と名付ける"
 	editable-label="yes" label-unique="yes" color="230 0 255 ">
+	<Type>Scanner</Type>
 	<BlockConnectors>
 		<BlockConnector label="初期値" connector-kind="socket" connector-type="object">
 			<DefaultArg genus-name="new-object-withobject" label="Scanner"></DefaultArg>
 		</BlockConnector>
 	</BlockConnectors>
-	<Type>Scanner</Type>
 	<Stubs>
 		<Stub stub-genus="getter">
 			<LangSpecProperties>

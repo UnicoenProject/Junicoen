@@ -20,14 +20,14 @@
 	color="255 80 0">
 	<BlockConnectors>
 		<BlockConnector label="かどうか調べて" connector-kind="socket"
-			connector-type="boolean" position-type="single">
+			connector-type="boolean">
 			<DefaultArg genus-name="equals-number" label="等しい"></DefaultArg>
 		</BlockConnector>
 		<BlockConnector label="真のとき" connector-kind="socket"
-			connector-type="cmd" position-type="single">
+			connector-type="cmd">
 		</BlockConnector>
 		<BlockConnector label="偽のとき" connector-kind="socket"
-			connector-type="cmd" position-type="single"></BlockConnector>
+			connector-type="cmd"></BlockConnector>
 	</BlockConnectors>
 	<LangSpecProperties>
 		<LangSpecProperty key="vm-cmd-name" value="ifelse"></LangSpecProperty>
@@ -37,11 +37,11 @@
 <BlockGenus name="while" kind="command" initlabel="繰返" color="255 80 0">
 	<BlockConnectors>
 		<BlockConnector label="かどうか調べて" connector-kind="socket"
-			connector-type="boolean" position-type="single">
+			connector-type="boolean">
 			<DefaultArg genus-name="lessthanorequalto" label="≤"></DefaultArg>
 		</BlockConnector>
 		<BlockConnector label="真の間" connector-kind="socket"
-			connector-type="cmd" position-type="single"></BlockConnector>
+			connector-type="cmd"></BlockConnector>
 	</BlockConnectors>
 	<LangSpecProperties>
 		<LangSpecProperty key="vm-cmd-name" value="repeat"></LangSpecProperty>
@@ -51,7 +51,7 @@
 <BlockGenus name="dowhile" kind="command" initlabel="1回以上繰返" color="255 80 0">
 	<BlockConnectors>
 		<BlockConnector label="真の間" connector-kind="socket"
-			connector-type="cmd"></BlockConnector>	
+			connector-type="cmd"></BlockConnector>
 		<BlockConnector label="かどうか調べて" connector-kind="socket"
 			connector-type="boolean">
 			<DefaultArg genus-name="lessthanorequalto" label="≤"></DefaultArg>

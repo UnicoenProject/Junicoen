@@ -68,6 +68,7 @@ import net.unicoen.parser.blockeditor.blockmodel.BlockPrePostModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockProcParmModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockProcedureModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockReturnModel;
+import net.unicoen.parser.blockeditor.blockmodel.BlockSpecialModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockStringLiteralModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockUserMethodCallModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockUserMethodCallWithReturnModel;
@@ -108,7 +109,12 @@ public class BlockGenerator {
 
 	public BlockGenerator(PrintStream out, String langdefRootPath) {
 		this.out = out;
-		resolver = new BlockResolver(langdefRootPath);
+		resolver = new BlockResolver(langdefRootPath, false);
+	}
+
+	public BlockGenerator(PrintStream out, String langdefRootPath, boolean isTest) {
+		this.out = out;
+		resolver = new BlockResolver(langdefRootPath, isTest);
 	}
 
 	/*
@@ -194,11 +200,11 @@ public class BlockGenerator {
 		return model;
 	}
 
-	public void addLocation(BlockElementModel mDec, Document document, int size){
+	public void addLocation(BlockElementModel mDec, Document document, int size) {
 		int x = 50 + 200 * size;
 		int y = 50;
-		if(size % 6 == 0 && size!=0){
-			y = 100 + 200 * (size/6);
+		if (size % 6 == 0 && size != 0) {
+			y = 100 + 200 * (size / 6);
 		}
 
 		mDec.addLocationElement(document, Integer.toString(x), Integer.toString(y), mDec.getBlockElement());
@@ -432,7 +438,10 @@ public class BlockGenerator {
 
 			return getterModel;
 		} else {
-			throw new RuntimeException("illegal variable:" + expr.name);
+			BlockSpecialModel model = new BlockSpecialModel(expr.name, document, ID_COUNTER++, "data", parent);
+			BlockPlugModel plugInfo = new BlockPlugModel("", "object", "mirror", parent);
+			model.setPlugElement(document, plugInfo);
+			return model;
 		}
 	}
 
@@ -559,29 +568,6 @@ public class BlockGenerator {
 			}
 
 			return new BlockSocketsModel(sockets);
-		}
-	}
-
-	public Map<String, String[]> calcSocketsInfoByElement(List<Element> socketNodes) {
-		if (socketNodes.size() <= 0) {
-			return null;
-		} else {
-			Map<String, String[]> socketsInfo = new HashMap<>();
-			String[] socketLabels = new String[socketNodes.size()];
-			String[] socketTypes = new String[socketNodes.size()];
-			String[] socketPositionTypes = new String[socketNodes.size()];
-
-			for (int i = 0; i < socketNodes.size(); i++) {
-				socketLabels[i] = DOMUtil.getAttribute(socketNodes.get(i), "label");
-				socketTypes[i] = DOMUtil.getAttribute(socketNodes.get(i), "connector-type");
-				socketPositionTypes[i] = DOMUtil.getAttribute(socketNodes.get(i), "position-type");
-			}
-
-			socketsInfo.put("label", socketLabels);
-			socketsInfo.put("connector-type", socketTypes);
-			socketsInfo.put("position-type", socketPositionTypes);
-
-			return socketsInfo;
 		}
 	}
 
@@ -896,10 +882,10 @@ public class BlockGenerator {
 			for (UniExpr arg : method.args) {
 				sockets.add(parseExpr(arg, document, DOMUtil.getAttribute(prototype, BlockElementModel.ID_ATTRIBUTE_TAG)));
 			}
-			// TODO trycatchで囲んで，メソッドコールの生成に失敗したらspecialブロックを作成する
+
 			return createMethodCallModel(method.methodName, sockets, document, callerId, parent);
 		} else {
-			return createExMethodCallModel(method,  document, parent);
+			return createExMethodCallModel(method, document, parent);
 		}
 	}
 
@@ -911,10 +897,36 @@ public class BlockGenerator {
 			}
 		});
 		String tmpGenusName = BlockMethodCallModel.calcMethodCallGenusName(methodName, socketTypes, resolver);
-		if (resolver.getFieldMethodInfo().isFieldMethod(tmpGenusName)) {
-			return createDefinedMethodCallerModel(methodName, sockets, callerId, document, parent);
-		} else {
-			return createLibraryMethodCallModel(methodName, callerId, sockets, document, parent);
+		try {
+			if (resolver.getFieldMethodInfo().isFieldMethod(tmpGenusName)) {
+				return createDefinedMethodCallerModel(methodName, sockets, callerId, document, parent);
+			} else {
+				return createLibraryMethodCallModel(methodName, callerId, sockets, document, parent);
+			}
+		} catch (Exception e) {
+			//create special
+			return createSpecialMethodCallModel(methodName, sockets,document, callerId, parent);
+		}
+	}
+
+
+	public BlockElementModel createSpecialMethodCallModel(String methodName, List<BlockElementModel> sockets, Document document, Long callerId, String parentId){
+		String kind="";
+
+		if(parentId != null){
+			kind = "function";
+			BlockSpecialModel model = new BlockSpecialModel(methodName,document, ID_COUNTER++, kind, parentId);
+			model.addSocketsAndNodes(sockets, document, null);
+
+			BlockPlugModel plug = new BlockPlugModel("", "poly", "single", parentId);
+			model.setPlugElement(document, plug);
+
+			return model;
+		}else{
+			kind = "command";
+			BlockSpecialModel model = new BlockSpecialModel(methodName,document, ID_COUNTER++, kind, parentId);
+			model.addSocketsAndNodes(sockets, document, null);
+			return model;
 		}
 	}
 
@@ -962,8 +974,7 @@ public class BlockGenerator {
 			}
 
 			// id, methodNameを使って，ライブラリメソッドor他のオブジェクトのフィールドメソッドモデルを生成
-			BlockElementModel callMethodModel = createMethodCallModel(method.methodName,  sockets, document, callerId, caller.getBlockID());
-
+			BlockElementModel callMethodModel = createMethodCallModel(method.methodName, sockets, document, callerId, caller.getBlockID());
 
 			// モデルにソケットに結合されるモデルを追加
 			caller.setCallMethod((BlockCommandModel) callMethodModel);
@@ -1002,7 +1013,7 @@ public class BlockGenerator {
 	}
 
 	public BlockElementModel createLibraryMethodCallModel(String methodName, Long id, List<BlockElementModel> argModels, Document document, String parentId) {
-		BlockMethodCallModel caller = new BlockMethodCallModel(methodName, argModels, document, resolver, id,parentId);
+		BlockMethodCallModel caller = new BlockMethodCallModel(methodName, argModels, document, resolver, id, parentId);
 
 		List<Node> socketNodes = resolver.getSocketNodes(caller.getGenusName());
 		BlockSocketsModel socketsInfo = calcSocketsInfo(socketNodes);
