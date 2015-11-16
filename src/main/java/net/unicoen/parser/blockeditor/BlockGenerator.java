@@ -447,13 +447,12 @@ public class BlockGenerator {
 
 	public BlockElementModel parseFor(UniFor forExpr, Document document, String parent) {
 		// whileをもつ抽象化ブロックを作成して返す
-		UniBlock forBlock = new UniBlock(new ArrayList<>(), null);
+		UniBlock forBlock = new UniBlock(new ArrayList<>(), "for");
 		if (forExpr.init != null) {
 			forBlock.body.add(forExpr.init);
 		}
-
+		UniBlock block = (UniBlock) forExpr.statement;
 		if (forExpr.step != null) {
-			UniBlock block = (UniBlock) forExpr.statement;
 			block.body.add(forExpr.step);
 		}
 
@@ -612,12 +611,13 @@ public class BlockGenerator {
 			}
 
 			if (parent == null) {
-				// i++;とか i = i+1に変換
-				genusName += DOMUtil.getAttribute(varDecNode, "genus-name");
+				// i = i+1に変換
+				genusName += DOMUtil.getAttribute(varDecNode, BlockElementModel.GENUS_NAME_ATTRIBUTE_TAG);
 				// BlockStubノード作成
 				Element blockStubElement = createBlockStubNode(document, ident.name, DOMUtil.getAttribute(varDecNode, "genus-name"));
 				// Blockノード作成
 				Element blockElement = createVariableBlockNode(document, genusName, ident.name, "command");
+				blockStubElement.appendChild(blockElement);
 
 				List<Node> socketNodes = resolver.getSocketNodes(genusName.substring("setter".length(), genusName.length()));
 				BlockSocketsModel sockets = calcSocketsInfo(socketNodes);

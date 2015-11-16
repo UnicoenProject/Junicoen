@@ -118,7 +118,7 @@ public class BlockResolver {
 		// 利用可能な変数型リストに登録
 		if ("param".equals(DOMUtil.getAttribute(node, "kind"))) {
 			this.availableFunctionArgsTypes.put(DOMUtil.getChildNode(node, "Type").getTextContent(),DOMUtil.getAttribute(node, "name"));
-		}else if("local-variable".equals(DOMUtil.getAttribute(node, "kind")) && !"special-local-var".equals(DOMUtil.getAttribute(node, "genus-name"))){
+		}else if("local-variable".equals(DOMUtil.getAttribute(node, "kind"))){
 			// 利用可能な関数の引数の型マップに登録
 			this.availableLocalVariableDecralationTypes.put(DOMUtil.getChildNode(node, "Type").getTextContent(), DOMUtil.getAttribute(node, "name"));
 		}else if ("global-variable".equals(DOMUtil.getAttribute(node, "kind"))) {

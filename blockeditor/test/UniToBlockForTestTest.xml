@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<cb:CODEBLOCKS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://education.mit.edu/openblocks/ns http://education.mit.edu/openblocks/codeblocks.xsd" xmlns:cb="http://education.mit.edu/openblocks/ns">
+<Pages collapsible-pages="no">
+<Page page-color="40 40 40" page-drawer="" page-infullview="yew" page-name="UniToBlockForTest" page-width="1366">
+<PageBlocks>
+<Block genus-name="procedure" id="2000" kind="procedure">
+<Label>start</Label>
+<ReturnType>void</ReturnType>
+<Location>
+<X>50</X>
+<Y>50</Y>
+</Location>
+<Sockets num-sockets="1">
+<BlockConnector connector-kind="socket" connector-type="poly" init-type="poly" label="" position-type="single"/>
+</Sockets>
+<AfterBlockId>2001</AfterBlockId>
+<Location>
+<X>50</X>
+<Y>50</Y>
+</Location>
+</Block>
+<Block genus-name="local-var-int-number" id="2002" kind="local-variable">
+<Label>i</Label>
+<Name>i</Name>
+<Type>int</Type>
+<Sockets num-sockets="1">
+<BlockConnector con-block-id="2003" connector-kind="socket" connector-type="number" init-type="number" label="初期値" position-type="single"/>
+</Sockets>
+<BeforeBlockId>2001</BeforeBlockId>
+<AfterBlockId>2004</AfterBlockId>
+</Block>
+<Block genus-name="number" id="2003" kind="data">
+<Label>1</Label>
+<Type>int</Type>
+<ParentBlock>2002</ParentBlock>
+<Plug>
+<BlockConnector con-block-id="2002" connector-kind="plug" connector-type="number" init-type="number" label="" position-type="mirror"/>
+</Plug>
+</Block>
+<Block genus-name="while" id="2004" kind="command">
+<Sockets num-sockets="2">
+<BlockConnector con-block-id="2005" connector-kind="socket" connector-type="boolean" init-type="boolean" label="かどうか調べて" position-type="single"/>
+<BlockConnector con-block-id="2008" connector-kind="socket" connector-type="cmd" init-type="cmd" label="真の間" position-type="single"/>
+</Sockets>
+<BeforeBlockId>2002</BeforeBlockId>
+</Block>
+<BlockStub>
+<StubParentName>i</StubParentName>
+<StubParentGenus>local-var-int-number</StubParentGenus>
+<Block genus-name="getterlocal-var-int-number" id="2006" kind="data">
+<Label>i</Label>
+<Name>i</Name>
+<Type>int</Type>
+<Plug>
+<BlockConnector con-block-id="2005" connector-kind="plug" connector-type="number" init-type="number" label="" position-type="mirror"/>
+</Plug>
+</Block>
+</BlockStub>
+<Block genus-name="number" id="2007" kind="data">
+<Label>3</Label>
+<Type>int</Type>
+<ParentBlock>2005</ParentBlock>
+<Plug>
+<BlockConnector con-block-id="2005" connector-kind="plug" connector-type="number" init-type="number" label="" position-type="mirror"/>
+</Plug>
+</Block>
+<Block genus-name="lessthan" id="2005" kind="function">
+<Type>boolean</Type>
+<Plug>
+<BlockConnector con-block-id="2004" connector-kind="plug" connector-type="boolean" init-type="boolean" label="" position-type="mirror"/>
+</Plug>
+<Sockets num-sockets="2">
+<BlockConnector con-block-id="2006" connector-kind="socket" connector-type="number" init-type="number" label="" position-type="bottom"/>
+<BlockConnector con-block-id="2007" connector-kind="socket" connector-type="number" init-type="number" label="" position-type="bottom"/>
+</Sockets>
+</Block>
+<Block genus-name="Turtle-fd[@int]" id="2008" kind="command">
+<Name>fd</Name>
+<Sockets num-sockets="1">
+<BlockConnector con-block-id="2009" connector-kind="socket" connector-type="number" init-type="number" label="歩数" position-type="single"/>
+</Sockets>
+<BeforeBlockId>2004</BeforeBlockId>
+<AfterBlockId>2010</AfterBlockId>
+</Block>
+<Block genus-name="number" id="2009" kind="data">
+<Label>50</Label>
+<Type>int</Type>
+<ParentBlock>2008</ParentBlock>
+<Plug>
+<BlockConnector con-block-id="2008" connector-kind="plug" connector-type="number" init-type="number" label="" position-type="mirror"/>
+</Plug>
+</Block>
+<BlockStub>
+<StubParentName>i</StubParentName>
+<StubParentGenus>local-var-int-number</StubParentGenus>
+<Block genus-name="setterlocal-var-int-number" id="2010" kind="command">
+<Label>i</Label>
+<Name>i</Name>
+<Sockets num-sockets="1">
+<BlockConnector con-block-id="2011" connector-kind="socket" connector-type="number" init-type="number" label="初期値" position-type="single"/>
+</Sockets>
+<BeforeBlockId>2008</BeforeBlockId>
+</Block>
+</BlockStub>
+<BlockStub>
+<StubParentName>i</StubParentName>
+<StubParentGenus>local-var-int-number</StubParentGenus>
+<Block genus-name="getterlocal-var-int-number" id="2012" kind="data">
+<Label>i</Label>
+<Name>i</Name>
+<Type>int</Type>
+<Plug>
+<BlockConnector con-block-id="2011" connector-kind="plug" connector-type="number" init-type="number" label="" position-type="mirror"/>
+</Plug>
+</Block>
+</BlockStub>
+<Block genus-name="number" id="2013" kind="data">
+<Label>1</Label>
+<Type>int</Type>
+<ParentBlock>2011</ParentBlock>
+<Plug>
+<BlockConnector con-block-id="2011" connector-kind="plug" connector-type="number" init-type="number" label="" position-type="mirror"/>
+</Plug>
+</Block>
+<Block genus-name="sum" id="2011" kind="function">
+<Type>int</Type>
+<Plug>
+<BlockConnector con-block-id="2010" connector-kind="plug" connector-type="number" init-type="number" label="" position-type="mirror"/>
+</Plug>
+<Sockets num-sockets="2">
+<BlockConnector con-block-id="2012" connector-kind="socket" connector-type="number" init-type="number" label="" position-type="bottom"/>
+<BlockConnector con-block-id="2013" connector-kind="socket" connector-type="number" init-type="number" label="" position-type="bottom"/>
+</Sockets>
+</Block>
+<Block genus-name="abstraction" id="2001" kind="command">
+<Label>for</Label>
+<Sockets num-sockets="1">
+<BlockConnector con-block-id="2002" connector-kind="socket" connector-type="cmd" init-type="cmd" label="" position-type="single"/>
+</Sockets>
+<BeforeBlockId>2000</BeforeBlockId>
+</Block>
+</PageBlocks>
+</Page>
+</Pages>
+</cb:CODEBLOCKS>
