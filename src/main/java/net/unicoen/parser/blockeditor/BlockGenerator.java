@@ -627,7 +627,7 @@ public class BlockGenerator {
 				List<BlockElementModel> rightElement = new ArrayList<>();
 				rightElement.add(right);
 
-				BlockVariableSetterModel model = new BlockVariableSetterModel(blockStubElement, (BlockExprModel) right);
+				BlockVariableSetterModel model = new BlockVariableSetterModel(blockStubElement);
 
 				model.addSocketsAndNodes(rightElement, document, sockets);
 
@@ -750,9 +750,9 @@ public class BlockGenerator {
 			UniIdent ident = (UniIdent) binopExpr.left;
 			Node varDecNode = resolver.getVariableNameResolver().getLocalVariableID(ident.name);
 
-			genusName += DOMUtil.getAttribute(varDecNode, "genus-name");
+			genusName += DOMUtil.getAttribute(varDecNode, BlockElementModel.GENUS_NAME_ATTRIBUTE_TAG);
 			// BlockStubノード作成
-			Element blockStubElement = createBlockStubNode(document, ident.name, DOMUtil.getAttribute(varDecNode, "genus-name"));
+			Element blockStubElement = createBlockStubNode(document, ident.name, DOMUtil.getAttribute(varDecNode, BlockElementModel.GENUS_NAME_ATTRIBUTE_TAG));
 
 			// Blockノード作成
 			Element blockElement = createVariableBlockNode(document, genusName, ident.name, "command");
@@ -760,6 +760,13 @@ public class BlockGenerator {
 			// 右辺のモデルの生成
 			BlockElementModel right = parseExpr(binopExpr.right, document, DOMUtil.getAttribute(blockElement, BlockElementModel.ID_ATTRIBUTE_TAG));
 			List<Node> socketNodes = resolver.getSocketNodes(genusName.substring("setter".length(), genusName.length()));
+
+			//TODO paramの場合上手くいかない socket情報でなく，plug情報を取ってきたほうがよい
+			if(isParamNode(varDecNode)){
+				String connectorType = BlockElementModel.convertTypeToBlockConnectorType(right.getType());
+				BlockSocketModel socket = new BlockSocketModel("", "single", connectorType, connectorType, right.getBlockID());
+				socketNodes.add(socket.createBlockConnectorElement(document));
+			}
 
 			// ソケット情報を付与して返す
 			if (socketNodes != null) {
@@ -770,7 +777,7 @@ public class BlockGenerator {
 				// BlockStubノードにBlockノードを追加する
 				blockStubElement.appendChild(blockElement);
 
-				BlockVariableSetterModel model = new BlockVariableSetterModel(blockStubElement, (BlockExprModel) right);
+				BlockVariableSetterModel model = new BlockVariableSetterModel(blockStubElement);
 				model.addSocketsAndNodes(rightElement, document, sockets);
 
 				return model;
@@ -780,6 +787,10 @@ public class BlockGenerator {
 		} else {
 			throw new RuntimeException("illegal left op:" + binopExpr.left);
 		}
+	}
+
+	public boolean isParamNode(Node node){
+		return DOMUtil.getAttribute(node, BlockElementModel.GENUS_NAME_ATTRIBUTE_TAG).startsWith("proc-param");
 	}
 
 	public BlockWhileModel parseWhile(UniWhile whileExpr, Document document, String parent) {

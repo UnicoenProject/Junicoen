@@ -212,13 +212,13 @@ public class BlockElementModel {
 	public void addBeforeBlockNode(Document document, String id) {
 		Element element = document.createElement("BeforeBlockId");
 		element.setTextContent(id);
-		getElement().appendChild(element);
+		getBlockElement().appendChild(element);
 	}
 
 	public void addAfterBlockNode(Document document, String id) {
 		Element element = document.createElement("AfterBlockId");
 		element.setTextContent(id);
-		getElement().appendChild(element);
+		getBlockElement().appendChild(element);
 	}
 
 	public Node getPlugNode(){

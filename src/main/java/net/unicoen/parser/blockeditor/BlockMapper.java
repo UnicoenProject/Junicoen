@@ -533,8 +533,12 @@ public class BlockMapper {
 			UniMethodCall caller = (UniMethodCall) args.get(1);
 			caller.receiver = ident;
 			return caller;
+		} else if(blockGenusName.equals("callerprocedure")){
+			String methodName = DOMUtil.getChildTextFromBlockNode(node, "Name");
+			UniMethodCall call = new UniMethodCall(null, methodName, args);
+			return call;
 		} else {
-			String methodName = DOMUtil.getChildText(resolver.getBlockNode(blockGenusName), "Name");
+			String methodName = DOMUtil.getChildTextFromBlockNode(resolver.getBlockNode(blockGenusName), "Name");
 			UniMethodCall mcall = getProtoType(methodName);
 			if (mcall != null) {
 				mcall.args = args;

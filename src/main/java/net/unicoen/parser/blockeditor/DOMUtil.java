@@ -48,6 +48,28 @@ public class DOMUtil {
 		return foundNode.getTextContent();
 	}
 
+	/**
+	 * Blockノードの子ノードのテキストを取得する.nodeがStubNodeだった場合,その子のBlockノード取得してから子ノードを取得する
+	 * @param node
+	 * @param nodeName
+	 * @return
+	 */
+	public static String getChildTextFromBlockNode(Node node, String... nodeName) {
+		Node searchNode = node;
+
+		if("BlockStub".equals(node.getNodeName())){
+			searchNode = getChildNode(node, "Block");
+		}
+
+		Node foundNode = getChildNode(searchNode, nodeName);
+		if (foundNode == null)
+			return null;
+
+		return foundNode.getTextContent();
+	}
+
+
+
 	public static Iterable<Node> eachChild(Node node) {
 		final NodeList list = node.getChildNodes();
 		final int length = list.getLength();
