@@ -11,7 +11,7 @@ public class BlockPrePostModel extends BlockCommandModel {
 		this.element = element;
 	}
 
-	public List<Element> getCommandBlockElements() {
+	public List<Element> getBlockElements() {
 		List<Element> elements = new ArrayList<Element>();
 		elements.add(this.element);
 

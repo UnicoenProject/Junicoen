@@ -8,3 +8,4 @@ src/main/generated-sources
 src/test/generated-sources
 *.DS_Store
 .ruby-version
+blockeditor/test

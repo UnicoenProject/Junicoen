@@ -3,7 +3,6 @@
 
 
 <!-- VARIABLE -->
-
 <BlockGenus name="global-var-number" kind="global-variable"
 	initlabel="global number" editable-label="yes" label-unique="yes"
 	color="65 170 225">

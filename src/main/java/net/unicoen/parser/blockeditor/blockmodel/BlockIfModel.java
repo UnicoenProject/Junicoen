@@ -10,24 +10,30 @@ public class BlockIfModel extends BlockCommandModel {
 	private List<BlockCommandModel> trueBlocks = new ArrayList<>();
 	private List<BlockCommandModel> falseBlocks = new ArrayList<>();
 
-	public List<Element> getCommandBlockElements() {
+	public BlockIfModel(Element element) {
+		this.element = element;
+	}
+
+	public List<Element> getBlockElements() {
 		List<Element> elements = new ArrayList<>();
 
 		elements.add(getElement());
 
 		// 条件式
-		for (BlockExprModel socket : getSocketBlocks()) {
-			elements.addAll(socket.getExprElements());
-		}
+		elements.addAll(getSocketBlocks().get(0).getBlockElements());
 
 		// 真ブロック
 		for (BlockCommandModel model : trueBlocks) {
-			elements.addAll(model.getCommandBlockElements());
+			if (model != null) {
+				elements.addAll(model.getBlockElements());
+			}
 		}
 
 		// 偽ブロック
 		for (BlockCommandModel model : falseBlocks) {
-			elements.addAll(model.getCommandBlockElements());
+			if (model != null) {
+				elements.addAll(model.getBlockElements());
+			}
 		}
 
 		return elements;

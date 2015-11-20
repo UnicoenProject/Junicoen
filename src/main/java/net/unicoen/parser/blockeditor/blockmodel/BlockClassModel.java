@@ -9,6 +9,7 @@ import org.w3c.dom.Element;
 public class BlockClassModel {
 
 	private List<BlockProcedureModel> methods = new ArrayList<>();
+	private List<BlockFieldVarDecModel> fieldVariables = new ArrayList<>();
 
 	public Element createBlockNodes(Document document) {
 		Element pageBlocksElement = document.createElement("PageBlocks");
@@ -20,8 +21,16 @@ public class BlockClassModel {
 		return pageBlocksElement;
 	}
 
+	public List<BlockProcedureModel> getMethods(){
+		return this.methods;
+	}
+
 	public void addMethod(BlockProcedureModel method) {
 		this.methods.add(method);
+	}
+
+	public void addFieldVariable(BlockFieldVarDecModel fieldVarDec) {
+		this.fieldVariables.add(fieldVarDec);
 	}
 
 }

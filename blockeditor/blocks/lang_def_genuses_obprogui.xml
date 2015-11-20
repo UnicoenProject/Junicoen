@@ -595,13 +595,13 @@
 			BCanvas型のプライベート変数を宣言します。変数名を設定してください。
 		</text>
 	</description>
-	<Type>BCanvas</Type>
 	<BlockConnectors>
 		<BlockConnector label="初期値" connector-kind="socket"
 			connector-type="object">
 			<DefaultArg genus-name="new-object" label="BCanvas"></DefaultArg>
 		</BlockConnector>
 	</BlockConnectors>
+	<Type>BCanvas</Type>
 	<Stubs>
 		<Stub stub-genus="getter">
 			<LangSpecProperties>
@@ -768,13 +768,13 @@
 			オブジェクト型のローカル変数を宣言します。変数名を設定してください。
 		</text>
 	</description>
-	<Type>BCanvas</Type>
 	<BlockConnectors>
 		<BlockConnector label="初期値" connector-kind="socket"
 			connector-type="object">
 			<DefaultArg genus-name="new-object" label="BCanvas"></DefaultArg>
 		</BlockConnector>
 	</BlockConnectors>
+	<Type>BCanvas</Type>
 	<Stubs>
 		<Stub stub-genus="getter">
 			<LangSpecProperties>
@@ -941,13 +941,13 @@
 			BCanvas型のプライベート変数を宣言します。変数名を設定してください。
 		</text>
 	</description>
-	<Type>BWindow</Type>
 	<BlockConnectors>
 		<BlockConnector label="初期値" connector-kind="socket"
 			connector-type="object">
 			<DefaultArg genus-name="new-object" label="BWindow"></DefaultArg>
 		</BlockConnector>
 	</BlockConnectors>
+	<Type>BWindow</Type>
 	<Stubs>
 		<Stub stub-genus="getter">
 			<LangSpecProperties>
@@ -1006,13 +1006,13 @@
 			オブジェクト型のローカル変数を宣言します。変数名を設定してください。
 		</text>
 	</description>
-	<Type>BWindow</Type>
 	<BlockConnectors>
 		<BlockConnector label="初期値" connector-kind="socket"
 			connector-type="object">
 			<DefaultArg genus-name="new-object" label="BCanvas"></DefaultArg>
 		</BlockConnector>
 	</BlockConnectors>
+	<Type>BWindow</Type>
 	<Stubs>
 		<Stub stub-genus="getter">
 			<LangSpecProperties>
@@ -1071,13 +1071,13 @@
 			BSound型のプライベート変数を宣言します。変数名を設定してください。
 		</text>
 	</description>
-	<Type>BSound</Type>
 	<BlockConnectors>
 		<BlockConnector label="初期値" connector-kind="socket"
 			connector-type="object">
 			<DefaultArg genus-name="new-object-withtext" label="BSound"></DefaultArg>
 		</BlockConnector>
 	</BlockConnectors>
+	<Type>BSound</Type>
 	<Stubs>
 		<Stub stub-genus="getter">
 			<LangSpecProperties>
@@ -1160,13 +1160,13 @@
 			BSound型のローカル変数を宣言します。変数名を設定してください。
 		</text>
 	</description>
-	<Type>BSound</Type>
 	<BlockConnectors>
 		<BlockConnector label="初期値" connector-kind="socket"
 			connector-type="object">
 			<DefaultArg genus-name="new-object" label="BCanvas"></DefaultArg>
 		</BlockConnector>
 	</BlockConnectors>
+	<Type>BSound</Type>
 	<Stubs>
 		<Stub stub-genus="getter">
 			<LangSpecProperties>
@@ -1249,13 +1249,13 @@
 			BCanvas型のプライベート変数を宣言します。変数名を設定してください。
 		</text>
 	</description>
-	<Type>Color</Type>
 	<BlockConnectors>
 		<BlockConnector label="初期値" connector-kind="socket"
 			connector-type="object">
 			<DefaultArg genus-name="new-object" label="BCanvas"></DefaultArg>
 		</BlockConnector>
 	</BlockConnectors>
+	<Type>Color</Type>
 	<Stubs>
 		<Stub stub-genus="getter">
 			<LangSpecProperties>
@@ -1286,13 +1286,13 @@
 			BCanvas型のプライベート変数を宣言します。変数名を設定してください。
 		</text>
 	</description>
-	<Type>Color</Type>
 	<BlockConnectors>
 		<BlockConnector label="初期値" connector-kind="socket"
 			connector-type="object">
 			<DefaultArg genus-name="new-object" label="BCanvas"></DefaultArg>
 		</BlockConnector>
 	</BlockConnectors>
+	<Type>Color</Type>
 	<Stubs>
 		<Stub stub-genus="getter">
 			<LangSpecProperties>
@@ -1323,13 +1323,13 @@
 			オブジェクト型のローカル変数を宣言します。変数名を設定してください。
 		</text>
 	</description>
-	<Type>Color</Type>
 	<BlockConnectors>
 		<BlockConnector label="初期値" connector-kind="socket"
 			connector-type="object">
 			<DefaultArg genus-name="new-object" label="BCanvas"></DefaultArg>
 		</BlockConnector>
 	</BlockConnectors>
+	<Type>Color</Type>
 	<Stubs>
 		<Stub stub-genus="getter">
 			<LangSpecProperties>
