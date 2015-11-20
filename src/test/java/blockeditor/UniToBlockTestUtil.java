@@ -39,7 +39,11 @@ public class UniToBlockTestUtil {
 	}
 
 	public static BlockGenerator createBlockGenerator(String fileName) throws IOException{
-		String filePath = "blockeditor/test/" + fileName + ".xml";
+		File dir = new File("blockeditor/test");
+		if(!dir.exists()){
+			dir.mkdir();
+		}
+		String filePath = dir.getPath() + "/" + fileName + ".xml";
 		File file = new File(filePath);
 		file.createNewFile();
 		PrintStream out = new PrintStream(file);
