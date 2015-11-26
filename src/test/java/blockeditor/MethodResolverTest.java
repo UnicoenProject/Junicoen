@@ -15,6 +15,10 @@ public class MethodResolverTest {
 		MethodResolver mResolver = resolver.getMehtodResolver();
 		
 		assertEquals("Turtle-fd[@int]", mResolver.getMethodGenusName("Turtle", "fd[@int]"));
+		assertEquals("Turtle-fd[@int]", mResolver.getMethodGenusName("ImageTurtle", "fd[@int]"));
+		
+		assertEquals("ButtonTurtle-isClicked[]", mResolver.getMethodGenusName("ButtonTurtle", "isClicked[]"));
+		
 		
 	}
 

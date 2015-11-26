@@ -2,6 +2,7 @@ package net.unicoen.parser.blockeditor;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.function.Consumer;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -136,5 +137,11 @@ public class DOMUtil {
 		}
 		return null;
 	}
-	
+	public static void doAnythingToNodeList(Node node, String nodeName, Consumer<Node> process){
+		for(int i = 0 ; i < node.getChildNodes().getLength();i++){
+			if(nodeName.equals(node.getChildNodes().item(i).getNodeName())){
+				process.accept(node.getChildNodes().item(i));
+			}
+		}
+	}
 }

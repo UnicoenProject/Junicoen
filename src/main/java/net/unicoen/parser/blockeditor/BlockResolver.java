@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.apache.xerces.parsers.DOMParser;
 import org.w3c.dom.Document;
@@ -32,11 +33,53 @@ public class BlockResolver {
 	public BlockResolver(String langdefRootPath, boolean isTest) {
 		this.langdefRootPath = langdefRootPath;
 		parseGnuses();
+		
 		if(!isTest){
 			parseTurtleXml(ORIGIN_LANG_DEF_ROOT_PATH + "method_lang_def.xml");
 		}else{
 			parseTurtleXml(ORIGIN_LANG_DEF_ROOT_PATH_FOR_UNI + "method_lang_def.xml");
 		}
+	}
+	
+	public void initMethodResolver() throws SAXException, IOException{
+		DOMParser parser = new DOMParser();
+		parser.parse(langdefRootPath+"library_list.xml");
+		
+//		methodResolver.add(className, map);
+	}
+	
+	public void createLibraryMethodsMap(Node node){
+		//LibClassノードで行う処理の定義
+		Consumer<Node> parseLibNode = new Consumer<Node>() {
+			@Override
+			public void accept(Node node) {
+				String className = DOMUtil.getAttribute(node, "name");
+				methodResolver.add(className, new ClassMethodMap());
+				//CategoryNameタグの全ノードで行う処理の定義
+				Consumer<Node> parseCategory = new Consumer<Node>() {
+					@Override
+					public void accept(Node t) {
+						Consumer<Node> c = new Consumer<Node>() {
+							@Override
+							public void accept(Node t) {
+								methodResolver.getAvaiableClassMethods().get(className).getClassMethodList(className).add(t.getTextContent());
+							}
+						};
+						
+						if("add".equals(DOMUtil.getAttribute(t, "command"))){
+							DOMUtil.doAnythingToNodeList(t, "MethodName", c);							
+						}else if("copy".equals(DOMUtil.getAttribute(t, "command"))){
+							String copyClass = DOMUtil.getAttribute(t, "name");
+							List<String> methods = methodResolver.getAvaiableClassMethods().get(copyClass).getClassMethodList(copyClass);
+							methodResolver.getAvaiableClassMethods().get(className).getClassMethodList(copyClass).addAll(methods);
+						}
+					}
+				};
+				
+				DOMUtil.doAnythingToNodeList(node, "CategoryName", parseCategory);
+			}
+		};
+		DOMUtil.doAnythingToNodeList(node, "LibraryClass", parseLibNode);		
 	}
 	
 	public MethodResolver getMethodResolver(){
@@ -115,9 +158,7 @@ public class BlockResolver {
 				map.add(className, getMethodsFromCategoryNode(child));
 			}
 		}
-		
-		methodResolver.add(type, map);
-		
+		methodResolver.add(type, map);	
 	}
 	
 	private List<String> getMethodsFromCategoryNode(Node node){

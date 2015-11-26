@@ -17,6 +17,10 @@ public class MethodResolver {
 	public void add(String className, ClassMethodMap map) {
 		this.avaiableClassMethods.put(className, map);
 	}
+	
+	public Map<String, ClassMethodMap> getAvaiableClassMethods(){
+		return this.avaiableClassMethods;
+	}
 
 	/**
 	 * クラス名とメソッド名（メソッド名[@param]）からブロックの名前を取得する

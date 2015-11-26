@@ -19,6 +19,10 @@ public class ClassMethodMap {
 		}
 	}
 	
+	public List<String> getClassMethodList(String identifier){
+		return classMethodMap.get(identifier);
+	}
+	
 	public String getGenusName(String methodName){
 		for(String key : classMethodMap.keySet()){
 			List<String> methods = classMethodMap.get(key);
