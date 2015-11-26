@@ -1,16 +1,19 @@
 package net.unicoen.parser.blockeditor;
 
+import java.io.IOException;
 import java.util.Iterator;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import net.unicoen.parser.blockeditor.blockmodel.BlockElementModel;
-
+import org.apache.xerces.parsers.DOMParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import net.unicoen.parser.blockeditor.blockmodel.BlockElementModel;
 
 public class DOMUtil {
 	public static String getAttribute(Node node, String attributeName) {
@@ -26,6 +29,7 @@ public class DOMUtil {
 			return null;
 		return attrNode.getNodeValue();
 	}
+	
 
 	public static Node getChildNode(Node node, String... nodeName) {
 		outer: for (int depth = 0; depth < nodeName.length; depth++) {
@@ -67,8 +71,6 @@ public class DOMUtil {
 
 		return foundNode.getTextContent();
 	}
-
-
 
 	public static Iterable<Node> eachChild(Node node) {
 		final NodeList list = node.getChildNodes();
@@ -118,5 +120,21 @@ public class DOMUtil {
 		Document document = builder.newDocument();
 		return document;
 	}
-
+	
+	public static Node getNodeFromXMLFilePath(String path){
+		DOMParser parser = new DOMParser();
+		// lang_def.xmlを読み込む
+		try {
+			parser.parse(path);
+			Document doc = parser.getDocument();
+			return doc.getDocumentElement();
+			
+		} catch (SAXException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 }

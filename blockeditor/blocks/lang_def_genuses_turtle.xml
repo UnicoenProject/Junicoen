@@ -1524,7 +1524,7 @@
 		</Stub>
 	</Stubs>
 	<ClassMethods>
-		<CategoryName name="タートル（基本）">
+		<CategoryName name="タートル（基本）" classname="Turtle">
 			<MethodName>Turtle-fd[@int]</MethodName>
 			<MethodName>Turtle-bk[@int]</MethodName>
 			<MethodName>Turtle-rt[@int]</MethodName>
@@ -1534,9 +1534,10 @@
 			<MethodName>Turtle-color[@int]</MethodName>
 			<MethodName>Turtle-input[]</MethodName>
 			<MethodName>Turtle-print[@string]</MethodName>
+			<MethodName>Turtle-print[@int]</MethodName>
 			<MethodName>Turtle-random[@int]</MethodName>
 		</CategoryName>
-		<CategoryName name="タートル（座標と大きさ）">
+		<CategoryName name="タートル（座標と大きさ）" classname="Turtle">
 			<MethodName>Turtle-getX[]</MethodName>
 			<MethodName>Turtle-getY[]</MethodName>
 			<MethodName>Turtle-warp[@int@int]</MethodName>
@@ -1551,7 +1552,7 @@
 			<MethodName>Turtle-tall[@int]</MethodName>
 			<MethodName>Turtle-little[@int]</MethodName>
 		</CategoryName>
-		<CategoryName name="タートル（見た目と判定）">
+		<CategoryName name="タートル（見た目と判定）" classname="Turtle">
 			<MethodName>Turtle-show[]</MethodName>
 			<MethodName>Turtle-hide[]</MethodName>
 			<MethodName>Turtle-isShow[]</MethodName>
@@ -1559,7 +1560,7 @@
 			<MethodName>Turtle-contains[@int@int]</MethodName>
 			<MethodName>Turtle-intersects[]</MethodName>
 		</CategoryName>
-		<CategoryName name="タートル（キーとマウス）">
+		<CategoryName name="タートル（キーとマウス）" classname="Turtle">
 			<MethodName>Turtle-key[]</MethodName>
 			<MethodName>Turtle-keyDown[@int]</MethodName>
 			<MethodName>Turtle-mouseX[]</MethodName>
@@ -1572,7 +1573,7 @@
 			<MethodName>Turtle-leftMouseDown[]</MethodName>
 			<MethodName>Turtle-rightMouseDown[]</MethodName>
 		</CategoryName>
-		<CategoryName name="タートル（その他）">
+		<CategoryName name="タートル（その他）" classname="Turtle">
 			<MethodName>Turtle-update[]</MethodName>
 			<MethodName>Turtle-sleep[@int]</MethodName>
 			<MethodName>Turtle-input[]</MethodName>
@@ -1612,7 +1613,7 @@
 		</Stub>
 	</Stubs>
 	<ClassMethods>
-		<CategoryName name="タートル（基本）">
+		<CategoryName name="タートル（基本）" classname="Turtle">
 			<MethodName>Turtle-fd[@int]</MethodName>
 			<MethodName>Turtle-bk[@int]</MethodName>
 			<MethodName>Turtle-rt[@int]</MethodName>
@@ -1622,9 +1623,10 @@
 			<MethodName>Turtle-color[@int]</MethodName>
 			<MethodName>Turtle-input[]</MethodName>
 			<MethodName>Turtle-print[@string]</MethodName>
+			<MethodName>Turtle-print[@int]</MethodName>
 			<MethodName>Turtle-random[@int]</MethodName>
 		</CategoryName>
-		<CategoryName name="タートル（座標と大きさ）">
+		<CategoryName name="タートル（座標と大きさ）" classname="Turtle">
 			<MethodName>Turtle-getX[]</MethodName>
 			<MethodName>Turtle-getY[]</MethodName>
 			<MethodName>Turtle-warp[@int@int]</MethodName>
@@ -1639,7 +1641,7 @@
 			<MethodName>Turtle-tall[@int]</MethodName>
 			<MethodName>Turtle-little[@int]</MethodName>
 		</CategoryName>
-		<CategoryName name="タートル（見た目と判定）">
+		<CategoryName name="タートル（見た目と判定）" classname="Turtle">
 			<MethodName>Turtle-show[]</MethodName>
 			<MethodName>Turtle-hide[]</MethodName>
 			<MethodName>Turtle-isShow[]</MethodName>
@@ -1647,7 +1649,7 @@
 			<MethodName>Turtle-contains[@int@int]</MethodName>
 			<MethodName>Turtle-intersects[]</MethodName>
 		</CategoryName>
-		<CategoryName name="タートル（キーとマウス）">
+		<CategoryName name="タートル（キーとマウス）" classname="Turtle">
 			<MethodName>Turtle-key[]</MethodName>
 			<MethodName>Turtle-keyDown[@int]</MethodName>
 			<MethodName>Turtle-mouseX[]</MethodName>
@@ -1660,13 +1662,13 @@
 			<MethodName>Turtle-leftMouseDown[]</MethodName>
 			<MethodName>Turtle-rightMouseDown[]</MethodName>
 		</CategoryName>
-		<CategoryName name="タートル（その他）">
+		<CategoryName name="タートル（その他）" classname="Turtle">
 			<MethodName>Turtle-update[]</MethodName>
 			<MethodName>Turtle-sleep[@int]</MethodName>
 			<MethodName>Turtle-input[]</MethodName>
 			<MethodName>Turtle-print[@string]</MethodName>
 		</CategoryName>
-		<CategoryName name="ImageTurtle">
+		<CategoryName name="ImageTurtle" classname="ImageTurtle">
 			<MethodName>ImageTurtle-image[@string]</MethodName>
 		</CategoryName>
 	</ClassMethods>
@@ -1708,7 +1710,7 @@
 		</Stub>
 	</Stubs>
 	<ClassMethods>
-		<CategoryName name="タートル（基本）">
+		<CategoryName name="タートル（基本）" classname="Turtle">
 			<MethodName>Turtle-fd[@int]</MethodName>
 			<MethodName>Turtle-bk[@int]</MethodName>
 			<MethodName>Turtle-rt[@int]</MethodName>
@@ -1718,9 +1720,10 @@
 			<MethodName>Turtle-color[@int]</MethodName>
 			<MethodName>Turtle-input[]</MethodName>
 			<MethodName>Turtle-print[@string]</MethodName>
+			<MethodName>Turtle-print[@int]</MethodName>
 			<MethodName>Turtle-random[@int]</MethodName>
 		</CategoryName>
-		<CategoryName name="タートル（座標と大きさ）">
+		<CategoryName name="タートル（座標と大きさ）" classname="Turtle">
 			<MethodName>Turtle-getX[]</MethodName>
 			<MethodName>Turtle-getY[]</MethodName>
 			<MethodName>Turtle-warp[@int@int]</MethodName>
@@ -1735,7 +1738,7 @@
 			<MethodName>Turtle-tall[@int]</MethodName>
 			<MethodName>Turtle-little[@int]</MethodName>
 		</CategoryName>
-		<CategoryName name="タートル（見た目と判定）">
+		<CategoryName name="タートル（見た目と判定）" classname="Turtle">
 			<MethodName>Turtle-show[]</MethodName>
 			<MethodName>Turtle-hide[]</MethodName>
 			<MethodName>Turtle-isShow[]</MethodName>
@@ -1743,9 +1746,9 @@
 			<MethodName>Turtle-contains[@int@int]</MethodName>
 			<MethodName>Turtle-intersects[]</MethodName>
 		</CategoryName>
-		<CategoryName name="タートル（キーとマウス）">
+		<CategoryName name="タートル（キーとマウス）" classname="Turtle">
 			<MethodName>Turtle-key[]</MethodName>
-			<MethodName>Turtle-keyDown[]</MethodName>
+			<MethodName>Turtle-keyDown[@int]</MethodName>
 			<MethodName>Turtle-mouseX[]</MethodName>
 			<MethodName>Turtle-mouseY[]</MethodName>
 			<MethodName>Turtle-mouseClicked[]</MethodName>
@@ -1756,13 +1759,13 @@
 			<MethodName>Turtle-leftMouseDown[]</MethodName>
 			<MethodName>Turtle-rightMouseDown[]</MethodName>
 		</CategoryName>
-		<CategoryName name="タートル（その他）">
+		<CategoryName name="タートル（その他）" classname="Turtle">
 			<MethodName>Turtle-update[]</MethodName>
 			<MethodName>Turtle-sleep[@int]</MethodName>
 			<MethodName>Turtle-input[]</MethodName>
 			<MethodName>Turtle-print[@string]</MethodName>
 		</CategoryName>
-		<CategoryName name="SoundTurtle">
+		<CategoryName name="SoundTurtle" classname="SoundTurtle">
 			<MethodName>SoundTurtle-file[@string]</MethodName>
 			<MethodName>SoundTurtle-play[]</MethodName>
 			<MethodName>SoundTurtle-loop[]</MethodName>
@@ -1806,7 +1809,7 @@
 		</Stub>
 	</Stubs>
 	<ClassMethods>
-		<CategoryName name="タートル（基本）">
+		<CategoryName name="タートル（基本）" classname="Turtle">
 			<MethodName>Turtle-fd[@int]</MethodName>
 			<MethodName>Turtle-bk[@int]</MethodName>
 			<MethodName>Turtle-rt[@int]</MethodName>
@@ -1816,9 +1819,10 @@
 			<MethodName>Turtle-color[@int]</MethodName>
 			<MethodName>Turtle-input[]</MethodName>
 			<MethodName>Turtle-print[@string]</MethodName>
+			<MethodName>Turtle-print[@int]</MethodName>
 			<MethodName>Turtle-random[@int]</MethodName>
 		</CategoryName>
-		<CategoryName name="タートル（座標と大きさ）">
+		<CategoryName name="タートル（座標と大きさ）" classname="Turtle">
 			<MethodName>Turtle-getX[]</MethodName>
 			<MethodName>Turtle-getY[]</MethodName>
 			<MethodName>Turtle-warp[@int@int]</MethodName>
@@ -1833,7 +1837,7 @@
 			<MethodName>Turtle-tall[@int]</MethodName>
 			<MethodName>Turtle-little[@int]</MethodName>
 		</CategoryName>
-		<CategoryName name="タートル（見た目と判定）">
+		<CategoryName name="タートル（見た目と判定）" classname="Turtle">
 			<MethodName>Turtle-show[]</MethodName>
 			<MethodName>Turtle-hide[]</MethodName>
 			<MethodName>Turtle-isShow[]</MethodName>
@@ -1841,7 +1845,7 @@
 			<MethodName>Turtle-contains[@int@int]</MethodName>
 			<MethodName>Turtle-intersects[]</MethodName>
 		</CategoryName>
-		<CategoryName name="タートル（キーとマウス）">
+		<CategoryName name="タートル（キーとマウス）" classname="Turtle">
 			<MethodName>Turtle-key[]</MethodName>
 			<MethodName>Turtle-keyDown[@int]</MethodName>
 			<MethodName>Turtle-mouseX[]</MethodName>
@@ -1854,13 +1858,13 @@
 			<MethodName>Turtle-leftMouseDown[]</MethodName>
 			<MethodName>Turtle-rightMouseDown[]</MethodName>
 		</CategoryName>
-		<CategoryName name="タートル（その他）">
+		<CategoryName name="タートル（その他）" classname="Turtle">
 			<MethodName>Turtle-update[]</MethodName>
 			<MethodName>Turtle-sleep[@int]</MethodName>
 			<MethodName>Turtle-input[]</MethodName>
 			<MethodName>Turtle-print[@string]</MethodName>
 		</CategoryName>
-		<CategoryName name="ListTurtle">
+		<CategoryName name="ListTurtle" classname="ListTurtle">
 			<MethodName>ListTurtle-get[@int]</MethodName>
 			<MethodName>ListTurtle-getSize[]</MethodName>
 			<MethodName>ListTurtle-add[@int]</MethodName>
@@ -1916,7 +1920,7 @@
 		</Stub>
 	</Stubs>
 	<ClassMethods>
-		<CategoryName name="タートル（基本）">
+		<CategoryName name="タートル（基本）" classname="Turtle">
 			<MethodName>Turtle-fd[@int]</MethodName>
 			<MethodName>Turtle-bk[@int]</MethodName>
 			<MethodName>Turtle-rt[@int]</MethodName>
@@ -1926,9 +1930,10 @@
 			<MethodName>Turtle-color[@int]</MethodName>
 			<MethodName>Turtle-input[]</MethodName>
 			<MethodName>Turtle-print[@string]</MethodName>
+			<MethodName>Turtle-print[@int]</MethodName>
 			<MethodName>Turtle-random[@int]</MethodName>
 		</CategoryName>
-		<CategoryName name="タートル（座標と大きさ）">
+		<CategoryName name="タートル（座標と大きさ）" classname="Turtle">
 			<MethodName>Turtle-getX[]</MethodName>
 			<MethodName>Turtle-getY[]</MethodName>
 			<MethodName>Turtle-warp[@int@int]</MethodName>
@@ -1943,7 +1948,7 @@
 			<MethodName>Turtle-tall[@int]</MethodName>
 			<MethodName>Turtle-little[@int]</MethodName>
 		</CategoryName>
-		<CategoryName name="タートル（見た目と判定）">
+		<CategoryName name="タートル（見た目と判定）" classname="Turtle">
 			<MethodName>Turtle-show[]</MethodName>
 			<MethodName>Turtle-hide[]</MethodName>
 			<MethodName>Turtle-isShow[]</MethodName>
@@ -1951,7 +1956,7 @@
 			<MethodName>Turtle-contains[@int@int]</MethodName>
 			<MethodName>Turtle-intersects[]</MethodName>
 		</CategoryName>
-		<CategoryName name="タートル（キーとマウス）">
+		<CategoryName name="タートル（キーとマウス）" classname="Turtle">
 			<MethodName>Turtle-key[]</MethodName>
 			<MethodName>Turtle-keyDown[@int]</MethodName>
 			<MethodName>Turtle-mouseX[]</MethodName>
@@ -1964,13 +1969,13 @@
 			<MethodName>Turtle-leftMouseDown[]</MethodName>
 			<MethodName>Turtle-rightMouseDown[]</MethodName>
 		</CategoryName>
-		<CategoryName name="タートル（その他）">
+		<CategoryName name="タートル（その他）" classname="Turtle">
 			<MethodName>Turtle-update[]</MethodName>
 			<MethodName>Turtle-sleep[@int]</MethodName>
 			<MethodName>Turtle-input[]</MethodName>
 			<MethodName>Turtle-print[@string]</MethodName>
 		</CategoryName>
-		<CategoryName name="InputTurtle">
+		<CategoryName name="InputTurtle" classname="InputTurtle">
 			<MethodName>InputTurtle-fontsize[@int]</MethodName>
 			<MethodName>InputTurtle-clearText[]</MethodName>
 			<MethodName>InputTurtle-setActive[@boolean]</MethodName>
@@ -2013,7 +2018,7 @@
 		</Stub>
 	</Stubs>
 	<ClassMethods>
-		<CategoryName name="タートル（基本）">
+		<CategoryName name="タートル（基本）" classname="Turtle">
 			<MethodName>Turtle-fd[@int]</MethodName>
 			<MethodName>Turtle-bk[@int]</MethodName>
 			<MethodName>Turtle-rt[@int]</MethodName>
@@ -2023,9 +2028,10 @@
 			<MethodName>Turtle-color[@int]</MethodName>
 			<MethodName>Turtle-input[]</MethodName>
 			<MethodName>Turtle-print[@string]</MethodName>
+			<MethodName>Turtle-print[@int]</MethodName>
 			<MethodName>Turtle-random[@int]</MethodName>
 		</CategoryName>
-		<CategoryName name="タートル（座標と大きさ）">
+		<CategoryName name="タートル（座標と大きさ）" classname="Turtle">
 			<MethodName>Turtle-getX[]</MethodName>
 			<MethodName>Turtle-getY[]</MethodName>
 			<MethodName>Turtle-warp[@int@int]</MethodName>
@@ -2040,7 +2046,7 @@
 			<MethodName>Turtle-tall[@int]</MethodName>
 			<MethodName>Turtle-little[@int]</MethodName>
 		</CategoryName>
-		<CategoryName name="タートル（見た目と判定）">
+		<CategoryName name="タートル（見た目と判定）" classname="Turtle">
 			<MethodName>Turtle-show[]</MethodName>
 			<MethodName>Turtle-hide[]</MethodName>
 			<MethodName>Turtle-isShow[]</MethodName>
@@ -2048,9 +2054,9 @@
 			<MethodName>Turtle-contains[@int@int]</MethodName>
 			<MethodName>Turtle-intersects[]</MethodName>
 		</CategoryName>
-		<CategoryName name="タートル（キーとマウス）">
+		<CategoryName name="タートル（キーとマウス）" classname="Turtle">
 			<MethodName>Turtle-key[]</MethodName>
-			<MethodName>Turtle-keyDown[]</MethodName>
+			<MethodName>Turtle-keyDown[@int]</MethodName>
 			<MethodName>Turtle-mouseX[]</MethodName>
 			<MethodName>Turtle-mouseY[]</MethodName>
 			<MethodName>Turtle-mouseClicked[]</MethodName>
@@ -2061,15 +2067,14 @@
 			<MethodName>Turtle-leftMouseDown[]</MethodName>
 			<MethodName>Turtle-rightMouseDown[]</MethodName>
 		</CategoryName>
-		<CategoryName name="タートル（その他）">
+		<CategoryName name="タートル（その他）" classname="Turtle">
 			<MethodName>Turtle-update[]</MethodName>
 			<MethodName>Turtle-sleep[@int]</MethodName>
 			<MethodName>Turtle-input[]</MethodName>
 			<MethodName>Turtle-print[@string]</MethodName>
 		</CategoryName>
-		<CategoryName name="CardTurtle">
+		<CategoryName name="CardTurtle" classname="CardTurtle">
 			<MethodName>CardTurtle-getText[]</MethodName>
-			n
 			<MethodName>CardTurtle-getNumber[]</MethodName>
 		</CategoryName>
 	</ClassMethods>
@@ -2106,7 +2111,7 @@
 		</Stub>
 	</Stubs>
 	<ClassMethods>
-		<CategoryName name="タートル（基本）">
+		<CategoryName name="タートル（基本）" classname="Turtle">
 			<MethodName>Turtle-fd[@int]</MethodName>
 			<MethodName>Turtle-bk[@int]</MethodName>
 			<MethodName>Turtle-rt[@int]</MethodName>
@@ -2116,9 +2121,10 @@
 			<MethodName>Turtle-color[@int]</MethodName>
 			<MethodName>Turtle-input[]</MethodName>
 			<MethodName>Turtle-print[@string]</MethodName>
+			<MethodName>Turtle-print[@int]</MethodName>
 			<MethodName>Turtle-random[@int]</MethodName>
 		</CategoryName>
-		<CategoryName name="タートル（座標と大きさ）">
+		<CategoryName name="タートル（座標と大きさ）" classname="Turtle">
 			<MethodName>Turtle-getX[]</MethodName>
 			<MethodName>Turtle-getY[]</MethodName>
 			<MethodName>Turtle-warp[@int@int]</MethodName>
@@ -2133,7 +2139,7 @@
 			<MethodName>Turtle-tall[@int]</MethodName>
 			<MethodName>Turtle-little[@int]</MethodName>
 		</CategoryName>
-		<CategoryName name="タートル（見た目と判定）">
+		<CategoryName name="タートル（見た目と判定）" classname="Turtle">
 			<MethodName>Turtle-show[]</MethodName>
 			<MethodName>Turtle-hide[]</MethodName>
 			<MethodName>Turtle-isShow[]</MethodName>
@@ -2141,7 +2147,7 @@
 			<MethodName>Turtle-contains[@int@int]</MethodName>
 			<MethodName>Turtle-intersects[]</MethodName>
 		</CategoryName>
-		<CategoryName name="タートル（キーとマウス）">
+		<CategoryName name="タートル（キーとマウス）" classname="Turtle">
 			<MethodName>Turtle-key[]</MethodName>
 			<MethodName>Turtle-keyDown[@int]</MethodName>
 			<MethodName>Turtle-mouseX[]</MethodName>
@@ -2154,13 +2160,13 @@
 			<MethodName>Turtle-leftMouseDown[]</MethodName>
 			<MethodName>Turtle-rightMouseDown[]</MethodName>
 		</CategoryName>
-		<CategoryName name="タートル（その他）">
+		<CategoryName name="タートル（その他）" classname="Turtle">
 			<MethodName>Turtle-update[]</MethodName>
 			<MethodName>Turtle-sleep[@int]</MethodName>
 			<MethodName>Turtle-input[]</MethodName>
 			<MethodName>Turtle-print[@string]</MethodName>
 		</CategoryName>
-		<CategoryName name="ButtonTurtle">
+		<CategoryName name="ButtonTurtle" classname="ButtonTurtle">
 			<MethodName>ButtonTurtle-isClicked[]</MethodName>
 			<MethodName>ButtonTurtle-fontSize[@int]</MethodName>
 		</CategoryName>

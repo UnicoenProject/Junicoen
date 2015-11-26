@@ -8,14 +8,16 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Test;
+
+import com.google.common.collect.Lists;
+
 import net.unicoen.node.UniBlock;
 import net.unicoen.node.UniClassDec;
 import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniMethodDec;
 import net.unicoen.node.UniVariableDec;
 import net.unicoen.parser.blockeditor.BlockGenerator;
-
-import org.junit.Test;
 
 public class UniToBlockBlockTest {
 
@@ -26,6 +28,7 @@ public class UniToBlockBlockTest {
 		String filePath = "blockeditor/test/" + fileName + ".xml";
 
 		UniClassDec dec = new UniClassDec();
+		dec.superClass = Lists.newArrayList("Turtle");
 		dec.members = new ArrayList<>();
 
 		UniBlock abstractionblock = new UniBlock();

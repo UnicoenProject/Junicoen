@@ -3,11 +3,11 @@ package net.unicoen.parser.blockeditor.blockmodel;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.unicoen.parser.blockeditor.BlockResolver;
-import net.unicoen.parser.blockeditor.DOMUtil;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import net.unicoen.parser.blockeditor.BlockResolver;
+import net.unicoen.parser.blockeditor.DOMUtil;
 
 public class BlockUserMethodCallWithReturnModel extends BlockExprModel {
 
@@ -18,12 +18,12 @@ public class BlockUserMethodCallWithReturnModel extends BlockExprModel {
 	}
 
 	public Element createPrototypeElement(String methodName, List<String> sockets, Document document, BlockResolver resolver, Long ID_COUNTER){
-		String parentID =  resolver.getFieldMethodInfo().getId(BlockMethodCallModel.calcMethodCallGenusName(methodName, sockets, resolver)).toString();
+		String parentID =  resolver.getMehtodResolver().getFieldMethodInfo().getId(BlockMethodCallModel.calcMethodCallGenusName(methodName, sockets)).toString();
 		Element root = createBlockStubNode(document, methodName, BlockProcedureModel.GENUS_NAME, parentID);
 		Element element = createBlockElement(document, BlockUserMethodCallModel.GENUS_NAME, ID_COUNTER, KIND);
 		addElement(BlockElementModel.NAME_NODE_NAME, document, methodName, element);
 		addElement(BlockElementModel.LABEL_NODE_NAME, document, methodName, element);
-		addElement(BlockElementModel.TYPE_NODE_NAME, document, resolver.getFieldMethodInfo().getReturnType(BlockMethodCallModel.calcMethodCallGenusName(methodName, sockets, resolver)), element);
+		addElement(BlockElementModel.TYPE_NODE_NAME, document, resolver.getMehtodResolver().getFieldMethodInfo().getReturnType(BlockMethodCallModel.calcMethodCallGenusName(methodName, sockets)), element);
 
 		root.appendChild(element);
 		return root;
@@ -38,15 +38,17 @@ public class BlockUserMethodCallWithReturnModel extends BlockExprModel {
 		return blockStubElement;
 	}
 
+	@Override
 	public Element getBlockElement(){
 		return (Element) DOMUtil.getChildNode(getElement(), BlockElementModel.BLOCK_NODE_NAME);
 	}
 
+	@Override
 	public void addSocketsAndNodes(List<BlockElementModel> socketBlocks, Document document, BlockSocketsModel sockets){
 		//SocketsInfoの作成
 		List<BlockSocketModel> socketsInfo = new ArrayList<BlockSocketModel>();
 		for (BlockElementModel param : socketBlocks) {
-			addSocketInfoToList(socketsInfo, (BlockElementModel)param);
+			addSocketInfoToList(socketsInfo, param);
 		}
 
 		super.addSocketsAndNodes(socketBlocks, document, new BlockSocketsModel(socketsInfo));

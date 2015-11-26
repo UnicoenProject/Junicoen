@@ -22,19 +22,24 @@ public class VariableNameResolver {
 		}
 	}
 
-	public Node getLocalVariableID(String name) {
+	
+	public Node getLocalVariableBlockNode(String name) {
 		return localVariables.get(name);
 	}
 
-	public Node getGlobalVariableID(String name) {
+	public Node getGlobalVariableBlockNode(String name) {
 		return globalVariables.get(name);
 	}
 
 	public void resetLocalVariables() {
 		localVariables.clear();
 	}
+	
+	public void resetglobalVariables() {
+		globalVariables.clear();
+	}
 
-	public Node getVariableNode(String name) {
+	public Node getVariableBlockNode(String name) {
 		Node node = localVariables.get(name);
 		if (node != null) {
 			return node;

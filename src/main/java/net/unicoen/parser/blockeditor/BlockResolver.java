@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.unicoen.parser.blockeditor.blockmodel.BlockElementModel;
-
 import org.apache.xerces.parsers.DOMParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -15,19 +13,21 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import net.unicoen.parser.blockeditor.blockmodel.BlockElementModel;
+
 public class BlockResolver {
 
 	private String langdefRootPath = "not available";
 	public static final String ORIGIN_LANG_DEF_ROOT_PATH = "ext/block2/";
 	public static final String ORIGIN_LANG_DEF_ROOT_PATH_FOR_UNI = "blockeditor/blocks/";
 
-	private Map<String, String> turtleMethods = new HashMap<String, String>();//key:methodname, value:genusname
+	private Map<String, String> turtleMethods = new HashMap<String, String>();//key:methodname, value:genusname この方法だと特定のメソッド名が利用できなくなる
 	private Map<String, Node> allAvailableBlocks = new HashMap<String, Node>();//key:genusname, value:node
 	private Map<String, String> availableLocalVariableDecralationTypes = new HashMap<>();//key:variable type , value: genusName
 	private Map<String, String> availableFieldVariableDecralationTypes = new HashMap<>();
 	private Map<String, String> availableFunctionArgsTypes = new HashMap<>();
 	private VariableNameResolver vnResolver = new VariableNameResolver();
-	private FieldMethodResolver fieldMethodResolver = new FieldMethodResolver();
+	private MethodResolver methodResolver = new MethodResolver();
 
 	public BlockResolver(String langdefRootPath, boolean isTest) {
 		this.langdefRootPath = langdefRootPath;
@@ -37,6 +37,10 @@ public class BlockResolver {
 		}else{
 			parseTurtleXml(ORIGIN_LANG_DEF_ROOT_PATH_FOR_UNI + "method_lang_def.xml");
 		}
+	}
+	
+	public MethodResolver getMethodResolver(){
+		return this.methodResolver;
 	}
 
 	public VariableNameResolver getVariableNameResolver(){
@@ -63,14 +67,6 @@ public class BlockResolver {
 		return allAvailableBlocks.get(genusName);
 	}
 
-	public void addFieldMethodInfo(String methodNameWithParam, FieldMethodInfo info){
-		this.fieldMethodResolver.addUserMethod(methodNameWithParam, info);
-	}
-
-	public FieldMethodResolver getFieldMethodInfo(){
-		return this.fieldMethodResolver;
-	}
-
 	/*
 	 * 全ブロックをハッシュマップに登録する キー：genus-name 値:ノード
 	 */
@@ -90,12 +86,52 @@ public class BlockResolver {
 				allAvailableBlocks.put(DOMUtil.getAttribute(node, "name"), node);
 				addAvaiableVariableTypeToMap(node);
 				addAvaiableMethodBlocks(node);
+				addAvaiableMethodToResolver(node);
 			}
 		} catch (SAXException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void addAvaiableMethodToResolver(Node node){
+		String kind = DOMUtil.getAttribute(node, "kind");
+		if("local-variable".equals(kind) || "global-variable".equals(kind)){
+			Node methodsNode = DOMUtil.getChildNode(node, "ClassMethods");
+			if(methodsNode != null){
+				addClassMethodsToResolver(DOMUtil.getChildTextFromBlockNode(node, "Type"),methodsNode);
+			}
+		}
+	}
+	
+	private void addClassMethodsToResolver(String type, Node node){
+		NodeList nodes = node.getChildNodes();
+		ClassMethodMap map = new ClassMethodMap();
+		for(int i = 0 ; i < nodes.getLength();i++){
+			Node child = nodes.item(i);
+			if("CategoryName".equals(child.getNodeName())){
+				String className = DOMUtil.getAttribute(child, "classname");
+				map.add(className, getMethodsFromCategoryNode(child));
+			}
+		}
+		
+		methodResolver.add(type, map);
+		
+	}
+	
+	private List<String> getMethodsFromCategoryNode(Node node){
+		List<String> methods = new ArrayList<>();
+		NodeList nodes = node.getChildNodes();
+		
+		for(int i = 0;i<nodes.getLength();i++){
+			Node child = nodes.item(i);
+			if("MethodName".equals(child.getNodeName())){
+				methods.add(child.getTextContent());
+			}
+		}
+		
+		return methods;
 	}
 
 	public void addAvaiableMethodBlocks(Node node){
@@ -168,13 +204,6 @@ public class BlockResolver {
 		return methodName;
 	}
 
-	public String getNamespace(String name) {
-		String namespace = turtleMethods.get(name);
-		if (namespace != null) {
-			return namespace + "-";
-		}
-		return "";
-	}
 
 	public Node getPlugElement(String genusName) {
 		Node genusNode = allAvailableBlocks.get(genusName);
@@ -245,4 +274,9 @@ public class BlockResolver {
 		paramNameSpace += "]";
 		return paramNameSpace;
 	}
+	
+	public MethodResolver getMehtodResolver(){
+		return this.methodResolver;
+	}
+	
 }

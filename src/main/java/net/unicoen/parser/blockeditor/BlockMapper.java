@@ -512,7 +512,7 @@ public class BlockMapper {
 		} else if (blockGenusName.startsWith("setter")) {
 			// BlockModelを解析して，UniversalModelを生成する
 			String variableName = DOMUtil.getChildText(node, "Label");
-			if (variableResolver.getVariableNode(variableName) != null || args.size() == 1) {
+			if (variableResolver.getVariableBlockNode(variableName) != null || args.size() == 1) {
 				// 代入式
 				UniBinOp op = new UniBinOp("=", new UniIdent(variableName), args.get(0));
 				return op;
@@ -521,7 +521,7 @@ public class BlockMapper {
 			}
 		} else if (blockGenusName.startsWith("inc")) {// increment
 			String variableName = DOMUtil.getChildText(node, "Label");
-			if (variableResolver.getVariableNode(variableName) != null || args.size() == 1) {
+			if (variableResolver.getVariableBlockNode(variableName) != null || args.size() == 1) {
 				// 代入式
 				UniUnaryOp op = new UniUnaryOp("_++", new UniIdent(variableName));
 				return op;
