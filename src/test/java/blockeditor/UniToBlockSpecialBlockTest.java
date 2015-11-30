@@ -13,7 +13,7 @@ public class UniToBlockSpecialBlockTest {
 	@Test
 	public void test() throws IOException {
 
-		UniClassDec spClass = UniToBlockTestUtil.createEmptyClassModel("Special");
+		UniClassDec spClass = UniToBlockTestUtil.createEmptyTurtleClassModel("Special");
 		UniMethodDec start = UniToBlockTestUtil.createEmptyMethodDec("start");
 
 		start.block.body.add(UniToBlockTestUtil.createLocalVariable("l", "Long"));

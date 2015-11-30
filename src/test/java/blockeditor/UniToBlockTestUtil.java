@@ -4,6 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.List;
+
+import org.xml.sax.SAXException;
+
+import com.google.common.collect.Lists;
 
 import net.unicoen.node.UniArg;
 import net.unicoen.node.UniBinOp;
@@ -16,20 +21,39 @@ import net.unicoen.node.UniIntLiteral;
 import net.unicoen.node.UniMemberDec;
 import net.unicoen.node.UniMethodCall;
 import net.unicoen.node.UniMethodDec;
+import net.unicoen.node.UniNew;
 import net.unicoen.node.UniUnaryOp;
 import net.unicoen.node.UniVariableDec;
 import net.unicoen.parser.blockeditor.BlockGenerator;
-
-import com.google.common.collect.Lists;
 
 public class UniToBlockTestUtil {
 
 	public static String LANG_DEF_ROOT = "blockeditor/blocks/";
 
-	public static UniClassDec createEmptyClassModel(String className){
+	/**
+	 * 空のタートルクラスモデルを作成する （全てのパラメータを空リストで初期化）
+	 * @param className　クラス名
+	 * @return
+	 */
+	public static UniClassDec createEmptyTurtleClassModel(String className){
 		return new UniClassDec(className, new ArrayList<String>(), new ArrayList<UniMemberDec>(), Lists.newArrayList("Turtle"), new ArrayList<String>(), new ArrayList<UniClassDec>());
 	}
+	
+	/**
+	 * 空のクラスモデルを作成する （全てのパラメータを空リストで初期化）
+	 * @param className　クラス名
+	 * @param parentClasses 親クラス
+	 * @return 指定した名前と親のクラスモデル
+	 */
+	public static UniClassDec createEmptyClassModel(String className, List<String> parentClasses){
+		return new UniClassDec(className, new ArrayList<String>(), new ArrayList<UniMemberDec>(), parentClasses, new ArrayList<String>(), new ArrayList<UniClassDec>());
+	}
 
+	/**
+	 * void型，引数なしのメソッドモデルを作成する
+	 * @param methodName メソッド名
+	 * @return　
+	 */
 	public static UniMethodDec createEmptyMethodDec(String methodName){
 		return new UniMethodDec(methodName, new ArrayList<String>(), "void", new ArrayList<UniArg>(), new UniBlock(new ArrayList<UniExpr>(), ""));
 	}
@@ -48,7 +72,12 @@ public class UniToBlockTestUtil {
 		file.createNewFile();
 		PrintStream out = new PrintStream(file);
 
-		return new BlockGenerator(out, LANG_DEF_ROOT, true);
+		try {
+			return new BlockGenerator(out, LANG_DEF_ROOT, true);
+		} catch (SAXException e) {
+			e.printStackTrace();
+			return null;
+		}	
 	}
 
 	/**
@@ -70,12 +99,33 @@ public class UniToBlockTestUtil {
 		return dec;
 	}
 
+	/**
+	 * 基本的なタートルメソッドコールモデルを作成する（fd,rt,bk,lt）
+	 * @param methodName メソッド名
+	 * @param step 歩数
+	 * @return
+	 */
 	public static UniMethodCall createTurtleBasicMethodCall(String methodName, int step){
 		return new UniMethodCall(null, methodName, Lists.newArrayList(new UniIntLiteral(step)));
+	}
+	
+	
+	/**
+	 * オブジェクト型のローカル変数モデルを作成する　初期値は引数なしのnewモデル
+	 * @param variableName 変数名
+	 * @param type 型
+	 * @return
+	 */
+	public static UniVariableDec createLocalObjectVariableBlockModel(String variableName, String type){
+		return new UniVariableDec(new ArrayList<>(), type, variableName, new UniNew(type, new ArrayList<>()));
 	}
 
 	public static void parseTest(UniClassDec cDec) throws IOException{
 		BlockGenerator gen = createBlockGenerator(cDec.className + "Test");
 		gen.parse(cDec);
+	}
+	
+	public static UniBinOp createVariableSetterModel(UniIdent ident, UniExpr value){
+		return new UniBinOp("=", ident, value);
 	}
 }

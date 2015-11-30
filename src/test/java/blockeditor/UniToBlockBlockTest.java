@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
+import org.xml.sax.SAXException;
 
 import com.google.common.collect.Lists;
 
@@ -51,9 +52,16 @@ public class UniToBlockBlockTest {
 		file.createNewFile();
 		PrintStream out = new PrintStream(file);
 
-		BlockGenerator parser = new BlockGenerator(out,"blockeditor/blocks/", true);
+		BlockGenerator parser;
+		try {
+			parser = new BlockGenerator(out,"blockeditor/blocks/", true);
+			parser.parse(dec);
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-		parser.parse(dec);
+
 	}
 
 }

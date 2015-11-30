@@ -1556,7 +1556,7 @@
 			<MethodName>Turtle-show[]</MethodName>
 			<MethodName>Turtle-hide[]</MethodName>
 			<MethodName>Turtle-isShow[]</MethodName>
-			<MethodName>Turtle-looks[]</MethodName>
+			<MethodName>Turtle-looks[@object]</MethodName>
 			<MethodName>Turtle-contains[@int@int]</MethodName>
 			<MethodName>Turtle-intersects[]</MethodName>
 		</CategoryName>
@@ -1645,7 +1645,7 @@
 			<MethodName>Turtle-show[]</MethodName>
 			<MethodName>Turtle-hide[]</MethodName>
 			<MethodName>Turtle-isShow[]</MethodName>
-			<MethodName>Turtle-looks[]</MethodName>
+			<MethodName>Turtle-looks[@object]</MethodName>
 			<MethodName>Turtle-contains[@int@int]</MethodName>
 			<MethodName>Turtle-intersects[]</MethodName>
 		</CategoryName>
@@ -1742,7 +1742,7 @@
 			<MethodName>Turtle-show[]</MethodName>
 			<MethodName>Turtle-hide[]</MethodName>
 			<MethodName>Turtle-isShow[]</MethodName>
-			<MethodName>Turtle-looks[]</MethodName>
+			<MethodName>Turtle-looks[@object]</MethodName>
 			<MethodName>Turtle-contains[@int@int]</MethodName>
 			<MethodName>Turtle-intersects[]</MethodName>
 		</CategoryName>
@@ -1841,7 +1841,7 @@
 			<MethodName>Turtle-show[]</MethodName>
 			<MethodName>Turtle-hide[]</MethodName>
 			<MethodName>Turtle-isShow[]</MethodName>
-			<MethodName>Turtle-looks[]</MethodName>
+			<MethodName>Turtle-looks[@object]</MethodName>
 			<MethodName>Turtle-contains[@int@int]</MethodName>
 			<MethodName>Turtle-intersects[]</MethodName>
 		</CategoryName>
@@ -1952,7 +1952,7 @@
 			<MethodName>Turtle-show[]</MethodName>
 			<MethodName>Turtle-hide[]</MethodName>
 			<MethodName>Turtle-isShow[]</MethodName>
-			<MethodName>Turtle-looks[]</MethodName>
+			<MethodName>Turtle-looks[@object]</MethodName>
 			<MethodName>Turtle-contains[@int@int]</MethodName>
 			<MethodName>Turtle-intersects[]</MethodName>
 		</CategoryName>
@@ -2050,7 +2050,7 @@
 			<MethodName>Turtle-show[]</MethodName>
 			<MethodName>Turtle-hide[]</MethodName>
 			<MethodName>Turtle-isShow[]</MethodName>
-			<MethodName>Turtle-looks[]</MethodName>
+			<MethodName>Turtle-looks[@object]</MethodName>
 			<MethodName>Turtle-contains[@int@int]</MethodName>
 			<MethodName>Turtle-intersects[]</MethodName>
 		</CategoryName>
@@ -2143,7 +2143,7 @@
 			<MethodName>Turtle-show[]</MethodName>
 			<MethodName>Turtle-hide[]</MethodName>
 			<MethodName>Turtle-isShow[]</MethodName>
-			<MethodName>Turtle-looks[]</MethodName>
+			<MethodName>Turtle-looks[@object]</MethodName>
 			<MethodName>Turtle-contains[@int@int]</MethodName>
 			<MethodName>Turtle-intersects[]</MethodName>
 		</CategoryName>

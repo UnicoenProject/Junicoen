@@ -21,72 +21,117 @@ public class BlockResolver {
 	private String langdefRootPath = "not available";
 	public static final String ORIGIN_LANG_DEF_ROOT_PATH = "ext/block2/";
 	public static final String ORIGIN_LANG_DEF_ROOT_PATH_FOR_UNI = "blockeditor/blocks/";
+	public static final String LIBRARYMETHODLIST_FILENAME="library_list.xml";
+	public static final String FORCECONVERION_FILENAME="force_convertion_list.xml";
 
-	private Map<String, String> turtleMethods = new HashMap<String, String>();//key:methodname, value:genusname この方法だと特定のメソッド名が利用できなくなる
-	private Map<String, Node> allAvailableBlocks = new HashMap<String, Node>();//key:genusname, value:node
-	private Map<String, String> availableLocalVariableDecralationTypes = new HashMap<>();//key:variable type , value: genusName
+	private Map<String, Node> allAvailableBlocks = new HashMap<String, Node>();// key:genusname, value:node
+	private Map<String, String> availableLocalVariableDecralationTypes = new HashMap<>();// key:variabletype,value: genusName
 	private Map<String, String> availableFieldVariableDecralationTypes = new HashMap<>();
 	private Map<String, String> availableFunctionArgsTypes = new HashMap<>();
 	private VariableNameResolver vnResolver = new VariableNameResolver();
 	private MethodResolver methodResolver = new MethodResolver();
+	
+	private Map<String, String> forceConvertionMap = new HashMap<>();
 
-	public BlockResolver(String langdefRootPath, boolean isTest) {
+	/**
+	 * ブロック変換の諸リゾルバクラス
+	 * @param langdefRootPath 言語定義ファイルのルートフォルダのパス /で終える
+	 * @param isTest UNICOENからテスト起動するかどうか
+	 */
+	public BlockResolver(String langdefRootPath, boolean isTest) throws SAXException, IOException {
 		this.langdefRootPath = langdefRootPath;
 		parseGnuses();
-		
-		if(!isTest){
-			parseTurtleXml(ORIGIN_LANG_DEF_ROOT_PATH + "method_lang_def.xml");
-		}else{
-			parseTurtleXml(ORIGIN_LANG_DEF_ROOT_PATH_FOR_UNI + "method_lang_def.xml");
-		}
+		initMethodResolver(isTest);
 	}
 	
-	public void initMethodResolver() throws SAXException, IOException{
+	public Map<String, String> getForceConvertionMap(){
+		return this.forceConvertionMap;
+	}
+
+	public void initMethodResolver(boolean isTest) throws SAXException, IOException {
+		//ライブラリクラスとその利用可能メソッドのマップを初期化
 		DOMParser parser = new DOMParser();
-		parser.parse(langdefRootPath+"library_list.xml");
+		if(isTest){
+			parser.parse(langdefRootPath + LIBRARYMETHODLIST_FILENAME);			
+		}else{
+			parser.parse(ORIGIN_LANG_DEF_ROOT_PATH + LIBRARYMETHODLIST_FILENAME);
+		}
+		createLibraryMethodsMap(parser.getDocument().getFirstChild());
 		
-//		methodResolver.add(className, map);
+		//強制変換リストを作成（System.out.println -> cui-printという1個のブロックに変換）というリスト
+		
+		parser = new DOMParser();
+		if(isTest){
+			parser.parse(langdefRootPath + FORCECONVERION_FILENAME);			
+		}else{
+			parser.parse(ORIGIN_LANG_DEF_ROOT_PATH + FORCECONVERION_FILENAME);
+		}
+		
+		initForceConvertionList(parser.getDocument().getFirstChild());
 	}
 	
-	public void createLibraryMethodsMap(Node node){
-		//LibClassノードで行う処理の定義
+	/**
+	 * 複数の構文要素からなる式を1つのブロックに無理やり変換するもののリストを作成する
+	 * @param node force_convertion_listのConvertListノード
+	 */
+	public void initForceConvertionList(Node node){
+		Consumer<Node> addItemToForceConvertionMap = new Consumer<Node>() {
+			@Override
+			public void accept(Node t) {
+				String ident = DOMUtil.getAttribute(t, "ident");
+				String genusName = DOMUtil.getAttribute(t, BlockElementModel.GENUS_NAME_ATTRIBUTE_TAG);
+				forceConvertionMap.put(ident, genusName);
+			}
+		};
+		DOMUtil.doAnythingToNodeList(node, "Item", addItemToForceConvertionMap);
+	}
+
+	public void createLibraryMethodsMap(Node node) {
+		// LibClassノードで行う処理の定義
 		Consumer<Node> parseLibNode = new Consumer<Node>() {
 			@Override
 			public void accept(Node node) {
 				String className = DOMUtil.getAttribute(node, "name");
 				methodResolver.add(className, new ClassMethodMap());
-				//CategoryNameタグの全ノードで行う処理の定義
+				// CategoryNameタグの全ノードで行う処理の定義
 				Consumer<Node> parseCategory = new Consumer<Node>() {
 					@Override
 					public void accept(Node t) {
 						Consumer<Node> c = new Consumer<Node>() {
 							@Override
 							public void accept(Node t) {
+								if (methodResolver.getAvaiableClassMethods().get(className).getClassMethodList(className) == null) {
+									methodResolver.getAvaiableClassMethods().get(className).add(className, new ArrayList<String>());
+								}
 								methodResolver.getAvaiableClassMethods().get(className).getClassMethodList(className).add(t.getTextContent());
 							}
 						};
-						
-						if("add".equals(DOMUtil.getAttribute(t, "command"))){
-							DOMUtil.doAnythingToNodeList(t, "MethodName", c);							
-						}else if("copy".equals(DOMUtil.getAttribute(t, "command"))){
+
+						if ("add".equals(DOMUtil.getAttribute(t, "command"))) {
+							DOMUtil.doAnythingToNodeList(t, "MethodName", c);
+						} else if ("copy".equals(DOMUtil.getAttribute(t, "command"))) {
 							String copyClass = DOMUtil.getAttribute(t, "name");
 							List<String> methods = methodResolver.getAvaiableClassMethods().get(copyClass).getClassMethodList(copyClass);
+							if (methodResolver.getAvaiableClassMethods().get(className).getClassMethodList(copyClass) == null) {
+								methodResolver.getAvaiableClassMethods().get(className).add(copyClass, new ArrayList<>());
+							}
+
 							methodResolver.getAvaiableClassMethods().get(className).getClassMethodList(copyClass).addAll(methods);
 						}
 					}
 				};
-				
+
 				DOMUtil.doAnythingToNodeList(node, "CategoryName", parseCategory);
 			}
 		};
-		DOMUtil.doAnythingToNodeList(node, "LibraryClass", parseLibNode);		
+		DOMUtil.doAnythingToNodeList(node, "LibraryClass", parseLibNode);
 	}
-	
-	public MethodResolver getMethodResolver(){
+
+	public MethodResolver getMethodResolver() {
 		return this.methodResolver;
 	}
 
-	public VariableNameResolver getVariableNameResolver(){
+	public VariableNameResolver getVariableNameResolver() {
 		return this.vnResolver;
 	}
 
@@ -100,10 +145,6 @@ public class BlockResolver {
 
 	public String getFunctionArgBlockName(String type) {
 		return availableFunctionArgsTypes.get(type);
-	}
-
-	public Map<String, String> getTurtleMethodsName() {
-		return turtleMethods;
 	}
 
 	public Node getBlockNode(String genusName) {
@@ -128,7 +169,6 @@ public class BlockResolver {
 				// 全ブロック情報のマップに登録
 				allAvailableBlocks.put(DOMUtil.getAttribute(node, "name"), node);
 				addAvaiableVariableTypeToMap(node);
-				addAvaiableMethodBlocks(node);
 				addAvaiableMethodToResolver(node);
 			}
 		} catch (SAXException e) {
@@ -138,113 +178,64 @@ public class BlockResolver {
 		}
 	}
 
-	private void addAvaiableMethodToResolver(Node node){
+	private void addAvaiableMethodToResolver(Node node) {
 		String kind = DOMUtil.getAttribute(node, "kind");
-		if("local-variable".equals(kind) || "global-variable".equals(kind)){
+		if ("local-variable".equals(kind) || "global-variable".equals(kind)) {
 			Node methodsNode = DOMUtil.getChildNode(node, "ClassMethods");
-			if(methodsNode != null){
-				addClassMethodsToResolver(DOMUtil.getChildTextFromBlockNode(node, "Type"),methodsNode);
+			if (methodsNode != null) {
+				addClassMethodsToResolver(DOMUtil.getChildTextFromBlockNode(node, "Type"), methodsNode);
 			}
 		}
 	}
-	
-	private void addClassMethodsToResolver(String type, Node node){
+
+	private void addClassMethodsToResolver(String type, Node node) {
 		NodeList nodes = node.getChildNodes();
 		ClassMethodMap map = new ClassMethodMap();
-		for(int i = 0 ; i < nodes.getLength();i++){
+		for (int i = 0; i < nodes.getLength(); i++) {
 			Node child = nodes.item(i);
-			if("CategoryName".equals(child.getNodeName())){
+			if ("CategoryName".equals(child.getNodeName())) {
 				String className = DOMUtil.getAttribute(child, "classname");
 				map.add(className, getMethodsFromCategoryNode(child));
 			}
 		}
-		methodResolver.add(type, map);	
+		methodResolver.add(type, map);
 	}
-	
-	private List<String> getMethodsFromCategoryNode(Node node){
+
+	private List<String> getMethodsFromCategoryNode(Node node) {
 		List<String> methods = new ArrayList<>();
 		NodeList nodes = node.getChildNodes();
-		
-		for(int i = 0;i<nodes.getLength();i++){
+
+		for (int i = 0; i < nodes.getLength(); i++) {
 			Node child = nodes.item(i);
-			if("MethodName".equals(child.getNodeName())){
+			if ("MethodName".equals(child.getNodeName())) {
 				methods.add(child.getTextContent());
 			}
 		}
-		
+
 		return methods;
 	}
 
-	public void addAvaiableMethodBlocks(Node node){
-		String namespace = getNameSpaceString(node);
-		if (isCommandOrFunction(node) && DOMUtil.getChildNode(node, "Name") != null && namespace!=null) {
-				turtleMethods.put(convertMethodName(DOMUtil.getAttribute(node, "name")), namespace);
-		}
-	}
 
-	private boolean isCommandOrFunction(Node node){
-		String kind = DOMUtil.getAttribute(node, BlockElementModel.KIND_ATTRIBUTE_TAG);
-		if("function".equals(kind) || "command".equals(kind)){
-			return true;
-		}
-		return false;
-
-	}
-
-	public void addAvaiableVariableTypeToMap(Node node){
+	public void addAvaiableVariableTypeToMap(Node node) {
 		// 利用可能な変数型リストに登録
 		if ("param".equals(DOMUtil.getAttribute(node, "kind"))) {
-			this.availableFunctionArgsTypes.put(DOMUtil.getChildNode(node, "Type").getTextContent(),DOMUtil.getAttribute(node, "name"));
-		}else if("local-variable".equals(DOMUtil.getAttribute(node, "kind"))){
+			this.availableFunctionArgsTypes.put(DOMUtil.getChildNode(node, "Type").getTextContent(), DOMUtil.getAttribute(node, "name"));
+		} else if ("local-variable".equals(DOMUtil.getAttribute(node, "kind"))) {
 			// 利用可能な関数の引数の型マップに登録
 			this.availableLocalVariableDecralationTypes.put(DOMUtil.getChildNode(node, "Type").getTextContent(), DOMUtil.getAttribute(node, "name"));
-		}else if ("global-variable".equals(DOMUtil.getAttribute(node, "kind"))) {
+		} else if ("global-variable".equals(DOMUtil.getAttribute(node, "kind"))) {
 			this.availableFieldVariableDecralationTypes.put(DOMUtil.getChildNode(node, "Type").getTextContent(), DOMUtil.getAttribute(node, "name"));
-		}
-	}
-
-	public void parseTurtleXml(String methodLangDefPath) {
-		DOMParser parser = new DOMParser();
-		// lang_def.xmlを読み込む
-		try {
-			parser.parse(methodLangDefPath);
-
-			Document doc = parser.getDocument();
-			Element root = doc.getDocumentElement();
-
-			NodeList genusNodes = root.getElementsByTagName("BlockGenus");
-
-			for (int i = 0; i < genusNodes.getLength(); i++) { // find them
-				Node node = genusNodes.item(i);
-
-				if (DOMUtil.getChildNode(node, "Name") != null) {
-					turtleMethods.put(convertMethodName(DOMUtil.getAttribute(node, "name")), getNameSpaceString(node));
-				}
-			}
-		} catch (SAXException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 
 	public static String getNameSpaceString(Node node) {
 		String name = DOMUtil.getAttribute(node, "name");
-		try{
+		try {
 			return name.substring(0, name.indexOf("-"));
-		}catch(Exception e){
+		} catch (Exception e) {
 			return null;
 		}
 	}
-
-	private static String convertMethodName(String methodName) {
-		int namespaceIndex = methodName.indexOf("-");
-		if (namespaceIndex > -1) {
-			return methodName.substring(namespaceIndex + 1);
-		}
-		return methodName;
-	}
-
 
 	public Node getPlugElement(String genusName) {
 		Node genusNode = allAvailableBlocks.get(genusName);
@@ -253,12 +244,11 @@ public class BlockResolver {
 		if (genusNode == null) {
 			return null;
 		} else {
-			Node socketConnectors = DOMUtil.getChildNode(genusNode,"BlockConnectors");
-			if(socketConnectors == null){
+			Node socketConnectors = DOMUtil.getChildNode(genusNode, "BlockConnectors");
+			if (socketConnectors == null) {
 				return null;
 			}
-			for (int i = 0; i < socketConnectors.getChildNodes()
-					.getLength(); i++) {
+			for (int i = 0; i < socketConnectors.getChildNodes().getLength(); i++) {
 				Node connector = socketConnectors.getChildNodes().item(i);
 				if (connector.getNodeName().equals("BlockConnector") && DOMUtil.getAttribute(connector, "connector-kind").equals("plug")) {
 					plugNode = connector;
@@ -276,12 +266,10 @@ public class BlockResolver {
 		if (genusNode == null) {
 			return null;
 		} else {
-			Node socketConnectors = DOMUtil.getChildNode(genusNode,"BlockConnectors");
+			Node socketConnectors = DOMUtil.getChildNode(genusNode, "BlockConnectors");
 			for (int i = 0; socketConnectors != null && i < socketConnectors.getChildNodes().getLength(); i++) {
 				Node connector = socketConnectors.getChildNodes().item(i);
-				if (connector.getNodeName().equals("BlockConnector")
-						&& DOMUtil.getAttribute(connector, "connector-kind")
-								.equals("socket")) {
+				if (connector.getNodeName().equals("BlockConnector") && DOMUtil.getAttribute(connector, "connector-kind").equals("socket")) {
 					socketsNode.add(connector);
 				}
 			}
@@ -290,22 +278,17 @@ public class BlockResolver {
 		return socketsNode;
 	}
 
-	public String getType(String genusName){
+	public String getType(String genusName) {
 		Node typeNode = DOMUtil.getChildNode(allAvailableBlocks.get(genusName), "Type");
-		if(typeNode == null){
+		if (typeNode == null) {
 			return "void";
-		}else{
+		} else {
 			return typeNode.getTextContent();
 		}
 	}
 
-	public boolean isTurtleMethod(String methodName, List<String> argTypes){
-		String genusName = methodName + calcParamNameSpace(argTypes);
 
-		return turtleMethods.containsKey(genusName);
-	}
-
-	public String calcParamNameSpace(List<String> params){
+	public String calcParamNameSpace(List<String> params) {
 		String paramNameSpace = "[";
 		// 名前空間補完}
 		for (String arg : params) {
@@ -315,9 +298,9 @@ public class BlockResolver {
 		paramNameSpace += "]";
 		return paramNameSpace;
 	}
-	
-	public MethodResolver getMehtodResolver(){
+
+	public MethodResolver getMehtodResolver() {
 		return this.methodResolver;
 	}
-	
+
 }

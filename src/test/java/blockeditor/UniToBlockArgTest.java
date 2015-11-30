@@ -16,7 +16,7 @@ public class UniToBlockArgTest {
 
 	@Test
 	public void test() throws IOException {
-		UniClassDec dec = UniToBlockTestUtil.createEmptyClassModel("UniToBlockArgTest");
+		UniClassDec dec = UniToBlockTestUtil.createEmptyTurtleClassModel("UniToBlockArgTest");
 
 		UniMethodDec start = UniToBlockTestUtil.createEmptyMethodDec("start");
 		dec.members.add(start);

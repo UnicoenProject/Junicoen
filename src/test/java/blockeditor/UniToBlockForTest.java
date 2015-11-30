@@ -15,7 +15,7 @@ public class UniToBlockForTest {
 
 	@Test
 	public void test() {
-		UniClassDec cDec = UniToBlockTestUtil.createEmptyClassModel("UniToBlockForTest");
+		UniClassDec cDec = UniToBlockTestUtil.createEmptyTurtleClassModel("UniToBlockForTest");
 		UniMethodDec mDec = UniToBlockTestUtil.createEmptyMethodDec("start");
 
 		UniFor uniFor = UniToBlockTestUtil.createForTmplate();

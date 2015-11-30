@@ -134,4 +134,11 @@
 			<MethodName>TextTurtle-getText[@int]</MethodName>			
 		</CategoryName>
 	</LibraryClass>
+	<LibraryClass name="Random">
+		<CategoryName name="Random" command="add">
+			<MethodName>Random-nextInt[]</MethodName>
+			<MethodName>Random-nextInt[@int]</MethodName>
+			<MethodName>Random-nextDouble[]</MethodName>			
+		</CategoryName>
+	</LibraryClass>	
 </LibraryClasses>

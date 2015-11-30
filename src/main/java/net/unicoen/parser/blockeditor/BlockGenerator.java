@@ -21,6 +21,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -107,13 +108,15 @@ public class BlockGenerator {
 	public static String BLOCK_ENC = "UTF-8";
 	
 	private String superClass = "";
+	
+	private static String ERROR_STRING = "ERR";
 
-	public BlockGenerator(PrintStream out, String langdefRootPath) {
+	public BlockGenerator(PrintStream out, String langdefRootPath) throws SAXException, IOException {
 		this.out = out;
 		resolver = new BlockResolver(langdefRootPath, false);
 	}
 
-	public BlockGenerator(PrintStream out, String langdefRootPath, boolean isTest) {
+	public BlockGenerator(PrintStream out, String langdefRootPath, boolean isTest) throws SAXException, IOException {
 		this.out = out;
 		resolver = new BlockResolver(langdefRootPath, isTest);
 	}
@@ -123,8 +126,8 @@ public class BlockGenerator {
 	 */
 	public void parse(UniClassDec classDec) throws IOException {
 		// クラス名のxmlファイルを作成する
-		addedModels.clear(); // cashクリア
-
+		addedModels.clear(); // cashクリアn
+		
 		out.print(getSaveString(classDec));
 
 		out.close();
@@ -890,9 +893,29 @@ public class BlockGenerator {
 
 			return createMethodCallModel(superClass, method.methodName, sockets, document, callerId, parent);
 		} else {
-			//標準ライブラリ，またはオブジェクトメソッドコール
-			//identが標準ライブラリか？
-			return createExMethodCallModel(method, document, parent);
+			List<BlockElementModel> sockets = new ArrayList<>();
+			Long methodCallID = ID_COUNTER++;
+			for(UniExpr arg : method.args){
+				sockets.add(parseExpr(arg, document, Long.toString(methodCallID)));
+			}
+			
+			String ident = calcIdentName(method.receiver) + BlockMethodCallModel.calcMethodCallGenusName(method.methodName, transformToTypeList(sockets));
+			if(!ident.contains(ERROR_STRING) && resolver.getForceConvertionMap().containsKey(ident)){
+				String genusName = resolver.getForceConvertionMap().get(ident);
+				return createMethodCallModel(genusName, methodCallID, sockets, document, parent);
+			}else{
+				return createExMethodCallModel(method, document, parent);				
+			}
+		}
+	}
+	
+	public static String calcIdentName(UniExpr expr){
+		if(expr instanceof UniIdent){
+			return ((UniIdent)(expr)).name + ".";
+		}else if(expr instanceof UniFieldAccess){
+			return calcIdentName(((UniFieldAccess)(expr)).receiver)  + ((UniFieldAccess)(expr)).fieldName +".";
+		}else{
+			return "ERR";
 		}
 	}
 
@@ -1013,17 +1036,16 @@ public class BlockGenerator {
 			return caller;
 		} else {
 			// 返り値ありのメソッド呼び出しモデルの作成
-			Long callerId = ID_COUNTER;
-			Element prototype = createBlockElement(document, "", ID_COUNTER++, "");
+			BlockExCallGetterModel caller = new BlockExCallGetterModel(document, ID_COUNTER++);
+			Long callerId = ID_COUNTER++;
+
 			List<BlockElementModel> sockets = new ArrayList<BlockElementModel>();
 			for (UniExpr arg : method.args) {
-				sockets.add(parseExpr(arg, document, DOMUtil.getAttribute(prototype, BlockElementModel.ID_ATTRIBUTE_TAG)));
+				sockets.add(parseExpr(arg, document, Long.toString(callerId)));
 			}
 
-			BlockExCallGetterModel caller = new BlockExCallGetterModel(document, callerId);
-
 			BlockExprModel receiverModel = (BlockExprModel) parseExpr(method.receiver, document, caller.getBlockID());
-			BlockElementModel callMethodModel = createMethodCallModel(receiverModel.getType(),method.methodName, sockets, document, ID_COUNTER++, caller.getBlockID());
+			BlockElementModel callMethodModel = createMethodCallModel(receiverModel.getType(),method.methodName, sockets, document, callerId, caller.getBlockID());
 			caller.setCalleMethod(callMethodModel);
 
 			// socketノードの作成
