@@ -106,10 +106,8 @@ public class BlockGenerator {
 
 	private PrintStream out;
 	public static String BLOCK_ENC = "UTF-8";
-	
+
 	private String superClass = "";
-	
-	private static String ERROR_STRING = "ERR";
 
 	public BlockGenerator(PrintStream out, String langdefRootPath) throws SAXException, IOException {
 		this.out = out;
@@ -127,7 +125,7 @@ public class BlockGenerator {
 	public void parse(UniClassDec classDec) throws IOException {
 		// クラス名のxmlファイルを作成する
 		addedModels.clear(); // cashクリアn
-		
+
 		out.print(getSaveString(classDec));
 
 		out.close();
@@ -182,8 +180,8 @@ public class BlockGenerator {
 	}
 
 	public BlockClassModel parseClass(UniClassDec classDec, Document document) {
-		if(classDec.superClass != null && classDec.superClass.size()>0){
-			superClass = classDec.superClass.get(classDec.superClass.size()-1);			
+		if (classDec.superClass != null && classDec.superClass.size() > 0) {
+			superClass = classDec.superClass.get(classDec.superClass.size() - 1);
 		}
 		BlockClassModel model = new BlockClassModel();
 
@@ -882,46 +880,51 @@ public class BlockGenerator {
 	}
 
 	public BlockElementModel parseMethodCall(UniMethodCall method, Document document, String parent) {
-		if (method.receiver== null) {
-			//フィールドメソッド呼び出し，または継承メソッド呼び出し
-			Long callerId = ID_COUNTER;
-			Element prototype = createBlockElement(document, "", ID_COUNTER++, "");
+		if (method.receiver == null) {
+			// フィールドメソッド呼び出し，または継承メソッド呼び出し
+			Long callerId = ID_COUNTER++;
 			List<BlockElementModel> sockets = new ArrayList<BlockElementModel>();
 			for (UniExpr arg : method.args) {
-				sockets.add(parseExpr(arg, document, DOMUtil.getAttribute(prototype, BlockElementModel.ID_ATTRIBUTE_TAG)));
+				sockets.add(parseExpr(arg, document, Long.toString(callerId)));
 			}
 
 			return createMethodCallModel(superClass, method.methodName, sockets, document, callerId, parent);
 		} else {
-			List<BlockElementModel> sockets = new ArrayList<>();
-			Long methodCallID = ID_COUNTER++;
-			for(UniExpr arg : method.args){
-				sockets.add(parseExpr(arg, document, Long.toString(methodCallID)));
-			}
-			
-			String ident = calcIdentName(method.receiver) + BlockMethodCallModel.calcMethodCallGenusName(method.methodName, transformToTypeList(sockets));
-			if(!ident.contains(ERROR_STRING) && resolver.getForceConvertionMap().containsKey(ident)){
-				String genusName = resolver.getForceConvertionMap().get(ident);
-				return createMethodCallModel(genusName, methodCallID, sockets, document, parent);
+			if(resolver.getForceConvertionMap().isForceConvertionMethod(method)){
+				//ライブラリメソッドの作成
+				Long callerId = ID_COUNTER++;
+				List<BlockElementModel> sockets = parseArgs(method.args, document, Long.toString(callerId));
+				return createMethodCallModel(resolver.getForceConvertionMap().getBlockGenusName(method), callerId, sockets, document, parent);
 			}else{
-				return createExMethodCallModel(method, document, parent);				
+				//ident.methodの作成
+				return createExMethodCallModel(method, document, parent);	
 			}
 		}
 	}
+
+	public List<BlockElementModel> parseArgs(List<UniExpr> args, Document document, String parentId){
+		List<BlockElementModel> sockets = new ArrayList<BlockElementModel>();
+		for (UniExpr arg : args) {
+			sockets.add(parseExpr(arg, document, parentId));
+		}
+		return sockets;
+	}
 	
-	public static String calcIdentName(UniExpr expr){
-		if(expr instanceof UniIdent){
-			return ((UniIdent)(expr)).name + ".";
-		}else if(expr instanceof UniFieldAccess){
-			return calcIdentName(((UniFieldAccess)(expr)).receiver)  + ((UniFieldAccess)(expr)).fieldName +".";
-		}else{
+	public static String calcIdentName(UniExpr expr) {
+		if (expr instanceof UniIdent) {
+			return ((UniIdent) (expr)).name + ".";
+		} else if (expr instanceof UniFieldAccess) {
+			return calcIdentName(((UniFieldAccess) (expr)).receiver) + ((UniFieldAccess) (expr)).fieldName + ".";
+		} else {
 			return "ERR";
 		}
 	}
 
 	/**
 	 * 継承メソッド，ライブラリメソッドコールモデルを作成する
-	 * @param identifier　呼び出し元のクラスまたはライブラリの識別子
+	 * 
+	 * @param identifier
+	 *            呼び出し元のクラスまたはライブラリの識別子
 	 * @param methodName
 	 * @param sockets
 	 * @param document
@@ -929,7 +932,7 @@ public class BlockGenerator {
 	 * @param parent
 	 * @return
 	 */
-	public BlockElementModel createMethodCallModel(String identifier,String methodName, List<BlockElementModel> sockets, Document document, Long callerId, String parent) {
+	public BlockElementModel createMethodCallModel(String identifier, String methodName, List<BlockElementModel> sockets, Document document, Long callerId, String parent) {
 		// メソッドコールモデルを作成する
 		List<String> socketTypes = Lists.transform(sockets, new Function<BlockElementModel, String>() {
 			@Override
@@ -938,20 +941,20 @@ public class BlockGenerator {
 			}
 		});
 		String tmpGenusName = BlockMethodCallModel.calcMethodCallGenusName(methodName, socketTypes);
-//		try {
-			if (resolver.getMehtodResolver().getFieldMethodInfo().isFieldMethod(tmpGenusName)) {//フィールドメソッドコール
-				return createDefinedMethodCallerModel(methodName, sockets, callerId, document, parent);
-			} else {//継承メソッドorライブラリメソッド
-				String genusName = resolver.getMehtodResolver().getMethodGenusName(identifier, tmpGenusName);
-				return createMethodCallModel(genusName, callerId, sockets, document, parent);
-			}
-//		} catch (Exception e) {
-//			// create special
-//			return createSpecialMethodCallModel(methodName, sockets, document, callerId, parent);
-//		}
+		// try {
+		if (resolver.getMehtodResolver().getFieldMethodInfo().isFieldMethod(tmpGenusName)) {// フィールドメソッドコール
+			return createDefinedMethodCallerModel(methodName, sockets, callerId, document, parent);
+		} else {// 継承メソッドorライブラリメソッド
+			String genusName = resolver.getMehtodResolver().getMethodGenusName(identifier, tmpGenusName);
+			return createMethodCallModel(genusName, callerId, sockets, document, parent);
+		}
+		// } catch (Exception e) {
+		// // create special
+		// return createSpecialMethodCallModel(methodName, sockets, document,
+		// callerId, parent);
+		// }
 	}
 
-	
 	public BlockElementModel createSpecialMethodCallModel(String methodName, List<BlockElementModel> sockets, Document document, Long callerId, String parentId) {
 		String kind = "";
 
@@ -1004,9 +1007,13 @@ public class BlockGenerator {
 
 	/**
 	 * オブジェクトのメソッドコールモデルを作成する
-	 * @param method UniMethodModel（null不可）
-	 * @param document null不可
-	 * @param parent null可
+	 * 
+	 * @param method
+	 *            UniMethodModel（null不可）
+	 * @param document
+	 *            null不可
+	 * @param parent
+	 *            null可
 	 * @return ExMethodCallModel
 	 */
 	public BlockElementModel createExMethodCallModel(UniMethodCall method, Document document, String parent) {
@@ -1023,7 +1030,7 @@ public class BlockGenerator {
 			}
 
 			// id, methodNameを使って，ライブラリメソッドor他のオブジェクトのフィールドメソッドモデルを生成
-			BlockElementModel callMethodModel = createMethodCallModel(receiverModel.getType(),method.methodName, sockets, document, callerId, caller.getBlockID());
+			BlockElementModel callMethodModel = createMethodCallModel(receiverModel.getType(), method.methodName, sockets, document, callerId, caller.getBlockID());
 
 			// モデルにソケットに結合されるモデルを追加
 			caller.setCallMethod((BlockCommandModel) callMethodModel);
@@ -1045,7 +1052,7 @@ public class BlockGenerator {
 			}
 
 			BlockExprModel receiverModel = (BlockExprModel) parseExpr(method.receiver, document, caller.getBlockID());
-			BlockElementModel callMethodModel = createMethodCallModel(receiverModel.getType(),method.methodName, sockets, document, callerId, caller.getBlockID());
+			BlockElementModel callMethodModel = createMethodCallModel(receiverModel.getType(), method.methodName, sockets, document, callerId, caller.getBlockID());
 			caller.setCalleMethod(callMethodModel);
 
 			// socketノードの作成
@@ -1062,31 +1069,39 @@ public class BlockGenerator {
 
 	/**
 	 * 標準ライブラリのidentifierかどうかを判定する
-	 * @param UniExpression null可
+	 * 
+	 * @param UniExpression
+	 *            null可
 	 * @return identifierかどうかの真偽値
 	 */
-	public boolean isIdentifier(UniExpr expr){
-		if(expr instanceof UniIdent){
-			UniIdent ident = (UniIdent)expr;
+	public boolean isIdentifier(UniExpr expr) {
+		if (expr instanceof UniIdent) {
+			UniIdent ident = (UniIdent) expr;
 			Node node = resolver.getVariableNameResolver().getVariableBlockNode(ident.name);
-			
-			if(node != null){
+
+			if (node != null) {
 				return false;
-			}else{
+			} else {
 				return true;
-			}	
-		}else{
+			}
+		} else {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * 継承メソッド、またはライブラリメソッドモデルを生成する．
-	 * @param genusName Block名（null不可，予め算出する）
-	 * @param id Blockのid（null不可）
-	 * @param argModels null不可
-	 * @param document null不可
-	 * @param parentId null可 nullの場合，statementとして判断される
+	 * 
+	 * @param genusName
+	 *            Block名（null不可，予め算出する）
+	 * @param id
+	 *            Blockのid（null不可）
+	 * @param argModels
+	 *            null不可
+	 * @param document
+	 *            null不可
+	 * @param parentId
+	 *            null可 nullの場合，statementとして判断される
 	 * @return BlockMethodCallModelをBlockElementModelとして返す
 	 */
 	public BlockElementModel createMethodCallModel(String genusName, Long id, List<BlockElementModel> argModels, Document document, String parentId) {
@@ -1105,7 +1120,6 @@ public class BlockGenerator {
 		return caller;
 	}
 
-	
 	public List<BlockElementModel> transformToBlockElementModel(List<BlockExprModel> argModels) {
 		if (argModels == null) {
 			return new ArrayList<BlockElementModel>();

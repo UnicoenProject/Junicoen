@@ -1,7 +1,9 @@
 package net.unicoen.parser.blockeditor;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.Consumer;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -43,6 +45,20 @@ public class DOMUtil {
 			return null;
 		}
 		return node;
+	}
+	
+	public static List<Node> getChildNodes(Node node){
+		NodeList list = node.getChildNodes();
+		List<Node> childNodes = new ArrayList<>();
+		
+		for(int i = 0; i < list.getLength();i++){
+			Node child = list.item(i);
+			if(!child.getNodeName().startsWith("#")){
+				childNodes.add(child);
+			}
+		}
+		
+		return childNodes;
 	}
 
 	public static String getChildText(Node node, String... nodeName) {

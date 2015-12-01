@@ -1,7 +1,6 @@
 package blockeditor;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import org.junit.Test;
 
@@ -14,8 +13,6 @@ import net.unicoen.node.UniIntLiteral;
 import net.unicoen.node.UniMethodCall;
 import net.unicoen.node.UniMethodDec;
 import net.unicoen.node.UniStringLiteral;
-import net.unicoen.node.UniVariableDec;
-import net.unicoen.parser.blockeditor.BlockGenerator;
 
 public class UniToBlockLibraryMethodTest {
 
@@ -40,15 +37,14 @@ public class UniToBlockLibraryMethodTest {
 		UniMethodCall sysout = new UniMethodCall(new UniFieldAccess(new UniIdent("System"), "out"),"println", Lists.newArrayList(new UniStringLiteral("hogehoge")));
 		start.block.body.add(sysout);
 		
-		
 		//d=Math.random();
-		UniVariableDec doubleNum = UniToBlockTestUtil.createLocalVariable("d", "double");
-		UniMethodCall mathrandom = new UniMethodCall(new UniIdent("Math"), "random", new ArrayList<>());
-		doubleNum.value = mathrandom;
-		start.block.body.add(doubleNum);		
-		
-		BlockGenerator gen = UniToBlockTestUtil.createBlockGenerator(dec.className);
-		gen.parse(dec);
+//		UniVariableDec doubleNum = UniToBlockTestUtil.createLocalVariable("d", "double");
+//		UniMethodCall mathrandom = new UniMethodCall(new UniIdent("Math"), "random", new ArrayList<>());
+//		doubleNum.value = mathrandom;
+//		start.block.body.add(doubleNum);		
+//		
+//		BlockGenerator gen = UniToBlockTestUtil.createBlockGenerator(dec.className);
+//		gen.parse(dec);
 		
 	}
 

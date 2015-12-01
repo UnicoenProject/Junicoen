@@ -31,7 +31,7 @@ public class BlockResolver {
 	private VariableNameResolver vnResolver = new VariableNameResolver();
 	private MethodResolver methodResolver = new MethodResolver();
 	
-	private Map<String, String> forceConvertionMap = new HashMap<>();
+	private ForceConvertionMap forceConvertionMap;
 
 	/**
 	 * ブロック変換の諸リゾルバクラス
@@ -42,10 +42,6 @@ public class BlockResolver {
 		this.langdefRootPath = langdefRootPath;
 		parseGnuses();
 		initMethodResolver(isTest);
-	}
-	
-	public Map<String, String> getForceConvertionMap(){
-		return this.forceConvertionMap;
 	}
 
 	public void initMethodResolver(boolean isTest) throws SAXException, IOException {
@@ -67,24 +63,10 @@ public class BlockResolver {
 			parser.parse(ORIGIN_LANG_DEF_ROOT_PATH + FORCECONVERION_FILENAME);
 		}
 		
-		initForceConvertionList(parser.getDocument().getFirstChild());
+		forceConvertionMap = new ForceConvertionMap(parser.getDocument().getFirstChild());
 	}
 	
-	/**
-	 * 複数の構文要素からなる式を1つのブロックに無理やり変換するもののリストを作成する
-	 * @param node force_convertion_listのConvertListノード
-	 */
-	public void initForceConvertionList(Node node){
-		Consumer<Node> addItemToForceConvertionMap = new Consumer<Node>() {
-			@Override
-			public void accept(Node t) {
-				String ident = DOMUtil.getAttribute(t, "ident");
-				String genusName = DOMUtil.getAttribute(t, BlockElementModel.GENUS_NAME_ATTRIBUTE_TAG);
-				forceConvertionMap.put(ident, genusName);
-			}
-		};
-		DOMUtil.doAnythingToNodeList(node, "Item", addItemToForceConvertionMap);
-	}
+
 
 	public void createLibraryMethodsMap(Node node) {
 		// LibClassノードで行う処理の定義
@@ -303,4 +285,8 @@ public class BlockResolver {
 		return this.methodResolver;
 	}
 
+	public ForceConvertionMap getForceConvertionMap(){
+		return this.forceConvertionMap;
+	}
+	
 }
