@@ -13,7 +13,7 @@ import net.unicoen.node.UniMethodCall;
 public class ForceConvertionMap {
 
 	private Map<UniMethodCall, String> uniToBlockForceConvertionMap = new HashMap<>();//キー：.メソッド名[param]
-//	private Map<String, Object> blockToUniForceConvertionMap = new HashMap<>();//キー：ident.メソッド名[param]
+	private Map<String, UniMethodCall> blockToUniForceConvertionMap = new HashMap<>();//キー：ident.メソッド名[param]
 	
 	public ForceConvertionMap(Node node){
 		initForceConvertionList(node);
@@ -31,6 +31,7 @@ public class ForceConvertionMap {
 				UniMethodCall uniModel = (UniMethodCall)getUniModel(uniModelNode);
 				String blockGenusName = DOMUtil.getChildNode(t, "GenusName").getTextContent();	
 				uniToBlockForceConvertionMap.put(uniModel, blockGenusName);
+				blockToUniForceConvertionMap.put(blockGenusName, uniModel);
 			}
 			/**
 			 * 
@@ -89,5 +90,9 @@ public class ForceConvertionMap {
 			}
 		}
 		return null;
+	}
+	
+	public UniMethodCall getUniMethodCallModel(String genusName){
+		return blockToUniForceConvertionMap.get(genusName);
 	}
 }
