@@ -15,6 +15,11 @@ public class ForceConvertionMap {
 	private Map<UniMethodCall, String> uniToBlockForceConvertionMap = new HashMap<>();//キー：.メソッド名[param]
 	private Map<String, UniMethodCall> blockToUniForceConvertionMap = new HashMap<>();//キー：ident.メソッド名[param]
 	
+	private static String ITEM_NODE = "Item";
+	private static String UNIMODEL_NODE = "UniModel";
+	private static String GENUSNAME_NODE = "GenusName";
+	private static String UNIMODEL_ATTR = "unimodel";
+	
 	public ForceConvertionMap(Node node){
 		initForceConvertionList(node);
 	}
@@ -27,9 +32,9 @@ public class ForceConvertionMap {
 		Consumer<Node> addItemToForceConvertionMap = new Consumer<Node>() {
 			@Override
 			public void accept(Node t) {
-				Node uniModelNode = DOMUtil.getChildNode(t, "UniModel");
+				Node uniModelNode = DOMUtil.getChildNode(t, UNIMODEL_NODE);
 				UniMethodCall uniModel = (UniMethodCall)getUniModel(uniModelNode);
-				String blockGenusName = DOMUtil.getChildNode(t, "GenusName").getTextContent();	
+				String blockGenusName = DOMUtil.getChildNode(t, GENUSNAME_NODE).getTextContent();	
 				uniToBlockForceConvertionMap.put(uniModel, blockGenusName);
 				blockToUniForceConvertionMap.put(blockGenusName, uniModel);
 			}
@@ -49,7 +54,7 @@ public class ForceConvertionMap {
 				}
 				
 				//取得した属性を元に，Uniモデルを作成する
-				return UniModelFactory.createUniModel(DOMUtil.getAttribute(node, "unimodel"), map);
+				return UniModelFactory.createUniModel(DOMUtil.getAttribute(node, UNIMODEL_ATTR), map);
 			}
 			
 			/**
@@ -58,14 +63,14 @@ public class ForceConvertionMap {
 			 * @return
 			 */
 			public Object getAttrObject(Node attrNode){
-				if(DOMUtil.getAttribute(attrNode, "unimodel") != null){
+				if(DOMUtil.getAttribute(attrNode, UNIMODEL_ATTR) != null){
 					return getUniModel(attrNode);
 				}else{
 					return attrNode.getTextContent();
 				}
 			}
 		};
-		DOMUtil.doAnythingToNodeList(node, "Item", addItemToForceConvertionMap);
+		DOMUtil.doAnythingToNodeList(node, ITEM_NODE, addItemToForceConvertionMap);
 	}
 	/**
 	 * 強制変換対象のメソッドかどうかを判定する 

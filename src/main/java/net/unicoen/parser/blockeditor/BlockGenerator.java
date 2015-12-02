@@ -720,7 +720,7 @@ public class BlockGenerator {
 		}
 
 		else {
-			throw new RuntimeException("unequipment operator");
+			throw new RuntimeException("unequipment operato :" + binopExpr.operator );
 		}
 
 		BlockElementModel leftBlock = parseExpr(binopExpr.left, document, DOMUtil.getAttribute(blockElement, BlockElementModel.ID_ATTRIBUTE_TAG));
