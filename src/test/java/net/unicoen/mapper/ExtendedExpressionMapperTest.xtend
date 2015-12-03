@@ -13,7 +13,7 @@ class ExtendedExpressionMapperTest extends MapperTest {
 	@Test @Ignore
 	def void parseSimpleIfStatement() {
 		val node = mapper.parse("public class A{void f(int i){if(3>2){}else{}}}")
-		node.evaluateClass("A", null, null)
+		node.evaluateClass("A", null, null,1)
 
 	//		val methods = (node as UniClassDec).members
 	}
