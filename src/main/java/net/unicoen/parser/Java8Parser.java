@@ -34,8 +34,8 @@ public class Java8Parser extends Parser {
 		MUL=83, DIV=84, BITAND=85, BITOR=86, CARET=87, MOD=88, ARROW=89, COLONCOLON=90, 
 		ADD_ASSIGN=91, SUB_ASSIGN=92, MUL_ASSIGN=93, DIV_ASSIGN=94, AND_ASSIGN=95, 
 		OR_ASSIGN=96, XOR_ASSIGN=97, MOD_ASSIGN=98, LSHIFT_ASSIGN=99, RSHIFT_ASSIGN=100, 
-		URSHIFT_ASSIGN=101, Identifier=102, AT=103, ELLIPSIS=104, WS=105, COMMENT=106, 
-		LINE_COMMENT=107;
+		URSHIFT_ASSIGN=101, Identifier=102, IdentifierLiteral=103, AT=104, ELLIPSIS=105, 
+		WS=106, COMMENT=107, LINE_COMMENT=108;
 	public static final int
 		RULE_literal = 0, RULE_integerLiteral = 1, RULE_floatingPointLiteral = 2, 
 		RULE_booleanLiteral = 3, RULE_stringLiteral = 4, RULE_characterLiteral = 5, 
@@ -216,7 +216,7 @@ public class Java8Parser extends Parser {
 		"'=='", "'<='", "'>='", "'!='", "'&&'", "'||'", "'++'", "'--'", "'+'", 
 		"'-'", "'*'", "'/'", "'&'", "'|'", "'^'", "'%'", "'->'", "'::'", "'+='", 
 		"'-='", "'*='", "'/='", "'&='", "'|='", "'^='", "'%='", "'<<='", "'>>='", 
-		"'>>>='", null, "'@'", "'...'"
+		"'>>>='", null, null, "'@'", "'...'"
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
 		null, "ABSTRACT", "ASSERT", "BOOLEAN", "BREAK", "BYTE", "CASE", "CATCH", 
@@ -233,7 +233,7 @@ public class Java8Parser extends Parser {
 		"DIV", "BITAND", "BITOR", "CARET", "MOD", "ARROW", "COLONCOLON", "ADD_ASSIGN", 
 		"SUB_ASSIGN", "MUL_ASSIGN", "DIV_ASSIGN", "AND_ASSIGN", "OR_ASSIGN", "XOR_ASSIGN", 
 		"MOD_ASSIGN", "LSHIFT_ASSIGN", "RSHIFT_ASSIGN", "URSHIFT_ASSIGN", "Identifier", 
-		"AT", "ELLIPSIS", "WS", "COMMENT", "LINE_COMMENT"
+		"IdentifierLiteral", "AT", "ELLIPSIS", "WS", "COMMENT", "LINE_COMMENT"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
@@ -17119,7 +17119,7 @@ public class Java8Parser extends Parser {
 
 	private static final int _serializedATNSegments = 2;
 	private static final String _serializedATNSegment0 =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3m\u0b69\4\2\t\2\4"+
+		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3n\u0b69\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
@@ -17719,7 +17719,7 @@ public class Java8Parser extends Parser {
 		"\3\2\2\2\u0474\u0472\3\2\2\2\u0474\u0475\3\2\2\2\u0475\u0477\3\2\2\2\u0476"+
 		"\u0474\3\2\2\2\u0477\u047b\5\u0086D\2\u0478\u047a\5\u0106\u0084\2\u0479"+
 		"\u0478\3\2\2\2\u047a\u047d\3\2\2\2\u047b\u0479\3\2\2\2\u047b\u047c\3\2"+
-		"\2\2\u047c\u047e\3\2\2\2\u047d\u047b\3\2\2\2\u047e\u047f\7j\2\2\u047f"+
+		"\2\2\u047c\u047e\3\2\2\2\u047d\u047b\3\2\2\2\u047e\u047f\7k\2\2\u047f"+
 		"\u0480\5\u0082B\2\u0480\u0483\3\2\2\2\u0481\u0483\5\u00aeX\2\u0482\u0474"+
 		"\3\2\2\2\u0482\u0481\3\2\2\2\u0483\u00b7\3\2\2\2\u0484\u0486\5\u0106\u0084"+
 		"\2\u0485\u0484\3\2\2\2\u0486\u0489\3\2\2\2\u0487\u0485\3\2\2\2\u0487\u0488"+
@@ -17819,7 +17819,7 @@ public class Java8Parser extends Parser {
 		"\2\2\u058f\u058c\3\2\2\2\u058f\u058d\3\2\2\2\u058f\u058e\3\2\2\2\u0590"+
 		"\u00f9\3\2\2\2\u0591\u0593\5\u00e6t\2\u0592\u0591\3\2\2\2\u0593\u0596"+
 		"\3\2\2\2\u0594\u0592\3\2\2\2\u0594\u0595\3\2\2\2\u0595\u0597\3\2\2\2\u0596"+
-		"\u0594\3\2\2\2\u0597\u0598\7i\2\2\u0598\u0599\7\36\2\2\u0599\u059a\7h"+
+		"\u0594\3\2\2\2\u0597\u0598\7j\2\2\u0598\u0599\7\36\2\2\u0599\u059a\7h"+
 		"\2\2\u059a\u059b\5\u00fc\177\2\u059b\u00fb\3\2\2\2\u059c\u05a0\7=\2\2"+
 		"\u059d\u059f\5\u00fe\u0080\2\u059e\u059d\3\2\2\2\u059f\u05a2\3\2\2\2\u05a0"+
 		"\u059e\3\2\2\2\u05a0\u05a1\3\2\2\2\u05a1\u05a3\3\2\2\2\u05a2\u05a0\3\2"+
@@ -17838,7 +17838,7 @@ public class Java8Parser extends Parser {
 		"\u05c4\7\16\2\2\u05c4\u05c5\5\u010e\u0088\2\u05c5\u0105\3\2\2\2\u05c6"+
 		"\u05ca\5\u0108\u0085\2\u05c7\u05ca\5\u0114\u008b\2\u05c8\u05ca\5\u0116"+
 		"\u008c\2\u05c9\u05c6\3\2\2\2\u05c9\u05c7\3\2\2\2\u05c9\u05c8\3\2\2\2\u05ca"+
-		"\u0107\3\2\2\2\u05cb\u05cc\7i\2\2\u05cc\u05cd\5D#\2\u05cd\u05cf\7;\2\2"+
+		"\u0107\3\2\2\2\u05cb\u05cc\7j\2\2\u05cc\u05cd\5D#\2\u05cd\u05cf\7;\2\2"+
 		"\u05ce\u05d0\5\u010a\u0086\2\u05cf\u05ce\3\2\2\2\u05cf\u05d0\3\2\2\2\u05d0"+
 		"\u05d1\3\2\2\2\u05d1\u05d2\7<\2\2\u05d2\u0109\3\2\2\2\u05d3\u05d8\5\u010c"+
 		"\u0087\2\u05d4\u05d5\7B\2\2\u05d5\u05d7\5\u010c\u0087\2\u05d6\u05d4\3"+
@@ -17853,7 +17853,7 @@ public class Java8Parser extends Parser {
 		"\u0111\3\2\2\2\u05ed\u05f2\5\u010e\u0088\2\u05ee\u05ef\7B\2\2\u05ef\u05f1"+
 		"\5\u010e\u0088\2\u05f0\u05ee\3\2\2\2\u05f1\u05f4\3\2\2\2\u05f2\u05f0\3"+
 		"\2\2\2\u05f2\u05f3\3\2\2\2\u05f3\u0113\3\2\2\2\u05f4\u05f2\3\2\2\2\u05f5"+
-		"\u05f6\7i\2\2\u05f6\u05f7\5D#\2\u05f7\u0115\3\2\2\2\u05f8\u05f9\7i\2\2"+
+		"\u05f6\7j\2\2\u05f6\u05f7\5D#\2\u05f7\u0115\3\2\2\2\u05f8\u05f9\7j\2\2"+
 		"\u05f9\u05fa\5D#\2\u05fa\u05fb\7;\2\2\u05fb\u05fc\5\u010e\u0088\2\u05fc"+
 		"\u05fd\7<\2\2\u05fd\u0117\3\2\2\2\u05fe\u0600\7=\2\2\u05ff\u0601\5\u011a"+
 		"\u008e\2\u0600\u05ff\3\2\2\2\u0600\u0601\3\2\2\2\u0601\u0603\3\2\2\2\u0602"+

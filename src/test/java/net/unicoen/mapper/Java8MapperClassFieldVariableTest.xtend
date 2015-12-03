@@ -11,6 +11,8 @@ import net.unicoen.node.UniStringLiteral
 import net.unicoen.node.UniIntLiteral
 import net.unicoen.node.UniDoubleLiteral
 import net.unicoen.node.UniBoolLiteral
+import net.unicoen.node.UniNewArray
+import net.unicoen.node.UniNew
 
 class Java8MapperClassFieldVariableTest extends MapperTest {
 	val mapper = new Java8Mapper(true)
@@ -96,42 +98,47 @@ class Java8MapperClassFieldVariableTest extends MapperTest {
 	}
 	@Test
 	def void ParseClassInstanceDecWithValue(){
-		val main = mapper.parse("class A{public static final Temp tt = new Temp();}");
+		val main = mapper.parse("class A{public static final Temp tt = new Temp(1,2);}");
 		main.evaluateClass("A",null,null,1)
 		val String[] modifiers = #["public","static","final"]
 		//"new" statements
-		evaluateFieldDec((main as UniClassDec).members.get(0), "Temp", "tt", null, modifiers)
-		
+		val UniNew literal = new UniNew
+		literal.type = "Temp"
+		val UniIntLiteral int1 = new UniIntLiteral
+		int1.value = 1
+		val UniIntLiteral int2 = new UniIntLiteral
+		int2.value = 2
+		val UniIntLiteral[] value = #[int1,int2]
+		literal.args = value
+		evaluateFieldDec((main as UniClassDec).members.get(0), "Temp", "tt", literal, modifiers)
 	}
 	@Test
 	def void ParseArrayInstanceDec(){
-		val main = mapper.parse("class A{ public static fincl int[] arr = new int[3]; }")
+		val main = mapper.parse("class A{ public static final int[] arr = new int[3]; }")
 		main.evaluateClass("A",null,null,1)
+		
 		val String[] modifiers = #["public","static","final"]
 		//"new" statements
-		evaluateFieldDec((main as UniClassDec).members.get(0), "int[]", "arr", null, modifiers)
+		val UniNewArray literal = new UniNewArray
+		literal.type = "int"
+		val UniIntLiteral num = new UniIntLiteral
+		num.value = 3
+		val UniIntLiteral[] elementsNum = #[num]
+		literal.elementsNum = elementsNum
+		literal.value = null
+		evaluateFieldDec((main as UniClassDec).members.get(0), "int[]", "arr", literal, modifiers)
 	}
 	@Test
 	def void ParseArrayInstanceDecWithValue(){
 		val main = mapper.parse("class A{ public static final int[] arr = {1,2,3}; }")
 		main.evaluateClass("A",null,null,1)
-		val String[] modifiers = #["public","static","final"]
-		val UniArray arr = new UniArray
-		val UniIntLiteral int1 = new UniIntLiteral
-		int1.value = 1
-		val UniIntLiteral int2 = new UniIntLiteral
-		int1.value = 2
-		val UniIntLiteral int3 = new UniIntLiteral
-		int1.value = 3
-		val UniIntLiteral[] values = #[int1,int2,int3]
-		arr.items = values
-		//evaluateFieldDec((main as UniClassDec).members.get(0), "int[]", "arr", arr, modifiers)
 		var varAttDec = (main as UniClassDec).members.get(0) as UniFieldDec
 		assertThat((main as UniClassDec).members.get(0), equalTo(varAttDec))
 		assertThat((varAttDec as UniFieldDec).name, equalTo("arr"))
 		assertThat((varAttDec as UniFieldDec).modifiers.get(0), equalTo("public"))
 		assertThat((varAttDec as UniFieldDec).modifiers.get(1), equalTo("static"))
 		assertThat((varAttDec as UniFieldDec).type, equalTo("int[]"))
+		assertThat((varAttDec.value), instanceOf(UniArray))
 		var varArrValue = varAttDec.value as UniArray
 		
 		val varAttDecVal = varArrValue.items
@@ -145,23 +152,26 @@ class Java8MapperClassFieldVariableTest extends MapperTest {
 	@Test
 	def void ParseArrayInstanceDecWithValue2(){
 		val main = mapper.parse("class A{ public static int[] arr = new int[]{1,2,3}; }")
-		assertThat(main, instanceOf(UniClassDec))
-		
+		main.evaluateClass("A",null,null,1)
 		var varAttDec = (main as UniClassDec).members.get(0) as UniFieldDec
 		assertThat((main as UniClassDec).members.get(0), equalTo(varAttDec))
 		assertThat((varAttDec as UniFieldDec).name, equalTo("arr"))
 		assertThat((varAttDec as UniFieldDec).modifiers.get(0), equalTo("public"))
 		assertThat((varAttDec as UniFieldDec).modifiers.get(1), equalTo("static"))
 		assertThat((varAttDec as UniFieldDec).type, equalTo("int[]"))
-		var varArrValue = varAttDec.value as UniArray
-		val varAttDecVal = varArrValue.items
-		assertThat(varAttDecVal.get(0), instanceOf(UniIntLiteral))
-		assertThat((varAttDecVal.get(0) as UniIntLiteral).value, equalTo(1))
+		assertThat(varAttDec.value, instanceOf(UniNewArray))
+		var varArrValue = varAttDec.value as UniNewArray
+		assertThat((varArrValue as UniNewArray).type, equalTo("int"))
+		assertThat((varArrValue.value), instanceOf(UniArray))
+		var arrliteral = varArrValue.value as UniArray
 		
-		assertThat(varAttDecVal.get(1), instanceOf(UniIntLiteral))
-		assertThat((varAttDecVal.get(1) as UniIntLiteral).value, equalTo(2))
-		
-		assertThat(varAttDecVal.get(2), instanceOf(UniIntLiteral))
-		assertThat((varAttDecVal.get(2) as UniIntLiteral).value, equalTo(3))
+		val eachliteral = arrliteral.items
+		assertThat(eachliteral.get(0), instanceOf(UniIntLiteral))
+		assertThat((eachliteral.get(0) as UniIntLiteral).value, equalTo(1))
+		assertThat(eachliteral.get(1), instanceOf(UniIntLiteral))
+		assertThat((eachliteral.get(1) as UniIntLiteral).value, equalTo(2))
+		assertThat(eachliteral.get(2), instanceOf(UniIntLiteral))
+		assertThat((eachliteral.get(2) as UniIntLiteral).value, equalTo(3))
 	}
+	
 }

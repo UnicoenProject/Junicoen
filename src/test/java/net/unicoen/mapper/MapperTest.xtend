@@ -157,13 +157,20 @@ class MapperTest {
 	/////
 	// evaluate Array
 	/////
-	def evaluateArray(Object node, UniArray arr){
+	def evaluateIntArray(Object node, UniArray arr){
 		assertThat(node, instanceOf(UniArray))
 		val cls = node as UniArray
 		assertEquals(cls.items.size, arr.items.size)
-		arr.items.forEach [ item |
-			assertTrue(cls.items.contains(item))
-		]
+		val size = cls.items.size
+		var i = 0
+		while(i<size){
+			assertThat(cls.items.get(i), instanceOf(UniIntLiteral))
+			assertThat((cls.items.get(i) as UniIntLiteral).value, equalTo((arr.items.get(i) as UniIntLiteral).value))
+			i = i+1
+		}
+//		arr.items.forEach [ item |
+//			assertTrue(cls.items.contains(item))
+//		]
 		
 	}
 }

@@ -1938,6 +1938,10 @@ URSHIFT_ASSIGN
 	;
 
 Identifier
+	:	IdentifierLiteral 
+	;
+
+IdentifierLiteral
 	:	JavaLetter JavaLetterOrDigit* 
 	;
 

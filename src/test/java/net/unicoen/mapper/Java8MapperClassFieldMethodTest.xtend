@@ -139,27 +139,6 @@ class Java8MapperClassFieldMethodTest extends MapperTest {
 		val UniBinOp[] statements = #[binop]
 		trueStatement.body = statements
 		evaluateIf(block.body.get(0), cond, trueStatement, null)
-		
-		
-//		assertThat(block.body.get(0), instanceOf(UniIf))
-//		val methodBody = method.block.body.get(0) as UniIf
-		
-//		assertThat(methodBody.cond, instanceOf(UniBoolLiteral))
-//		val cond = methodBody.cond as UniBoolLiteral
-//		assertThat(cond.value, equalTo(true))
-		
-//		assertThat(methodBody.trueStatement, equalTo(UniBlock))
-//		val trueS = methodBody.trueStatement as UniBlock
-//		assertThat(trueS.body.get(0), instanceOf(UniBinOp))
-		
-//		val binop = trueS.body.get(0) as UniBinOp
-//		assertThat(binop.operator, equalTo("="))
-//		assertThat(binop.left, instanceOf(UniIdent))
-//		val binleft = binop.left as UniIdent
-//		assertThat(binleft.name, equalTo("a"))
-//		assertThat(binop.right, instanceOf(UniIntLiteral))
-//		val binright = binop.right as UniIntLiteral
-//		assertThat(binright.value, equalTo(1) )
 	}
 	@Test
 	def void parseMethodWithIfElseStatement(){
