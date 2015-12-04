@@ -27,6 +27,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 import net.unicoen.node.UniArg;
+import net.unicoen.node.UniArray;
 import net.unicoen.node.UniBinOp;
 import net.unicoen.node.UniBlock;
 import net.unicoen.node.UniBoolLiteral;
@@ -47,6 +48,7 @@ import net.unicoen.node.UniMemberDec;
 import net.unicoen.node.UniMethodCall;
 import net.unicoen.node.UniMethodDec;
 import net.unicoen.node.UniNew;
+import net.unicoen.node.UniNewArray;
 import net.unicoen.node.UniReturn;
 import net.unicoen.node.UniStringLiteral;
 import net.unicoen.node.UniUnaryOp;
@@ -64,6 +66,7 @@ import net.unicoen.parser.blockeditor.blockmodel.BlockElementModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockExCallGetterModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockExCallerModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockExprModel;
+import net.unicoen.parser.blockeditor.blockmodel.BlockFieldVarDecModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockIfModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockIntLiteralModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockLiteralModel;
@@ -131,6 +134,11 @@ public class BlockGenerator {
 		out.close();
 	}
 
+	/**
+	 * UniClassModelを解析して，BockEditorのソースコード形式のxmlNodeを文字列として取得する
+	 * @param classDec
+	 * @return
+	 */
 	public String getSaveString(UniClassDec classDec) {
 		try {
 			Node node = getSaveNode(classDec);
@@ -150,6 +158,11 @@ public class BlockGenerator {
 		}
 	}
 
+	/**
+	 *  UniClassModelを解析して，BockEditorのソースコード形式のxmlNodeを生成する
+	 * @param classDec UniClassModel
+	 * @return
+	 */
 	public Node getSaveNode(UniClassDec classDec) {
 		try {
 			Document document = DOMUtil.createDocumentInstance();
@@ -183,14 +196,22 @@ public class BlockGenerator {
 			superClass = classDec.superClass.get(classDec.superClass.size() - 1);
 		}
 		BlockClassModel model = new BlockClassModel();
-
+		
+		parseFieldVariable(classDec, model, document);
+		
 		// メソッド呼び出しがユーザ定義メソッドかどうかを識別するため、全メソッドをresolverに一度登録する
 		addUserDefineMethodToResolver(classDec);
+		
+		parseClassMethods(classDec, model, document);
 
-		parseFieldVariable(classDec, model);
+		superClass = "";
+		return model;
+	}
+	
+	public void parseClassMethods(UniClassDec classDec, BlockClassModel model, Document document){
 		for (UniMemberDec member : classDec.members) {
 			// フィールドメソッドの解析
-			if (member instanceof UniMemberDec) {
+			if (member instanceof UniMethodDec) {
 				UniMethodDec mDec = (UniMethodDec) member;
 				ID_COUNTER = resolver.getMehtodResolver().getFieldMethodInfo().getId(BlockMethodCallModel.calcMethodCallGenusName(mDec.methodName, transformArgToString(mDec.args)));
 
@@ -201,8 +222,6 @@ public class BlockGenerator {
 				}
 			}
 		}
-		superClass = "";
-		return model;
 	}
 
 	public void addLocation(BlockElementModel mDec, Document document, int size) {
@@ -214,22 +233,41 @@ public class BlockGenerator {
 
 		mDec.addLocationElement(document, Integer.toString(x), Integer.toString(y), mDec.getBlockElement());
 	}
+	
+	public BlockFieldVarDecModel createBlockFieldVariableDecModel(UniFieldDec member, Document document){
+		UniFieldDec varDec = member;
+		BlockFieldVarDecModel blockModel = new BlockFieldVarDecModel(member.type, member.name, document, resolver, ID_COUNTER++);
+		BlockElementModel initializer = null;
+		if (varDec.value != null) {
+			initializer = parseExpr(varDec.value, document, blockModel.getBlockID());
+		}
 
-	public void parseFieldVariable(UniClassDec classDec, BlockClassModel model) {
+		List<Node> socketNodes = resolver.getSocketNodes(blockModel.getElement().getAttribute("genus-name"));
+
+		BlockSocketsModel sockets = calcSocketsInfo(socketNodes);
+
+		List<BlockElementModel> args = new ArrayList<>();
+		if (initializer != null) {
+			args.add(initializer);
+		} else {
+			args.add(null);
+		}
+		blockModel.addSocketsAndNodes(args, document, sockets);
+		
+		return blockModel;
+	}
+
+	public void parseFieldVariable(UniClassDec classDec, BlockClassModel model, Document document) {
 		for (UniMemberDec member : classDec.members) {
 			if (member instanceof UniFieldDec) {
+				model.addFieldVariable(createBlockFieldVariableDecModel((UniFieldDec)member, document));
 			}
 		}
 	}
 
-	public BlockElementModel parseFieldVarDec(UniFieldDec dec) {
-		// TODO should impl
-		return null;
-	}
-
 	public void addUserDefineMethodToResolver(UniClassDec classDec) {
 		for (UniMemberDec member : classDec.members) {
-			if (member instanceof UniMemberDec) {
+			if (member instanceof UniMethodDec) {
 				UniMethodDec mDec = (UniMethodDec) member;
 				resolver.getMehtodResolver().addFieldMethodInfo(BlockMethodCallModel.calcMethodCallGenusName(mDec.methodName, transformArgToString(mDec.args)), new FieldMethodInfo(mDec.returnType, ID_COUNTER += MAX_AVAIABLE_ID));
 			}
@@ -398,6 +436,10 @@ public class BlockGenerator {
 			model = parseUnaryOperator((UniUnaryOp) expr, document, parentId);
 		} else if (expr instanceof UniVariableDec) {
 			model = parseVarDec((UniVariableDec) expr, document, parentId);
+		} else if(expr instanceof UniArray){ 
+			throw new RuntimeException("The expr has not been supported yet");
+		} else if(expr instanceof UniNewArray){
+			throw new RuntimeException("The expr has not been supported yet");
 		} else if (expr instanceof UniLongLiteral) {
 			throw new RuntimeException("The expr has not been supported yet");
 		} else if (expr instanceof UniReturn) {

@@ -14,6 +14,10 @@ public class BlockClassModel {
 	public Element createBlockNodes(Document document) {
 		Element pageBlocksElement = document.createElement("PageBlocks");
 
+		for(BlockFieldVarDecModel model : fieldVariables){
+			pageBlocksElement.appendChild(model.getElement());
+		}
+		
 		for (BlockProcedureModel method : methods) {
 			method.addBlockNodes(pageBlocksElement);
 		}
@@ -23,6 +27,10 @@ public class BlockClassModel {
 
 	public List<BlockProcedureModel> getMethods(){
 		return this.methods;
+	}
+	
+	public List<BlockFieldVarDecModel> getFieldVariables(){
+		return this.fieldVariables;
 	}
 
 	public void addMethod(BlockProcedureModel method) {
