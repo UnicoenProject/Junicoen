@@ -223,7 +223,7 @@ public class BlockGenerator {
 			}
 		}
 	}
-
+	
 	public void addLocation(BlockElementModel mDec, Document document, int size) {
 		int x = 50 + 200 * size;
 		int y = 50;
@@ -254,6 +254,7 @@ public class BlockGenerator {
 		}
 		blockModel.addSocketsAndNodes(args, document, sockets);
 		
+		resolver.getVariableNameResolver().addGlobalVariable(member.name, blockModel.getElement());
 		return blockModel;
 	}
 
@@ -786,7 +787,7 @@ public class BlockGenerator {
 		if (binopExpr.left instanceof UniIdent) {
 			String genusName = "setter";
 			UniIdent ident = (UniIdent) binopExpr.left;
-			Node varDecNode = resolver.getVariableNameResolver().getLocalVariableBlockNode(ident.name);
+			Node varDecNode = resolver.getVariableNameResolver().getVariableBlockNode(ident.name);
 
 			genusName += DOMUtil.getAttribute(varDecNode, BlockElementModel.GENUS_NAME_ATTRIBUTE_TAG);
 			// BlockStubノード作成
