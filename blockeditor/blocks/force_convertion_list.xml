@@ -10,6 +10,19 @@
 				</receiver>
 			</receiver>
 		</UniModel>
+		<GenusName>cui-println[@string]</GenusName>
+	</Item>
+	
+	<Item>
+		<UniModel unimodel="UniMethodCall">
+			<name>print</name>
+			<receiver unimodel="UniFieldAccess">
+				<name>out</name>
+				<receiver unimodel="UniIdent">
+					<name>System</name>
+				</receiver>
+			</receiver>
+		</UniModel>
 		<GenusName>cui-print[@string]</GenusName>
 	</Item>
 

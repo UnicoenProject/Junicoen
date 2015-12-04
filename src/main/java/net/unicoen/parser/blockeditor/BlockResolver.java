@@ -65,8 +65,6 @@ public class BlockResolver {
 		
 		forceConvertionMap = new ForceConvertionMap(parser.getDocument().getFirstChild());
 	}
-	
-
 
 	public void createLibraryMethodsMap(Node node) {
 		// LibClassノードで行う処理の定義

@@ -124,8 +124,8 @@ public class BlockGenerator {
 	 */
 	public void parse(UniClassDec classDec) throws IOException {
 		// クラス名のxmlファイルを作成する
-		addedModels.clear(); // cashクリアn
-
+		addedModels.clear(); // cashクリア
+		
 		out.print(getSaveString(classDec));
 
 		out.close();
@@ -158,7 +158,6 @@ public class BlockGenerator {
 			documentElement.setAttributeNS(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "xsi:schemaLocation", XML_CODEBLOCKS_NS + " " + XML_CODEBLOCKS_SCHEMA_URI);
 
 			BlockClassModel model = parseClass(classDec, document);
-
 			PageModel pageModel = new PageModel(classDec.className, model.createBlockNodes(document), document);
 
 			List<PageModel> pages = new ArrayList<PageModel>();
@@ -890,11 +889,12 @@ public class BlockGenerator {
 
 			return createMethodCallModel(superClass, method.methodName, sockets, document, callerId, parent);
 		} else {
-			if(resolver.getForceConvertionMap().isForceConvertionMethod(method)){
+			String genusName = resolver.getForceConvertionMap().getBlockGenusName(method);
+			if(genusName != null){
 				//ライブラリメソッドの作成
 				Long callerId = ID_COUNTER++;
 				List<BlockElementModel> sockets = parseArgs(method.args, document, Long.toString(callerId));
-				return createMethodCallModel(resolver.getForceConvertionMap().getBlockGenusName(method), callerId, sockets, document, parent);
+				return createMethodCallModel(genusName, callerId, sockets, document, parent);
 			}else{
 				//ident.methodの作成
 				return createExMethodCallModel(method, document, parent);	
