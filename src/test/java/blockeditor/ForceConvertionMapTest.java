@@ -32,6 +32,7 @@ public class ForceConvertionMapTest {
 		assertEquals("Math-random[]", map.getBlockGenusName(new UniMethodCall(new UniIdent("Math"),"random", null)));
 		
 		
+		
 	}
 
 }

@@ -3,23 +3,25 @@ package net.unicoen.parser.blockeditor.blockmodel;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.unicoen.node.UniMethodDec;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
+import net.unicoen.node.UniMethodDec;
 
 public class BlockProcedureModel extends BlockElementModel {
 
 	private List<BlockCommandModel> bodyBlocks = new ArrayList<>();
 	public static String GENUS_NAME = "procedure";
+	public static String KIND = "procedure";
+	
 
 	public BlockProcedureModel(UniMethodDec dec, Document document, Long ID_COUNTER) {
 		initialize(dec, document, ID_COUNTER);
 	}
 
 	public void initialize(UniMethodDec funcDec, Document document, Long ID_COUNTER){
-		Element procedureElement = createBlockElement(document, GENUS_NAME, ID_COUNTER, GENUS_NAME);
+		Element procedureElement = createBlockElement(document, GENUS_NAME, ID_COUNTER, KIND);
 
 		addElement("Label", document, funcDec.methodName, procedureElement);
 		addElement("ReturnType", document, funcDec.returnType, procedureElement);
@@ -51,11 +53,12 @@ public class BlockProcedureModel extends BlockElementModel {
 		}
 	}
 
+	@Override
 	public void addSocketsAndNodes(List<BlockElementModel> socketBlocks, Document document, BlockSocketsModel sockets){
 		//SocketsInfoの作成
 		List<BlockSocketModel> socketsInfo = new ArrayList<BlockSocketModel>();
 		for (BlockElementModel param : socketBlocks) {
-			addSocketInfoToList(socketsInfo, (BlockElementModel)param);
+			addSocketInfoToList(socketsInfo, param);
 		}
 		//procedureは空のソケットを1つ持っていなければいけない
 		addSocketInfoToList(socketsInfo, null);

@@ -16,6 +16,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.google.common.collect.Lists;
+
 import net.unicoen.node.UniBinOp;
 import net.unicoen.node.UniBlock;
 import net.unicoen.node.UniBoolLiteral;
@@ -25,6 +27,7 @@ import net.unicoen.node.UniContinue;
 import net.unicoen.node.UniDoWhile;
 import net.unicoen.node.UniDoubleLiteral;
 import net.unicoen.node.UniExpr;
+import net.unicoen.node.UniFieldDec;
 import net.unicoen.node.UniIdent;
 import net.unicoen.node.UniIf;
 import net.unicoen.node.UniIntLiteral;
@@ -39,7 +42,9 @@ import net.unicoen.node.UniVariableDec;
 import net.unicoen.node.UniWhile;
 import net.unicoen.parser.blockeditor.blockmodel.BlockElementModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockExCallGetterModel;
+import net.unicoen.parser.blockeditor.blockmodel.BlockFieldVarDecModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockProcedureModel;
+import net.unicoen.parser.blockeditor.blockmodel.BlockReturnModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockSocketsModel;
 import net.unicoen.parser.blockeditor.blockmodel.PageModel;
 
@@ -58,14 +63,40 @@ public class BlockMapper {
 		// Blockノードの親ノードを取得する
 		Node pageBlock = getPageBlocksNode(xmlFile);
 
-		ArrayList<Node> procs = new ArrayList<>();// Blockのidをキー該当ノードをvalueとしてメソッド定義ブロックのBlockNodeを保持する変数
+		List<Node> procs = new ArrayList<>();// Blockのidをキー該当ノードをvalueとしてメソッド定義ブロックのBlockNodeを保持する変数
 		Map<String, String> methodsReturnTypes = new HashMap<>();// 返り値の型を保持する
-
+		List<Node>  fieldVariables = new ArrayList<>();
+		
 		// mapに全てのBlockNodeを,procsに全てのメソッド定義のBlockNodeを保存する
-		putAllBlockNodes(pageBlock, procs);
+		putAllBlockNodes(pageBlock);
+		preparseNodes(pageBlock, procs, methodsReturnTypes, fieldVariables);
+		
+		classDec.members = parseFieldVariableNodes(fieldVariables);
 
-		putReturnTypesToMap(pageBlock, procs, methodsReturnTypes);
+		classDec.members = parseMethodNodes(procs, methodsReturnTypes);
 
+		return classDec;
+	}
+	
+	public List<UniMemberDec> parseFieldVariableNodes(List<Node> procs){
+		List<UniMemberDec> fieldVariables = new ArrayList<>();
+		for(Node node : procs){
+			UniFieldDec dec = new UniFieldDec();
+			dec.name = DOMUtil.getChildText(node, BlockElementModel.NAME_NODE_NAME);
+			dec.type = DOMUtil.getChildText(node, BlockElementModel.TYPE_NODE_NAME);
+			dec.modifiers = Lists.newArrayList("pivate");
+			
+			List<UniExpr> initValues = parseSocket(DOMUtil.getChildNode(node, BlockSocketsModel.NODE_NAME), map);
+			
+			if (!initValues.isEmpty()) {
+				dec.value=initValues.get(0);
+			}
+			fieldVariables.add(dec);
+		}
+		return fieldVariables;
+	}
+
+	public List<UniMemberDec> parseMethodNodes(List<Node> procs, Map<String, String> methodsReturnTypes){
 		List<UniMemberDec> ret = new ArrayList<>();
 		for (Node procNode : procs) {
 			UniMethodDec d = new UniMethodDec(DOMUtil.getChildText(procNode, BlockElementModel.LABEL_NODE_NAME), new ArrayList<>(), methodsReturnTypes.get(DOMUtil.getAttribute(procNode, BlockElementModel.ID_ATTRIBUTE_TAG)), new ArrayList<>(), null);
@@ -84,13 +115,16 @@ public class BlockMapper {
 			ret.add(d);
 			variableResolver.resetLocalVariables();
 		}
-
-		classDec.members = ret;
-
-		return classDec;
+		return ret;
 	}
-
-	public void putReturnTypesToMap(Node pageBlock, ArrayList<Node> procs, Map<String, String> returnTypes) {
+	
+	/**
+	 * 一度pageblocksノードを全て解析し，インスタンス変数ノード，メソッドノード，メソッド名と返り値を取得する
+	 * @param pageBlock pageblocksノード
+	 * @param procs メソッド定義ノードを格納するリスト
+	 * @param returnTypes メソッド名とその返り値を登録するマップ
+	 */
+	public void preparseNodes(Node pageBlock, List<Node> procs, Map<String, String> returnTypes, List<Node> fieldVariables) {
 		// xmlのPageの子ノードから，メソッド定義のBlockノードのみを抽出する
 		for (Node node : DOMUtil.eachChild(pageBlock)) {
 			String name = node.getNodeName();
@@ -99,17 +133,17 @@ public class BlockMapper {
 			} else if (name.equals(BlockElementModel.BLOCK_STUB_NODE_NAME)) {
 				node = DOMUtil.getChildNode(node, BlockElementModel.BLOCK_NODE_NAME);
 			}
-			String genusName = DOMUtil.getAttribute(node, BlockElementModel.GENUS_NAME_ATTRIBUTE_TAG);
+			
 			String nodeId = DOMUtil.getAttribute(node, BlockElementModel.ID_ATTRIBUTE_TAG);
-
-			if (BlockProcedureModel.GENUS_NAME.equals(genusName)) {
+			String kind = DOMUtil.getAttribute(node, BlockElementModel.KIND_ATTRIBUTE_TAG);
+			if (BlockProcedureModel.KIND.equals(kind)) {
 				procs.add(node);
 				if (returnTypes.get(nodeId) == null) {
 					returnTypes.put(nodeId, "void");
 				}
-			}
-
-			if ("return".equals(genusName)) {
+			} else if(BlockFieldVarDecModel.KIND.equals(kind)){
+				fieldVariables.add(node);
+			} else if (BlockReturnModel.KIND.equals(kind)) {
 				Node socketNode = DOMUtil.getChildNode(getSocketsNode(node), "BlockConnector");
 				returnTypes.put(DOMUtil.getAttribute(getTopBlockNode(node), BlockElementModel.ID_ATTRIBUTE_TAG), getSocketType(socketNode));
 			}
@@ -134,7 +168,7 @@ public class BlockMapper {
 		return d;
 	}
 
-	public void putAllBlockNodes(Node pageBlock, ArrayList<Node> procs) {
+	public void putAllBlockNodes(Node pageBlock) {
 		// xmlのPageの子ノードから，メソッド定義のBlockノードのみを抽出する
 		for (Node node : DOMUtil.eachChild(pageBlock)) {
 			String name = node.getNodeName();
