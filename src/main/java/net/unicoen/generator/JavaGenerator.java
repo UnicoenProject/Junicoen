@@ -445,7 +445,15 @@ public class JavaGenerator extends Traverser {
 
 	@Override
 	public void traverseFieldDec(UniFieldDec node) {
-		throw new RuntimeException("Not Implemented");
+		String mod = safeJoin(node.modifiers, " ");
+		String dec = String.join(" ", mod, node.type, node.name);
+		print(dec);
+		
+		if(node.value != null){
+			print(" = ");
+			parseExpr(node.value);
+		}
+		print(";");
 	}
 
 	@Override

@@ -1,5 +1,8 @@
 package net.unicoen.parser.blockeditor.blockmodel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -19,6 +22,9 @@ public class PageModel {
 	private static String PAGE_WIDTH ="1366";
 
 	public static String NODE_NAME = "Page";
+	
+	private List<String> importStatements = new ArrayList<>();
+//	private String headerComment = "";
 
 	public PageModel(String className, Element blockNode, Document document){
 		this.pageName = className;
@@ -33,8 +39,17 @@ public class PageModel {
 		pageElement.setAttribute(PAGE_NAME_TAGNAME, pageName);
 		pageElement.setAttribute(PAGE_WITDH_TAGNAME, PAGE_WIDTH);
 
+		
+		
 		pageElement.appendChild(blockNode);
 		this.pageNode = pageElement;
+	}
+	
+	public void addImportStatements(Element pageElement, Document document){
+		for(String statement : importStatements){
+			document.createElement(statement);
+		}
+
 	}
 
 	public Element getPageElement(){

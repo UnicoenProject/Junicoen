@@ -10,6 +10,8 @@ import com.google.common.collect.Lists;
 
 public class BlockReturnModel extends BlockCommandModel {
 
+	public static String KIND = "return";
+	
 	public BlockReturnModel(Element element, BlockExprModel socket, Document document) {
 		this.element = element;
 		List<BlockSocketModel> sockets = new ArrayList<BlockSocketModel>();

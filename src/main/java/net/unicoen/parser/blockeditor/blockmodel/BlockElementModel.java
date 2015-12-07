@@ -3,14 +3,14 @@ package net.unicoen.parser.blockeditor.blockmodel;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.unicoen.parser.blockeditor.DOMUtil;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+
+import net.unicoen.parser.blockeditor.DOMUtil;
 
 public class BlockElementModel {
 
@@ -27,7 +27,7 @@ public class BlockElementModel {
 	public static String BLOCK_STUB_NODE_NAME = "BlockStub";
 	public static String AFTERBLOCKID_NODE_NAME = "AfterBlockId";
 	public static String BEFOREBLOCKID_NODE_NAME = "BeforeBlockId";
-
+	
 	private List<BlockElementModel> socketBlocksElements = new ArrayList<>();
 
 	public BlockElementModel() {
@@ -235,6 +235,7 @@ public class BlockElementModel {
 
 	public List<String> transformToTypeStringList(List<BlockElementModel> args){
 		return Lists.transform(args, new Function<BlockElementModel, String>() {
+			@Override
 			public String apply(BlockElementModel input) {
 				return input.getType();
 			}

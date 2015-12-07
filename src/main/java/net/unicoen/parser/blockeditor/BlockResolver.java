@@ -15,6 +15,9 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import net.unicoen.parser.blockeditor.blockmodel.BlockElementModel;
+import net.unicoen.parser.blockeditor.blockmodel.BlockFieldVarDecModel;
+import net.unicoen.parser.blockeditor.blockmodel.BlockLocalVarDecModel;
+import net.unicoen.parser.blockeditor.blockmodel.BlockProcParmModel;
 
 public class BlockResolver {
 
@@ -65,8 +68,6 @@ public class BlockResolver {
 		
 		forceConvertionMap = new ForceConvertionMap(parser.getDocument().getFirstChild());
 	}
-	
-
 
 	public void createLibraryMethodsMap(Node node) {
 		// LibClassノードで行う処理の定義
@@ -162,7 +163,7 @@ public class BlockResolver {
 
 	private void addAvaiableMethodToResolver(Node node) {
 		String kind = DOMUtil.getAttribute(node, "kind");
-		if ("local-variable".equals(kind) || "global-variable".equals(kind)) {
+		if (BlockLocalVarDecModel.KIND.equals(kind)) {
 			Node methodsNode = DOMUtil.getChildNode(node, "ClassMethods");
 			if (methodsNode != null) {
 				addClassMethodsToResolver(DOMUtil.getChildTextFromBlockNode(node, "Type"), methodsNode);
@@ -197,16 +198,15 @@ public class BlockResolver {
 		return methods;
 	}
 
-
 	public void addAvaiableVariableTypeToMap(Node node) {
 		// 利用可能な変数型リストに登録
-		if ("param".equals(DOMUtil.getAttribute(node, "kind"))) {
-			this.availableFunctionArgsTypes.put(DOMUtil.getChildNode(node, "Type").getTextContent(), DOMUtil.getAttribute(node, "name"));
-		} else if ("local-variable".equals(DOMUtil.getAttribute(node, "kind"))) {
+		if (BlockProcParmModel.KIND.equals(DOMUtil.getAttribute(node, BlockElementModel.KIND_ATTRIBUTE_TAG))) {
+			this.availableFunctionArgsTypes.put(DOMUtil.getChildNode(node, BlockElementModel.TYPE_NODE_NAME).getTextContent(), DOMUtil.getAttribute(node, "name"));
+		} else if (BlockLocalVarDecModel.KIND.equals(DOMUtil.getAttribute(node, BlockElementModel.KIND_ATTRIBUTE_TAG))) {
 			// 利用可能な関数の引数の型マップに登録
-			this.availableLocalVariableDecralationTypes.put(DOMUtil.getChildNode(node, "Type").getTextContent(), DOMUtil.getAttribute(node, "name"));
-		} else if ("global-variable".equals(DOMUtil.getAttribute(node, "kind"))) {
-			this.availableFieldVariableDecralationTypes.put(DOMUtil.getChildNode(node, "Type").getTextContent(), DOMUtil.getAttribute(node, "name"));
+			this.availableLocalVariableDecralationTypes.put(DOMUtil.getChildNode(node, BlockElementModel.TYPE_NODE_NAME).getTextContent(), DOMUtil.getAttribute(node, "name"));
+		} else if (BlockFieldVarDecModel.KIND.equals(DOMUtil.getAttribute(node, BlockElementModel.KIND_ATTRIBUTE_TAG))) {
+			this.availableFieldVariableDecralationTypes.put(DOMUtil.getChildNode(node, BlockElementModel.TYPE_NODE_NAME).getTextContent(), DOMUtil.getAttribute(node, "name"));
 		}
 	}
 

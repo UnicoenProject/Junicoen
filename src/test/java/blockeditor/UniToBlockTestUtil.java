@@ -6,6 +6,8 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.xml.sax.SAXException;
 
 import com.google.common.collect.Lists;
@@ -15,6 +17,7 @@ import net.unicoen.node.UniBinOp;
 import net.unicoen.node.UniBlock;
 import net.unicoen.node.UniClassDec;
 import net.unicoen.node.UniExpr;
+import net.unicoen.node.UniFieldDec;
 import net.unicoen.node.UniFor;
 import net.unicoen.node.UniIdent;
 import net.unicoen.node.UniIntLiteral;
@@ -25,6 +28,8 @@ import net.unicoen.node.UniNew;
 import net.unicoen.node.UniUnaryOp;
 import net.unicoen.node.UniVariableDec;
 import net.unicoen.parser.blockeditor.BlockGenerator;
+import net.unicoen.parser.blockeditor.DOMUtil;
+import net.unicoen.parser.blockeditor.blockmodel.BlockClassModel;
 
 public class UniToBlockTestUtil {
 
@@ -125,7 +130,22 @@ public class UniToBlockTestUtil {
 		gen.parse(cDec);
 	}
 	
+	public static BlockClassModel createBlockClassModel(UniClassDec dec) throws IOException, ParserConfigurationException{
+		BlockGenerator gen = createBlockGenerator(dec.className + "Test");
+		
+		return gen.parseClass(dec, DOMUtil.createDocumentInstance());
+		
+	}
+	
 	public static UniBinOp createVariableSetterModel(UniIdent ident, UniExpr value){
 		return new UniBinOp("=", ident, value);
+	}
+	
+	public static UniFieldDec createFieldDec(String type, String name){
+		return new UniFieldDec(Lists.newArrayList(), type, name, null);
+	}
+	
+	public static UniMethodDec createStartMethod(){
+		return new UniMethodDec("start", Lists.newArrayList("public"), "void", Lists.newArrayList(), new UniBlock(Lists.newArrayList(), ""));
 	}
 }

@@ -1,13 +1,13 @@
 package net.unicoen.parser.blockeditor.blockmodel;
 
-import net.unicoen.parser.blockeditor.BlockResolver;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import net.unicoen.parser.blockeditor.BlockResolver;
+
 public class BlockProcParmModel extends BlockExprModel {
 
-	private static String KIND = "param";
+	public static String KIND = "param";
 
 	public BlockProcParmModel(String type, String name, Document document, BlockResolver resolver, Long ID_COUNTER) {
 		this.element = createLocalVaribleElement(type, name, document, resolver, ID_COUNTER);
