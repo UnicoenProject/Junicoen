@@ -22,7 +22,7 @@ public class JavaGeneratorForTurtle extends JavaGenerator {
 				"extends Turtle {");
 		print(declare);
 		newline();
-
+		newline();
 		withIndent(() -> {
 			print("public static void main (String[] args) {");
 			newline();
@@ -37,10 +37,10 @@ public class JavaGeneratorForTurtle extends JavaGenerator {
 
 			for (UniMemberDec dec : iter(classDec.members)) {
 				traverseMemberDec(dec);
+				newline();
+				newline();
 			}
 		});
-		newline();
 		print("}");
-		newline();
 	}
 }

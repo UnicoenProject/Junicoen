@@ -73,7 +73,7 @@ public class BlockMapper {
 		
 		classDec.members = parseFieldVariableNodes(fieldVariables);
 
-		classDec.members = parseMethodNodes(procs, methodsReturnTypes);
+		classDec.members.addAll(parseMethodNodes(procs, methodsReturnTypes));
 
 		return classDec;
 	}
@@ -84,7 +84,7 @@ public class BlockMapper {
 			UniFieldDec dec = new UniFieldDec();
 			dec.name = DOMUtil.getChildText(node, BlockElementModel.NAME_NODE_NAME);
 			dec.type = DOMUtil.getChildText(node, BlockElementModel.TYPE_NODE_NAME);
-			dec.modifiers = Lists.newArrayList("pivate");
+			dec.modifiers = Lists.newArrayList("private");
 			
 			List<UniExpr> initValues = parseSocket(DOMUtil.getChildNode(node, BlockSocketsModel.NODE_NAME), map);
 			
@@ -155,6 +155,7 @@ public class BlockMapper {
 		classDec.className = xmlFile.getName().substring(0, xmlFile.getName().indexOf(".xml"));
 		classDec.modifiers = new ArrayList<String>();
 		classDec.modifiers.add("");
+		classDec.members = new ArrayList<>();
 
 		return classDec;
 	}

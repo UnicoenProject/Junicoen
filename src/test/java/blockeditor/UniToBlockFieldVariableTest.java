@@ -14,6 +14,7 @@ import net.unicoen.node.UniBinOp;
 import net.unicoen.node.UniBoolLiteral;
 import net.unicoen.node.UniClassDec;
 import net.unicoen.node.UniDoubleLiteral;
+import net.unicoen.node.UniFieldDec;
 import net.unicoen.node.UniIdent;
 import net.unicoen.node.UniIntLiteral;
 import net.unicoen.node.UniMethodDec;
@@ -25,7 +26,9 @@ public class UniToBlockFieldVariableTest {
 	@Test
 	public void test() throws IOException, ParserConfigurationException {
 		UniClassDec dec = UniToBlockTestUtil.createEmptyClassModel("UniToBlockFieldVarDecTest", Lists.newArrayList("Turtle"));
-		dec.members.add(UniToBlockTestUtil.createFieldDec("String", "s"));
+		UniFieldDec stringdec = UniToBlockTestUtil.createFieldDec("String", "s");
+		stringdec.value = new UniStringLiteral("hoge");
+		dec.members.add(stringdec);
 		dec.members.add(UniToBlockTestUtil.createFieldDec("int", "i"));
 		dec.members.add(UniToBlockTestUtil.createFieldDec("double", "d"));
 		dec.members.add(UniToBlockTestUtil.createFieldDec("boolean", "b"));

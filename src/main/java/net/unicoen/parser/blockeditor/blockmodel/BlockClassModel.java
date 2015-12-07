@@ -15,7 +15,9 @@ public class BlockClassModel {
 		Element pageBlocksElement = document.createElement("PageBlocks");
 
 		for(BlockFieldVarDecModel model : fieldVariables){
-			pageBlocksElement.appendChild(model.getElement());
+			for (Element element : model.getBlockElements()) {
+				pageBlocksElement.appendChild(element);
+			}
 		}
 		
 		for (BlockProcedureModel method : methods) {
