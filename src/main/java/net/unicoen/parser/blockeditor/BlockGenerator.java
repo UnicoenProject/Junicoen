@@ -128,7 +128,7 @@ public class BlockGenerator {
 	public void parse(UniClassDec classDec) throws IOException {
 		// クラス名のxmlファイルを作成する
 		addedModels.clear(); // cashクリア
-		
+
 		out.print(getSaveString(classDec));
 
 		out.close();
@@ -136,6 +136,7 @@ public class BlockGenerator {
 
 	/**
 	 * UniClassModelを解析して，BockEditorのソースコード形式のxmlNodeを文字列として取得する
+	 * 
 	 * @param classDec
 	 * @return
 	 */
@@ -159,8 +160,10 @@ public class BlockGenerator {
 	}
 
 	/**
-	 *  UniClassModelを解析して，BockEditorのソースコード形式のxmlNodeを生成する
-	 * @param classDec UniClassModel
+	 * UniClassModelを解析して，BockEditorのソースコード形式のxmlNodeを生成する
+	 * 
+	 * @param classDec
+	 *            UniClassModel
 	 * @return
 	 */
 	public Node getSaveNode(UniClassDec classDec) {
@@ -171,7 +174,7 @@ public class BlockGenerator {
 			documentElement.setAttributeNS(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "xsi:schemaLocation", XML_CODEBLOCKS_NS + " " + XML_CODEBLOCKS_SCHEMA_URI);
 
 			BlockClassModel model = parseClass(classDec, document);
-			PageModel pageModel = new PageModel(classDec.className, model.createBlockNodes(document), document);
+			PageModel pageModel = new PageModel(classDec, model.createBlockNodes(document), document);
 
 			List<PageModel> pages = new ArrayList<PageModel>();
 			pages.add(pageModel);
@@ -196,45 +199,45 @@ public class BlockGenerator {
 			superClass = classDec.superClass.get(classDec.superClass.size() - 1);
 		}
 		BlockClassModel model = new BlockClassModel();
-		
+
 		parseFieldVariable(classDec, model, document);
-		
+
 		// メソッド呼び出しがユーザ定義メソッドかどうかを識別するため、全メソッドをresolverに一度登録する
 		addUserDefineMethodToResolver(classDec);
-		
+
 		parseClassMethods(classDec, model, document);
 
 		superClass = "";
 		return model;
 	}
-	
-	public void parseClassMethods(UniClassDec classDec, BlockClassModel model, Document document){
+
+	public void parseClassMethods(UniClassDec classDec, BlockClassModel model, Document document) {
 		for (UniMemberDec member : classDec.members) {
 			// フィールドメソッドの解析
 			if (member instanceof UniMethodDec) {
 				UniMethodDec mDec = (UniMethodDec) member;
 				ID_COUNTER = resolver.getMehtodResolver().getFieldMethodInfo().getId(BlockMethodCallModel.calcMethodCallGenusName(mDec.methodName, transformArgToString(mDec.args)));
-
-				if (!isMainMethod(mDec)) {
-					BlockProcedureModel blockMethodCall = parseFunctionDec(mDec, document);
-					addLocation(blockMethodCall, document, model.getMethods().size());
-					model.addMethod(blockMethodCall);
+							
+				BlockProcedureModel blockMethodCall = parseFunctionDec(mDec, document);
+				if(!blockMethodCall.isMainMethod()){
+					addLocation(blockMethodCall, document, model.getMethods().size());	
 				}
+				model.addMethod(blockMethodCall);
 			}
 		}
 	}
-	
+
 	public void addLocation(BlockElementModel mDec, Document document, int size) {
-		int x = 50 + 200 * size;
+		int x = 50 + 200 * (size-1);
 		int y = 50;
-		if (size % 6 == 0 && size != 0) {
-			y = 100 + 200 * (size / 6);
+		if ((size-1) % 6 == 0 && (size-1) != 0) {
+			y = 100 + 200 * ((size-1) / 6);
 		}
 
 		mDec.addLocationElement(document, Integer.toString(x), Integer.toString(y), mDec.getBlockElement());
 	}
-	
-	public BlockFieldVarDecModel createBlockFieldVariableDecModel(UniFieldDec member, Document document){
+
+	public BlockFieldVarDecModel createBlockFieldVariableDecModel(UniFieldDec member, Document document) {
 		UniFieldDec varDec = member;
 		BlockFieldVarDecModel blockModel = new BlockFieldVarDecModel(member.type, member.name, document, resolver, ID_COUNTER++);
 		BlockElementModel initializer = null;
@@ -253,7 +256,7 @@ public class BlockGenerator {
 			args.add(null);
 		}
 		blockModel.addSocketsAndNodes(args, document, sockets);
-		
+
 		resolver.getVariableNameResolver().addGlobalVariable(member.name, blockModel.getElement());
 		return blockModel;
 	}
@@ -261,7 +264,7 @@ public class BlockGenerator {
 	public void parseFieldVariable(UniClassDec classDec, BlockClassModel model, Document document) {
 		for (UniMemberDec member : classDec.members) {
 			if (member instanceof UniFieldDec) {
-				model.addFieldVariable(createBlockFieldVariableDecModel((UniFieldDec)member, document));
+				model.addFieldVariable(createBlockFieldVariableDecModel((UniFieldDec) member, document));
 			}
 		}
 	}
@@ -341,7 +344,13 @@ public class BlockGenerator {
 	 * 関数の解析
 	 */
 	public BlockProcedureModel parseFunctionDec(UniMethodDec funcDec, Document document) {
-		BlockProcedureModel model = new BlockProcedureModel(funcDec, document, ID_COUNTER++);
+		BlockProcedureModel model;
+		if(funcDec.methodName.equals("main")){
+			model = new BlockProcedureModel(funcDec, document, ID_COUNTER++,true);	
+		}else{
+			model = new BlockProcedureModel(funcDec, document, ID_COUNTER++, false);
+		}
+		
 		// //引数を解析して引数モデルを生成
 		List<BlockProcParmModel> args = parseFunctionArgs(document, funcDec.args, model.getBlockID());
 
@@ -437,9 +446,9 @@ public class BlockGenerator {
 			model = parseUnaryOperator((UniUnaryOp) expr, document, parentId);
 		} else if (expr instanceof UniVariableDec) {
 			model = parseVarDec((UniVariableDec) expr, document, parentId);
-		} else if(expr instanceof UniArray){ 
+		} else if (expr instanceof UniArray) {
 			throw new RuntimeException("The expr has not been supported yet");
-		} else if(expr instanceof UniNewArray){
+		} else if (expr instanceof UniNewArray) {
 			throw new RuntimeException("The expr has not been supported yet");
 		} else if (expr instanceof UniLongLiteral) {
 			throw new RuntimeException("The expr has not been supported yet");
@@ -762,7 +771,7 @@ public class BlockGenerator {
 		}
 
 		else {
-			throw new RuntimeException("unequipment operato :" + binopExpr.operator );
+			throw new RuntimeException("unequipment operato :" + binopExpr.operator);
 		}
 
 		BlockElementModel leftBlock = parseExpr(binopExpr.left, document, DOMUtil.getAttribute(blockElement, BlockElementModel.ID_ATTRIBUTE_TAG));
@@ -933,26 +942,26 @@ public class BlockGenerator {
 			return createMethodCallModel(superClass, method.methodName, sockets, document, callerId, parent);
 		} else {
 			String genusName = resolver.getForceConvertionMap().getBlockGenusName(method);
-			if(genusName != null){
-				//ライブラリメソッドの作成
+			if (genusName != null) {
+				// ライブラリメソッドの作成
 				Long callerId = ID_COUNTER++;
 				List<BlockElementModel> sockets = parseArgs(method.args, document, Long.toString(callerId));
 				return createMethodCallModel(genusName, callerId, sockets, document, parent);
-			}else{
-				//ident.methodの作成
-				return createExMethodCallModel(method, document, parent);	
+			} else {
+				// ident.methodの作成
+				return createExMethodCallModel(method, document, parent);
 			}
 		}
 	}
 
-	public List<BlockElementModel> parseArgs(List<UniExpr> args, Document document, String parentId){
+	public List<BlockElementModel> parseArgs(List<UniExpr> args, Document document, String parentId) {
 		List<BlockElementModel> sockets = new ArrayList<BlockElementModel>();
 		for (UniExpr arg : args) {
 			sockets.add(parseExpr(arg, document, parentId));
 		}
 		return sockets;
 	}
-	
+
 	public static String calcIdentName(UniExpr expr) {
 		if (expr instanceof UniIdent) {
 			return ((UniIdent) (expr)).name + ".";

@@ -62,14 +62,13 @@ public class UniModelFactory {
 			this.text = text;
 		}
 		
-		
 		@Override
 		public String toString(){
 			return this.text;
 		}
 	}
 	
-	public static UniExpr createUniModel(String uniModelName, UniModelInitializerMap map) {
+	public static UniExpr createUniExprModel(String uniModelName, UniModelData map) {
 		if(uniModelName.equals(UniBlockNames.UNIARRAY.toString())){
 			return new UniArray();
 		}else if(uniModelName.equals(UniBlockNames.UNIBINOP.toString())){
@@ -92,13 +91,13 @@ public class UniModelFactory {
 				}
 			};
 		}else if(uniModelName.equals(UniBlockNames.UNIFIELDACCESS.toString())){
-			UniExpr receiver = (UniExpr)(map.get(UniModelInitializerMap.UniModelParameters.RECEIVER.toString()));
-			String name = (String)(map.get(UniModelInitializerMap.UniModelParameters.NAME.toString()));
+			UniExpr receiver = (UniExpr)(map.get(UniModelData.UniModelParameters.RECEIVER.toString()));
+			String name = (String)(map.get(UniModelData.UniModelParameters.NAME.toString()));
 			return new UniFieldAccess(receiver, name);
 		}else if(uniModelName.equals(UniBlockNames.UNIFOR.toString())){
 			return new UniFor();
 		}else if(uniModelName.equals(UniBlockNames.UNIIDENT.toString())){
-			return new UniIdent((String)(map.get(UniModelInitializerMap.UniModelParameters.NAME.toString())));
+			return new UniIdent((String)(map.get(UniModelData.UniModelParameters.NAME.toString())));
 		}else if(uniModelName.equals(UniBlockNames.UNIIF)){
 			return new UniIf();
 		}else if(uniModelName.equals(UniBlockNames.UNIINTLITERAL.toString())){
@@ -106,8 +105,8 @@ public class UniModelFactory {
 		}else if(uniModelName.equals(UniBlockNames.UNILONGLITERAL.toString())){
 			return new UniLongLiteral();
 		}else if(uniModelName.equals(UniBlockNames.UNIMETHODCALL.toString())){
-			String name = (String)(map.get(UniModelInitializerMap.UniModelParameters.NAME.toString()));
-			UniExpr receiver = (UniExpr)(map.get(UniModelInitializerMap.UniModelParameters.RECEIVER.toString()));
+			String name = (String)(map.get(UniModelData.UniModelParameters.NAME.toString()));
+			UniExpr receiver = (UniExpr)(map.get(UniModelData.UniModelParameters.RECEIVER.toString()));
 			
 			return new UniMethodCall(receiver,name,null);
 		}else if(uniModelName.equals(UniBlockNames.UNINEW.toString())){
@@ -130,5 +129,4 @@ public class UniModelFactory {
 			throw new RuntimeException("not supported model:" + uniModelName);
 		}
 	}
-	
 }

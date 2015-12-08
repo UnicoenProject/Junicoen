@@ -14,19 +14,29 @@ public class BlockProcedureModel extends BlockElementModel {
 	private List<BlockCommandModel> bodyBlocks = new ArrayList<>();
 	public static String GENUS_NAME = "procedure";
 	public static String KIND = "procedure";
+	private boolean isMainMethod = false;
+	private static String RETURN_TYPE_NODE = "ReturnType";
 	
-
-	public BlockProcedureModel(UniMethodDec dec, Document document, Long ID_COUNTER) {
+	public BlockProcedureModel(UniMethodDec dec, Document document, Long ID_COUNTER, boolean isMain) {
+		this.isMainMethod = isMain;
 		initialize(dec, document, ID_COUNTER);
 	}
 
+	public boolean isMainMethod(){
+		return this.isMainMethod;
+	}
+	
 	public void initialize(UniMethodDec funcDec, Document document, Long ID_COUNTER){
 		Element procedureElement = createBlockElement(document, GENUS_NAME, ID_COUNTER, KIND);
 
-		addElement("Label", document, funcDec.methodName, procedureElement);
-		addElement("ReturnType", document, funcDec.returnType, procedureElement);
+		addElement(BlockElementModel.LABEL_NODE_NAME, document, funcDec.methodName, procedureElement);
+		addElement(RETURN_TYPE_NODE, document, funcDec.returnType, procedureElement);
 		addLocationElement(document, "50", "50", procedureElement);
 
+		if(isMainMethod){
+			addElement("MainMethod", document, "true", procedureElement);
+		}
+		
 		this.element = procedureElement;
 	}
 

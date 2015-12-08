@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import net.unicoen.parser.blockeditor.BlockResolver;
 import net.unicoen.parser.blockeditor.DOMUtil;
@@ -24,9 +25,10 @@ public class BlockMethodCallModel extends BlockCommandModel{
 	}
 
 	public Element createPrototypeElement(String genusName, List<BlockElementModel> sockets,Document document, BlockResolver resolver, Long ID_COUNTER, String parentId){
-		String kind = DOMUtil.getAttribute(resolver.getBlockNode(genusName), BlockElementModel.KIND_ATTRIBUTE_TAG);
+		Node originNode = resolver.getBlockNode(genusName);
+		String kind = DOMUtil.getAttribute(originNode, BlockElementModel.KIND_ATTRIBUTE_TAG);
 		Element element = createBlockElement(document, genusName, ID_COUNTER, kind);
-		addElement("Name", document, genusName, element);
+		addElement("Name", document, DOMUtil.getChildText(originNode, BlockElementModel.NAME_NODE_NAME), element);
 		this.element = element;
 
 		if (kind.equals("command") && parentId != null) {
