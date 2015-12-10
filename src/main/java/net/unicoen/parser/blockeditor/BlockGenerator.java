@@ -198,6 +198,7 @@ public class BlockGenerator {
 		if (classDec.superClass != null && classDec.superClass.size() > 0) {
 			superClass = classDec.superClass.get(classDec.superClass.size() - 1);
 		}
+
 		BlockClassModel model = new BlockClassModel();
 
 		parseFieldVariable(classDec, model, document);

@@ -15,7 +15,8 @@ public class BlockProcedureModel extends BlockElementModel {
 	public static String GENUS_NAME = "procedure";
 	public static String KIND = "procedure";
 	private boolean isMainMethod = false;
-	private static String RETURN_TYPE_NODE = "ReturnType";
+	public static String RETURN_TYPE_NODE = "ReturnType";
+	public static String MAIN_NODE = "MainMethod";
 	
 	public BlockProcedureModel(UniMethodDec dec, Document document, Long ID_COUNTER, boolean isMain) {
 		this.isMainMethod = isMain;
@@ -34,7 +35,7 @@ public class BlockProcedureModel extends BlockElementModel {
 		addLocationElement(document, "50", "50", procedureElement);
 
 		if(isMainMethod){
-			addElement("MainMethod", document, "true", procedureElement);
+			addElement(MAIN_NODE, document, "true", procedureElement);
 		}
 		
 		this.element = procedureElement;

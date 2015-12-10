@@ -2,6 +2,8 @@ package net.unicoen.parser.blockeditor.blockmodel;
 
 public class BlockConnectorInfo {
 
+	public static String CONNECTOR_NODE = "BlockConnector";
+	
 	public static String CONNECTOR_BLOCK_ID_TAG = "con-block-id";
 	public static String CONNECTOR_KIND_TAG = "connector-kind";
 	public static String CONNECTOR_TYPE_TAG = "connector-type";
