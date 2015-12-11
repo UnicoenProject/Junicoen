@@ -25,15 +25,15 @@ public class UniToBlockFieldVariableTest {
 
 	@Test
 	public void test() throws IOException, ParserConfigurationException {
-		UniClassDec dec = UniToBlockTestUtil.createEmptyClassModel("UniToBlockFieldVarDecTest", Lists.newArrayList("Turtle"));
-		UniFieldDec stringdec = UniToBlockTestUtil.createFieldDec("String", "s");
+		UniClassDec dec = UniModelMaker.createEmptyClassModel("UniToBlockFieldVarDecTest", Lists.newArrayList("Turtle"));
+		UniFieldDec stringdec = UniModelMaker.createFieldDec("String", "s");
 		stringdec.value = new UniStringLiteral("hoge");
 		dec.members.add(stringdec);
-		dec.members.add(UniToBlockTestUtil.createFieldDec("int", "i"));
-		dec.members.add(UniToBlockTestUtil.createFieldDec("double", "d"));
-		dec.members.add(UniToBlockTestUtil.createFieldDec("boolean", "b"));
+		dec.members.add(UniModelMaker.createFieldDec("int", "i"));
+		dec.members.add(UniModelMaker.createFieldDec("double", "d"));
+		dec.members.add(UniModelMaker.createFieldDec("boolean", "b"));
 		
-		UniMethodDec start = UniToBlockTestUtil.createStartMethod();
+		UniMethodDec start = UniModelMaker.createStartMethod();
 		
 		start.block.body.add(new UniBinOp("=", new UniIdent("s"), new UniStringLiteral("hoge")));
 		start.block.body.add(new UniBinOp("=", new UniIdent("s"), new UniIdent("s")));
@@ -44,7 +44,7 @@ public class UniToBlockFieldVariableTest {
 		start.block.body.add(new UniBinOp("=", new UniIdent("b"), new UniBoolLiteral(true)));
 		start.block.body.add(new UniBinOp("=", new UniIdent("b"), new UniIdent("b")));
 		dec.members.add(start);
-		BlockClassModel blockModel = UniToBlockTestUtil.createBlockClassModel(dec);
+		BlockClassModel blockModel = UniModelMaker.createBlockClassModel(dec);
 		
 		assertEquals(blockModel.getFieldVariables().size() + blockModel.getMethods().size(), dec.members.size());
 		

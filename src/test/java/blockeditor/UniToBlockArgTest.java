@@ -16,19 +16,19 @@ public class UniToBlockArgTest {
 
 	@Test
 	public void test() throws IOException {
-		UniClassDec dec = UniToBlockTestUtil.createEmptyTurtleClassModel("UniToBlockArgTest");
+		UniClassDec dec = UniModelMaker.createEmptyTurtleClassModel("UniToBlockArgTest");
 
-		UniMethodDec start = UniToBlockTestUtil.createEmptyMethodDec("start");
+		UniMethodDec start = UniModelMaker.createEmptyMethodDec("start");
 		dec.members.add(start);
 
-		UniMethodDec hoge = UniToBlockTestUtil.createEmptyMethodDec("hoge");
+		UniMethodDec hoge = UniModelMaker.createEmptyMethodDec("hoge");
 		hoge.args.add(new UniArg("int", "length"));
 		dec.members.add(hoge);
 
 		hoge.block.body.add(new UniBinOp("=", new UniIdent("length"), new UniIntLiteral(5)));
 
 
-		BlockGenerator gen = UniToBlockTestUtil.createBlockGenerator(dec.className);
+		BlockGenerator gen = UniModelMaker.createBlockGenerator(dec.className);
 		gen.parse(dec);
 
 	}

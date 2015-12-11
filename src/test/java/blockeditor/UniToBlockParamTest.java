@@ -18,8 +18,8 @@ public class UniToBlockParamTest {
 
 	@Test
 	public void test() throws IOException {
-		UniClassDec dec = UniToBlockTestUtil.createEmptyTurtleClassModel("UniToBlockParam");
-		UniMethodDec start = UniToBlockTestUtil.createStartMethod();
+		UniClassDec dec = UniModelMaker.createEmptyTurtleClassModel("UniToBlockParam");
+		UniMethodDec start = UniModelMaker.createStartMethod();
 		start.modifiers = Lists.newArrayList("public", "static", "void");
 		start.args = Lists.newArrayList(new UniArg("String[]", "args"));
 		
@@ -27,7 +27,7 @@ public class UniToBlockParamTest {
 		
 		dec.members.add(start);
 		
-		UniToBlockTestUtil.createBlockGenerator(dec.className).parse(dec);
+		UniModelMaker.createBlockGenerator(dec.className).parse(dec);
 		
 		
 		
