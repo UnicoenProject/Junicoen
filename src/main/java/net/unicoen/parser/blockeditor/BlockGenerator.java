@@ -1008,8 +1008,9 @@ public class BlockGenerator {
 	}
 
 	public BlockElementModel createSpecialMethodCallModel(String methodName, List<BlockElementModel> sockets, Document document, Long callerId, String parentId) {
+		System.out.println("create special block : " + methodName);
 		String kind = "";
-
+		
 		BlockSocketsModel socketsModel = new BlockSocketsModel(Lists.newArrayList());
 		for(BlockElementModel socket : sockets){
 			socketsModel.addSocketInfo(new BlockSocketModel((BlockExprModel)socket));

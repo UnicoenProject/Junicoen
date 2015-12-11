@@ -8,7 +8,6 @@ public class BlockSpecialModel extends BlockElementModel{
 	public static String GENUS_NAME = "special";
 
 	public BlockSpecialModel(String methodName, Document document, Long id, String kind, String parentId){
-
 		Element element = createBlockElement(document, GENUS_NAME, id, kind);
 		addElement("Name", document, methodName, element);
 		this.element = element;

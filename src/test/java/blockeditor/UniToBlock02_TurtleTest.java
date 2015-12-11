@@ -8,11 +8,11 @@ import com.google.common.collect.Lists;
 
 import net.unicoen.node.UniClassDec;
 
-public class UniToBlock05_WindowTest {
+public class UniToBlock02_TurtleTest {
 
 	@Test
 	public void test() throws IOException {
-		UniClassDec classModel = UniToBlockTestUtil.createClassDec("blockeditor/testcases/BlockConvertTest/_05WindowTest.java");
+		UniClassDec classModel = UniToBlockTestUtil.createClassDec("blockeditor/testcases/BlockConvertTest/_02TurtleTest.java");
 		classModel.superClass = Lists.newArrayList("Turtle");
 		UniToBlockTestUtil.parseTest(classModel);
 	}

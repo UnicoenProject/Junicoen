@@ -21,7 +21,7 @@ public class UniToBlockTestUtil {
 	}
 	
 	public static void parseTest(UniClassDec cDec) throws IOException{
-		BlockGenerator gen = UniModelMaker.createBlockGenerator(cDec.className + "Test");
+		BlockGenerator gen = UniModelMaker.createBlockGenerator(cDec.className);
 		gen.parse(cDec);
 	}
 	
