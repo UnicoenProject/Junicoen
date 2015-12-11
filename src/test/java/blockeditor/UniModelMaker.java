@@ -31,7 +31,7 @@ import net.unicoen.parser.blockeditor.BlockGenerator;
 import net.unicoen.parser.blockeditor.DOMUtil;
 import net.unicoen.parser.blockeditor.blockmodel.BlockClassModel;
 
-public class UniToBlockTestUtil {
+public class UniModelMaker {
 
 	public static String LANG_DEF_ROOT = "blockeditor/blocks/";
 
@@ -123,11 +123,6 @@ public class UniToBlockTestUtil {
 	 */
 	public static UniVariableDec createLocalObjectVariableBlockModel(String variableName, String type){
 		return new UniVariableDec(new ArrayList<>(), type, variableName, new UniNew(type, new ArrayList<>()));
-	}
-
-	public static void parseTest(UniClassDec cDec) throws IOException{
-		BlockGenerator gen = createBlockGenerator(cDec.className + "Test");
-		gen.parse(cDec);
 	}
 	
 	public static BlockClassModel createBlockClassModel(UniClassDec dec) throws IOException, ParserConfigurationException{

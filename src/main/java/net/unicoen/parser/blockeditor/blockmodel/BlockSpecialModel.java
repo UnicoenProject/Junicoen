@@ -23,5 +23,5 @@ public class BlockSpecialModel extends BlockElementModel{
 			addElement("Type", document, "Object", element);
 		}
 	}
-
+		
 }
