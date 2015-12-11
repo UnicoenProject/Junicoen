@@ -18,12 +18,11 @@ public class JavaGeneratorForTurtle extends JavaGenerator {
 	@Override
 	public void traverseClassDec(UniClassDec classDec) {
 		String mod = safeJoin(classDec.modifiers, " ");
-		String superClass = "";
-		if(classDec.superClass !=null){
-			superClass = classDec.superClass.get(0);
+		String extendsdecl = "";
+		if(classDec.superClass != null && classDec.superClass.size()>0){
+			extendsdecl = String.join(" ", "extends", classDec.superClass.get(0)); 
 		}
-		 
-		String declare = String.join(" ", mod, "class", classDec.className, "extends", superClass, "{");
+		String declare = String.join(" ", mod, "class", classDec.className, extendsdecl, "{");
 		print(declare);
 		newline();
 		newline();
