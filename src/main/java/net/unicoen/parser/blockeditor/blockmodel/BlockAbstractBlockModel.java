@@ -39,8 +39,8 @@ public class BlockAbstractBlockModel extends BlockCommandModel {
 	@Override
 	public void addSocketsNode(Document document, BlockSocketsModel sockets) {
 		if (sockets.getSockets().size() > 0) {
-			Element socketsElement = document.createElement("Sockets");
-			socketsElement.setAttribute("num-sockets", String.valueOf(sockets.getSockets().size()));
+			Element socketsElement = document.createElement(BlockSocketsModel.NODE_NAME);
+			socketsElement.setAttribute(BlockSocketsModel.NUMSOCKETS_ATTR, String.valueOf(sockets.getSockets().size()));
 			for (int i = 0; i < getSocketBlocks().size(); i++) {
 				sockets.getSockets().get(i).setConnectorBlockID(getSocketBlocks().get(i).getBlockID());
 				addSocketNode(document, socketsElement, sockets.getSockets().get(i));

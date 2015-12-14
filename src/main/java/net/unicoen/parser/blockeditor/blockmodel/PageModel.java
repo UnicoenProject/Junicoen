@@ -26,7 +26,6 @@ public class PageModel {
 	private static String PAGE_DRAWER ="";
 	private static String IN_FULLVIEW_VALUE ="yew";
 	private static String PAGE_WIDTH ="1366";
-
 	
 	public static String PAGE_BLOCKS = "PageBlocks";
 	public static String NODE_NAME = "Page";

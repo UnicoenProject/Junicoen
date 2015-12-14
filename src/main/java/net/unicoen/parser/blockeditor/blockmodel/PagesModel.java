@@ -11,9 +11,10 @@ public class PagesModel {
 
 	private static String COLLAPSIBLE_PAGES_TAGNAME = "collapsible-pages";
 	private static String COLLAPSIBLE_PAGES = "no";
+	private static String PAGES_NODE = "Pages";
 
 	public PagesModel( List<PageModel> pages, Document document){
-		Element pageElement = document.createElement("Pages");
+		Element pageElement = document.createElement(PAGES_NODE);
 		pageElement.setAttribute(COLLAPSIBLE_PAGES_TAGNAME, COLLAPSIBLE_PAGES);
 
 		for(PageModel page : pages){
