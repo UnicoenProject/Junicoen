@@ -65,4 +65,14 @@
 		</UniModel>
 		<GenusName>Turtle-startTurtle[@object@object]</GenusName>
 	</Item>
+	
+		<Item>
+		<UniModel unimodel="UniMethodCall">
+			<name>toString</name>
+			<receiver unimodel="UniIdent">
+				<name>Integer</name>
+			</receiver>
+		</UniModel>
+		<GenusName>toStringFromInt</GenusName>
+	</Item>
 </ConvertList>

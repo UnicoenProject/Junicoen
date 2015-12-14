@@ -7,11 +7,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class BlockAbstractBlockModel extends BlockCommandModel {
-
+	
 	private List<BlockElementModel> commandBlocks = new ArrayList<>();
-
-	public BlockAbstractBlockModel(Element element) {
-		this.element = element;
+	public static String GENUS_NAME = "abstraction";
+	
+	public BlockAbstractBlockModel(Document document, Long id) {
+		this.element = createBlockElement(document, GENUS_NAME, id, KIND);
 	}
 
 	@Override

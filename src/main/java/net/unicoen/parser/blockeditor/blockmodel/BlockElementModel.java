@@ -29,7 +29,7 @@ public class BlockElementModel {
 	public static String BEFOREBLOCKID_NODE_NAME = "BeforeBlockId";
 	
 	private List<BlockElementModel> socketBlocksElements = new ArrayList<>();
-
+	
 	public BlockElementModel() {
 	}
 
