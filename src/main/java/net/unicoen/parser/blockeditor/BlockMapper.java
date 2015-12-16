@@ -104,7 +104,7 @@ public class BlockMapper {
 		for (Node procNode : procs) {
 			UniMethodDec d = new UniMethodDec(DOMUtil.getChildText(procNode, BlockElementModel.LABEL_NODE), new ArrayList<>(), methodsReturnTypes.get(DOMUtil.getAttribute(procNode, BlockElementModel.ID_ATTR)), new ArrayList<>(), null);
 			d.modifiers.add("public");
-			if(DOMUtil.getChildNode(procNode, BlockProcedureModel.MAIN_NODE) != null){
+			if(DOMUtil.getChildNode(procNode, BlockProcedureModel.INVISIBLE_NODE) != null){
 				d.modifiers.add("static");
 			}
 			

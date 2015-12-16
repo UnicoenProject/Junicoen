@@ -39,19 +39,21 @@ public class CommentGetterTest {
 		assertEquals("&quot;テスト&quot;", AnnotationCommentGetter.addEscapeSeaquence("\"テスト\""));
 
 		//openclose annotation
-		assertEquals("[open]", AnnotationCommentGetter.getOpenClose("hogehhho[open]"));
+		assertEquals(AnnotationCommentGetter.NOT_FOUND, AnnotationCommentGetter.getOpenClose("hogehhho[open]"));
+		assertEquals("[close]", AnnotationCommentGetter.getOpenClose("hogehhho[close]"));
 		assertEquals(AnnotationCommentGetter.NOT_FOUND, AnnotationCommentGetter.getLocationComment("hogehhho[oen]"));
 		
 		//visible annotation
-		assertEquals("@visible", AnnotationCommentGetter.getVisible("hogehhho[open]@visible"));
+		assertEquals(AnnotationCommentGetter.NOT_FOUND, AnnotationCommentGetter.getVisible("hogehhho[open]@visible"));
 		assertEquals(AnnotationCommentGetter.NOT_FOUND, AnnotationCommentGetter.getVisible("hogehhho[open]visible"));
+		assertEquals("@invisible", AnnotationCommentGetter.getVisible("hogehhho[open]@invisible"));
 
 		//comment text withoud annotations
-		assertEquals("hogehhho", AnnotationCommentGetter.getCommentText("hogehhho[open]@visible"));
-		assertEquals("hogehhho", AnnotationCommentGetter.getCommentText("hogehhho@(100,   200)[close]@visible"));		
-		assertEquals("hogehhho", AnnotationCommentGetter.getCommentText("hogehhho@(100,   200)[close]@visible@visible@visible"));
-		assertEquals("hogehhho", AnnotationCommentGetter.getCommentText("hogehhho@(100,   200)[close]@visible@visible@visible"));
-		assertEquals("hogehhho", AnnotationCommentGetter.getCommentText("@(100,   200)hogehhho[close]@visible@visible@visible"));
+		assertEquals("hogehhho[open]", AnnotationCommentGetter.getCommentText("hogehhho[open]@invisible"));
+		assertEquals("hogehhho", AnnotationCommentGetter.getCommentText("hogehhho@(100,   200)[close]@invisible"));		
+		assertEquals("hogehhho", AnnotationCommentGetter.getCommentText("hogehhho@(100,   200)[close]@invisible@invisible@invisible"));
+		assertEquals("hogehhho", AnnotationCommentGetter.getCommentText("hogehhho@(100,   200)[close]@invisible@invisible@invisible"));
+		assertEquals("hogehhho", AnnotationCommentGetter.getCommentText("@(100,   200)hogehhho[close]@invisible@invisible@invisible"));
 	}
 
 }

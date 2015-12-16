@@ -8,8 +8,8 @@ public class AnnotationCommentGetter {
 
 	public static String NOT_FOUND = "no comment";
 	public static String LOCATION_REGEX = "@\\(\\s*[0-9]{1,4}\\s*,\\s*[0-9]{1,4}\\s*\\)";
-	public static String VISIVLE_REGEX = "@(visible|invisible)";
-	public static String OPENCLOSE_REGEX = "\\[(open|close)\\]";
+	public static String VISIVLE_REGEX = "@invisible";
+	public static String OPENCLOSE_REGEX = "\\[close\\]";
 	
 	public static String getLocationComment(String comment) {
 		return getPatternComment(comment, LOCATION_REGEX);
@@ -58,9 +58,9 @@ public class AnnotationCommentGetter {
 		}
 	}
 
-	public static boolean containsVisible(String comment) {
+	public static boolean containsInvisible(String comment) {
 		String visibleAnnotation = getVisible(comment);
-		if (visibleAnnotation.contains("visible")) {
+		if (visibleAnnotation.equals("@invisible")) {
 			return true;
 		} else {
 			return false;

@@ -218,21 +218,18 @@ public class BlockGenerator {
 			if (member instanceof UniMethodDec) {
 				UniMethodDec mDec = (UniMethodDec) member;
 				ID_COUNTER = resolver.getMehtodResolver().getFieldMethodInfo().getId(BlockMethodCallModel.calcMethodCallGenusName(mDec.methodName, transformArgToString(mDec.args)));
-
 				BlockProcedureModel blockMethodCall = parseFunctionDec(mDec, document);
-				if (!blockMethodCall.isMainMethod()) {
-					addLocation(blockMethodCall, document, model.getMethods().size());
-				}
+				addLocation(blockMethodCall, document, model.getMethods().size());
 				model.addMethod(blockMethodCall);
 			}
 		}
 	}
 
 	public void addLocation(BlockElementModel mDec, Document document, int size) {
-		int x = 50 + 200 * (size - 1);
+		int x = 50 + 200 * size;
 		int y = 50;
-		if ((size - 1) % 6 == 0 && (size - 1) != 0) {
-			y = 100 + 200 * ((size - 1) / 6);
+		if (size % 6 == 0 && size != 0) {
+			y = 100 + 200 * (size / 6);
 		}
 
 		mDec.addLocationElement(document, Integer.toString(x), Integer.toString(y), mDec.getBlockElement());
@@ -292,18 +289,6 @@ public class BlockGenerator {
 		}
 	}
 
-	// TODO 対応が必要
-	public boolean isMainMethod(UniMethodDec dec) {
-		if ("main".equals(dec.methodName) && dec.modifiers != null) {
-			for (String mod : dec.modifiers) {
-				if ("static".equals(mod)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
 	public List<BlockCommandModel> parseBody(Document document, String parentId, UniExpr statement) throws RuntimeException {
 		if (statement == null) {
 			return new ArrayList<>(); // can be Collections.emptyList();
@@ -345,23 +330,26 @@ public class BlockGenerator {
 	 * 関数の解析
 	 */
 	public BlockProcedureModel parseFunctionDec(UniMethodDec funcDec, Document document) throws RuntimeException {
-		BlockProcedureModel model;
-		if (funcDec.methodName.equals("main")) {
-			model = new BlockProcedureModel(funcDec, document, ID_COUNTER++, true);
-		} else {
-			model = new BlockProcedureModel(funcDec, document, ID_COUNTER++, false);
-		}
+		BlockProcedureModel model  = new BlockProcedureModel(funcDec, document, ID_COUNTER++);
 
 		// //引数を解析して引数モデルを生成
 		List<BlockProcParmModel> args = parseFunctionArgs(document, funcDec.args, model.getBlockID());
-
+		
+		//メソッドモデルに引数ノードを追加
 		model.addSocketsAndNodes(Lists.transform(args, new Function<BlockProcParmModel, BlockElementModel>() {
 			@Override
 			public BlockElementModel apply(BlockProcParmModel input) {
 				return input;
 			}
 		}), document, null);
-
+		
+		//Locationの追加
+		
+		//TODO 可視状態の追加 コメントが追加されたら即修正すること
+		if(funcDec.methodName.equals("main")){
+			model.addInvisibleNode(document, "@invisible");
+		}
+		
 		List<BlockCommandModel> bodyBlocks = new ArrayList<>();
 		model.setBodyBlocks(bodyBlocks);
 		// funcDec.body ボディのパース
@@ -556,6 +544,7 @@ public class BlockGenerator {
 		// 抽象化コメントの追加
 		if (blockExpr.blockLabel != null) {
 			model.setLabel(blockExpr.blockLabel, document);
+			model.setCollapsed(blockExpr.blockLabel, document);
 		}
 
 		model.addSocketsAndNodes(Lists.transform(commands, new Function<BlockCommandModel, BlockElementModel>() {
@@ -1110,6 +1099,5 @@ public class BlockGenerator {
 			});
 		}
 	}
-
 
 }
