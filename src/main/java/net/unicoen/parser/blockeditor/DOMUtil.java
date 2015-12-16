@@ -23,8 +23,8 @@ public class DOMUtil {
 		assert node != null;
 		assert attributeName != null;
 
-		if(BlockElementModel.BLOCK_STUB_NODE_NAME.equals(node.getNodeName())){
-			node = getChildNode(node, BlockElementModel.BLOCK_NODE_NAME);
+		if(BlockElementModel.BLOCK_STUB_NODE.equals(node.getNodeName())){
+			node = getChildNode(node, BlockElementModel.BLOCK_NODE);
 		}
 
 		Node attrNode = node.getAttributes().getNamedItem(attributeName);

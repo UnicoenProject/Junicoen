@@ -12,8 +12,8 @@ import net.unicoen.parser.blockeditor.DOMUtil;
 public class BlockPrePostModel extends BlockCommandModel {
 
 	public BlockPrePostModel(Document document, String genusName, Node parentNode, Long id) {
-		String parentGenus = DOMUtil.getAttribute(parentNode, BlockElementModel.GENUS_NAME_ATTRIBUTE_TAG);
-		String variableName = DOMUtil.getChildTextFromBlockNode(parentNode, BlockElementModel.NAME_NODE_NAME);
+		String parentGenus = DOMUtil.getAttribute(parentNode, BlockElementModel.GENUS_NAME_ATTR);
+		String variableName = DOMUtil.getChildTextFromBlockNode(parentNode, BlockElementModel.NAME_NODE);
 		Element blockStubElement = createBlockStubNode(document, variableName, parentGenus);
 		// Blockノード作成
 		Element blockElement = createVariableBlockNode(document, genusName + parentGenus, variableName, id);

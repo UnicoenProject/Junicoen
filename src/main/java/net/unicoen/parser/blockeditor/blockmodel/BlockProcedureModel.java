@@ -30,7 +30,7 @@ public class BlockProcedureModel extends BlockElementModel {
 	public void initialize(UniMethodDec funcDec, Document document, Long ID_COUNTER){
 		Element procedureElement = createBlockElement(document, GENUS_NAME, ID_COUNTER, KIND);
 
-		addElement(BlockElementModel.LABEL_NODE_NAME, document, funcDec.methodName, procedureElement);
+		addElement(BlockElementModel.LABEL_NODE, document, funcDec.methodName, procedureElement);
 		addElement(RETURN_TYPE_NODE, document, funcDec.returnType, procedureElement);
 		addLocationElement(document, "50", "50", procedureElement);
 

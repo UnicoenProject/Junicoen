@@ -16,8 +16,8 @@ public class BlockCommandModel extends BlockElementModel {
 	
 	public Element createVariableBlockNode(Document document, String genusName, String name, Long id) {
 		Element blockElement = createBlockElement(document, genusName, id, KIND);
-		addElement(BlockElementModel.LABEL_NODE_NAME, document, name, blockElement);
-		addElement(BlockElementModel.NAME_NODE_NAME, document, name, blockElement);
+		addElement(BlockElementModel.LABEL_NODE, document, name, blockElement);
+		addElement(BlockElementModel.NAME_NODE, document, name, blockElement);
 		return blockElement;
 	}
 }

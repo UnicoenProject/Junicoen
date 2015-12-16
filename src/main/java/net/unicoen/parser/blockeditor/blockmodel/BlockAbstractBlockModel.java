@@ -6,15 +6,32 @@ import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import net.unicoen.parser.blockeditor.AnnotationCommentGetter;
+
 public class BlockAbstractBlockModel extends BlockCommandModel {
 	
 	private List<BlockElementModel> commandBlocks = new ArrayList<>();
 	public static String GENUS_NAME = "abstraction";
+	public static String COLLAPSED_NODE = "Collapsed";
 	
 	public BlockAbstractBlockModel(Document document, Long id) {
 		this.element = createBlockElement(document, GENUS_NAME, id, KIND);
 	}
 
+	public void setLabel(String label, Document document){
+		Element element = document.createElement(BlockElementModel.LABEL_NODE);
+		element.setTextContent(AnnotationCommentGetter.getCommentText(label));
+		getBlockElement().appendChild(element);
+	}
+	
+	public void setCollapsed(String comment, Document document){
+		String openClose = AnnotationCommentGetter.getOpenClose(comment);
+		if(!openClose.equals(AnnotationCommentGetter.NOT_FOUND) && !AnnotationCommentGetter.containsOpen(openClose)){
+			Element element = document.createElement(COLLAPSED_NODE);
+			getBlockElement().appendChild(element);			
+		}
+	}
+	
 	@Override
 	public List<Element> getBlockElements() {
 		List<Element> elements = new ArrayList<>();

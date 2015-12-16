@@ -10,23 +10,25 @@ import org.w3c.dom.Node;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
+import net.unicoen.parser.blockeditor.AnnotationCommentGetter;
 import net.unicoen.parser.blockeditor.DOMUtil;
 
 public class BlockElementModel {
 
-	protected Long id;
 	protected Element element;
-	public static String BLOCK_NODE_NAME = "Block";
-	public static String GENUS_NAME_ATTRIBUTE_TAG = "genus-name";
-	public static String ID_ATTRIBUTE_TAG = "id";
-	public static String KIND_ATTRIBUTE_TAG = "kind";
-	public static String TYPE_NODE_NAME = "Type";
-	public static String LABEL_NODE_NAME = "Label";
-	public static String NAME_NODE_NAME = "Name";
-	public static String LOCATION_NODE_NAME = "Location";
-	public static String BLOCK_STUB_NODE_NAME = "BlockStub";
-	public static String AFTERBLOCKID_NODE_NAME = "AfterBlockId";
-	public static String BEFOREBLOCKID_NODE_NAME = "BeforeBlockId";
+	public static String BLOCK_NODE = "Block";
+	public static String GENUS_NAME_ATTR = "genus-name";//必須
+	public static String ID_ATTR = "id";//必須
+	public static String KIND_ATTR = "kind";//必須
+	public static String TYPE_NODE = "Type";//任意（モデルによって必要）
+	public static String LABEL_NODE = "Label";//任意（モデルによって必要）
+	public static String NAME_NODE = "Name";//任意（モデルによって必要）
+	public static String LOCATION_NODE = "Location";//任意
+	public static String BLOCK_STUB_NODE = "BlockStub";
+	public static String AFTERBLOCKID_NODE = "AfterBlockId";//任意（モデルによって必要）
+	public static String BEFOREBLOCKID_NODE = "BeforeBlockId";//任意（モデルによって必要）
+	public static String COMMENT_NODE = "Comment";//任意
+	
 	
 	private List<BlockElementModel> socketBlocksElements = new ArrayList<>();
 	
@@ -42,19 +44,19 @@ public class BlockElementModel {
 	}
 
 	public String getBlockID() {
-		return DOMUtil.getAttribute(this.element, ID_ATTRIBUTE_TAG);
+		return DOMUtil.getAttribute(this.element, ID_ATTR);
 	}
 
 	public String getGenusName() {
-		return DOMUtil.getAttribute(this.element,GENUS_NAME_ATTRIBUTE_TAG);
+		return DOMUtil.getAttribute(this.element,GENUS_NAME_ATTR);
 	}
 
 	public String getKind() {
-		return DOMUtil.getAttribute(this.element, KIND_ATTRIBUTE_TAG);
+		return DOMUtil.getAttribute(this.element, KIND_ATTR);
 	}
 
 	public String getType(){
-		Node typeNode = DOMUtil.getChildNode(getElement(), "Type");
+		Node typeNode = DOMUtil.getChildNode(getElement(), TYPE_NODE);
 		if(typeNode == null){
 			return "Object";
 		}else{
@@ -86,9 +88,9 @@ public class BlockElementModel {
 			return "-1";
 		}
 		if ("BlockStub".equals(element.getNodeName())) {
-			return DOMUtil.getAttribute(DOMUtil.getChildNode(element, BLOCK_NODE_NAME), ID_ATTRIBUTE_TAG);
+			return DOMUtil.getAttribute(DOMUtil.getChildNode(element, BLOCK_NODE), ID_ATTR);
 		} else {
-			return DOMUtil.getAttribute(element, ID_ATTRIBUTE_TAG);
+			return DOMUtil.getAttribute(element, ID_ATTR);
 		}
 	}
 
@@ -101,11 +103,11 @@ public class BlockElementModel {
 	}
 
 	public String getLabel() {
-		return DOMUtil.getChildNode(element, "Label").getTextContent();
+		return DOMUtil.getChildNode(element, BlockElementModel.LABEL_NODE).getTextContent();
 	}
 
 	public void addLocationElement(Document document, String x, String y, Element blockElement) {
-		Element locationElement = document.createElement("Location");
+		Element locationElement = document.createElement(BlockElementModel.LOCATION_NODE);
 		Element xElement = document.createElement("X");
 		Element yElement = document.createElement("Y");
 
@@ -118,17 +120,17 @@ public class BlockElementModel {
 		blockElement.appendChild(locationElement);
 	}
 
-	public void addElement(String elementName, Document document, String name, Element blockElement) {
+	public void addElement(String elementName, Document document, String text, Element blockElement) {
 		Element element = document.createElement(elementName);
-		element.setTextContent(name);
+		element.setTextContent(text);
 		blockElement.appendChild(element);
 	}
 
 	public Element createBlockElement(Document document, String genusName, long id, String kind) {
-		Element element = document.createElement(BLOCK_NODE_NAME);
-		element.setAttribute(GENUS_NAME_ATTRIBUTE_TAG, genusName);
-		element.setAttribute(ID_ATTRIBUTE_TAG, String.valueOf(id));
-		element.setAttribute(KIND_ATTRIBUTE_TAG, kind);
+		Element element = document.createElement(BLOCK_NODE);
+		element.setAttribute(GENUS_NAME_ATTR, genusName);
+		element.setAttribute(ID_ATTR, String.valueOf(id));
+		element.setAttribute(KIND_ATTR, kind);
 
 		return element;
 	}
@@ -210,23 +212,23 @@ public class BlockElementModel {
 	}
 
 	public void addBeforeBlockNode(Document document, String id) {
-		Element element = document.createElement("BeforeBlockId");
+		Element element = document.createElement(BEFOREBLOCKID_NODE);
 		element.setTextContent(id);
 		getBlockElement().appendChild(element);
 	}
 
 	public void addAfterBlockNode(Document document, String id) {
-		Element element = document.createElement("AfterBlockId");
+		Element element = document.createElement(AFTERBLOCKID_NODE);
 		element.setTextContent(id);
 		getBlockElement().appendChild(element);
 	}
 
 	public Node getPlugNode(){
-		return DOMUtil.getChildNode(this.element, "Plug");
+		return DOMUtil.getChildNode(this.element, BlockPlugModel.NODE_NAME);
 	}
 
 	public String getPlugAttribute(String attribute){
-		return DOMUtil.getAttribute(DOMUtil.getChildNode(getPlugNode(), "BlockConnector"), attribute);
+		return DOMUtil.getAttribute(DOMUtil.getChildNode(getPlugNode(), BlockConnectorInfo.CONNECTOR_NODE), attribute);
 	}
 
 	public Element getBlockElement(){
@@ -241,4 +243,11 @@ public class BlockElementModel {
 			}
 		});
 	}
+	
+	public void addCommentNode(String comment, Document document){
+		Element commentElement = document.createElement(COMMENT_NODE);
+		commentElement.setTextContent(AnnotationCommentGetter.getCommentText(comment));
+		getBlockElement().appendChild(commentElement);
+	}
+	
 }

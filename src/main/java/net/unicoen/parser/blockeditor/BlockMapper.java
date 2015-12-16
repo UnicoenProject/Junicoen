@@ -85,8 +85,8 @@ public class BlockMapper {
 		List<UniMemberDec> fieldVariables = new ArrayList<>();
 		for(Node node : procs){
 			UniFieldDec dec = new UniFieldDec();
-			dec.name = DOMUtil.getChildText(node, BlockElementModel.NAME_NODE_NAME);
-			dec.type = DOMUtil.getChildText(node, BlockElementModel.TYPE_NODE_NAME);
+			dec.name = DOMUtil.getChildText(node, BlockElementModel.NAME_NODE);
+			dec.type = DOMUtil.getChildText(node, BlockElementModel.TYPE_NODE);
 			dec.modifiers = Lists.newArrayList("private");
 			
 			List<UniExpr> initValues = parseSocket(DOMUtil.getChildNode(node, BlockSocketsModel.NODE_NAME), map);
@@ -102,7 +102,7 @@ public class BlockMapper {
 	public List<UniMemberDec> parseMethodNodes(List<Node> procs, Map<String, String> methodsReturnTypes){
 		List<UniMemberDec> ret = new ArrayList<>();
 		for (Node procNode : procs) {
-			UniMethodDec d = new UniMethodDec(DOMUtil.getChildText(procNode, BlockElementModel.LABEL_NODE_NAME), new ArrayList<>(), methodsReturnTypes.get(DOMUtil.getAttribute(procNode, BlockElementModel.ID_ATTRIBUTE_TAG)), new ArrayList<>(), null);
+			UniMethodDec d = new UniMethodDec(DOMUtil.getChildText(procNode, BlockElementModel.LABEL_NODE), new ArrayList<>(), methodsReturnTypes.get(DOMUtil.getAttribute(procNode, BlockElementModel.ID_ATTR)), new ArrayList<>(), null);
 			d.modifiers.add("public");
 			if(DOMUtil.getChildNode(procNode, BlockProcedureModel.MAIN_NODE) != null){
 				d.modifiers.add("static");
@@ -112,13 +112,13 @@ public class BlockMapper {
 
 			UniBlock body = new UniBlock(new ArrayList<>(), null);
 
-			String nextNodeId = DOMUtil.getChildText(procNode, BlockElementModel.AFTERBLOCKID_NODE_NAME);
+			String nextNodeId = DOMUtil.getChildText(procNode, BlockElementModel.AFTERBLOCKID_NODE);
 			if (nextNodeId != null) {
 				body = parseBody(map.get(nextNodeId), map);
 			}
 
 			d.block = body;
-			d.returnType = methodsReturnTypes.get(DOMUtil.getAttribute(procNode, BlockElementModel.ID_ATTRIBUTE_TAG));
+			d.returnType = methodsReturnTypes.get(DOMUtil.getAttribute(procNode, BlockElementModel.ID_ATTR));
 			ret.add(d);
 			variableResolver.resetLocalVariables();
 		}
@@ -137,12 +137,12 @@ public class BlockMapper {
 			String name = node.getNodeName();
 			if (name.startsWith("#")) {
 				continue;
-			} else if (name.equals(BlockElementModel.BLOCK_STUB_NODE_NAME)) {
-				node = DOMUtil.getChildNode(node, BlockElementModel.BLOCK_NODE_NAME);
+			} else if (name.equals(BlockElementModel.BLOCK_STUB_NODE)) {
+				node = DOMUtil.getChildNode(node, BlockElementModel.BLOCK_NODE);
 			}
 			
-			String nodeId = DOMUtil.getAttribute(node, BlockElementModel.ID_ATTRIBUTE_TAG);
-			String kind = DOMUtil.getAttribute(node, BlockElementModel.KIND_ATTRIBUTE_TAG);
+			String nodeId = DOMUtil.getAttribute(node, BlockElementModel.ID_ATTR);
+			String kind = DOMUtil.getAttribute(node, BlockElementModel.KIND_ATTR);
 			if (BlockProcedureModel.KIND.equals(kind)) {
 				procs.add(node);
 				if (returnTypes.get(nodeId) == null) {
@@ -152,7 +152,7 @@ public class BlockMapper {
 				fieldVariables.add(node);
 			} else if (BlockReturnModel.KIND.equals(kind)) {
 				Node socketNode = DOMUtil.getChildNode(getSocketsNode(node), "BlockConnector");
-				returnTypes.put(DOMUtil.getAttribute(getTopBlockNode(node), BlockElementModel.ID_ATTRIBUTE_TAG), getSocketType(socketNode));
+				returnTypes.put(DOMUtil.getAttribute(getTopBlockNode(node), BlockElementModel.ID_ATTR), getSocketType(socketNode));
 			}
 		}
 	}
@@ -165,8 +165,8 @@ public class BlockMapper {
 			if(connector.getNodeName().equals(BlockConnectorInfo.CONNECTOR_NODE)){
 				Node connectorBlock = map.get(DOMUtil.getAttribute(connector, BlockConnectorInfo.CONNECTOR_BLOCK_ID_TAG));
 				if(connectorBlock != null){
-					String name = DOMUtil.getChildText(connectorBlock, BlockElementModel.NAME_NODE_NAME);
-					String type = DOMUtil.getChildText(connectorBlock, BlockElementModel.TYPE_NODE_NAME);
+					String name = DOMUtil.getChildText(connectorBlock, BlockElementModel.NAME_NODE);
+					String type = DOMUtil.getChildText(connectorBlock, BlockElementModel.TYPE_NODE);
 					args.add(new UniArg(type, name));					
 				}
 			}
@@ -200,26 +200,26 @@ public class BlockMapper {
 			String name = node.getNodeName();
 			if (name.startsWith("#")) {
 				continue;
-			} else if (name.equals(BlockElementModel.BLOCK_STUB_NODE_NAME)) {
-				node = DOMUtil.getChildNode(node, BlockElementModel.BLOCK_NODE_NAME);
+			} else if (name.equals(BlockElementModel.BLOCK_STUB_NODE)) {
+				node = DOMUtil.getChildNode(node, BlockElementModel.BLOCK_NODE);
 			}
 
-			String nodeId = DOMUtil.getAttribute(node, BlockElementModel.ID_ATTRIBUTE_TAG);
+			String nodeId = DOMUtil.getAttribute(node, BlockElementModel.ID_ATTR);
 			map.put(nodeId, node);
 		}
 	}
 
 	public Node getTopBlockNode(Node node) {
-		if (BlockProcedureModel.GENUS_NAME.equals(DOMUtil.getAttribute(node, BlockElementModel.GENUS_NAME_ATTRIBUTE_TAG))) {
+		if (BlockProcedureModel.GENUS_NAME.equals(DOMUtil.getAttribute(node, BlockElementModel.GENUS_NAME_ATTR))) {
 			return node;
 		}
 		Node tmpNode = node;
 
 		while (tmpNode != null) {
-			if (DOMUtil.getChildNode(tmpNode, BlockElementModel.BEFOREBLOCKID_NODE_NAME) == null) {
+			if (DOMUtil.getChildNode(tmpNode, BlockElementModel.BEFOREBLOCKID_NODE) == null) {
 				return tmpNode;
 			}
-			String beforeBlockID = DOMUtil.getChildText(node, BlockElementModel.BEFOREBLOCKID_NODE_NAME);
+			String beforeBlockID = DOMUtil.getChildText(node, BlockElementModel.BEFOREBLOCKID_NODE);
 			tmpNode = map.get(beforeBlockID);
 		}
 
@@ -231,7 +231,7 @@ public class BlockMapper {
 		String id = DOMUtil.getAttribute(node, "con-block-id");
 
 		if (id != null) {
-			type = DOMUtil.getChildText(map.get(id), BlockElementModel.TYPE_NODE_NAME);
+			type = DOMUtil.getChildText(map.get(id), BlockElementModel.TYPE_NODE);
 		}
 
 		return type;
@@ -253,7 +253,7 @@ public class BlockMapper {
 
 		body.add(parseToExpr(bodyNode, map));
 
-		String nextNodeId = DOMUtil.getChildText(bodyNode, BlockElementModel.AFTERBLOCKID_NODE_NAME);
+		String nextNodeId = DOMUtil.getChildText(bodyNode, BlockElementModel.AFTERBLOCKID_NODE);
 		while (true) {
 			if (nextNodeId == null)
 				break;
@@ -261,7 +261,7 @@ public class BlockMapper {
 			// add body
 			UniExpr expr = parseToExpr(next, map);
 			body.add(expr);
-			nextNodeId = DOMUtil.getChildText(next, BlockElementModel.AFTERBLOCKID_NODE_NAME);
+			nextNodeId = DOMUtil.getChildText(next, BlockElementModel.AFTERBLOCKID_NODE);
 		}
 
 		UniBlock block = new UniBlock(body, null);
@@ -425,7 +425,7 @@ public class BlockMapper {
 		} else {
 			// MethodCallとする
 			// TODO should fix
-			UniMethodCall call = new UniMethodCall(null, DOMUtil.getChildText(resolver.getBlockNode(blockGenusName), BlockElementModel.NAME_NODE_NAME), functionArgs);
+			UniMethodCall call = new UniMethodCall(null, DOMUtil.getChildText(resolver.getBlockNode(blockGenusName), BlockElementModel.NAME_NODE), functionArgs);
 			return call;
 		}
 	}
@@ -514,8 +514,8 @@ public class BlockMapper {
 				Node realArgNode = map.get(argElemId);
 				if (realArgNode != null) {
 					// beforeを持たないElementNodeは引数なので，引数の解析
-					Node beforeBlock = map.get(DOMUtil.getChildText(realArgNode, BlockElementModel.BEFOREBLOCKID_NODE_NAME));
-					if (DOMUtil.getChildText(realArgNode, BlockElementModel.BEFOREBLOCKID_NODE_NAME) == null || DOMUtil.getAttribute(beforeBlock, BlockElementModel.GENUS_NAME_ATTRIBUTE_TAG).equals(BlockExCallerModel.GENUS_NAME_ATTRIBUTE_TAG)) {
+					Node beforeBlock = map.get(DOMUtil.getChildText(realArgNode, BlockElementModel.BEFOREBLOCKID_NODE));
+					if (DOMUtil.getChildText(realArgNode, BlockElementModel.BEFOREBLOCKID_NODE) == null || DOMUtil.getAttribute(beforeBlock, BlockElementModel.GENUS_NAME_ATTR).equals(BlockExCallerModel.GENUS_NAME_ATTR)) {
 						args.add(parseToExpr(realArgNode, map));
 					} else {
 						args.add(parseBody(realArgNode, map));

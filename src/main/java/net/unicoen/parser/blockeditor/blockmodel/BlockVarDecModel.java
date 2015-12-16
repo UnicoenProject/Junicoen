@@ -21,14 +21,14 @@ public class BlockVarDecModel extends BlockCommandModel{
 
 		if(genusName == null){
 			blockElement = createSpecialVariableDecModel(type, name, getKind(), document, resolver, ID_COUNTER);
-			addElement(BlockElementModel.LABEL_NODE_NAME, document, type + "型の変数を作り、" + name + "と名付ける", blockElement);
+			addElement(BlockElementModel.LABEL_NODE, document, type + "型の変数を作り、" + name + "と名付ける", blockElement);
 		}else{
 			blockElement = createBlockElement(document, genusName, ID_COUNTER++, getKind());
-			addElement(BlockElementModel.LABEL_NODE_NAME, document, name, blockElement);
+			addElement(BlockElementModel.LABEL_NODE, document, name, blockElement);
 		}
 
-		addElement(BlockElementModel.NAME_NODE_NAME, document, name, blockElement);
-		addElement(BlockElementModel.TYPE_NODE_NAME, document, type, blockElement);
+		addElement(BlockElementModel.NAME_NODE, document, name, blockElement);
+		addElement(BlockElementModel.TYPE_NODE, document, type, blockElement);
 
 		return blockElement;
 	}

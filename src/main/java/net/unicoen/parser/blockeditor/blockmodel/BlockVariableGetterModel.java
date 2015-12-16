@@ -10,7 +10,7 @@ public class BlockVariableGetterModel extends BlockExprModel {
 
 	public BlockVariableGetterModel(Node varDecNode, Document document, Long id) {
 		String genusName = "getter" + DOMUtil.getAttribute(varDecNode, "genus-name");
-		String name = DOMUtil.getChildText(varDecNode, BlockElementModel.NAME_NODE_NAME);
+		String name = DOMUtil.getChildText(varDecNode, BlockElementModel.NAME_NODE);
 		// BlockStubノード作成
 		Element stubElement = createBlockStubNode(document, name, DOMUtil.getAttribute(varDecNode, "genus-name"));
 		// Blockノード作成
@@ -21,27 +21,27 @@ public class BlockVariableGetterModel extends BlockExprModel {
 
 	@Override
 	public void setPlugElement(Document document, BlockPlugModel plugInfo){
-		DOMUtil.getChildNode(this.element, BlockElementModel.BLOCK_NODE_NAME).appendChild(plugInfo.createElemnet(document));
+		DOMUtil.getChildNode(this.element, BlockElementModel.BLOCK_NODE).appendChild(plugInfo.createElemnet(document));
 	}
 
 	@Override
 	public String getBlockID() {
-		return DOMUtil.getAttribute(DOMUtil.getChildNode(this.element, BlockElementModel.BLOCK_NODE_NAME), ID_ATTRIBUTE_TAG);
+		return DOMUtil.getAttribute(DOMUtil.getChildNode(this.element, BlockElementModel.BLOCK_NODE), ID_ATTR);
 	}
 
 	@Override
 	public String getGenusName() {
-		return DOMUtil.getAttribute(DOMUtil.getChildNode(this.element, BlockElementModel.BLOCK_NODE_NAME),GENUS_NAME_ATTRIBUTE_TAG);
+		return DOMUtil.getAttribute(DOMUtil.getChildNode(this.element, BlockElementModel.BLOCK_NODE),GENUS_NAME_ATTR);
 	}
 
 	@Override
 	public String getKind() {
-		return DOMUtil.getAttribute(DOMUtil.getChildNode(this.element, BlockElementModel.BLOCK_NODE_NAME), KIND_ATTRIBUTE_TAG);
+		return DOMUtil.getAttribute(DOMUtil.getChildNode(this.element, BlockElementModel.BLOCK_NODE), KIND_ATTR);
 	}
 
 	@Override
 	public String getType(){
-		Node blockElement = DOMUtil.getChildNode(this.element, BlockElementModel.BLOCK_NODE_NAME);
+		Node blockElement = DOMUtil.getChildNode(this.element, BlockElementModel.BLOCK_NODE);
 		return DOMUtil.getChildNode(blockElement, "Type").getTextContent();
 	}
 
@@ -51,11 +51,11 @@ public class BlockVariableGetterModel extends BlockExprModel {
 
 	@Override
 	public Node getPlugNode(){
-		return DOMUtil.getChildNode(DOMUtil.getChildNode(this.element, BlockElementModel.BLOCK_NODE_NAME), "Plug");
+		return DOMUtil.getChildNode(DOMUtil.getChildNode(this.element, BlockElementModel.BLOCK_NODE), "Plug");
 	}
 
 	@Override
 	public Element getBlockElement(){
-		return (Element)DOMUtil.getChildNode(this.getElement(), BlockElementModel.BLOCK_NODE_NAME);
+		return (Element)DOMUtil.getChildNode(this.getElement(), BlockElementModel.BLOCK_NODE);
 	}
 }
