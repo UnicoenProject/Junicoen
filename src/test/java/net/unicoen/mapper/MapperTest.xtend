@@ -24,23 +24,38 @@ class MapperTest {
 	 * @author J.Kobayashi
 	 * @param node 評価対象のノード({@link UniClassDec}であることを期待する.)
 	 * @param className 期待するクラス名.
-	 * @param superClass 期待するスーパークラス名(ない場合はnull.)
+	 * @param superClass 期待するスーパークラス名の配列(ない場合はnull.)
 	 * @param superInterfaces 期待する実装インタフェース名の配列(ない場合はnull.)
 	 */
-	def evaluateClass(Object node, String className, String superClass, List<String> superInterfaces) {
+	def evaluateClass(Object node, String className, List<String> superClasses, List<String> superInterfaces) {
 		assertThat(node, instanceOf(typeof(UniClassDec)))
 		val cls = node as UniClassDec
-		assertNotNull("Class name cannot be null",className)
+		assertNotNull("Class name cannot be null", className)
 		assertEquals(cls.className, className)
-		assertEquals(cls.superClass, superClass)
-		if(cls.interfaces == null){
-			assertNull(superInterfaces)
-			return
+		if (superClasses == null) {
+			if (cls.superClass != null) {
+				assertThat(cls.superClass.size, is(0))
+			} else {
+				assertThat(cls.superClass, is(nullValue))
+			}
+		} else {
+			assertEquals(cls.superClass.size, superClasses.size)
+			superClasses.forEach [
+				assertTrue(cls.superClass.contains(it))
+			]
 		}
-		assertEquals(cls.interfaces.size, superInterfaces.size)
-		superInterfaces.forEach[
-			assertTrue(cls.interfaces.contains(it))
-		]
+		if (superInterfaces == null) {
+			if(cls.interfaces != null){
+			assertThat(cls.interfaces.size, is(0))
+			} else {
+				assertThat(cls.interfaces, is(nullValue))
+			}
+		} else {
+			assertEquals(cls.interfaces.size, superInterfaces.size)
+			superInterfaces.forEach [
+				assertTrue(cls.interfaces.contains(it))
+			]
+		}
 	}
 
 	// add evaluate method/array/ etc.

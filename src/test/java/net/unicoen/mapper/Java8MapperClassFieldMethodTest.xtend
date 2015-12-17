@@ -4,9 +4,6 @@ import org.junit.Test
 import static org.hamcrest.Matchers.*
 import static org.junit.Assert.*
 import net.unicoen.node.UniClassDec
-import org.junit.Ignore
-import net.unicoen.node.UniFieldDec
-import net.unicoen.node.UniArray
 
 class Java8MapperClassFieldMethodTest extends MapperTest {
 	val mapper = new Java8Mapper(true)
