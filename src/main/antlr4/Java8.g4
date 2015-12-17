@@ -378,11 +378,7 @@ unannArrayType
 	;
 
 methodDeclaration
-	:	methodModifiers methodHeader methodBody 
-	;
-
-methodModifiers
-	:	methodModifier* 
+	:	methodModifier* methodHeader methodBody 
 	;
 
 methodModifier
