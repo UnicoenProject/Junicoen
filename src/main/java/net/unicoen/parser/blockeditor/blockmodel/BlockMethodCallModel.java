@@ -22,12 +22,12 @@ public class BlockMethodCallModel extends BlockCommandModel{
 		addElement(BlockElementModel.NAME_NODE, document, DOMUtil.getChildText(originNode, BlockElementModel.NAME_NODE), element);
 		this.element = element;
 
-		if (kind.equals("command") && parentId != null) {
+		if (kind.equals(BlockElementModel.BLOCKKINDS.COMMAND) && parentId != null) {
 			addBeforeBlockNode(document, parentId);
 		}
 
 		if(!"void".equals(resolver.getType(genusName))){
-			addElement("Type", document, resolver.getType(genusName), element);
+			addElement(BlockElementModel.TYPE_NODE, document, resolver.getType(genusName), element);
 		}
 
 		return element;

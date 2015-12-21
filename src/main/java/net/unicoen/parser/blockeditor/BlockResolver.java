@@ -198,6 +198,7 @@ public class BlockResolver {
 	}
 
 	public void addAvaiableVariableTypeToMap(Node node) {
+		
 		// 利用可能な変数型リストに登録
 		if (BlockProcParmModel.KIND.equals(DOMUtil.getAttribute(node, BlockElementModel.KIND_ATTR))) {
 			this.variableResolver.addAvaiableFunctionVariable(DOMUtil.getChildNode(node, BlockElementModel.TYPE_NODE).getTextContent(), DOMUtil.getAttribute(node, "name"));
@@ -249,7 +250,7 @@ public class BlockResolver {
 			Node socketConnectors = DOMUtil.getChildNode(genusNode, "BlockConnectors");
 			for (int i = 0; socketConnectors != null && i < socketConnectors.getChildNodes().getLength(); i++) {
 				Node connector = socketConnectors.getChildNodes().item(i);
-				if (connector.getNodeName().equals(BlockConnector.CONNECTOR_NODE) && DOMUtil.getAttribute(connector, BlockConnector.CONNECTOR_KIND_TAG).equals("socket")) {
+				if (connector.getNodeName().equals(BlockConnector.CONNECTOR_NODE) && DOMUtil.getAttribute(connector, BlockConnector.CONNECTOR_KIND_ATTR).equals("socket")) {
 					socketsNode.add(connector);
 				}
 			}

@@ -24,10 +24,31 @@ public class BlockElementModel {
 	public static String LABEL_NODE = "Label";//任意（モデルによって必要）
 	public static String NAME_NODE = "Name";//任意（モデルによって必要）
 	public static String LOCATION_NODE = "Location";//任意
+	
 	public static String BLOCK_STUB_NODE = "BlockStub";
+	public static String STUBPARENTNAME_NODE = "StubParentName";
+	public static String STUBPARENTGENUS_NODE = "StubParentGenus";
+	public static String STUBPARENTID_NODE = "StubParentID";
+	
 	public static String AFTERBLOCKID_NODE = "AfterBlockId";//任意（モデルによって必要）
 	public static String BEFOREBLOCKID_NODE = "BeforeBlockId";//任意（モデルによって必要）
 	public static String COMMENT_NODE = "Comment";//任意
+	public static String INITLABEL_ATTR = "initlabel";
+	
+	
+	public static enum BLOCKKINDS{
+		FUNCTION("function"),COMMAND("command"),DATA("data"),LOCAL_VARDEC("local-variable"),
+		GLOBAL_VARDEC("global-variable"),PROCEDURE("procedure"),PARAM("param"),RETURN("return"),SPECIAL("special"),SPECIAL_VARDEC("special-variable");
+		private final String text;
+		private BLOCKKINDS(String text){
+			this.text = text;
+		}
+		
+		@Override
+		public String toString(){
+			return this.text;
+		}
+	}
 	
 	
 	private List<BlockElementModel> socketBlocksElements = new ArrayList<>();

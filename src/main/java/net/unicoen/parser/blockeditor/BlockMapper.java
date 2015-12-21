@@ -151,7 +151,7 @@ public class BlockMapper {
 			} else if (BlockFieldVarDecModel.KIND.equals(kind)) {
 				fieldVariables.add(node);
 			} else if (BlockReturnModel.KIND.equals(kind)) {
-				Node socketNode = DOMUtil.getChildNode(getSocketsNode(node), "BlockConnector");
+				Node socketNode = DOMUtil.getChildNode(getSocketsNode(node), BlockConnector.CONNECTOR_NODE);
 				returnTypes.put(DOMUtil.getAttribute(getTopBlockNode(node), BlockElementModel.ID_ATTR), getSocketType(socketNode));
 			}
 		}
@@ -163,7 +163,7 @@ public class BlockMapper {
 		List<UniArg> args = new ArrayList<>();
 		for (Node connector : connectors) {
 			if (connector.getNodeName().equals(BlockConnector.CONNECTOR_NODE)) {
-				Node connectorBlock = map.get(DOMUtil.getAttribute(connector, BlockConnector.CONNECTOR_BLOCK_ID_TAG));
+				Node connectorBlock = map.get(DOMUtil.getAttribute(connector, BlockConnector.CONNECTOR_BLOCK_ID_ATTR));
 				if (connectorBlock != null) {
 					String name = DOMUtil.getChildText(connectorBlock, BlockElementModel.NAME_NODE);
 					String type = DOMUtil.getChildText(connectorBlock, BlockElementModel.TYPE_NODE);
@@ -228,7 +228,7 @@ public class BlockMapper {
 
 	public String getSocketType(Node node) {
 		String type = "void";
-		String id = DOMUtil.getAttribute(node, BlockConnector.CONNECTOR_BLOCK_ID_TAG);
+		String id = DOMUtil.getAttribute(node, BlockConnector.CONNECTOR_BLOCK_ID_ATTR);
 
 		if (id != null) {
 			type = DOMUtil.getChildText(map.get(id), BlockElementModel.TYPE_NODE);
@@ -438,7 +438,7 @@ public class BlockMapper {
 		if (argsNode != null) {
 			for (Node argNode : DOMUtil.eachChild(argsNode)) {
 				assert argNode.getNodeName().equals(BlockConnector.CONNECTOR_NODE);
-				String argElemId = DOMUtil.getAttribute(argNode, BlockConnector.CONNECTOR_BLOCK_ID_TAG);
+				String argElemId = DOMUtil.getAttribute(argNode, BlockConnector.CONNECTOR_BLOCK_ID_ATTR);
 				Node realArgNode = map.get(argElemId);
 				if (realArgNode != null) {
 					// beforeを持たないElementNodeは引数なので，引数の解析
@@ -462,7 +462,7 @@ public class BlockMapper {
 		int i = 0;
 		// ifブロックのソケットのノードからUniExprを作成
 		for (Node argNode : DOMUtil.eachChild(argsNode)) {
-			String argElemId = DOMUtil.getAttribute(argNode, BlockConnector.CONNECTOR_BLOCK_ID_TAG);
+			String argElemId = DOMUtil.getAttribute(argNode, BlockConnector.CONNECTOR_BLOCK_ID_ATTR);
 			Node realArgNode = map.get(argElemId);
 			if (realArgNode != null) {
 				if (i == 0) {

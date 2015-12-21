@@ -13,9 +13,7 @@ public class BlockBinaryOperatorModel extends BlockExprModel {
 	private BlockElementModel left;
 	private BlockElementModel right;
 	public static String OPERATOR_NODE = "Operator";
-	
-	public static String KIND = "function";
-	
+		
 	public static enum BINOP_BLOCKGENUSNAMES{
 		AND("and"), OR("or"),EQUALS_NUMBER("equals-number"), NOT_EQUALS_NUMBER("not-equals-number"),
 		GREATERTHAN_OR_EQUALTO("greaterthanorequalto"),GREATERTHAN("greaterthan"),LESSTHAN_OR_EQUALTO("lessthanorequalto"),
@@ -33,7 +31,7 @@ public class BlockBinaryOperatorModel extends BlockExprModel {
 	}
 
 	public BlockBinaryOperatorModel(Document document ,String operator, Long id,  BlockElementModel left, BlockElementModel right,BlockResolver resolver) {
-		this.element = createBlockElement(document, calcGenusName(operator, left, right), id, KIND);
+		this.element = createBlockElement(document, calcGenusName(operator, left, right), id, BlockElementModel.BLOCKKINDS.FUNCTION.toString());
 		this.left = left;
 		this.right = right;
 	}
@@ -63,7 +61,7 @@ public class BlockBinaryOperatorModel extends BlockExprModel {
 	}
 
 	public String calcGenusName(String operator, BlockElementModel left, BlockElementModel right){
-		String type = calcConnectorType(left.getPlugAttribute(BlockPlugModel.CONNECTOR_TYPE_TAG), right.getPlugAttribute(BlockPlugModel.CONNECTOR_TYPE_TAG));
+		String type = calcConnectorType(left.getPlugAttribute(BlockPlugModel.CONNECTOR_TYPE_ATTR), right.getPlugAttribute(BlockPlugModel.CONNECTOR_TYPE_ATTR));
 		if (operator.equals("=")) {// 他の二項演算と扱いが別（ソケットが一つのみ）
 			return "";
 		} else if (operator.equals("&&")) {

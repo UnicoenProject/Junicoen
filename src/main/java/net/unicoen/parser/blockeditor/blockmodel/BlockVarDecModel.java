@@ -34,7 +34,7 @@ public class BlockVarDecModel extends BlockCommandModel{
 	}
 	
 	public Element createSpecialVariableDecModel(String type, String name, String kind, Document document, BlockResolver resolver, Long ID_COUNTER){
-		Element blockElement = createBlockElement(document, "special-variable", ID_COUNTER++, kind);
+		Element blockElement = createBlockElement(document, BlockSpecialModel.VARIABLE_GENUS_NAME, ID_COUNTER++, kind);
 		return blockElement;
 	}
 	

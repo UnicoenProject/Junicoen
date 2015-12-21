@@ -236,7 +236,7 @@ public class BlockGenerator extends UniModelVisitor {
 
 			return getterModel;
 		} else {
-			BlockSpecialModel model = new BlockSpecialModel(node.name, document, ID_COUNTER++, "data", parentId);
+			BlockSpecialModel model = new BlockSpecialModel(node.name, document, ID_COUNTER++, BlockElementModel.BLOCKKINDS.DATA.toString(), parentId);
 			BlockPlugModel plugInfo = new BlockPlugModel("", "object", "mirror", parentId);
 			model.setPlugElement(document, plugInfo);
 			return model;
@@ -970,7 +970,7 @@ public class BlockGenerator extends UniModelVisitor {
 		}
 
 		if (parentId != null) {
-			kind = "function";
+			kind = BlockElementModel.BLOCKKINDS.FUNCTION.toString();
 			BlockSpecialModel model = new BlockSpecialModel(methodName, document, ID_COUNTER++, kind, parentId);
 			model.addSocketsAndNodes(sockets, document, socketsModel);
 
@@ -979,7 +979,7 @@ public class BlockGenerator extends UniModelVisitor {
 
 			return model;
 		} else {
-			kind = "command";
+			kind = BlockElementModel.BLOCKKINDS.COMMAND.toString();
 			BlockSpecialModel model = new BlockSpecialModel(methodName, document, ID_COUNTER++, kind, parentId);
 
 			model.addSocketsAndNodes(sockets, document, socketsModel);

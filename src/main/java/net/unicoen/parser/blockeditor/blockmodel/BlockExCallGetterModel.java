@@ -9,12 +9,11 @@ import org.w3c.dom.Element;
 public class BlockExCallGetterModel extends BlockExprModel {
 
 	public static String GENUS_NAME = "callGetterMethod2";
-	private static String KIND = "function";
 
 	private BlockElementModel methodBlock;
 
 	public BlockExCallGetterModel(Document document, Long id){
-		this.element = createBlockElement(document, GENUS_NAME, id, KIND);
+		this.element = createBlockElement(document, GENUS_NAME, id, BlockElementModel.BLOCKKINDS.FUNCTION.toString());
 	}
 
 	public void setCalleMethod(BlockElementModel callMethodModel){
@@ -22,6 +21,7 @@ public class BlockExCallGetterModel extends BlockExprModel {
 	}
 
 	// @override
+	@Override
 	public List<Element> getBlockElements() {
 		List<Element> elements = new ArrayList<Element>();
 		elements.add(getElement());
@@ -52,8 +52,8 @@ public class BlockExCallGetterModel extends BlockExprModel {
 	@Override
 	public void addSocketsNode(Document document, BlockSocketsModel sockets) {
 		if (sockets.getSockets().size() > 0) {
-			Element socketsElement = document.createElement("Sockets");
-			socketsElement.setAttribute("num-sockets", String.valueOf(sockets.getSockets().size()));
+			Element socketsElement = document.createElement(BlockSocketsModel.NODE_NAME);
+			socketsElement.setAttribute(BlockSocketsModel.NUMSOCKETS_ATTR, String.valueOf(sockets.getSockets().size()));
 			for (int i = 0;i<sockets.getSockets().size();i++) {
 				if(getSocketBlocks().size() > i && getSocketBlocks().get(i)!= null){
 					sockets.getSockets().get(i).setConnectorBlockID(getSocketBlocks().get(i).getBlockID());

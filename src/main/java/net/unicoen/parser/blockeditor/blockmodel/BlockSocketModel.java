@@ -59,14 +59,14 @@ public class BlockSocketModel extends BlockConnector{
 	public Element createBlockConnectorElement(Document document){
 		Element connector = document.createElement(BlockConnector.CONNECTOR_NODE);
 
-		connector.setAttribute(BlockConnector.CONNECTOR_KIND_TAG, CONNECTOR_TYPE);
-		connector.setAttribute(BlockConnector.CONNECTOR_POSITION_TYPE_TAG, getPositionType());
-		connector.setAttribute(BlockConnector.CONNECTOR_LABEL_TAG, getLabel());
+		connector.setAttribute(BlockConnector.CONNECTOR_KIND_ATTR, CONNECTOR_TYPE);
+		connector.setAttribute(BlockConnector.CONNECTOR_POSITION_TYPE_ATTR, getPositionType());
+		connector.setAttribute(BlockConnector.CONNECTOR_LABEL_ATTR, getLabel());
 		
-		connector.setAttribute(BlockConnector.CONNECTOR_TYPE_TAG, getConnectorType());
-		connector.setAttribute(BlockConnector.CONNECTOR_INIT_TYPE_TAG, getInitType());
+		connector.setAttribute(BlockConnector.CONNECTOR_TYPE_ATTR, getConnectorType());
+		connector.setAttribute(BlockConnector.CONNECTOR_INIT_TYPE_ATTR, getInitType());
 		if (!"-1".equals(getConnectorBlockID())) {
-			connector.setAttribute(BlockConnector.CONNECTOR_BLOCK_ID_TAG, getConnectorBlockID());
+			connector.setAttribute(BlockConnector.CONNECTOR_BLOCK_ID_ATTR, getConnectorBlockID());
 		}
 		return connector;
 	}

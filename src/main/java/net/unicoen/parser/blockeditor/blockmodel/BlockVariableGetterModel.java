@@ -14,7 +14,7 @@ public class BlockVariableGetterModel extends BlockExprModel {
 		// BlockStubノード作成
 		Element stubElement = createBlockStubNode(document, name, DOMUtil.getAttribute(varDecNode, BlockElementModel.GENUS_NAME_ATTR));
 		// Blockノード作成
-		Element blockElement = createVariableBlockNode(document, genusName, name, "data", DOMUtil.getChildNode(varDecNode, BlockElementModel.TYPE_NODE).getTextContent(), id);
+		Element blockElement = createVariableBlockNode(document, genusName, name, BlockElementModel.BLOCKKINDS.DATA.toString(), DOMUtil.getChildNode(varDecNode, BlockElementModel.TYPE_NODE).getTextContent(), id);
 		stubElement.appendChild(blockElement);
 		this.element = stubElement;
 	}

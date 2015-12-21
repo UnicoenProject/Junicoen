@@ -5,7 +5,8 @@ import org.w3c.dom.Document;
 import net.unicoen.parser.blockeditor.BlockResolver;
 
 public class BlockFieldVarDecModel extends BlockVarDecModel{
-	public static String KIND = "global-variable"; 
+	
+	public static String KIND = BlockElementModel.BLOCKKINDS.GLOBAL_VARDEC.toString();
 	
 	public BlockFieldVarDecModel(String type, String name, Document document, BlockResolver resolver, Long ID_COUNTER) {
 		super(type, name, document, resolver, ID_COUNTER);
@@ -15,9 +16,5 @@ public class BlockFieldVarDecModel extends BlockVarDecModel{
 	public String getGenusNameFromResolver(BlockResolver resolver, String type){
 		return resolver.getFieldVarDecBlockName(type);
 	}
-	
-	@Override
-	public String getKind(){
-		return KIND;
-	}
+
 }

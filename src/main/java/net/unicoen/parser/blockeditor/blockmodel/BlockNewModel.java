@@ -28,13 +28,13 @@ public class BlockNewModel extends BlockExprModel{
 		
 		Element blockElement = createBlockElement(document, genusName, ID_COUNTER, KIND);
 
-		addElement("Label", document, newModel.type, blockElement);
-		addElement("Type", document, newModel.type, blockElement);
+		addElement(BlockElementModel.LABEL_NODE, document, newModel.type, blockElement);
+		addElement(BlockElementModel.TYPE_NODE, document, newModel.type, blockElement);
 
 		//Plug?
 		Node plugNode = resolver.getPlugElement(genusName);
 		Map<String, String> plugInfo = calcPlugInfo(plugNode);
-		addPlugElement(document, blockElement, parentBlockID, plugInfo.get("connector-type"), plugInfo.get("position-type"));
+		addPlugElement(document, blockElement, parentBlockID, plugInfo.get(BlockPlugModel.CONNECTOR_TYPE_ATTR), plugInfo.get(BlockPlugModel.CONNECTOR_POSITION_TYPE_ATTR));
 
 		return blockElement;
 	}
