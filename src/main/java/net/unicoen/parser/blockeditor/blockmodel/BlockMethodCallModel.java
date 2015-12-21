@@ -10,14 +10,6 @@ import net.unicoen.parser.blockeditor.BlockResolver;
 import net.unicoen.parser.blockeditor.DOMUtil;
 
 public class BlockMethodCallModel extends BlockCommandModel{
-
-	private String genusName;//必須
-	private List<BlockElementModel> sockets;//任意
-	private Long id;//必須
-	private String beforeBlockID;//必須
-	private String kind;//必須(parentNodeから計算可能)
-	private String name;//必須
-	private String type;//必須
 	
 	public BlockMethodCallModel(String genusName, List<BlockElementModel> sockets ,Document document, BlockResolver resolver, Long ID_COUNTER, String parentId){
 		this.element = createPrototypeElement(genusName, sockets, document, resolver, ID_COUNTER, parentId);

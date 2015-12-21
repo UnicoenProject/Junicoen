@@ -25,7 +25,7 @@ public class UniToBlock00_BasicTest {
 		UniBlock stmt = (UniBlock)model.statement;
 		stmt.body.set(2, new UniUnaryOp("_++", new UniIdent("i")));
 		
-		UniToBlockTestUtil.parseTest(classModel);
+		UniToBlockTestUtil.parseTestToBG2(classModel);
 	}
 
 }

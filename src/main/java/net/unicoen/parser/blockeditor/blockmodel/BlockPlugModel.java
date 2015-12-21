@@ -6,7 +6,7 @@ import org.w3c.dom.Node;
 
 import net.unicoen.parser.blockeditor.DOMUtil;
 
-public class BlockPlugModel extends BlockConnectorInfo{
+public class BlockPlugModel extends BlockConnector{
 
 	public static String NODE_NAME = "Plug";
 	/**
@@ -32,6 +32,10 @@ public class BlockPlugModel extends BlockConnectorInfo{
 		Element plugNode = document.createElement("Plug");
 		Element blockConnectorNode = document.createElement("BlockConnector");
 
+		if (this.connectorBlockID == null) {
+			throw new RuntimeException("parent id is null");
+		}
+		
 		blockConnectorNode.setAttribute(CONNECTOR_BLOCK_ID_TAG, this.connectorBlockID);
 		blockConnectorNode.setAttribute(CONNECTOR_KIND_TAG , "plug");
 		blockConnectorNode.setAttribute(CONNECTOR_TYPE_TAG, this.connectorType);

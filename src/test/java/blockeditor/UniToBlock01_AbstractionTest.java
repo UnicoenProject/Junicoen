@@ -14,10 +14,7 @@ public class UniToBlock01_AbstractionTest {
 	public void test() throws IOException {
 		UniClassDec classModel = UniToBlockTestUtil.createClassDec("blockeditor/testcases/BlockConvertTest/_01AbstractionTest.java");
 		classModel.superClass = Lists.newArrayList("Turtle");
-		UniToBlockTestUtil.parseTest(classModel);
-		
-		
-		
+		UniToBlockTestUtil.parseTestToBG2(classModel);
 	}
 
 }

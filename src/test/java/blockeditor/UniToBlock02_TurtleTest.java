@@ -14,7 +14,7 @@ public class UniToBlock02_TurtleTest {
 	public void test() throws IOException {
 		UniClassDec classModel = UniToBlockTestUtil.createClassDec("blockeditor/testcases/BlockConvertTest/_02TurtleTest.java");
 		classModel.superClass = Lists.newArrayList("Turtle");
-		UniToBlockTestUtil.parseTest(classModel);
+		UniToBlockTestUtil.parseTestToBG2(classModel);
 	}
 
 }

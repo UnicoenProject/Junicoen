@@ -14,7 +14,7 @@ public class UniToBlock06_MouseTest {
 	public void test() throws IOException {
 		UniClassDec classModel = UniToBlockTestUtil.createClassDec("blockeditor/testcases/BlockConvertTest/_06MouseTest.java");
 		classModel.superClass = Lists.newArrayList("Turtle");
-		UniToBlockTestUtil.parseTest(classModel);
+		UniToBlockTestUtil.parseTestToBG2(classModel);
 	}
 
 }

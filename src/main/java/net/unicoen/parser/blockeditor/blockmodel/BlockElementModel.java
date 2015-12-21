@@ -103,7 +103,12 @@ public class BlockElementModel {
 	}
 
 	public String getLabel() {
-		return DOMUtil.getChildNode(element, BlockElementModel.LABEL_NODE).getTextContent();
+		Node label = DOMUtil.getChildNode(element, BlockElementModel.LABEL_NODE);
+		if(label == null){
+			return "";
+		}else{
+			return label.getTextContent();			
+		}
 	}
 
 	public void addLocationElement(Document document, String x, String y, Element blockElement) {
@@ -228,7 +233,7 @@ public class BlockElementModel {
 	}
 
 	public String getPlugAttribute(String attribute){
-		return DOMUtil.getAttribute(DOMUtil.getChildNode(getPlugNode(), BlockConnectorInfo.CONNECTOR_NODE), attribute);
+		return DOMUtil.getAttribute(DOMUtil.getChildNode(getPlugNode(), BlockConnector.CONNECTOR_NODE), attribute);
 	}
 
 	public Element getBlockElement(){

@@ -1,6 +1,6 @@
 package net.unicoen.parser.blockeditor.blockmodel;
 
-public class BlockConnectorInfo {
+public class BlockConnector {
 
 	public static String CONNECTOR_NODE = "BlockConnector";
 	

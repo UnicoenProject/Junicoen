@@ -12,6 +12,7 @@ public class BlockBinaryOperatorModel extends BlockExprModel {
 
 	private BlockElementModel left;
 	private BlockElementModel right;
+	public static String OPERATOR_NODE = "Operator";
 	
 	public static String KIND = "function";
 	

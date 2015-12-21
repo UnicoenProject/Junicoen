@@ -4,8 +4,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 
-public class BlockSocketModel extends BlockConnectorInfo{
+public class BlockSocketModel extends BlockConnector{
 
+	public static String CONNECTOR_TYPE = "socket";
+	
 	public BlockSocketModel(BlockExprModel param) {
 		this.label = param.getLabel();
 		this.positionType = "single";
@@ -55,19 +57,16 @@ public class BlockSocketModel extends BlockConnectorInfo{
 	}
 
 	public Element createBlockConnectorElement(Document document){
-		Element connector = document.createElement("BlockConnector");
+		Element connector = document.createElement(BlockConnector.CONNECTOR_NODE);
 
-		connector.setAttribute("connector-kind", "socket");
-		connector.setAttribute("position-type", getPositionType());
-		connector.setAttribute("label", getLabel());
-
+		connector.setAttribute(BlockConnector.CONNECTOR_KIND_TAG, CONNECTOR_TYPE);
+		connector.setAttribute(BlockConnector.CONNECTOR_POSITION_TYPE_TAG, getPositionType());
+		connector.setAttribute(BlockConnector.CONNECTOR_LABEL_TAG, getLabel());
+		
+		connector.setAttribute(BlockConnector.CONNECTOR_TYPE_TAG, getConnectorType());
+		connector.setAttribute(BlockConnector.CONNECTOR_INIT_TYPE_TAG, getInitType());
 		if (!"-1".equals(getConnectorBlockID())) {
-			connector.setAttribute("con-block-id", getConnectorBlockID());
-			connector.setAttribute("connector-type", getConnectorType());
-			connector.setAttribute("init-type", getInitType());
-		} else {
-			connector.setAttribute("connector-type", getConnectorType());
-			connector.setAttribute("init-type", getInitType());
+			connector.setAttribute(BlockConnector.CONNECTOR_BLOCK_ID_TAG, getConnectorBlockID());
 		}
 		return connector;
 	}

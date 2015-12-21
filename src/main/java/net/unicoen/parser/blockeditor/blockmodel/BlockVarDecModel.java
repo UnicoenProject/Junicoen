@@ -60,9 +60,9 @@ public class BlockVarDecModel extends BlockCommandModel{
 		for(BlockElementModel socket : socketBlocks){
 			addSocketBlock(socket);
 		}
-		
+
 		//TODO should fix
-		if(getGenusName().equals(BlockSpecialModel.GENUS_NAME)){
+		if(getGenusName().equals(BlockSpecialModel.VARIABLE_GENUS_NAME)){
 			for(BlockElementModel socket : socketBlocks){
 				sockets.addSocketInfo(new BlockSocketModel((BlockExprModel) socket));
 			}			

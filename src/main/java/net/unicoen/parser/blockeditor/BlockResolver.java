@@ -14,6 +14,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import net.unicoen.parser.blockeditor.blockmodel.BlockConnector;
 import net.unicoen.parser.blockeditor.blockmodel.BlockElementModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockFieldVarDecModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockLocalVarDecModel;
@@ -28,12 +29,10 @@ public class BlockResolver {
 	public static final String FORCECONVERION_FILENAME="force_convertion_list.xml";
 
 	private Map<String, Node> allAvailableBlocks = new HashMap<String, Node>();// key:genusname, value:node
-	private Map<String, String> availableLocalVariableDecralationTypes = new HashMap<>();// key:variabletype,value: genusName
-	private Map<String, String> availableFieldVariableDecralationTypes = new HashMap<>();
-	private Map<String, String> availableFunctionArgsTypes = new HashMap<>();
+
 	private VariableNameResolver vnResolver = new VariableNameResolver();
 	private MethodResolver methodResolver = new MethodResolver();
-	
+	private VariableBlockNameResolver variableResolver = new VariableBlockNameResolver();
 	private ForceConvertionMap forceConvertionMap;
 
 	/**
@@ -119,15 +118,15 @@ public class BlockResolver {
 	}
 
 	public String getLocalVarDecBlockName(String type) {
-		return availableLocalVariableDecralationTypes.get(type);
+		return variableResolver.getLocalVariableBlockName(type);
 	}
 
 	public String getFieldVarDecBlockName(String type) {
-		return availableFieldVariableDecralationTypes.get(type);
+		return variableResolver.getFieldVariableBlockName(type);
 	}
 
 	public String getFunctionArgBlockName(String type) {
-		return availableFunctionArgsTypes.get(type);
+		return variableResolver.getFunctionVariableBlockName(type);
 	}
 
 	public Node getBlockNode(String genusName) {
@@ -201,12 +200,11 @@ public class BlockResolver {
 	public void addAvaiableVariableTypeToMap(Node node) {
 		// 利用可能な変数型リストに登録
 		if (BlockProcParmModel.KIND.equals(DOMUtil.getAttribute(node, BlockElementModel.KIND_ATTR))) {
-			this.availableFunctionArgsTypes.put(DOMUtil.getChildNode(node, BlockElementModel.TYPE_NODE).getTextContent(), DOMUtil.getAttribute(node, "name"));
+			this.variableResolver.addAvaiableFunctionVariable(DOMUtil.getChildNode(node, BlockElementModel.TYPE_NODE).getTextContent(), DOMUtil.getAttribute(node, "name"));
 		} else if (BlockLocalVarDecModel.KIND.equals(DOMUtil.getAttribute(node, BlockElementModel.KIND_ATTR))) {
-			// 利用可能な関数の引数の型マップに登録
-			this.availableLocalVariableDecralationTypes.put(DOMUtil.getChildNode(node, BlockElementModel.TYPE_NODE).getTextContent(), DOMUtil.getAttribute(node, "name"));
+			this.variableResolver.addAvaiableLocalVariable(DOMUtil.getChildNode(node, BlockElementModel.TYPE_NODE).getTextContent(), DOMUtil.getAttribute(node, "name"));
 		} else if (BlockFieldVarDecModel.KIND.equals(DOMUtil.getAttribute(node, BlockElementModel.KIND_ATTR))) {
-			this.availableFieldVariableDecralationTypes.put(DOMUtil.getChildNode(node, BlockElementModel.TYPE_NODE).getTextContent(), DOMUtil.getAttribute(node, "name"));
+			this.variableResolver.addAvaiableFieldVariable(DOMUtil.getChildNode(node, BlockElementModel.TYPE_NODE).getTextContent(), DOMUtil.getAttribute(node, "name"));
 		}
 	}
 
@@ -251,7 +249,7 @@ public class BlockResolver {
 			Node socketConnectors = DOMUtil.getChildNode(genusNode, "BlockConnectors");
 			for (int i = 0; socketConnectors != null && i < socketConnectors.getChildNodes().getLength(); i++) {
 				Node connector = socketConnectors.getChildNodes().item(i);
-				if (connector.getNodeName().equals("BlockConnector") && DOMUtil.getAttribute(connector, "connector-kind").equals("socket")) {
+				if (connector.getNodeName().equals(BlockConnector.CONNECTOR_NODE) && DOMUtil.getAttribute(connector, BlockConnector.CONNECTOR_KIND_TAG).equals("socket")) {
 					socketsNode.add(connector);
 				}
 			}
@@ -261,7 +259,7 @@ public class BlockResolver {
 	}
 
 	public String getType(String genusName) {
-		Node typeNode = DOMUtil.getChildNode(allAvailableBlocks.get(genusName), "Type");
+		Node typeNode = DOMUtil.getChildNode(allAvailableBlocks.get(genusName), BlockElementModel.TYPE_NODE);
 		if (typeNode == null) {
 			return "void";
 		} else {

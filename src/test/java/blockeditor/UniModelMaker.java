@@ -6,8 +6,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.xml.sax.SAXException;
 
 import com.google.common.collect.Lists;
@@ -28,8 +26,6 @@ import net.unicoen.node.UniNew;
 import net.unicoen.node.UniUnaryOp;
 import net.unicoen.node.UniVariableDec;
 import net.unicoen.parser.blockeditor.BlockGenerator;
-import net.unicoen.parser.blockeditor.DOMUtil;
-import net.unicoen.parser.blockeditor.blockmodel.BlockClassModel;
 
 public class UniModelMaker {
 
@@ -68,6 +64,24 @@ public class UniModelMaker {
 	}
 
 	public static BlockGenerator createBlockGenerator(String fileName) throws IOException{
+		File dir = new File("blockeditor/test");
+		if(!dir.exists()){
+			dir.mkdir();
+		}
+		String filePath = dir.getPath() + "/" + fileName + ".xml";
+		File file = new File(filePath);
+		file.createNewFile();
+		PrintStream out = new PrintStream(file);
+
+		try {
+			return new BlockGenerator(out, LANG_DEF_ROOT, true);
+		} catch (SAXException e) {
+			e.printStackTrace();
+			return null;
+		}	
+	}
+	
+	public static BlockGenerator createBlockGenerator2(String fileName) throws IOException{
 		File dir = new File("blockeditor/test");
 		if(!dir.exists()){
 			dir.mkdir();
@@ -125,12 +139,6 @@ public class UniModelMaker {
 		return new UniVariableDec(new ArrayList<>(), type, variableName, new UniNew(type, new ArrayList<>()));
 	}
 	
-	public static BlockClassModel createBlockClassModel(UniClassDec dec) throws IOException, ParserConfigurationException{
-		BlockGenerator gen = createBlockGenerator(dec.className + "Test");
-		
-		return gen.parseClass(dec, DOMUtil.createDocumentInstance());
-		
-	}
 	
 	public static UniBinOp createVariableSetterModel(UniIdent ident, UniExpr value){
 		return new UniBinOp("=", ident, value);
