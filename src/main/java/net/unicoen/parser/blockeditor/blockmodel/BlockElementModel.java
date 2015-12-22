@@ -38,7 +38,9 @@ public class BlockElementModel {
 	
 	public static enum BLOCKKINDS{
 		FUNCTION("function"),COMMAND("command"),DATA("data"),LOCAL_VARDEC("local-variable"),
-		GLOBAL_VARDEC("global-variable"),PROCEDURE("procedure"),PARAM("param"),RETURN("return"),SPECIAL("special"),SPECIAL_VARDEC("special-variable");
+		GLOBAL_VARDEC("global-variable"),PROCEDURE("procedure"),PARAM("param"),RETURN("return"),SPECIAL("special"),SPECIAL_VARDEC("special-variable")
+		,ABSTRACTION("abstraction");
+		
 		private final String text;
 		private BLOCKKINDS(String text){
 			this.text = text;

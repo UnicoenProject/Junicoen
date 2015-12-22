@@ -250,7 +250,13 @@ public class BlockGenerator extends UniModelVisitor {
 
 	@Override
 	public Object visitFieldAccess(UniFieldAccess node) {
-		return null;
+		String genusName = resolver.getForceConvertionMap().getBlockGenusName(node);
+		BlockExprModel expr = new BlockExprModel();
+		expr.setElement(expr.createBlockElement(document, genusName, ID_COUNTER++,BlockElementModel.BLOCKKINDS.DATA.toString()));
+		
+		BlockPlugModel plugInfo = new BlockPlugModel(resolver.getPlugElement(expr.getGenusName()), idStack.pop());
+		expr.setPlugElement(document, plugInfo);
+		return expr;
 	}
 
 	@Override
@@ -346,7 +352,7 @@ public class BlockGenerator extends UniModelVisitor {
 			if (parentId == null) {
 				Long id = ID_COUNTER++;
 				// i = i+1に変換
-				List<Node> socketNodes = resolver.getSocketNodes(genusName.substring("setter".length(), genusName.length()));
+				List<Node> socketNodes = resolver.getSocketNodes(DOMUtil.getAttribute(varDecNode, BlockElementModel.GENUS_NAME_ATTR));
 				BlockSocketsModel sockets = calcSocketsInfo(socketNodes);
 
 				BlockElementModel right = visitExpr(new UniBinOp(operator, new UniIdent(ident.name), new UniIntLiteral(1)), String.valueOf(id));

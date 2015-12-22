@@ -8,8 +8,10 @@ import net.unicoen.parser.blockeditor.DOMUtil;
 
 public class BlockVariableSetterModel extends BlockCommandModel {
 
+	public static String GENUS_HEADER = "setter";
+	
 	public BlockVariableSetterModel(Document document, Node parentNode, Long id) {
-		String genusName = "setter" + DOMUtil.getAttribute(parentNode, BlockElementModel.GENUS_NAME_ATTR);
+		String genusName = GENUS_HEADER + DOMUtil.getAttribute(parentNode, BlockElementModel.GENUS_NAME_ATTR);
 		String variableName = DOMUtil.getChildTextFromBlockNode(parentNode, BlockElementModel.NAME_NODE);
 		// BlockStubノード作成
 		Element blockStubElement = createBlockStubNode(document, variableName, DOMUtil.getAttribute(parentNode, BlockElementModel.GENUS_NAME_ATTR));

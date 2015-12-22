@@ -14,6 +14,8 @@ public class BlockNewModel extends BlockExprModel{
 
 	private static String KIND = "function";
 	private static String GENUSNAME_HEADER = "new-object";
+	public static String GENUS_HEADER = "new-";
+	private String defauldGenusName = "new-object";
 
 	public BlockNewModel(UniNew newModel, List<BlockElementModel> sockets, String parentBlockID, Document document, Long ID_COUNTER, BlockResolver resolver){
 		element = createNewElement(newModel, sockets, document, parentBlockID, ID_COUNTER, resolver);
@@ -23,7 +25,7 @@ public class BlockNewModel extends BlockExprModel{
 
 		String genusName = calcGesnuName(newModel, transformToTypeStringList(sockets), resolver);
 		if(genusName == null){
-			genusName = "new-object";
+			genusName = defauldGenusName;
 		}
 		
 		Element blockElement = createBlockElement(document, genusName, ID_COUNTER, KIND);
@@ -44,7 +46,7 @@ public class BlockNewModel extends BlockExprModel{
 		if(resolver.getBlockNode(tmpGenus) != null){
 			return tmpGenus;
 		}else{
-			return "new-object";	
+			return defauldGenusName;	
 		} 
 	}
 }

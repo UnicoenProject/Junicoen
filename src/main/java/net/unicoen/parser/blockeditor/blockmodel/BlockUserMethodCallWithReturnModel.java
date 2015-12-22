@@ -32,9 +32,9 @@ public class BlockUserMethodCallWithReturnModel extends BlockExprModel {
 	//TODO should fix Stubクラスを作ってまとめる?　
 	public Element createBlockStubNode(Document document, String parentName, String parentGenusName, String parentID) {
 		Element blockStubElement = document.createElement(BlockElementModel.BLOCK_STUB_NODE);
-		addElement("StubParentName", document, parentName, blockStubElement);
-		addElement("StubParentGenus", document, parentGenusName, blockStubElement);
-		addElement("StubParentID", document, parentID, blockStubElement);
+		addElement(BlockElementModel.STUBPARENTNAME_NODE, document, parentName, blockStubElement);
+		addElement(BlockElementModel.STUBPARENTGENUS_NODE, document, parentGenusName, blockStubElement);
+		addElement(BlockElementModel.STUBPARENTID_NODE, document, parentID, blockStubElement);
 		return blockStubElement;
 	}
 

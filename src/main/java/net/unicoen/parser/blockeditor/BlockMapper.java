@@ -42,14 +42,20 @@ import net.unicoen.node.UniUnaryOp;
 import net.unicoen.node.UniVariableDec;
 import net.unicoen.node.UniWhile;
 import net.unicoen.parser.blockeditor.blockmodel.BlockBinaryOperatorModel;
+import net.unicoen.parser.blockeditor.blockmodel.BlockBooleanLiteralModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockConnector;
+import net.unicoen.parser.blockeditor.blockmodel.BlockDoubleLiteralModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockElementModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockExCallGetterModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockExCallerModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockFieldVarDecModel;
+import net.unicoen.parser.blockeditor.blockmodel.BlockIntLiteralModel;
+import net.unicoen.parser.blockeditor.blockmodel.BlockPrePostModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockProcedureModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockReturnModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockSocketsModel;
+import net.unicoen.parser.blockeditor.blockmodel.BlockStringLiteralModel;
+import net.unicoen.parser.blockeditor.blockmodel.BlockVariableGetterModel;
 import net.unicoen.parser.blockeditor.blockmodel.PageModel;
 
 public class BlockMapper {
@@ -276,18 +282,17 @@ public class BlockMapper {
 
 		String blockKind = DOMUtil.getAttribute(node, BlockElementModel.KIND_ATTR);
 		// ブロックモデルに応じてJUNICOENの式モデルを生成する
-		switch (blockKind) {
-		case "data":
+		if(BlockElementModel.BLOCKKINDS.DATA.toString().equals(blockKind)){
 			return parseLiteral(node);// リテラルを解析して式モデルを返す
-		case "command":
+		}else if(BlockElementModel.BLOCKKINDS.COMMAND.toString().equals(blockKind)){
 			return parseCommand(node, map);// if，while，メソッドなどを解析して式モデルを返す
-		case "function":
+		}else if(BlockElementModel.BLOCKKINDS.FUNCTION.toString().equals(blockKind)){
 			return parseFunction(node, map);// 二項演算，または単項演算を解析して式モデルを返す
-		case "local-variable":
+		}else if(BlockElementModel.BLOCKKINDS.LOCAL_VARDEC.toString().equals(blockKind)){
 			return parseLocalVariable(node, map);// ローカル変数を解析して，式モデルを返す
-		case "abstraction":
+		}else if(BlockElementModel.BLOCKKINDS.ABSTRACTION.toString().equals(blockKind)){
 			return parseAbstraction(node, map);
-		default:
+		}else{
 			throw new RuntimeException("Unsupported node: " + blockKind);
 		}
 	}
@@ -304,37 +309,37 @@ public class BlockMapper {
 
 	private UniExpr parseLiteral(Node node) {
 		String blockGenusName = DOMUtil.getAttribute(node, BlockElementModel.GENUS_NAME_ATTR);
-		if ("number".equals(blockGenusName)) {
+		if (BlockIntLiteralModel.INTLITERAL_GENUS_NAME.equals(blockGenusName)) {
 			// String num = getChildText(node, BlockElementModel.LABEL_NODE);
 			UniIntLiteral num = new UniIntLiteral(Integer.parseInt(DOMUtil.getChildText(node, BlockElementModel.LABEL_NODE)));
 			return num;
-		} else if ("string".equals(blockGenusName)) {
+		} else if (BlockStringLiteralModel.STRINGLITERAL_GENUS_NAME.equals(blockGenusName)) {
 			UniStringLiteral lit = new UniStringLiteral(DOMUtil.getChildText(node, BlockElementModel.LABEL_NODE));
 			return lit;
-		} else if ("double-number".equals(blockGenusName)) {
+		} else if (BlockDoubleLiteralModel.GENUS_NAME.equals(blockGenusName)) {
 			UniDoubleLiteral value = new UniDoubleLiteral(Double.parseDouble(DOMUtil.getChildText(node, BlockElementModel.LABEL_NODE)));
 			return value;
-		} else if ("true".equals(blockGenusName) ) {
+		} else if (BlockBooleanLiteralModel.TRUELITERAL_GENUS_NAME.equals(blockGenusName) ) {
 			UniBoolLiteral trueValue = new UniBoolLiteral();
 			trueValue.value = true;
 			return trueValue;
-		} else if ("false".equals(blockGenusName)) {
+		} else if (BlockBooleanLiteralModel.FALSELITERAL_GENUS_NAME.equals(blockGenusName)) {
 			UniBoolLiteral falseValue = new UniBoolLiteral();
 			falseValue.value = false;
 			return falseValue;
-		} else if (blockGenusName.startsWith("getter")) {
+		} else if (blockGenusName.startsWith(BlockVariableGetterModel.GENUS_HEADER)) {
 			UniIdent ident = new UniIdent(DOMUtil.getChildText(node, BlockElementModel.LABEL_NODE));
 			return ident;
-		} else if (blockGenusName.startsWith("preinc")) {
+		} else if (blockGenusName.startsWith(BlockPrePostModel.PRE_POST_GENUSHEADER.PRE_INC.toString())) {
 			UniUnaryOp op = new UniUnaryOp("++_", new UniIdent(DOMUtil.getChildText(node, BlockElementModel.LABEL_NODE)));
 			return op;
-		} else if (blockGenusName.startsWith("predec")) {
+		} else if (blockGenusName.startsWith(BlockPrePostModel.PRE_POST_GENUSHEADER.PRE_DEC.toString())) {
 			UniUnaryOp op = new UniUnaryOp("--_", new UniIdent(DOMUtil.getChildText(node, BlockElementModel.LABEL_NODE)));
 			return op;
-		} else if (blockGenusName.startsWith("postinc")) {
+		} else if (blockGenusName.startsWith(BlockPrePostModel.PRE_POST_GENUSHEADER.POST_INC.toString())) {
 			UniUnaryOp op = new UniUnaryOp("_++", new UniIdent(DOMUtil.getChildText(node, BlockElementModel.LABEL_NODE)));
 			return op;
-		} else if (blockGenusName.startsWith("postdec")) {
+		} else if (blockGenusName.startsWith(BlockPrePostModel.PRE_POST_GENUSHEADER.POST_DEC.toString())) {
 			UniUnaryOp op = new UniUnaryOp("_--", new UniIdent(DOMUtil.getChildText(node, BlockElementModel.LABEL_NODE)));
 			return op;
 		} else {
@@ -347,7 +352,7 @@ public class BlockMapper {
 		List<UniExpr> initValues = parseSocket(initValueNode, map);
 		String blockGenusName = DOMUtil.getAttribute(node, BlockElementModel.GENUS_NAME_ATTR);
 
-		String type = DOMUtil.getChildText(resolver.getBlockNode(blockGenusName), "Type");
+		String type = DOMUtil.getChildText(resolver.getBlockNode(blockGenusName), BlockElementModel.TYPE_NODE);
 		String name = DOMUtil.getChildText(node, BlockElementModel.LABEL_NODE);
 
 		resolver.getVariableNameResolver().addLocalVariable(DOMUtil.getChildText(node, BlockElementModel.LABEL_NODE), node);
@@ -536,7 +541,7 @@ public class BlockMapper {
 			caller.receiver = ident;
 			return caller;
 		} else if (blockGenusName.equals("callerprocedure")) {
-			String methodName = DOMUtil.getChildTextFromBlockNode(node, "Name");
+			String methodName = DOMUtil.getChildTextFromBlockNode(node, BlockElementModel.NAME_NODE);
 			UniMethodCall call = new UniMethodCall(null, methodName, args);
 			return call;
 		} else if (resolver.getForceConvertionMap().getUniMethodCallModel(blockGenusName) != null) {
@@ -546,7 +551,7 @@ public class BlockMapper {
 			return model;
 		} else {
 			String methodName = DOMUtil.getChildTextFromBlockNode(resolver.getBlockNode(blockGenusName), BlockElementModel.NAME_NODE);
-			System.out.println(blockGenusName);
+
 			UniMethodCall mcall = getProtoType(methodName);
 			if (mcall != null) {
 				mcall.args = args;

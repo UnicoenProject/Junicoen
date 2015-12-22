@@ -11,8 +11,8 @@ import net.unicoen.parser.blockeditor.BlockResolver;
 import net.unicoen.parser.blockeditor.DOMUtil;
 
 public class BlockBooleanLiteralModel extends BlockLiteralModel {
-	private static String TRUELITERAL_GENUS_NAME = "true";
-	private static String FALSELITERAL_GENUS_NAME = "false";
+	public static String TRUELITERAL_GENUS_NAME = "true";
+	public static String FALSELITERAL_GENUS_NAME = "false";
 
 	public BlockBooleanLiteralModel(UniBoolLiteral model, Document document, String parent, Long ID_COUNTER, BlockResolver resolver) {
 		super(String.valueOf(model.value), DOMUtil.getAttribute(resolver.getBlockNode(String.valueOf(model.value)), BlockElementModel.INITLABEL_ATTR), document, parent, ID_COUNTER, resolver);

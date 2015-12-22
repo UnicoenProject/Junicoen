@@ -1,5 +1,6 @@
 package net.unicoen.parser.blockeditor.blockmodel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.w3c.dom.Document;
@@ -12,6 +13,8 @@ public class PagesModel {
 	private static String COLLAPSIBLE_PAGES_TAGNAME = "collapsible-pages";
 	private static String COLLAPSIBLE_PAGES = "no";
 	private static String PAGES_NODE = "Pages";
+	
+	public List<PageModel> pageModels = new ArrayList<>(); 
 
 	public PagesModel( List<PageModel> pages, Document document){
 		Element pageElement = document.createElement(PAGES_NODE);
@@ -22,6 +25,8 @@ public class PagesModel {
 		}
 
 		this.pagesElement = pageElement;
+		
+		this.pageModels = pages;
 	}
 
 	public Element getPagesElement(){

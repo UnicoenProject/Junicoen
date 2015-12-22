@@ -7,9 +7,11 @@ import org.w3c.dom.Node;
 import net.unicoen.parser.blockeditor.DOMUtil;
 
 public class BlockVariableGetterModel extends BlockExprModel {
+	
+	public static String GENUS_HEADER = "getter";
 
 	public BlockVariableGetterModel(Node varDecNode, Document document, Long id) {
-		String genusName = "getter" + DOMUtil.getAttribute(varDecNode, BlockElementModel.GENUS_NAME_ATTR);
+		String genusName = GENUS_HEADER + DOMUtil.getAttribute(varDecNode, BlockElementModel.GENUS_NAME_ATTR);
 		String name = DOMUtil.getChildText(varDecNode, BlockElementModel.NAME_NODE);
 		// BlockStubノード作成
 		Element stubElement = createBlockStubNode(document, name, DOMUtil.getAttribute(varDecNode, BlockElementModel.GENUS_NAME_ATTR));
