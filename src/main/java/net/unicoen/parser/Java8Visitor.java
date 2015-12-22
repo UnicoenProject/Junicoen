@@ -1465,11 +1465,29 @@ public interface Java8Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitMultiplicativeExpression(Java8Parser.MultiplicativeExpressionContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Java8Parser#add}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAdd(Java8Parser.AddContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Java8Parser#sub}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSub(Java8Parser.SubContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Java8Parser#unaryExpression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitUnaryExpression(Java8Parser.UnaryExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Java8Parser#inc}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInc(Java8Parser.IncContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Java8Parser#preIncrementExpression}.
 	 * @param ctx the parse tree
@@ -1477,11 +1495,29 @@ public interface Java8Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitPreIncrementExpression(Java8Parser.PreIncrementExpressionContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Java8Parser#dec}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDec(Java8Parser.DecContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Java8Parser#preDecrementExpression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitPreDecrementExpression(Java8Parser.PreDecrementExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Java8Parser#tilde}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTilde(Java8Parser.TildeContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Java8Parser#bang}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBang(Java8Parser.BangContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Java8Parser#unaryExpressionNotPlusMinus}.
 	 * @param ctx the parse tree

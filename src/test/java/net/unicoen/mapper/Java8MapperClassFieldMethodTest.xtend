@@ -16,6 +16,7 @@ import net.unicoen.node.UniBinOp
 import net.unicoen.node.UniIdent
 import net.unicoen.node.UniIntLiteral
 import net.unicoen.node.UniVariableDec
+import net.unicoen.node.UniUnaryOp
 
 class Java8MapperClassFieldMethodTest extends MapperTest {
 	val mapper = new Java8Mapper(true)
@@ -125,16 +126,23 @@ class Java8MapperClassFieldMethodTest extends MapperTest {
 		method.evaluateMethodDec("main","void",modifiers,1,args)
 		//MethodBody
 		val block = method.block as UniBlock
+		//cond
+		val UniUnaryOp cond = new UniUnaryOp
+		val UniBoolLiteral condliteral = new UniBoolLiteral
+		condliteral.value = true
+		cond.expr = condliteral
+		//statement
 		val UniIdent variable = new UniIdent
 		variable.name = "a"
+		
 		val UniIntLiteral literal = new UniIntLiteral
 		literal.value = 1
+		val UniUnaryOp value = new UniUnaryOp
+		value.expr = literal
 		val UniBinOp binop = new UniBinOp
 		binop.left = variable
-		binop.right = literal
+		binop.right = value
 		binop.operator = "="
-		val UniBoolLiteral cond = new UniBoolLiteral
-		cond.value = true
 		val UniBlock trueStatement = new UniBlock
 		val UniBinOp[] statements = #[binop]
 		trueStatement.body = statements
@@ -158,23 +166,30 @@ class Java8MapperClassFieldMethodTest extends MapperTest {
 		variable.name = "a"
 		val UniIntLiteral literal = new UniIntLiteral
 		literal.value = 1
+		val UniUnaryOp value = new UniUnaryOp
+		value.expr = literal
 		val UniBinOp binop = new UniBinOp
 		binop.left = variable
-		binop.right = literal
+		binop.right = value
 		binop.operator = "="
+		
 		val UniIdent variable2 = new UniIdent
 		variable2.name = "b"
 		val UniIntLiteral literal2 = new UniIntLiteral
 		literal2.value = 1
+		val UniUnaryOp value2 = new UniUnaryOp
+		value2.expr = literal2
 		val UniBinOp binop2 = new UniBinOp
-		binop2.left = variable
-		binop2.right = literal
+		binop2.left = variable2
+		binop2.right = value2
 		binop2.operator = "="
-		val UniBoolLiteral cond = new UniBoolLiteral
-		cond.value = true
+		
+		val UniBoolLiteral condliteral = new UniBoolLiteral
+		condliteral.value = true
+		val UniUnaryOp cond = new UniUnaryOp
+		cond.expr = condliteral
 		val UniBlock trueStatement = new UniBlock
 		val UniBinOp[] statements = #[binop]
-		trueStatement.body = statements
 		val UniBlock falseStatement = new UniBlock
 		val UniBinOp[] statements2 = #[binop2]
 		trueStatement.body = statements
@@ -185,16 +200,20 @@ class Java8MapperClassFieldMethodTest extends MapperTest {
 	def void parseMethodWithForStatement(){
 		
 	}
+	@Test
+	def void parseMethodWithForStatement2(){
+		
+	}
 	@Test 
 	def void parseMethodWithWhileStatement(){
-		
+
 	}
 	@Test
 	def void parseMethodWthSwitchStatement(){
 		
 	}
 	@Test
-	def void parseMethodWithDoStatement(){
+	def void parseMethodWithDoWhileStatement(){
 		
 	}
 	@Test

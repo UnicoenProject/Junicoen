@@ -1237,26 +1237,50 @@ multiplicativeExpression
 	|	multiplicativeExpression '%' unaryExpression 
 	;
 
+add
+	:	ADD 
+	;
+
+sub
+	:	SUB 
+	;
+
 unaryExpression
 	:	preIncrementExpression 
 	|	preDecrementExpression 
-	|	'+' unaryExpression 
-	|	'-' unaryExpression 
+	|	add unaryExpression 
+	|	sub unaryExpression 
 	|	unaryExpressionNotPlusMinus 
 	;
 
+inc
+	:	INC 
+	;
+
 preIncrementExpression
-	:	'++' unaryExpression 
+	:	inc unaryExpression 
+	;
+
+dec
+	:	DEC 
 	;
 
 preDecrementExpression
-	:	'--' unaryExpression 
+	:	dec unaryExpression 
+	;
+
+tilde
+	:	TILDE 
+	;
+
+bang
+	:	BANG 
 	;
 
 unaryExpressionNotPlusMinus
 	:	postfixExpression 
-	|	'~' unaryExpression 
-	|	'!' unaryExpression 
+	|	tilde unaryExpression 
+	|	bang unaryExpression 
 	|	castExpression 
 	;
 
@@ -1938,10 +1962,6 @@ URSHIFT_ASSIGN
 	;
 
 Identifier
-	:	IdentifierLiteral 
-	;
-
-IdentifierLiteral
 	:	JavaLetter JavaLetterOrDigit* 
 	;
 
