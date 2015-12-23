@@ -35,6 +35,7 @@ public class BlockElementModel {
 	public static String COMMENT_NODE = "Comment";//任意
 	public static String INITLABEL_ATTR = "initlabel";
 	
+	private List<BlockElementModel> socketBlocksElements = new ArrayList<>();
 	
 	public static enum BLOCKKINDS{
 		FUNCTION("function"),COMMAND("command"),DATA("data"),LOCAL_VARDEC("local-variable"),
@@ -50,12 +51,6 @@ public class BlockElementModel {
 		public String toString(){
 			return this.text;
 		}
-	}
-	
-	
-	private List<BlockElementModel> socketBlocksElements = new ArrayList<>();
-	
-	public BlockElementModel() {
 	}
 
 	public Element getElement() {
@@ -98,9 +93,6 @@ public class BlockElementModel {
 		return commandBlocks;
 	}
 
-	protected void addSocketBlock(BlockElementModel socket) {
-		this.socketBlocksElements.add(socket);
-	}
 
 	public List<BlockElementModel> getSocketBlocks() {
 		return this.socketBlocksElements;
@@ -133,7 +125,28 @@ public class BlockElementModel {
 			return label.getTextContent();			
 		}
 	}
+	
+	public Node getPlugNode(){
+		return DOMUtil.getChildNode(this.element, BlockPlugModel.NODE_NAME);
+	}
 
+	public String getPlugAttribute(String attribute){
+		return DOMUtil.getAttribute(DOMUtil.getChildNode(getPlugNode(), BlockConnector.CONNECTOR_NODE), attribute);
+	}
+
+	public Element getBlockElement(){
+		return this.getElement();
+	}
+	
+	protected void addSocketBlock(BlockElementModel socket) {
+		this.socketBlocksElements.add(socket);
+	}
+
+	/*
+	 * 以下BlockNode生成に関連するメソッド
+	 * 
+	 * */	
+	
 	public void addLocationElement(Document document, String x, String y, Element blockElement) {
 		Element locationElement = document.createElement(BlockElementModel.LOCATION_NODE);
 		Element xElement = document.createElement("X");
@@ -249,18 +262,6 @@ public class BlockElementModel {
 		Element element = document.createElement(AFTERBLOCKID_NODE);
 		element.setTextContent(id);
 		getBlockElement().appendChild(element);
-	}
-
-	public Node getPlugNode(){
-		return DOMUtil.getChildNode(this.element, BlockPlugModel.NODE_NAME);
-	}
-
-	public String getPlugAttribute(String attribute){
-		return DOMUtil.getAttribute(DOMUtil.getChildNode(getPlugNode(), BlockConnector.CONNECTOR_NODE), attribute);
-	}
-
-	public Element getBlockElement(){
-		return this.getElement();
 	}
 
 	public List<String> transformToTypeStringList(List<BlockElementModel> args){

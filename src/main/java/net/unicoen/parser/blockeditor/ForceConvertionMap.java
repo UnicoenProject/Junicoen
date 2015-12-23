@@ -35,7 +35,7 @@ public class ForceConvertionMap {
 			@Override
 			public void accept(Node t) {
 				Node uniModelNode = DOMUtil.getChildNode(t, UNIMODEL_NODE);
-				UniMethodCall uniModel = (UniMethodCall) getUniModel(uniModelNode);
+				UniExpr uniModel = (UniExpr) getUniModel(uniModelNode);
 				String blockGenusName = DOMUtil.getChildNode(t, GENUSNAME_NODE).getTextContent();
 				uniToBlockForceConvertionMap.put(uniModel, blockGenusName);
 				blockToUniForceConvertionMap.put(blockGenusName, uniModel);

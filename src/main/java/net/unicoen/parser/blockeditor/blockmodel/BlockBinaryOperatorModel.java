@@ -13,24 +13,23 @@ public class BlockBinaryOperatorModel extends BlockExprModel {
 	private BlockElementModel left;
 	private BlockElementModel right;
 	public static String OPERATOR_NODE = "Operator";
-		
-	public static enum BINOP_BLOCKGENUSNAMES{
-		AND("and"), OR("or"),EQUALS_NUMBER("equals-number"), NOT_EQUALS_NUMBER("not-equals-number"),
-		GREATERTHAN_OR_EQUALTO("greaterthanorequalto"),GREATERTHAN("greaterthan"),LESSTHAN_OR_EQUALTO("lessthanorequalto"),
-		LESSTHAN("lessthan"), SUM("sum"),DIFFERENCE("difference"),PRODUCT("product"),QUOTIENT("quotient"),REMAINDER("remainder");
-		
+
+	public static enum BINOP_BLOCKGENUSNAMES {
+		AND("and"), OR("or"), EQUALS_NUMBER("equals-number"), NOT_EQUALS_NUMBER("not-equals-number"), GREATERTHAN_OR_EQUALTO("greaterthanorequalto"), GREATERTHAN("greaterthan"), LESSTHAN_OR_EQUALTO("lessthanorequalto"), LESSTHAN("lessthan"), SUM("sum"), DIFFERENCE("difference"), PRODUCT("product"), QUOTIENT("quotient"), REMAINDER("remainder");
+
 		private final String text;
-		private BINOP_BLOCKGENUSNAMES(String text){
+
+		private BINOP_BLOCKGENUSNAMES(String text) {
 			this.text = text;
 		}
-		
+
 		@Override
-		public String toString(){
+		public String toString() {
 			return this.text;
 		}
 	}
 
-	public BlockBinaryOperatorModel(Document document ,String operator, Long id,  BlockElementModel left, BlockElementModel right,BlockResolver resolver) {
+	public BlockBinaryOperatorModel(Document document, String operator, Long id, BlockElementModel left, BlockElementModel right, BlockResolver resolver) {
 		this.element = createBlockElement(document, calcGenusName(operator, left, right), id, BlockElementModel.BLOCKKINDS.FUNCTION.toString());
 		this.left = left;
 		this.right = right;
@@ -48,7 +47,7 @@ public class BlockBinaryOperatorModel extends BlockExprModel {
 	public String calcConnectorType(String leftConnectorType, String rightConnectorType) {
 		String returnType = "number";
 
-		if(rightConnectorType.equals("string") || leftConnectorType.equals("string")){
+		if (rightConnectorType.equals("string") || leftConnectorType.equals("string")) {
 			return "string";
 		}
 
@@ -60,11 +59,9 @@ public class BlockBinaryOperatorModel extends BlockExprModel {
 		return returnType;
 	}
 
-	public String calcGenusName(String operator, BlockElementModel left, BlockElementModel right){
+	public String calcGenusName(String operator, BlockElementModel left, BlockElementModel right) {
 		String type = calcConnectorType(left.getPlugAttribute(BlockPlugModel.CONNECTOR_TYPE_ATTR), right.getPlugAttribute(BlockPlugModel.CONNECTOR_TYPE_ATTR));
-		if (operator.equals("=")) {// 他の二項演算と扱いが別（ソケットが一つのみ）
-			return "";
-		} else if (operator.equals("&&")) {
+		if (operator.equals("&&")) {
 			return "and";
 		} else if (operator.equals("||")) {
 			return "or";
@@ -79,7 +76,6 @@ public class BlockBinaryOperatorModel extends BlockExprModel {
 		}
 	}
 
-
 	public String calcCompareOperatorGenusName(String operator, String type) {
 		String genusName;
 		if (operator.equals(">=") || operator.equals(">")) {
@@ -91,8 +87,6 @@ public class BlockBinaryOperatorModel extends BlockExprModel {
 			if ("number".equals(type)) {
 			} else if ("double-number".equals(type)) {
 				genusName += "-double";
-			} else {
-				throw new RuntimeException(type + "is not supported type yet at " + operator);
 			}
 			return genusName;
 		} else {
@@ -104,8 +98,6 @@ public class BlockBinaryOperatorModel extends BlockExprModel {
 			if ("number".equals(type)) {
 			} else if ("double-number".equals(type)) {
 				genusName += "-double";
-			} else {
-				throw new RuntimeException(type + "is not supported type yet at " + operator);
 			}
 			return genusName;
 		}
@@ -143,8 +135,6 @@ public class BlockBinaryOperatorModel extends BlockExprModel {
 			if ("number".equals(type)) {
 			} else if ("double-number".equals(type)) {
 				genusName += "-double";
-			} else {
-				throw new RuntimeException(type + "is not supported type yet at " + operator);
 			}
 		}
 

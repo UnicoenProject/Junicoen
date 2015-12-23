@@ -198,7 +198,6 @@ public class BlockGenerator extends UniModelVisitor {
 	@Override
 	public Object visitBoolLiteral(UniBoolLiteral node) {
 		String parentId = getParentId();
-
 		return new BlockBooleanLiteralModel(node, document, parentId, ID_COUNTER++, resolver);
 	}
 
@@ -393,7 +392,6 @@ public class BlockGenerator extends UniModelVisitor {
 			BlockElementModel rightBlock = visitExpr(node.right, String.valueOf(id));
 
 			BlockBinaryOperatorModel binOpModel = new BlockBinaryOperatorModel(document, node.operator, id, leftBlock, rightBlock, resolver);
-			System.out.println(binOpModel.getGenusName());
 			binOpModel.addElement(BlockElementModel.TYPE_NODE, document, resolver.getType(binOpModel.getGenusName()), binOpModel.getBlockElement());
 
 			// plugの追加

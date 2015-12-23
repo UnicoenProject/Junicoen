@@ -7,7 +7,6 @@ public class BlockCommandModel extends BlockElementModel {
 
 	public static String KIND = BlockElementModel.BLOCKKINDS.COMMAND.toString();
 
-	
 	public Element createBlockStubNode(Document document, String parentName, String parentGenusName) {
 		Element blockStubElement = document.createElement(BlockElementModel.BLOCK_STUB_NODE);
 		addElement(BlockElementModel.STUBPARENTNAME_NODE, document, parentName, blockStubElement);
