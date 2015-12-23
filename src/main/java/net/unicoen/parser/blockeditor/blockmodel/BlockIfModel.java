@@ -3,17 +3,21 @@ package net.unicoen.parser.blockeditor.blockmodel;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class BlockIfModel extends BlockCommandModel {
 
 	private List<BlockCommandModel> trueBlocks = new ArrayList<>();
 	private List<BlockCommandModel> falseBlocks = new ArrayList<>();
+	private static String GENUS_NAME = "ifelse";
+	private static String KIND = "command";
 
-	public BlockIfModel(Element element) {
-		this.element = element;
+	public BlockIfModel(Document document, Long id) {
+		this.element = createBlockElement(document, GENUS_NAME, id, KIND);
 	}
 
+	@Override
 	public List<Element> getBlockElements() {
 		List<Element> elements = new ArrayList<>();
 

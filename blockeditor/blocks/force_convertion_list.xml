@@ -12,11 +12,11 @@
 		</UniModel>
 		<GenusName>cui-println[@string]</GenusName>
 	</Item>
-	
+
 	<Item>
 		<UniModel unimodel="UniMethodCall">
 			<name>print</name>
-			<receiver unimodel="UniFieldAccess">
+			<receiver unimodel="UniIdent">
 				<name>out</name>
 				<receiver unimodel="UniIdent">
 					<name>System</name>
@@ -29,7 +29,7 @@
 	<Item>
 		<UniModel unimodel="UniMethodCall">
 			<name>size</name>
-			<receiver unimodel="UniFieldAccess">
+			<receiver unimodel="UniIdent">
 				<name>window</name>
 			</receiver>
 		</UniModel>
@@ -38,13 +38,41 @@
 
 	<Item>
 		<UniModel unimodel="UniMethodCall">
+			<name>warp</name>
+			<receiver unimodel="UniIdent">
+				<name>window</name>
+			</receiver>
+		</UniModel>
+		<GenusName>TurtleFrame-warp[@int@int]</GenusName>
+	</Item>
+
+	<Item>
+		<UniModel unimodel="UniMethodCall">
 			<name>random</name>
 			<receiver unimodel="UniIdent">
 				<name>Math</name>
 			</receiver>
-			>
 		</UniModel>
-		>
 		<GenusName>Math-random[]</GenusName>
+	</Item>
+
+	<Item>
+		<UniModel unimodel="UniMethodCall">
+			<name>startTurtle</name>
+			<receiver unimodel="UniIdent">
+				<name>Turtle</name>
+			</receiver>
+		</UniModel>
+		<GenusName>Turtle-startTurtle[@object@object]</GenusName>
+	</Item>
+	
+		<Item>
+		<UniModel unimodel="UniMethodCall">
+			<name>toString</name>
+			<receiver unimodel="UniIdent">
+				<name>Integer</name>
+			</receiver>
+		</UniModel>
+		<GenusName>toStringFromInt</GenusName>
 	</Item>
 </ConvertList>

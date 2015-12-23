@@ -200,13 +200,13 @@ public class BlockResolver {
 
 	public void addAvaiableVariableTypeToMap(Node node) {
 		// 利用可能な変数型リストに登録
-		if (BlockProcParmModel.KIND.equals(DOMUtil.getAttribute(node, BlockElementModel.KIND_ATTRIBUTE_TAG))) {
-			this.availableFunctionArgsTypes.put(DOMUtil.getChildNode(node, BlockElementModel.TYPE_NODE_NAME).getTextContent(), DOMUtil.getAttribute(node, "name"));
-		} else if (BlockLocalVarDecModel.KIND.equals(DOMUtil.getAttribute(node, BlockElementModel.KIND_ATTRIBUTE_TAG))) {
+		if (BlockProcParmModel.KIND.equals(DOMUtil.getAttribute(node, BlockElementModel.KIND_ATTR))) {
+			this.availableFunctionArgsTypes.put(DOMUtil.getChildNode(node, BlockElementModel.TYPE_NODE).getTextContent(), DOMUtil.getAttribute(node, "name"));
+		} else if (BlockLocalVarDecModel.KIND.equals(DOMUtil.getAttribute(node, BlockElementModel.KIND_ATTR))) {
 			// 利用可能な関数の引数の型マップに登録
-			this.availableLocalVariableDecralationTypes.put(DOMUtil.getChildNode(node, BlockElementModel.TYPE_NODE_NAME).getTextContent(), DOMUtil.getAttribute(node, "name"));
-		} else if (BlockFieldVarDecModel.KIND.equals(DOMUtil.getAttribute(node, BlockElementModel.KIND_ATTRIBUTE_TAG))) {
-			this.availableFieldVariableDecralationTypes.put(DOMUtil.getChildNode(node, BlockElementModel.TYPE_NODE_NAME).getTextContent(), DOMUtil.getAttribute(node, "name"));
+			this.availableLocalVariableDecralationTypes.put(DOMUtil.getChildNode(node, BlockElementModel.TYPE_NODE).getTextContent(), DOMUtil.getAttribute(node, "name"));
+		} else if (BlockFieldVarDecModel.KIND.equals(DOMUtil.getAttribute(node, BlockElementModel.KIND_ATTR))) {
+			this.availableFieldVariableDecralationTypes.put(DOMUtil.getChildNode(node, BlockElementModel.TYPE_NODE).getTextContent(), DOMUtil.getAttribute(node, "name"));
 		}
 	}
 

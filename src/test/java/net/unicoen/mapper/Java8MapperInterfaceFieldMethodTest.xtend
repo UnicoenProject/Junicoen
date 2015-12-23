@@ -17,6 +17,5 @@ class Java8MapperInterfaceFieldMethodTest extends MapperTest {
 		assertThat(main, instanceOf(UniClassDec))
 		val cls = main as UniClassDec
 		cls.evaluateClass("Main", null, null)
-		assertEquals(cls.members.size,1)
 	}
 }

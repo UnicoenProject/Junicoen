@@ -49,7 +49,7 @@ public class ForceConvertionMap {
 			public Object getUniModel(Node node) {
 				List<Node> modelAttrNodes = DOMUtil.getChildNodes(node);
 
-				UniModelInitializerMap map = new UniModelInitializerMap();
+				UniModelData map = new UniModelData();
 				// 属性を取得する（mapを作成する）
 				for (Node attrNode : modelAttrNodes) {
 					String attrName = attrNode.getNodeName();
@@ -57,16 +57,15 @@ public class ForceConvertionMap {
 				}
 
 				// 取得した属性を元に，Uniモデルを作成する
-				return UniModelFactory.createUniModel(DOMUtil.getAttribute(node, UNIMODEL_ATTR), map);
+				return UniModelFactory.createUniExprModel(DOMUtil.getAttribute(node, UNIMODEL_ATTR), map);
 			}
 
 			/**
 			 * 属性ノードをインプットし，InitalizeMapの値を返す（nameならstring文字列，
 			 * receiverならunimodel）
 			 * 
-			 * @param arrtNode
-			 *            force_convertion_listのUnimodel以下のノード
-			 * @return
+			 * @param arrtNode force_convertion_listのUnimodel以下のノード
+			 * @return mapの値
 			 */
 			public Object getAttrObject(Node attrNode) {
 				if (DOMUtil.getAttribute(attrNode, UNIMODEL_ATTR) != null) {

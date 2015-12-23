@@ -156,7 +156,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				temp.forEach [ key, value |
 					builder.append(value.castTo(clazz))
 				]
-				return clazz.getConstructor(StringBuilder).newInstance(builder)
+				return if(builder.length > 0) clazz.getConstructor(StringBuilder).newInstance(builder) else null
 			}
 			val instance = clazz.newInstance
 			val fields = clazz.fields
@@ -182,7 +182,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				temp.forEach [
 					builder.append(it.castTo(clazz))
 				]
-				return clazz.getConstructor(StringBuilder).newInstance(builder)
+				return if(builder.length > 0) clazz.getConstructor(StringBuilder).newInstance(builder) else null
 			}
 			val first = temp.findFirst[clazz.isAssignableFrom(it.class)]
 			return if (first == null) {
@@ -191,18 +191,6 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				first.castTo(clazz)
 		}
 		clazz.cast(temp)
-	}
-
-	override public visitLiteral(Java8Parser.LiteralContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
 	}
 
 	override public visitIntegerLiteral(Java8Parser.IntegerLiteralContext ctx) {
@@ -216,7 +204,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		].text
 		return new UniIntLiteral(Integer.parseInt(text))
 	}
-
+	
 	override public visitFloatingPointLiteral(Java8Parser.FloatingPointLiteralContext ctx) {
 		val text = ctx.children.findFirst[
 			if (it instanceof TerminalNodeImpl) {
@@ -228,7 +216,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		].text
 		return new UniDoubleLiteral(Double.parseDouble(text))
 	}
-
+	
 	override public visitBooleanLiteral(Java8Parser.BooleanLiteralContext ctx) {
 		val text = ctx.children.findFirst[
 			if (it instanceof TerminalNodeImpl) {
@@ -240,7 +228,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		].text
 		return new UniBoolLiteral(Boolean.parseBoolean(text))
 	}
-
+	
 	override public visitStringLiteral(Java8Parser.StringLiteralContext ctx) {
 		val text = ctx.children.findFirst[
 			if (it instanceof TerminalNodeImpl) {
@@ -252,367 +240,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		].text
 		return new UniStringLiteral(text.substring(1, text.length - 1))
 	}
-
-	override public visitCharacterLiteral(Java8Parser.CharacterLiteralContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitNullLiteral(Java8Parser.NullLiteralContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitType(Java8Parser.TypeContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitPrimitiveType(Java8Parser.PrimitiveTypeContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitNumericType(Java8Parser.NumericTypeContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitIntegralType(Java8Parser.IntegralTypeContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitFloatingPointType(Java8Parser.FloatingPointTypeContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitReferenceType(Java8Parser.ReferenceTypeContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitClassOrInterfaceType(Java8Parser.ClassOrInterfaceTypeContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitClassType(Java8Parser.ClassTypeContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitClassType_lf_classOrInterfaceType(Java8Parser.ClassType_lf_classOrInterfaceTypeContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitClassType_lfno_classOrInterfaceType(Java8Parser.ClassType_lfno_classOrInterfaceTypeContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitInterfaceType(Java8Parser.InterfaceTypeContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitInterfaceType_lf_classOrInterfaceType(Java8Parser.InterfaceType_lf_classOrInterfaceTypeContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitInterfaceType_lfno_classOrInterfaceType(Java8Parser.InterfaceType_lfno_classOrInterfaceTypeContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitTypeVariable(Java8Parser.TypeVariableContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitArrayType(Java8Parser.ArrayTypeContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitDims(Java8Parser.DimsContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitTypeParameter(Java8Parser.TypeParameterContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitTypeParameterModifier(Java8Parser.TypeParameterModifierContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitTypeBound(Java8Parser.TypeBoundContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitAdditionalBound(Java8Parser.AdditionalBoundContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitTypeArguments(Java8Parser.TypeArgumentsContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitTypeArgumentList(Java8Parser.TypeArgumentListContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitTypeArgument(Java8Parser.TypeArgumentContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitWildcard(Java8Parser.WildcardContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitWildcardBounds(Java8Parser.WildcardBoundsContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitPackageName(Java8Parser.PackageNameContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitTypeName(Java8Parser.TypeNameContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitPackageOrTypeName(Java8Parser.PackageOrTypeNameContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
+	
 	override public visitExpressionName(Java8Parser.ExpressionNameContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -631,19 +259,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		]
 		map.castTo(UniIdent)
 	}
-
-	override public visitAmbiguousName(Java8Parser.AmbiguousNameContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
+	
 	override public visitCompilationUnit(Java8Parser.CompilationUnitContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -663,91 +279,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		merge.forEach[node.merge(it.castTo(UniClassDec))]
 		node
 	}
-
-	override public visitPackageDeclaration(Java8Parser.PackageDeclarationContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitPackageModifier(Java8Parser.PackageModifierContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitImportDeclaration(Java8Parser.ImportDeclarationContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitSingleTypeImportDeclaration(Java8Parser.SingleTypeImportDeclarationContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitTypeImportOnDemandDeclaration(Java8Parser.TypeImportOnDemandDeclarationContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitSingleStaticImportDeclaration(Java8Parser.SingleStaticImportDeclarationContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitStaticImportOnDemandDeclaration(Java8Parser.StaticImportOnDemandDeclarationContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
+	
 	override public visitTypeDeclaration(Java8Parser.TypeDeclarationContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -770,7 +302,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		merge.forEach[node.merge(it.castTo(UniClassDec))]
 		node
 	}
-
+	
 	override public visitClassDeclaration(Java8Parser.ClassDeclarationContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -790,7 +322,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		merge.forEach[node.merge(it.castTo(UniClassDec))]
 		node
 	}
-
+	
 	override public visitNormalClassDeclaration(Java8Parser.NormalClassDeclarationContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -829,19 +361,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		]
 		map.castTo(UniClassDec)
 	}
-
-	override public visitClassName(Java8Parser.ClassNameContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
+	
 	override public visitClassModifiers(Java8Parser.ClassModifiersContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -861,43 +381,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		}
 		map.castToList(String)
 	}
-
-	override public visitClassModifier(Java8Parser.ClassModifierContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitTypeParameters(Java8Parser.TypeParametersContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitTypeParameterList(Java8Parser.TypeParameterListContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
+	
 	override public visitSuperclass(Java8Parser.SuperclassContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -917,7 +401,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		}
 		map.castToList(String)
 	}
-
+	
 	override public visitSuperinterfaces(Java8Parser.SuperinterfacesContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -937,7 +421,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		}
 		map.castToList(String)
 	}
-
+	
 	override public visitInterfaceTypeList(Java8Parser.InterfaceTypeListContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -960,7 +444,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		}
 		map.castToList(String)
 	}
-
+	
 	override public visitClassBody(Java8Parser.ClassBodyContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -980,7 +464,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		}
 		map.castToList(UniMemberDec)
 	}
-
+	
 	override public visitClassBodyDeclaration(Java8Parser.ClassBodyDeclarationContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -1003,7 +487,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		}
 		map.castToList(UniMemberDec)
 	}
-
+	
 	override public visitClassMemberDeclaration(Java8Parser.ClassMemberDeclarationContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -1026,7 +510,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		}
 		map.castToList(UniMemberDec)
 	}
-
+	
 	override public visitFieldDeclaration(Java8Parser.FieldDeclarationContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -1057,7 +541,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		merge.castToList(UniFieldDec).forEach[it.merge(node)]
 		merge
 	}
-
+	
 	override public visitFieldModifiers(Java8Parser.FieldModifiersContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -1077,19 +561,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		}
 		map.castToList(String)
 	}
-
-	override public visitFieldModifier(Java8Parser.FieldModifierContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
+	
 	override public visitVariableDeclaratorList(Java8Parser.VariableDeclaratorListContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -1112,7 +584,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		}
 		map.castToList(UniFieldDec)
 	}
-
+	
 	override public visitVariableDeclarator(Java8Parser.VariableDeclaratorContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -1136,175 +608,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		]
 		map.castTo(UniFieldDec)
 	}
-
-	override public visitVariableDeclaratorId(Java8Parser.VariableDeclaratorIdContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitVariableInitializer(Java8Parser.VariableInitializerContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitUnannType(Java8Parser.UnannTypeContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitUnannPrimitiveType(Java8Parser.UnannPrimitiveTypeContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitUnannReferenceType(Java8Parser.UnannReferenceTypeContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitUnannClassOrInterfaceType(Java8Parser.UnannClassOrInterfaceTypeContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitUnannClassType(Java8Parser.UnannClassTypeContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitUnannClassType_lf_unannClassOrInterfaceType(Java8Parser.UnannClassType_lf_unannClassOrInterfaceTypeContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitUnannClassType_lfno_unannClassOrInterfaceType(Java8Parser.UnannClassType_lfno_unannClassOrInterfaceTypeContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitUnannInterfaceType(Java8Parser.UnannInterfaceTypeContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitUnannInterfaceType_lf_unannClassOrInterfaceType(Java8Parser.UnannInterfaceType_lf_unannClassOrInterfaceTypeContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitUnannInterfaceType_lfno_unannClassOrInterfaceType(Java8Parser.UnannInterfaceType_lfno_unannClassOrInterfaceTypeContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitUnannTypeVariable(Java8Parser.UnannTypeVariableContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitUnannArrayType(Java8Parser.UnannArrayTypeContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
+	
 	override public visitMethodDeclaration(Java8Parser.MethodDeclarationContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -1334,19 +638,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		merge.forEach[node.merge(it.castTo(UniMethodDec))]
 		node
 	}
-
-	override public visitMethodModifier(Java8Parser.MethodModifierContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
+	
 	override public visitMethodHeader(Java8Parser.MethodHeaderContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -1377,19 +669,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		merge.forEach[node.merge(it.castTo(UniMethodDec))]
 		node
 	}
-
-	override public visitResult(Java8Parser.ResultContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
+	
 	override public visitMethodDeclarator(Java8Parser.MethodDeclaratorContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -1418,19 +698,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		]
 		map.castTo(UniMethodDec)
 	}
-
-	override public visitMethodName(Java8Parser.MethodNameContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
+	
 	override public visitFormalParameterList(Java8Parser.FormalParameterListContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -1456,7 +724,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		}
 		map.castToList(UniArg)
 	}
-
+	
 	override public visitFormalParameters(Java8Parser.FormalParametersContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -1479,7 +747,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		}
 		map.castToList(UniArg)
 	}
-
+	
 	override public visitFormalParameter(Java8Parser.FormalParameterContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -1504,7 +772,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		merge.forEach[node.merge(it.castTo(UniArg))]
 		node
 	}
-
+	
 	override public visitParameterDeclaratorId(Java8Parser.ParameterDeclaratorIdContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -1528,91 +796,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		]
 		map.castTo(UniArg)
 	}
-
-	override public visitParameterName(Java8Parser.ParameterNameContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitVariableModifier(Java8Parser.VariableModifierContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitLastFormalParameter(Java8Parser.LastFormalParameterContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitReceiverParameter(Java8Parser.ReceiverParameterContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitThrows_(Java8Parser.Throws_Context ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitExceptionTypeList(Java8Parser.ExceptionTypeListContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitExceptionType(Java8Parser.ExceptionTypeContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
+	
 	override public visitMethodBody(Java8Parser.MethodBodyContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -1632,31 +816,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		merge.forEach[node.merge(it.castTo(UniBlock))]
 		node
 	}
-
-	override public visitInstanceInitializer(Java8Parser.InstanceInitializerContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitStaticInitializer(Java8Parser.StaticInitializerContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
+	
 	override public visitConstructorDeclaration(Java8Parser.ConstructorDeclarationContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -1686,19 +846,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		merge.forEach[node.merge(it.castTo(UniMethodDec))]
 		node
 	}
-
-	override public visitConstructorModifier(Java8Parser.ConstructorModifierContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
+	
 	override public visitConstructorDeclarator(Java8Parser.ConstructorDeclaratorContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -1722,115 +870,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		]
 		map.castTo(UniMethodDec)
 	}
-
-	override public visitSimpleTypeName(Java8Parser.SimpleTypeNameContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitConstructorBody(Java8Parser.ConstructorBodyContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitExplicitConstructorInvocation(Java8Parser.ExplicitConstructorInvocationContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitEnumDeclaration(Java8Parser.EnumDeclarationContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitEnumBody(Java8Parser.EnumBodyContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitEnumConstantList(Java8Parser.EnumConstantListContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitEnumConstant(Java8Parser.EnumConstantContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitEnumConstantModifier(Java8Parser.EnumConstantModifierContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitEnumBodyDeclarations(Java8Parser.EnumBodyDeclarationsContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
+	
 	override public visitInterfaceDeclaration(Java8Parser.InterfaceDeclarationContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -1850,7 +890,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		merge.forEach[node.merge(it.castTo(UniClassDec))]
 		node
 	}
-
+	
 	override public visitNormalInterfaceDeclaration(Java8Parser.NormalInterfaceDeclarationContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -1884,7 +924,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		]
 		map.castTo(UniClassDec)
 	}
-
+	
 	override public visitInterfaceModifiers(Java8Parser.InterfaceModifiersContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -1904,31 +944,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		}
 		map.castToList(String)
 	}
-
-	override public visitInterfaceName(Java8Parser.InterfaceNameContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitInterfaceModifier(Java8Parser.InterfaceModifierContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
+	
 	override public visitExtendsInterfaces(Java8Parser.ExtendsInterfacesContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -1948,7 +964,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		}
 		map.castToList(String)
 	}
-
+	
 	override public visitInterfaceBody(Java8Parser.InterfaceBodyContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -1968,7 +984,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		}
 		map.castToList(UniMemberDec)
 	}
-
+	
 	override public visitInterfaceMemberDeclaration(Java8Parser.InterfaceMemberDeclarationContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -1991,7 +1007,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		}
 		map.castToList(UniMemberDec)
 	}
-
+	
 	override public visitConstantDeclaration(Java8Parser.ConstantDeclarationContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -2022,7 +1038,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		merge.castToList(UniFieldDec).forEach[it.merge(node)]
 		merge
 	}
-
+	
 	override public visitConstantModifiers(Java8Parser.ConstantModifiersContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -2042,19 +1058,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		}
 		map.castToList(String)
 	}
-
-	override public visitConstantModifier(Java8Parser.ConstantModifierContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
+	
 	override public visitInterfaceMethodDeclaration(Java8Parser.InterfaceMethodDeclarationContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -2084,7 +1088,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		merge.forEach[node.merge(it.castTo(UniMethodDec))]
 		node
 	}
-
+	
 	override public visitInterfaceMethodModifiers(Java8Parser.InterfaceMethodModifiersContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -2104,199 +1108,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		}
 		map.castToList(String)
 	}
-
-	override public visitInterfaceMethodModifier(Java8Parser.InterfaceMethodModifierContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitAnnotationTypeDeclaration(Java8Parser.AnnotationTypeDeclarationContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitAnnotationTypeBody(Java8Parser.AnnotationTypeBodyContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitAnnotationTypeMemberDeclaration(Java8Parser.AnnotationTypeMemberDeclarationContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitAnnotationTypeElementDeclaration(Java8Parser.AnnotationTypeElementDeclarationContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitAnnotationTypeElementModifier(Java8Parser.AnnotationTypeElementModifierContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitDefaultValue(Java8Parser.DefaultValueContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitAnnotation(Java8Parser.AnnotationContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitNormalAnnotation(Java8Parser.NormalAnnotationContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitElementValuePairList(Java8Parser.ElementValuePairListContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitElementValuePair(Java8Parser.ElementValuePairContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitElementValue(Java8Parser.ElementValueContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitElementValueArrayInitializer(Java8Parser.ElementValueArrayInitializerContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitElementValueList(Java8Parser.ElementValueListContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitMarkerAnnotation(Java8Parser.MarkerAnnotationContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitSingleElementAnnotation(Java8Parser.SingleElementAnnotationContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
+	
 	override public visitArrayInitializer(Java8Parser.ArrayInitializerContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -2315,7 +1127,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		]
 		map.castTo(UniArray)
 	}
-
+	
 	override public visitVariableInitializerList(Java8Parser.VariableInitializerListContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -2338,7 +1150,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		}
 		map.castToList(UniExpr)
 	}
-
+	
 	override public visitBlock(Java8Parser.BlockContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -2357,7 +1169,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		]
 		map.castTo(UniBlock)
 	}
-
+	
 	override public visitBlockStatements(Java8Parser.BlockStatementsContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -2380,115 +1192,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		}
 		map.castToList(UniExpr)
 	}
-
-	override public visitBlockStatement(Java8Parser.BlockStatementContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitLocalVariableDeclarationStatement(Java8Parser.LocalVariableDeclarationStatementContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitLocalVariableDeclaration(Java8Parser.LocalVariableDeclarationContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitStatement(Java8Parser.StatementContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitStatementNoShortIf(Java8Parser.StatementNoShortIfContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitStatementWithoutTrailingSubstatement(Java8Parser.StatementWithoutTrailingSubstatementContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitEmptyStatement(Java8Parser.EmptyStatementContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitLabeledStatement(Java8Parser.LabeledStatementContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitLabeledStatementNoShortIf(Java8Parser.LabeledStatementNoShortIfContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
+	
 	override public visitExpressionStatement(Java8Parser.ExpressionStatementContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -2505,19 +1209,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		}
 		map.castTo(UniBinOp)
 	}
-
-	override public visitStatementExpression(Java8Parser.StatementExpressionContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
+	
 	override public visitIfThenStatement(Java8Parser.IfThenStatementContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -2541,883 +1233,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		]
 		map.castTo(UniIf)
 	}
-
-	override public visitIfThenElseStatement(Java8Parser.IfThenElseStatementContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitIfThenElseStatementNoShortIf(Java8Parser.IfThenElseStatementNoShortIfContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitAssertStatement(Java8Parser.AssertStatementContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitSwitchStatement(Java8Parser.SwitchStatementContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitSwitchBlock(Java8Parser.SwitchBlockContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitSwitchBlockStatementGroup(Java8Parser.SwitchBlockStatementGroupContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitSwitchLabels(Java8Parser.SwitchLabelsContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitSwitchLabel(Java8Parser.SwitchLabelContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitEnumConstantName(Java8Parser.EnumConstantNameContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitWhileStatement(Java8Parser.WhileStatementContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitWhileStatementNoShortIf(Java8Parser.WhileStatementNoShortIfContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitDoStatement(Java8Parser.DoStatementContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitForStatement(Java8Parser.ForStatementContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitForStatementNoShortIf(Java8Parser.ForStatementNoShortIfContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitBasicForStatement(Java8Parser.BasicForStatementContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitBasicForStatementNoShortIf(Java8Parser.BasicForStatementNoShortIfContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitForInit(Java8Parser.ForInitContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitForUpdate(Java8Parser.ForUpdateContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitStatementExpressionList(Java8Parser.StatementExpressionListContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitEnhancedForStatement(Java8Parser.EnhancedForStatementContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitEnhancedForStatementNoShortIf(Java8Parser.EnhancedForStatementNoShortIfContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitBreakStatement(Java8Parser.BreakStatementContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitContinueStatement(Java8Parser.ContinueStatementContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitReturnStatement(Java8Parser.ReturnStatementContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitThrowStatement(Java8Parser.ThrowStatementContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitSynchronizedStatement(Java8Parser.SynchronizedStatementContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitTryStatement(Java8Parser.TryStatementContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitCatches(Java8Parser.CatchesContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitCatchClause(Java8Parser.CatchClauseContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitCatchFormalParameter(Java8Parser.CatchFormalParameterContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitCatchType(Java8Parser.CatchTypeContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitFinally_(Java8Parser.Finally_Context ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitTryWithResourcesStatement(Java8Parser.TryWithResourcesStatementContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitResourceSpecification(Java8Parser.ResourceSpecificationContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitResourceList(Java8Parser.ResourceListContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitResource(Java8Parser.ResourceContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitPrimary(Java8Parser.PrimaryContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitPrimaryNoNewArray(Java8Parser.PrimaryNoNewArrayContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitPrimaryNoNewArray_lf_arrayAccess(Java8Parser.PrimaryNoNewArray_lf_arrayAccessContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitPrimaryNoNewArray_lfno_arrayAccess(Java8Parser.PrimaryNoNewArray_lfno_arrayAccessContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitPrimaryNoNewArray_lf_primary(Java8Parser.PrimaryNoNewArray_lf_primaryContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitPrimaryNoNewArray_lf_primary_lf_arrayAccess_lf_primary(Java8Parser.PrimaryNoNewArray_lf_primary_lf_arrayAccess_lf_primaryContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitPrimaryNoNewArray_lf_primary_lfno_arrayAccess_lf_primary(Java8Parser.PrimaryNoNewArray_lf_primary_lfno_arrayAccess_lf_primaryContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitPrimaryNoNewArray_lfno_primary(Java8Parser.PrimaryNoNewArray_lfno_primaryContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitPrimaryNoNewArray_lfno_primary_lf_arrayAccess_lfno_primary(Java8Parser.PrimaryNoNewArray_lfno_primary_lf_arrayAccess_lfno_primaryContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitPrimaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary(Java8Parser.PrimaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primaryContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitClassInstanceCreationExpression(Java8Parser.ClassInstanceCreationExpressionContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitClassInstanceCreationExpression_lf_primary(Java8Parser.ClassInstanceCreationExpression_lf_primaryContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitClassInstanceCreationExpression_lfno_primary(Java8Parser.ClassInstanceCreationExpression_lfno_primaryContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitTypeArgumentsOrDiamond(Java8Parser.TypeArgumentsOrDiamondContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitFieldAccess(Java8Parser.FieldAccessContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitFieldAccess_lf_primary(Java8Parser.FieldAccess_lf_primaryContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitFieldAccess_lfno_primary(Java8Parser.FieldAccess_lfno_primaryContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitArrayAccess(Java8Parser.ArrayAccessContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitArrayAccess_lf_primary(Java8Parser.ArrayAccess_lf_primaryContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitArrayAccess_lfno_primary(Java8Parser.ArrayAccess_lfno_primaryContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitMethodInvocation(Java8Parser.MethodInvocationContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitMethodInvocation_lf_primary(Java8Parser.MethodInvocation_lf_primaryContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitMethodInvocation_lfno_primary(Java8Parser.MethodInvocation_lfno_primaryContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitArgumentList(Java8Parser.ArgumentListContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitMethodReference(Java8Parser.MethodReferenceContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitMethodReference_lf_primary(Java8Parser.MethodReference_lf_primaryContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitMethodReference_lfno_primary(Java8Parser.MethodReference_lfno_primaryContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitArrayCreationExpression(Java8Parser.ArrayCreationExpressionContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitDimExprs(Java8Parser.DimExprsContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitDimExpr(Java8Parser.DimExprContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitConstantExpression(Java8Parser.ConstantExpressionContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitExpression(Java8Parser.ExpressionContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitLambdaExpression(Java8Parser.LambdaExpressionContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitLambdaParameters(Java8Parser.LambdaParametersContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitInferredFormalParameterList(Java8Parser.InferredFormalParameterListContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitLambdaBody(Java8Parser.LambdaBodyContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitAssignmentExpression(Java8Parser.AssignmentExpressionContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
+	
 	override public visitAssignment(Java8Parser.AssignmentContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -3446,280 +1262,37 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		]
 		map.castTo(UniBinOp)
 	}
-
-	override public visitLeftHandSide(Java8Parser.LeftHandSideContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitAssignmentOperator(Java8Parser.AssignmentOperatorContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
+	
 	override public visitConditionalExpression(Java8Parser.ConditionalExpressionContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
 		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
+		val trueExpr = Lists.newArrayList
+		map.put("trueExpr", trueExpr)
+		val cond = Lists.newArrayList
+		map.put("cond", cond)
+		val falseExpr = Lists.newArrayList
+		map.put("falseExpr", falseExpr)
+		for(it : ctx.children) {
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 2692: {
+						return it.visit
+					}
+					case 2693: {
+						cond += it.visit
+					}
+					case 2695: {
+						trueExpr += it.visit
+					}
+					case 2697: {
+						falseExpr += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+			}
 		}
-		map
+		map.castTo(UniTernaryOp)
 	}
-
-	override public visitConditionalOrExpression(Java8Parser.ConditionalOrExpressionContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitConditionalAndExpression(Java8Parser.ConditionalAndExpressionContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitInclusiveOrExpression(Java8Parser.InclusiveOrExpressionContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitExclusiveOrExpression(Java8Parser.ExclusiveOrExpressionContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitAndExpression(Java8Parser.AndExpressionContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitEqualityExpression(Java8Parser.EqualityExpressionContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitRelationalExpression(Java8Parser.RelationalExpressionContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitShiftExpression(Java8Parser.ShiftExpressionContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitAdditiveExpression(Java8Parser.AdditiveExpressionContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitMultiplicativeExpression(Java8Parser.MultiplicativeExpressionContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitUnaryExpression(Java8Parser.UnaryExpressionContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitPreIncrementExpression(Java8Parser.PreIncrementExpressionContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitPreDecrementExpression(Java8Parser.PreDecrementExpressionContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitUnaryExpressionNotPlusMinus(Java8Parser.UnaryExpressionNotPlusMinusContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitPostfixExpression(Java8Parser.PostfixExpressionContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitPostIncrementExpression(Java8Parser.PostIncrementExpressionContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitPostIncrementExpression_lf_postfixExpression(Java8Parser.PostIncrementExpression_lf_postfixExpressionContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitPostDecrementExpression(Java8Parser.PostDecrementExpressionContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitPostDecrementExpression_lf_postfixExpression(Java8Parser.PostDecrementExpression_lf_postfixExpressionContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
-
-	override public visitCastExpression(Java8Parser.CastExpressionContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				none += it.visit
-			]
-		}
-		map
-	}
+	
 }

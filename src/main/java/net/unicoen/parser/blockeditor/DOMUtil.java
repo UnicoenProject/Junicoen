@@ -23,8 +23,8 @@ public class DOMUtil {
 		assert node != null;
 		assert attributeName != null;
 
-		if(BlockElementModel.BLOCK_STUB_NODE_NAME.equals(node.getNodeName())){
-			node = getChildNode(node, BlockElementModel.BLOCK_NODE_NAME);
+		if(BlockElementModel.BLOCK_STUB_NODE.equals(node.getNodeName())){
+			node = getChildNode(node, BlockElementModel.BLOCK_NODE);
 		}
 
 		Node attrNode = node.getAttributes().getNamedItem(attributeName);
@@ -153,11 +153,30 @@ public class DOMUtil {
 		}
 		return null;
 	}
+	
 	public static void doAnythingToNodeList(Node node, String nodeName, Consumer<Node> process){
 		for(int i = 0 ; i < node.getChildNodes().getLength();i++){
 			if(nodeName.equals(node.getChildNodes().item(i).getNodeName())){
 				process.accept(node.getChildNodes().item(i));
 			}
 		}
+	}
+	
+	/**
+	 * 指定した名前の子ノードのテキストコンテントのリストを作成する．
+	 * @param node 親ノード
+	 * @param listNodeName　テキストコンテントを取得してリストを作成したい子ノードの名前
+	 * @return 子ノードのテキストコンテントのリスト
+	 */
+	public static List<String> getListFromNode(Node node, String listNodeName){
+		NodeList children = node.getChildNodes();
+		List<String> contentList = new ArrayList<>();
+		for(int i = 0; i<children.getLength();i++){
+			Node child = children.item(i);
+			if(listNodeName.equals(child.getNodeName())){
+				contentList.add(child.getTextContent());
+			}
+		}
+		return contentList;
 	}
 }

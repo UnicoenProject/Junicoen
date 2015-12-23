@@ -9,15 +9,18 @@ import org.w3c.dom.Element;
 public class BlockWhileModel extends BlockCommandModel {
 
 	private List<BlockCommandModel> trueBlocks = new ArrayList<>();
-
-	public BlockWhileModel(Element element) {
-		this.element = element;
+	public static String GENUS_NAME = "while";
+	public static String KIND = "command";
+	
+	public BlockWhileModel(Document document, Long id) {
+		this.element = createBlockElement(document, GENUS_NAME, id, KIND);
 	}
 
 	public void setTrueBlocks(List<BlockCommandModel> trueBlocks) {
 		this.trueBlocks = trueBlocks;
 	}
 
+	@Override
 	public List<Element> getBlockElements() {
 		List<Element> commandBlocks = new ArrayList<>();
 

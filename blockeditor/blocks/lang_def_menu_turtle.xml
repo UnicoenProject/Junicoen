@@ -165,7 +165,7 @@
 		<BlockGenusMember>Turtle-isShow[]</BlockGenusMember>
 		<BlockGenusMember>Turtle-looks[@object]</BlockGenusMember>
 		<BlockGenusMember>Turtle-contains[@int@int]</BlockGenusMember>
-		<BlockGenusMember>Turtle-intersects[]</BlockGenusMember>
+		<BlockGenusMember>Turtle-intersects[@object]</BlockGenusMember>
 	</BlockDrawer>
 
 	<BlockDrawer button-color="153 0 0" name="タートル（キーとマウス）">

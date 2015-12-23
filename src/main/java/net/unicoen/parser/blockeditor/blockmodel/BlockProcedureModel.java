@@ -8,25 +8,27 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import net.unicoen.node.UniMethodDec;
+import net.unicoen.parser.blockeditor.AnnotationCommentGetter;
 
 public class BlockProcedureModel extends BlockElementModel {
 
 	private List<BlockCommandModel> bodyBlocks = new ArrayList<>();
 	public static String GENUS_NAME = "procedure";
 	public static String KIND = "procedure";
+	public static String RETURN_TYPE_NODE = "ReturnType";
+	public static String INVISIBLE_NODE = "Invisible";
 	
-
 	public BlockProcedureModel(UniMethodDec dec, Document document, Long ID_COUNTER) {
 		initialize(dec, document, ID_COUNTER);
 	}
-
+	
 	public void initialize(UniMethodDec funcDec, Document document, Long ID_COUNTER){
 		Element procedureElement = createBlockElement(document, GENUS_NAME, ID_COUNTER, KIND);
 
-		addElement("Label", document, funcDec.methodName, procedureElement);
-		addElement("ReturnType", document, funcDec.returnType, procedureElement);
+		addElement(BlockElementModel.LABEL_NODE, document, funcDec.methodName, procedureElement);
+		addElement(RETURN_TYPE_NODE, document, funcDec.returnType, procedureElement);
 		addLocationElement(document, "50", "50", procedureElement);
-
+		
 		this.element = procedureElement;
 	}
 
@@ -64,5 +66,12 @@ public class BlockProcedureModel extends BlockElementModel {
 		addSocketInfoToList(socketsInfo, null);
 
 		super.addSocketsAndNodes(socketBlocks, document, new BlockSocketsModel(socketsInfo));
+	}
+	
+	public void addInvisibleNode(Document document, String comment){
+		String visible = AnnotationCommentGetter.getVisible(comment);
+		if(!visible.equals(AnnotationCommentGetter.NOT_FOUND) && AnnotationCommentGetter.containsInvisible(visible)){
+			this.getBlockElement().appendChild(document.createElement(INVISIBLE_NODE));
+		}
 	}
 }

@@ -1,5 +1,3 @@
-import java.util.*;
-
 /**
 * プログラム名：
 * 作成者： 
@@ -33,12 +31,12 @@ public class _08CalcTest extends Turtle{
 			int math = 50;
 			int english = 40;
 			int tt = japanese + math + english;
-			double total1 = (double)japanese + math + english;
-			double total2 = (double)(japanese + math) + english;
-			double total3 = ((double)japanese + math) + english;
-			double total4 = (double)(japanese + math + english);
-			double total5 = (double)japanese + math - english;
-			double total6 = (double)japanese * math / english;
+//			double total1 = (double)japanese + math + english;
+//			double total2 = (double)(japanese + math) + english;
+//			double total3 = ((double)japanese + math) + english;
+//			double total4 = (double)(japanese + math + english);
+//			double total5 = (double)japanese + math - english;
+//			double total6 = (double)japanese * math / english;
 		}
 	}
 	

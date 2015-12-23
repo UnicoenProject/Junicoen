@@ -16,6 +16,8 @@ import net.unicoen.node.UniWhile
 
 import static org.hamcrest.Matchers.*
 import static org.junit.Assert.*
+import net.unicoen.node.UniIntLiteral
+import net.unicoen.node.UniArray
 
 class MapperTest {
 
@@ -45,8 +47,8 @@ class MapperTest {
 			]
 		}
 		if (superInterfaces == null) {
-			if(cls.interfaces != null){
-			assertThat(cls.interfaces.size, is(0))
+			if (cls.interfaces != null) {
+				assertThat(cls.interfaces.size, is(0))
 			} else {
 				assertThat(cls.interfaces, is(nullValue))
 			}
@@ -59,8 +61,10 @@ class MapperTest {
 	}
 
 	// add evaluate method/array/ etc.
-	def evaluateMethodDec(Object node, String methodName, String returnType, List<String> modifiers, UniBlock block,
-		UniArg... args) {
+	def evaluateMethodDec(Object node, String methodName, String returnType, List<String> modifiers, int blockSize,
+		List<UniArg> args) {
+
+		//Check the header from node type, name, return type to modifiers
 		assertThat(node, instanceOf(typeof(UniMethodDec)))
 		val cls = node as UniMethodDec
 		assertEquals(cls.methodName, methodName)
@@ -74,19 +78,33 @@ class MapperTest {
 			assertTrue(cls.modifiers.contains(modifier))
 		]
 
+		//Check the arguments from argument size, object type, type and names
 		if (cls.args == null) {
 			assertEquals(0, args.length)
-			return
+		} else {
+			assertEquals(cls.args.size, args.length)
+			cls.args.forEach [ arg |
+				assertThat(arg, instanceOf(UniArg))
+			]
+			args.forEach [ arg |
+				assertTrue(cls.args.contains(arg))
+			]
 		}
-		assertEquals(cls.args.size, args.length)
-		args.forEach [ arg |
-			assertTrue(cls.args.contains(args))
-		]
-		assertEquals(cls.block, block)
 
+		//Check the block object type and size
+		if (cls.block == null) {
+			assertEquals(0, blockSize)
+		} else {
+			assertThat(cls.block, instanceOf(UniBlock))
+			if (cls.block.body != null) {
+				assertThat(cls.block.body.size, equalTo(blockSize))
+			}
+		}
 	}
 
 	def evaluateFieldDec(Object node, String type, String name, UniExpr value, String... modifiers) {
+
+		//For Primitive/ Reference field declarations
 		assertThat(node, instanceOf(typeof(UniFieldDec)))
 		val cls = node as UniFieldDec
 		assertEquals(cls.type, type)
@@ -103,6 +121,8 @@ class MapperTest {
 	}
 
 	def evaluateVariableDec(Object node, String type, String name, UniExpr value, String... modifiers) {
+
+		//check object node
 		assertThat(node, instanceOf(typeof(UniVariableDec)))
 		val cls = node as UniVariableDec
 		assertEquals(cls.type, type)
@@ -156,4 +176,23 @@ class MapperTest {
 		assertThat(node, instanceOf(typeof(UniBreak)))
 	}
 
+	/////
+	// evaluate Array
+	/////
+	def evaluateIntArray(Object node, UniArray arr) {
+		assertThat(node, instanceOf(UniArray))
+		val cls = node as UniArray
+		assertEquals(cls.items.size, arr.items.size)
+		val size = cls.items.size
+		var i = 0
+		while (i < size) {
+			assertThat(cls.items.get(i), instanceOf(UniIntLiteral))
+			assertThat((cls.items.get(i) as UniIntLiteral).value, equalTo((arr.items.get(i) as UniIntLiteral).value))
+			i = i + 1
+		}
+
+	//		arr.items.forEach [ item |
+	//			assertTrue(cls.items.contains(item))
+	//		]
+	}
 }
