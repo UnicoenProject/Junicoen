@@ -11,6 +11,7 @@ public class BlockSpecialModel extends BlockElementModel{
 	public BlockSpecialModel(String methodName, Document document, Long id, String kind, String parentId){
 		Element element = createBlockElement(document, GENUS_NAME, id, kind);
 		addElement(BlockElementModel.NAME_NODE, document, methodName, element);
+		addElement(BlockElementModel.LABEL_NODE, document, methodName, element);
 		this.element = element;
 
 		if (kind.equals(BlockElementModel.BLOCKKINDS.COMMAND.toString()) && parentId != null) {

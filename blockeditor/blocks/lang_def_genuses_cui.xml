@@ -2,14 +2,23 @@
 
 <!-- CUI -->
 
-<BlockGenus name="cui-print[@string]" kind="command" initlabel="(CUI)出力する"
-	color="255 0 0">
+<BlockGenus name="cui-print[@string]" kind="command"
+	initlabel="(CUI)出力する" color="255 0 0">
 	<BlockConnectors>
 		<BlockConnector connector-kind="socket" connector-type="string">
 			<DefaultArg genus-name="string" label="あいうえお"></DefaultArg>
 		</BlockConnector>
 	</BlockConnectors>
 </BlockGenus>
+
+<BlockGenus name="systemin" kind="function" initlabel="System.in"
+	color="255 0 0">
+	<BlockConnectors>
+		<BlockConnector connector-kind="plug" connector-type="object">
+		</BlockConnector>
+	</BlockConnectors>
+</BlockGenus>
+
 <BlockGenus name="cui-print[@int]" kind="command" initlabel="(CUI)出力する"
 	color="255 0 0">
 	<BlockConnectors>
@@ -18,15 +27,15 @@
 		</BlockConnector>
 	</BlockConnectors>
 </BlockGenus>
-<BlockGenus name="cui-print[@object]" kind="command" initlabel="(CUI)出力する"
-	color="255 0 0">
+<BlockGenus name="cui-print[@object]" kind="command"
+	initlabel="(CUI)出力する" color="255 0 0">
 	<BlockConnectors>
 		<BlockConnector connector-kind="socket" connector-type="object">
 		</BlockConnector>
 	</BlockConnectors>
 </BlockGenus>
-<BlockGenus name="cui-print[@double]" kind="command" initlabel="(CUI)出力する"
-	color="255 0 0">
+<BlockGenus name="cui-print[@double]" kind="command"
+	initlabel="(CUI)出力する" color="255 0 0">
 	<BlockConnectors>
 		<BlockConnector connector-kind="socket" connector-type="double-number">
 			<DefaultArg genus-name="double-number" label="1.0"></DefaultArg>
@@ -34,32 +43,32 @@
 	</BlockConnectors>
 </BlockGenus>
 
-<BlockGenus name="cui-println[@int]" kind="command" initlabel="(CUI)出力して改行する"
-	color="255 0 0">
+<BlockGenus name="cui-println[@int]" kind="command"
+	initlabel="(CUI)出力して改行する" color="255 0 0">
 	<BlockConnectors>
 		<BlockConnector connector-kind="socket" connector-type="string">
 			<DefaultArg genus-name="string" label="あいうえお"></DefaultArg>
 		</BlockConnector>
 	</BlockConnectors>
 </BlockGenus>
-<BlockGenus name="cui-println[@string]" kind="command" initlabel="(CUI)出力して改行する"
-	color="255 0 0">
+<BlockGenus name="cui-println[@string]" kind="command"
+	initlabel="(CUI)出力して改行する" color="255 0 0">
 	<BlockConnectors>
 		<BlockConnector connector-kind="socket" connector-type="string">
 			<DefaultArg genus-name="string" label="あいうえお"></DefaultArg>
 		</BlockConnector>
 	</BlockConnectors>
 </BlockGenus>
-<BlockGenus name="cui-println[@double]" kind="command" initlabel="(CUI)出力して改行する"
-	color="255 0 0">
+<BlockGenus name="cui-println[@double]" kind="command"
+	initlabel="(CUI)出力して改行する" color="255 0 0">
 	<BlockConnectors>
 		<BlockConnector connector-kind="socket" connector-type="string">
 			<DefaultArg genus-name="string" label="あいうえお"></DefaultArg>
 		</BlockConnector>
 	</BlockConnectors>
 </BlockGenus>
-<BlockGenus name="cui-println[@object]" kind="command" initlabel="(CUI)出力して改行する"
-	color="255 0 0">
+<BlockGenus name="cui-println[@object]" kind="command"
+	initlabel="(CUI)出力して改行する" color="255 0 0">
 	<BlockConnectors>
 		<BlockConnector connector-kind="socket" connector-type="string">
 			<DefaultArg genus-name="string" label="あいうえお"></DefaultArg>
@@ -67,7 +76,7 @@
 	</BlockConnectors>
 </BlockGenus>
 
-<BlockGenus name="Scanner-next[]" kind="data" initlabel="入力を受け取る（文字列型）"
+<BlockGenus name="Scanner-next[]" kind="function" initlabel="入力を受け取る（文字列型）"
 	color="255 255 100" label-suffix="">
 	<Name>next</Name>
 	<Type>String</Type>
@@ -78,6 +87,16 @@
 	</BlockConnectors>
 </BlockGenus>
 
+<BlockGenus name="Scanner-nextLine[]" kind="function" initlabel="入力を受け取る（文字列型）"
+	color="255 255 100" label-suffix="">
+	<Name>next</Name>
+	<Type>String</Type>
+	<BlockConnectors>
+		<BlockConnector connector-kind="plug" connector-type="string"
+			position-type="single">
+		</BlockConnector>
+	</BlockConnectors>
+</BlockGenus>
 
 <BlockGenus name="Scanner-nextInt[]" kind="function"
 	initlabel="入力を受け取る(int型)" color="255 0 0">
@@ -144,41 +163,18 @@
 				<LangSpecProperty key="scope" value="local"></LangSpecProperty>
 			</LangSpecProperties>
 		</Stub>
-		<MethodStubs>
-			<ClassName name="Scanner">
-				<Stub stub-genus="next[]">
-					<LangSpecProperties>
-						<LangSpecProperty key="vm-cmd-name" value="eval-setlocal"></LangSpecProperty>
-						<LangSpecProperty key="scope" value="local"></LangSpecProperty>
-					</LangSpecProperties>
-				</Stub>
-				<Stub stub-genus="nextInt[]">
-					<LangSpecProperties>
-						<LangSpecProperty key="vm-cmd-name" value="eval-setlocal"></LangSpecProperty>
-						<LangSpecProperty key="scope" value="local"></LangSpecProperty>
-					</LangSpecProperties>
-				</Stub>
-				<Stub stub-genus="nextDouble[]">
-					<LangSpecProperties>
-						<LangSpecProperty key="vm-cmd-name" value="eval-setlocal"></LangSpecProperty>
-						<LangSpecProperty key="scope" value="local"></LangSpecProperty>
-					</LangSpecProperties>
-				</Stub>
-				<Stub stub-genus="hasNextInt[]">
-					<LangSpecProperties>
-						<LangSpecProperty key="vm-cmd-name" value="eval-setlocal"></LangSpecProperty>
-						<LangSpecProperty key="scope" value="local"></LangSpecProperty>
-					</LangSpecProperties>
-				</Stub>
-				<Stub stub-genus="hasNextDouble[]">
-					<LangSpecProperties>
-						<LangSpecProperty key="vm-cmd-name" value="eval-setlocal"></LangSpecProperty>
-						<LangSpecProperty key="scope" value="local"></LangSpecProperty>
-					</LangSpecProperties>
-				</Stub>
-			</ClassName>
-		</MethodStubs>
 	</Stubs>
+	<ClassMethods>
+		<CategoryName name="Scanner" classname="Scanner">
+			<MethodName>Scanner-nextInt[]</MethodName>
+			<MethodName>Scanner-nextDouble[]</MethodName>
+			<MethodName>Scanner-next[]</MethodName>
+			<MethodName>Scanner-nextLine[]</MethodName>			
+			<MethodName>Scanner-hasNextDouble[]</MethodName>
+			<MethodName>Scanner-hasNextInt[]</MethodName>			
+		</CategoryName>
+
+	</ClassMethods>
 	<LangSpecProperties>
 		<LangSpecProperty key="scope" value="local"></LangSpecProperty>
 		<LangSpecProperty key="type" value="object"></LangSpecProperty>
@@ -210,29 +206,14 @@
 				<LangSpecProperty key="scope" value="local"></LangSpecProperty>
 			</LangSpecProperties>
 		</Stub>
-		<MethodStubs>
-			<ClassName name="Scanner">
-				<Stub stub-genus="Random-nextInt[]">
-					<LangSpecProperties>
-						<LangSpecProperty key="vm-cmd-name" value="eval-setlocal"></LangSpecProperty>
-						<LangSpecProperty key="scope" value="local"></LangSpecProperty>
-					</LangSpecProperties>
-				</Stub>
-				<Stub stub-genus="Random-nextInt[@int]">
-					<LangSpecProperties>
-						<LangSpecProperty key="vm-cmd-name" value="eval-setlocal"></LangSpecProperty>
-						<LangSpecProperty key="scope" value="local"></LangSpecProperty>
-					</LangSpecProperties>
-				</Stub>
-				<Stub stub-genus="Random-nextDouble[]">
-					<LangSpecProperties>
-						<LangSpecProperty key="vm-cmd-name" value="eval-setlocal"></LangSpecProperty>
-						<LangSpecProperty key="scope" value="local"></LangSpecProperty>
-					</LangSpecProperties>
-				</Stub>
-			</ClassName>
-		</MethodStubs>
 	</Stubs>
+	<ClassMethods>
+		<CategoryName name="Random" className="Random">
+			<MethodName>Random-nextInt[]</MethodName>
+			<MethodName>Random-nextInt[@number]</MethodName>
+			<MethodName>Random-nextDouble[]</MethodName>
+		</CategoryName>
+	</ClassMethods>
 	<LangSpecProperties>
 		<LangSpecProperty key="scope" value="local"></LangSpecProperty>
 		<LangSpecProperty key="type" value="object"></LangSpecProperty>
@@ -252,8 +233,9 @@
 	</BlockConnectors>
 </BlockGenus>
 
-<BlockGenus name="new-object-Random[]" kind="function" initlabel="Random"
-	editable-label="yes" header-label="新しく" footer-label="を作る" color="16 240 27">
+<BlockGenus name="new-object-Random[]" kind="function"
+	initlabel="Random" editable-label="yes" header-label="新しく"
+	footer-label="を作る" color="16 240 27">
 	<description>
 		<text>
 			新しいオブジェクトを生成します。このブロックはオブジェクト型の変数に代入します。
@@ -269,14 +251,15 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="Random-nextInt[@int]" kind="function"
+<BlockGenus name="Random-nextInt[@number]" kind="function"
 	initlabel="上限値より小さい乱数を生成する(int型)" color="255 0 0">
 	<Name>nextInt</Name>
 	<Type>int</Type>
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="number">
 		</BlockConnector>
-		<BlockConnector label="上限値" connector-kind="socket" connector-type="number">
+		<BlockConnector label="上限値" connector-kind="socket"
+			connector-type="number">
 			<DefaultArg genus-name="number" label="10"></DefaultArg>
 		</BlockConnector>
 	</BlockConnectors>
@@ -297,7 +280,7 @@
 	connector-kind="plug" connector-type="string"> </BlockConnector> </BlockConnectors> 
 	</BlockGenus> -->
 
-<BlockGenus name="hashCode" kind="function" initlabel="ハッシュ値を求める"
+<BlockGenus name="String-hashCode[@string]" kind="function" initlabel="ハッシュ値を求める"
 	color="255 0 0">
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="number" />
@@ -306,28 +289,28 @@
 </BlockGenus>
 
 
-<BlockGenus name="input-getInt" kind="data" initlabel="キーボードから整数を入力し、その値"
+<BlockGenus name="input-getInt[]" kind="data" initlabel="キーボードから整数を入力し、その値"
 	color="255 0 0">
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="number" />
 	</BlockConnectors>
 </BlockGenus>
 
-<BlockGenus name="input-getString" kind="data" initlabel="キーボードから文字列を入力し、その値"
+<BlockGenus name="input-getString[]" kind="data" initlabel="キーボードから文字列を入力し、その値"
 	color="255 0 0">
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="string" />
 	</BlockConnectors>
 </BlockGenus>
 
-<BlockGenus name="input-getDouble" kind="data" initlabel="キーボードから実数を入力し、その値"
+<BlockGenus name="input-getDouble[]" kind="data" initlabel="キーボードから実数を入力し、その値"
 	color="255 0 0">
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="double-number" />
 	</BlockConnectors>
 </BlockGenus>
 
-<BlockGenus name="input-isInteger" kind="data" initlabel="整数かどうか調べる"
+<BlockGenus name="input-isInteger[@string]" kind="data" initlabel="整数かどうか調べる"
 	color="255 0 0">
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="boolean" />
@@ -336,7 +319,7 @@
 	</BlockConnectors>
 </BlockGenus>
 
-<BlockGenus name="input-isDouble" kind="data" initlabel="実数かどうか調べる"
+<BlockGenus name="input-isDouble[@string]" kind="data" initlabel="実数かどうか調べる"
 	color="255 0 0">
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="boolean" />

@@ -42,7 +42,7 @@ public class BlockResolver {
 	 */
 	public BlockResolver(String langdefRootPath, boolean isTest) throws SAXException, IOException {
 		this.langdefRootPath = langdefRootPath;
-		parseGnuses();
+		initializeResolvers();
 		initMethodResolver(isTest);
 	}
 
@@ -136,7 +136,7 @@ public class BlockResolver {
 	/*
 	 * 全ブロックをハッシュマップに登録する キー：genus-name 値:ノード
 	 */
-	public void parseGnuses() {
+	public void initializeResolvers() {
 		DOMParser parser = new DOMParser();
 		// lang_def.xmlを読み込む
 		try {
@@ -163,6 +163,7 @@ public class BlockResolver {
 	private void addAvaiableMethodToResolver(Node node) {
 		String kind = DOMUtil.getAttribute(node, "kind");
 		if (BlockLocalVarDecModel.KIND.equals(kind)) {
+			System.out.println(DOMUtil.getChildText(node, BlockElementModel.TYPE_NODE));
 			Node methodsNode = DOMUtil.getChildNode(node, "ClassMethods");
 			if (methodsNode != null) {
 				addClassMethodsToResolver(DOMUtil.getChildTextFromBlockNode(node, "Type"), methodsNode);

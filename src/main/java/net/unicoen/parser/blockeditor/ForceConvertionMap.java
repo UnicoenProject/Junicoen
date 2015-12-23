@@ -98,7 +98,7 @@ public class ForceConvertionMap {
 	public boolean isSameModel(UniExpr forceConvertExpression, UniFieldAccess accesser) {
 		UniExpr receiver = accesser.receiver;
 		if (forceConvertExpression instanceof UniFieldAccess) {
-			if (receiver.equals(((UniMethodCall) forceConvertExpression).receiver) && accesser.fieldName.equals(((UniFieldAccess) forceConvertExpression).fieldName)) {
+			if (receiver.equals(((UniFieldAccess) forceConvertExpression).receiver) && accesser.fieldName.equals(((UniFieldAccess) forceConvertExpression).fieldName)) {
 				return true;
 			}
 		}

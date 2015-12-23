@@ -1,5 +1,3 @@
-import java.util.*;
-
 public class _20CUITest{
 	
 	//起動処理

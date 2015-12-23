@@ -16,7 +16,7 @@
 	<Item>
 		<UniModel unimodel="UniMethodCall">
 			<name>print</name>
-			<receiver unimodel="UniIdent">
+			<receiver unimodel="UniFieldAccess">
 				<name>out</name>
 				<receiver unimodel="UniIdent">
 					<name>System</name>
@@ -330,5 +330,15 @@
 			</receiver>
 		</UniModel>
 		<GenusName>pink</GenusName>
+	</Item>
+
+	<Item>
+		<UniModel unimodel="UniFieldAccess">
+			<name>in</name>
+			<receiver unimodel="UniIdent">
+				<name>System</name>
+			</receiver>
+		</UniModel>
+		<GenusName>systemin</GenusName>
 	</Item>
 </ConvertList>
