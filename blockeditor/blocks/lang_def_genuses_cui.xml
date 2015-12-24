@@ -87,8 +87,8 @@
 	</BlockConnectors>
 </BlockGenus>
 
-<BlockGenus name="Scanner-nextLine[]" kind="function" initlabel="入力を受け取る（文字列型）"
-	color="255 255 100" label-suffix="">
+<BlockGenus name="Scanner-nextLine[]" kind="function"
+	initlabel="入力を受け取る（文字列型）" color="255 255 100" label-suffix="">
 	<Name>next</Name>
 	<Type>String</Type>
 	<BlockConnectors>
@@ -169,9 +169,9 @@
 			<MethodName>Scanner-nextInt[]</MethodName>
 			<MethodName>Scanner-nextDouble[]</MethodName>
 			<MethodName>Scanner-next[]</MethodName>
-			<MethodName>Scanner-nextLine[]</MethodName>			
+			<MethodName>Scanner-nextLine[]</MethodName>
 			<MethodName>Scanner-hasNextDouble[]</MethodName>
-			<MethodName>Scanner-hasNextInt[]</MethodName>			
+			<MethodName>Scanner-hasNextInt[]</MethodName>
 		</CategoryName>
 
 	</ClassMethods>
@@ -280,8 +280,10 @@
 	connector-kind="plug" connector-type="string"> </BlockConnector> </BlockConnectors> 
 	</BlockGenus> -->
 
-<BlockGenus name="String-hashCode[@string]" kind="function" initlabel="ハッシュ値を求める"
-	color="255 0 0">
+<BlockGenus name="String-hashCode[@string]" kind="function"
+	initlabel="ハッシュ値を求める" color="255 0 0">
+	<Type>int</Type>
+	<Name>hashCode</Name>
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="number" />
 		<BlockConnector connector-kind="socket" connector-type="string" />
@@ -289,29 +291,37 @@
 </BlockGenus>
 
 
-<BlockGenus name="input-getInt[]" kind="data" initlabel="キーボードから整数を入力し、その値"
+<BlockGenus name="input-getInt[]" kind="function" initlabel="キーボードから整数を入力し、その値"
 	color="255 0 0">
+	<Type>int</Type>
+	<Name>getInt</Name>
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="number" />
 	</BlockConnectors>
 </BlockGenus>
 
-<BlockGenus name="input-getString[]" kind="data" initlabel="キーボードから文字列を入力し、その値"
-	color="255 0 0">
+<BlockGenus name="input-getString[]" kind="function"
+	initlabel="キーボードから文字列を入力し、その値" color="255 0 0">
+	<Type>String</Type>
+	<Name>getString</Name>
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="string" />
 	</BlockConnectors>
 </BlockGenus>
 
-<BlockGenus name="input-getDouble[]" kind="data" initlabel="キーボードから実数を入力し、その値"
-	color="255 0 0">
+<BlockGenus name="input-getDouble[]" kind="function"
+	initlabel="キーボードから実数を入力し、その値" color="255 0 0">
+	<Type>double</Type>
+	<Name>getDouble</Name>
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="double-number" />
 	</BlockConnectors>
 </BlockGenus>
 
-<BlockGenus name="input-isInteger[@string]" kind="data" initlabel="整数かどうか調べる"
-	color="255 0 0">
+<BlockGenus name="input-isInteger[@string]" kind="function"
+	initlabel="整数かどうか調べる" color="255 0 0">
+	<Type>boolean</Type>
+	<Name>isInteger</Name>
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="boolean" />
 		<BlockConnector connector-kind="socket" connector-type="string"
@@ -319,8 +329,10 @@
 	</BlockConnectors>
 </BlockGenus>
 
-<BlockGenus name="input-isDouble[@string]" kind="data" initlabel="実数かどうか調べる"
-	color="255 0 0">
+<BlockGenus name="input-isDouble[@string]" kind="function"
+	initlabel="実数かどうか調べる" color="255 0 0">
+	<Type>boolean</Type>
+	<Name>isDouble</Name>
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="boolean" />
 		<BlockConnector connector-kind="socket" connector-type="string"
@@ -328,3 +340,11 @@
 	</BlockConnectors>
 </BlockGenus>
 
+<BlockGenus name="Object-hashCode[]" kind="function"
+	initlabel="ハッシュ値を求める" color="255 0 0">
+	<Name>hashCode</Name>
+	<Type>int</Type>
+	<BlockConnectors>
+		<BlockConnector connector-kind="plug" connector-type="number" />
+	</BlockConnectors>
+</BlockGenus>

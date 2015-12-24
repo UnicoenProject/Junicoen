@@ -1067,41 +1067,19 @@ public class BlockGenerator extends UniModelVisitor {
 				sockets.add(visitExpr(arg, String.valueOf(callerId)));
 			}
 
-			BlockExprModel receiverModel = (BlockExprModel) visitExpr(method.receiver, String.valueOf(caller.getBlockID()));
+			BlockElementModel receiverModel = visitExpr(method.receiver, String.valueOf(caller.getBlockID()));
 			BlockElementModel callMethodModel = createMethodCallModel(receiverModel.getType(), method.methodName, sockets, document, callerId, caller.getBlockID());
 			caller.setCalleMethod(callMethodModel);
 
 			// socketノードの作成
 			List<Node> socketNodes = resolver.getSocketNodes(caller.getGenusName());
 			BlockSocketsModel socketsInfo = calcSocketsInfo(socketNodes);
-			caller.addSocketsAndNodes(Lists.newArrayList((BlockElementModel) receiverModel, callMethodModel), document, socketsInfo);
+			caller.addSocketsAndNodes(Lists.newArrayList(receiverModel, callMethodModel), document, socketsInfo);
 
 			// plugノードの追加
 			BlockPlugModel plug = new BlockPlugModel(resolver.getPlugElement(caller.getGenusName()), parent);
 			caller.setPlugElement(document, plug);
 			return caller;
-		}
-	}
-
-	/**
-	 * 標準ライブラリのidentifierかどうかを判定する
-	 * 
-	 * @param UniExpression
-	 *            null可
-	 * @return identifierかどうかの真偽値
-	 */
-	public boolean isIdentifier(UniExpr expr) {
-		if (expr instanceof UniIdent) {
-			UniIdent ident = (UniIdent) expr;
-			Node node = resolver.getVariableNameResolver().getVariableBlockNode(ident.name);
-
-			if (node != null) {
-				return false;
-			} else {
-				return true;
-			}
-		} else {
-			return false;
 		}
 	}
 

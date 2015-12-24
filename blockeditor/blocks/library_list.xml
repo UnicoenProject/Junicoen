@@ -1,7 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <LibraryClasses>
+	<!-- basic -->
+	<LibraryClass name="Object">
+		<CategoryName name="Object" command="add">
+			<MethodName>Object-toString[]</MethodName>
+			<MethodName>Object-hashCode[]</MethodName>
+		</CategoryName>
+	</LibraryClass>
+
+	<LibraryClass name="String">
+		<CategoryName name="Object" command="copy" />
+		<CategoryName name="String" command="add">
+			<MethodName>String-equals[@string]</MethodName>
+		</CategoryName>
+	</LibraryClass>
+
 	<!-- Turtle -->
 	<LibraryClass name="Turtle">
+		<CategoryName name="Object" command="copy" />
 		<CategoryName name="タートル（基本）" command="add">
 			<MethodName>Turtle-fd[@int]</MethodName>
 			<MethodName>Turtle-bk[@int]</MethodName>
@@ -58,12 +74,14 @@
 		</CategoryName>
 	</LibraryClass>
 	<LibraryClass name="ImageTurtle">
+		<CategoryName name="Object" command="copy" />
 		<CategoryName name="ImageTurtle" command="add">
 			<MethodName>ImageTurtle-image[@string]</MethodName>
 		</CategoryName>
 		<CategoryName name="Turtle" command="copy" />
 	</LibraryClass>
 	<LibraryClass name="SoundTurtle">
+		<CategoryName name="Object" command="copy" />
 		<CategoryName name="Turtle" command="copy" />
 		<CategoryName name="SoundTurtle" command="add">
 			<MethodName>SoundTurtle-file[@string]</MethodName>
@@ -77,6 +95,7 @@
 		</CategoryName>
 	</LibraryClass>
 	<LibraryClass name="ListTurtle">
+		<CategoryName name="Object" command="copy" />
 		<CategoryName name="Turtle" command="copy" />
 		<CategoryName name="ListTurtle" command="add">
 			<MethodName>ListTurtle-get[@int]</MethodName>
@@ -102,6 +121,7 @@
 		</CategoryName>
 	</LibraryClass>
 	<LibraryClass name="InputTurtle">
+		<CategoryName name="Object" command="copy" />
 		<CategoryName name="Turtle" command="copy" />
 		<CategoryName name="InputTurtle" command="add">
 			<MethodName>InputTurtle-fontsize[@int]</MethodName>
@@ -114,6 +134,7 @@
 		</CategoryName>
 	</LibraryClass>
 	<LibraryClass name="CardTurtle">
+		<CategoryName name="Object" command="copy" />
 		<CategoryName name="Turtle" command="copy" />
 		<CategoryName name="CardTurtle" command="add">
 			<MethodName>CardTurtle-getText[]</MethodName>
@@ -135,9 +156,10 @@
 			<MethodName>TextTurtle-getText[]</MethodName>
 		</CategoryName>
 	</LibraryClass>
-	
+
 	<!-- Obpro -->
 	<LibraryClass name="Random">
+		<CategoryName name="Object" command="copy" />
 		<CategoryName name="Random" command="add">
 			<MethodName>Random-nextInt[]</MethodName>
 			<MethodName>Random-nextInt[@int]</MethodName>
@@ -145,6 +167,7 @@
 		</CategoryName>
 	</LibraryClass>
 	<LibraryClass naame="BCanvas">
+		<CategoryName name="Object" command="copy" />
 		<CategoryName name="BCanvasのメソッド" command="add">
 			<MethodName>BCanvas-drawLine[@object@number@number@number@number]
 			</MethodName>
@@ -180,6 +203,7 @@
 		</CategoryName>
 	</LibraryClass>
 	<LibraryClass name="BWindow">
+		<CategoryName name="Object" command="copy" />
 		<CategoryName name="BWindowのメソッド" command="add">
 			<MethodName>BWindow-setLocation[@number@number]</MethodName>
 			<MethodName>BWindow-show[]</MethodName>
@@ -188,6 +212,7 @@
 		</CategoryName>
 	</LibraryClass>
 	<LibraryClass name="BSound">
+		<CategoryName name="Object" command="copy" />
 		<CategoryName name="BSoundのメソッド" command="add">
 			<MethodName>BSound-getVolume[]</MethodName>
 			<MethodName>BSound-setVolume[@number]</MethodName>

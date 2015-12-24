@@ -79,12 +79,12 @@
 		<BlockGenusMember>string-append</BlockGenusMember>
 
 		<BlockGenusMember>Math-random[]</BlockGenusMember>
-		<BlockGenusMember>sqrt</BlockGenusMember>
-		<BlockGenusMember>sin</BlockGenusMember>
-		<BlockGenusMember>cos</BlockGenusMember>
-		<BlockGenusMember>tan</BlockGenusMember>
-		<BlockGenusMember>log</BlockGenusMember>
-		<BlockGenusMember>toRadians</BlockGenusMember>
+		<BlockGenusMember>Math-sqrt[@number]</BlockGenusMember>
+		<BlockGenusMember>Math-sin[@number]</BlockGenusMember>
+		<BlockGenusMember>Math-cos[@number]</BlockGenusMember>
+		<BlockGenusMember>Math-tan[@number]</BlockGenusMember>
+		<BlockGenusMember>Math-log[@number]</BlockGenusMember>
+		<BlockGenusMember>Math-toRadians[@number]</BlockGenusMember>
 	</BlockDrawer>
 
 	<BlockDrawer name="変数の定義" type="factory" button-color="230 0 255">

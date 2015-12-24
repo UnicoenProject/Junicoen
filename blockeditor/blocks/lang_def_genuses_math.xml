@@ -7,7 +7,7 @@
 	</BlockConnectors>
 </BlockGenus>
 
-<BlockGenus name="round" kind="function" initlabel="四捨五入する"
+<BlockGenus name="Math-round[@number]" kind="function" initlabel="四捨五入する"
 	color="15 20 220">
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="number"></BlockConnector>
@@ -19,7 +19,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="min" kind="function" initlabel="小さい方"
+<BlockGenus name="Math-min[@number@number]" kind="function" initlabel="小さい方"
 	color="15 20 220">
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="number"
@@ -35,7 +35,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="max" kind="function" initlabel="大きい方"
+<BlockGenus name="Math-max[@number@number]" kind="function" initlabel="大きい方"
 	color="15 20 220">
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="number"
@@ -51,7 +51,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="pow" kind="function" initlabel="power"
+<BlockGenus name="Math-pow[@number@number]" kind="function" initlabel="power"
 	color="15 20 220">
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="number"
@@ -67,7 +67,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="abs" kind="function" initlabel="絶対値にする"
+<BlockGenus name="Math-abs[@number]" kind="function" initlabel="絶対値にする"
 	color="15 20 220">
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="number"></BlockConnector>
@@ -79,7 +79,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="sqrt" kind="function" initlabel="平方根にする"
+<BlockGenus name="Math-sqrt[@number]" kind="function" initlabel="平方根にする"
 	color="15 20 220">
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="double-number"></BlockConnector>
@@ -93,7 +93,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="sin" kind="function" initlabel="sin" color="15 20 220">
+<BlockGenus name="Math-sin[@number]" kind="function" initlabel="sin" color="15 20 220">
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="double-number"></BlockConnector>
 		<BlockConnector label="degs" connector-kind="socket"
@@ -107,7 +107,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="cos" kind="function" initlabel="cos" color="15 20 220">
+<BlockGenus name="Math-cos[@number]" kind="function" initlabel="cos" color="15 20 220">
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="double-number"></BlockConnector>
 		<BlockConnector label="degs" connector-kind="socket"
@@ -121,7 +121,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="tan" kind="function" initlabel="tan" color="15 20 220">
+<BlockGenus name="Math-tan[@number]" kind="function" initlabel="tan" color="15 20 220">
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="double-number"></BlockConnector>
 		<BlockConnector label="degs" connector-kind="socket"
@@ -135,7 +135,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="atan" kind="function" initlabel="atan"
+<BlockGenus name="Math-atan[@number]" kind="function" initlabel="atan"
 	color="15 20 220">
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="number"></BlockConnector>
@@ -150,7 +150,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="asin" kind="function" initlabel="asin"
+<BlockGenus name="Math-asin[@number]" kind="function" initlabel="asin"
 	color="15 20 220">
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="number"></BlockConnector>
@@ -162,7 +162,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="acos" kind="function" initlabel="acos"
+<BlockGenus name="Math-acos[@number]" kind="function" initlabel="acos"
 	color="15 20 220">
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="number"></BlockConnector>
@@ -174,7 +174,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="log" kind="function" initlabel="log" color="15 20 220">
+<BlockGenus name="Math-log[@number]" kind="function" initlabel="log" color="15 20 220">
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="double-number"></BlockConnector>
 		<BlockConnector connector-kind="socket" connector-type="double-number">
@@ -187,7 +187,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="ln" kind="function" initlabel="ln" color="15 20 220">
+<BlockGenus name="Math-ln[@number]" kind="function" initlabel="ln" color="15 20 220">
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="number"></BlockConnector>
 		<BlockConnector connector-kind="socket" connector-type="number"></BlockConnector>
@@ -198,7 +198,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="toRadians" kind="function" initlabel="ラジアンにする" color="15 20 220">
+<BlockGenus name="Math-toRadians[@number]" kind="function" initlabel="ラジアンにする" color="15 20 220">
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="double-number"></BlockConnector>
 		<BlockConnector connector-kind="socket" label="度" connector-type="double-number">
@@ -211,7 +211,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="ceil" kind="function" initlabel="小数点以下を繰り上げた" color="15 20 220">
+<BlockGenus name="Math-ceil[@number]" kind="function" initlabel="小数点以下を繰り上げた" color="15 20 220">
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="double-number"></BlockConnector>
 		<BlockConnector connector-kind="socket" label="度" connector-type="double-number">
@@ -224,7 +224,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="max" kind="function" initlabel="大きい方の値" color="15 20 220">
+<BlockGenus name="Math-max[@number]" kind="function" initlabel="大きい方の値" color="15 20 220">
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="double-number"></BlockConnector>
 		<BlockConnector connector-kind="socket" label="値1" connector-type="double-number"></BlockConnector>
@@ -236,7 +236,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="min" kind="function" initlabel="小さい方の値" color="15 20 220">
+<BlockGenus name="Math-min[@number]" kind="function" initlabel="小さい方の値" color="15 20 220">
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="double-number"></BlockConnector>
 		<BlockConnector connector-kind="socket" label="値1" connector-type="double-number"></BlockConnector>
@@ -248,7 +248,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="floor" kind="function" initlabel="小数点以下を繰り下げた値" color="15 20 220">
+<BlockGenus name="Math-floor[@number]" kind="function" initlabel="小数点以下を繰り下げた値" color="15 20 220">
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="double-number"></BlockConnector>
 		<BlockConnector connector-kind="socket" label="値" connector-type="double-number"></BlockConnector>

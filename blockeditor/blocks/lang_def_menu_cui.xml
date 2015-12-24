@@ -3,10 +3,10 @@
 	window-per-drawer="no" drawer-draggable="no">
 
 	<BlockDrawer name="CUI" type="factory" button-color="0 102 51">
-		<BlockGenusMember>cui-print</BlockGenusMember>
-		<BlockGenusMember>cui-println</BlockGenusMember>
-		<BlockGenusMember>cui-random</BlockGenusMember>
-		<BlockGenusMember>hashCode</BlockGenusMember>
+		<BlockGenusMember>cui-print[@string]</BlockGenusMember>
+		<BlockGenusMember>cui-println[@string]</BlockGenusMember>
+		<BlockGenusMember>Math-random[]</BlockGenusMember>
+		<BlockGenusMember>Object-hashCode[]</BlockGenusMember>
 		<BlockGenusMember>local-var-object-Scanner</BlockGenusMember>
  		<BlockGenusMember>input-isInteger</BlockGenusMember>
 		<BlockGenusMember>input-isDouble</BlockGenusMember>
@@ -99,12 +99,12 @@
 
 	<BlockDrawer name="数学" type="factory" button-color="102 129 255">
 		<BlockGenusMember>Math-random[]</BlockGenusMember>
-		<BlockGenusMember>sqrt</BlockGenusMember>
-		<BlockGenusMember>sin</BlockGenusMember>
-		<BlockGenusMember>cos</BlockGenusMember>
-		<BlockGenusMember>tan</BlockGenusMember>
-		<BlockGenusMember>log</BlockGenusMember>
-		<BlockGenusMember>toRadians</BlockGenusMember>
+		<BlockGenusMember>Math-sqrt[@number]</BlockGenusMember>
+		<BlockGenusMember>Math-sin[@number]</BlockGenusMember>
+		<BlockGenusMember>Math-cos[@number]</BlockGenusMember>
+		<BlockGenusMember>Math-tan[@number]</BlockGenusMember>
+		<BlockGenusMember>Math-log[@number]</BlockGenusMember>
+		<BlockGenusMember>Math-toRadians[@number]</BlockGenusMember>
 	</BlockDrawer>
 
 	<BlockDrawer name="変数の定義" type="factory" button-color="230 0 255">
