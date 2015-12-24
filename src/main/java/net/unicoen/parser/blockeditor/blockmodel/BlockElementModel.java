@@ -74,7 +74,7 @@ public class BlockElementModel {
 	}
 
 	public String getType(){
-		Node typeNode = DOMUtil.getChildNode(getElement(), TYPE_NODE);
+		Node typeNode = DOMUtil.getChildNode(getBlockElement(), TYPE_NODE);
 		if(typeNode == null){
 			return "Object";
 		}else{
@@ -135,7 +135,11 @@ public class BlockElementModel {
 	}
 
 	public Element getBlockElement(){
-		return this.getElement();
+		if(this.getElement().getNodeName().equals(BlockElementModel.BLOCK_NODE)){
+			return this.getElement();
+		}else{
+			return (Element) DOMUtil.getChildNode(getElement(), BlockElementModel.BLOCK_NODE);			
+		}
 	}
 	
 	protected void addSocketBlock(BlockElementModel socket) {
@@ -207,8 +211,8 @@ public class BlockElementModel {
 
 	public void addSocketsNode(Document document, BlockSocketsModel sockets) {
 		if (sockets.getSockets().size() > 0) {
-			Element socketsElement = document.createElement("Sockets");
-			socketsElement.setAttribute("num-sockets", String.valueOf(sockets.getSockets().size()));
+			Element socketsElement = document.createElement(BlockSocketsModel.NODE_NAME);
+			socketsElement.setAttribute(BlockSocketsModel.NUMSOCKETS_ATTR, String.valueOf(sockets.getSockets().size()));
 			for (int i = 0;i<sockets.getSockets().size();i++) {
 				if(getSocketBlocks().size() > i && getSocketBlocks().get(i)!= null){
 					sockets.getSockets().get(i).setConnectorBlockID(getSocketBlocks().get(i).getBlockID());
@@ -249,7 +253,7 @@ public class BlockElementModel {
 	 * このブロックのノードにPlugノードを追加する
 	 */
 	public void setPlugElement(Document document, BlockPlugModel plugInfo) {
-		this.element.appendChild(plugInfo.createElemnet(document));
+		getBlockElement().appendChild(plugInfo.createElemnet(document));
 	}
 
 	public void addBeforeBlockNode(Document document, String id) {

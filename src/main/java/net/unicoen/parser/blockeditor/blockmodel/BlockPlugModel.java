@@ -31,10 +31,6 @@ public class BlockPlugModel extends BlockConnector{
 	public Element createElemnet(Document document){
 		Element plugNode = document.createElement(NODE_NAME);
 		Element blockConnectorNode = document.createElement(BlockConnector.CONNECTOR_NODE);
-
-		if (this.connectorBlockID == null) {
-			throw new RuntimeException("parent id is null");
-		}
 		
 		blockConnectorNode.setAttribute(CONNECTOR_BLOCK_ID_ATTR, this.connectorBlockID);
 		blockConnectorNode.setAttribute(CONNECTOR_KIND_ATTR , "plug");

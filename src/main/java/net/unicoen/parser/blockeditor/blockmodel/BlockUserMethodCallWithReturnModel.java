@@ -7,7 +7,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import net.unicoen.parser.blockeditor.BlockResolver;
-import net.unicoen.parser.blockeditor.DOMUtil;
 
 public class BlockUserMethodCallWithReturnModel extends BlockExprModel {
 
@@ -36,11 +35,6 @@ public class BlockUserMethodCallWithReturnModel extends BlockExprModel {
 		addElement(BlockElementModel.STUBPARENTGENUS_NODE, document, parentGenusName, blockStubElement);
 		addElement(BlockElementModel.STUBPARENTID_NODE, document, parentID, blockStubElement);
 		return blockStubElement;
-	}
-
-	@Override
-	public Element getBlockElement(){
-		return (Element) DOMUtil.getChildNode(getElement(), BlockElementModel.BLOCK_NODE);
 	}
 
 	@Override

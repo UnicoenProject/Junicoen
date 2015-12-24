@@ -12,7 +12,7 @@ import net.unicoen.parser.blockeditor.AnnotationCommentGetter;
 
 public class BlockProcedureModel extends BlockElementModel {
 
-	private List<BlockCommandModel> bodyBlocks = new ArrayList<>();
+	private List<BlockElementModel> bodyBlocks = new ArrayList<>();
 	public static String GENUS_NAME = "procedure";
 	public static String KIND = "procedure";
 	public static String RETURN_TYPE_NODE = "ReturnType";
@@ -32,11 +32,11 @@ public class BlockProcedureModel extends BlockElementModel {
 		this.element = procedureElement;
 	}
 
-	public void setBodyBlocks(List<BlockCommandModel> bodyBlocks) {
+	public void setBodyBlocks(List<BlockElementModel> bodyBlocks) {
 		this.bodyBlocks = bodyBlocks;
 	}
 
-	public List<BlockCommandModel> getBodyBlocks() {
+	public List<BlockElementModel> getBodyBlocks() {
 		return this.bodyBlocks;
 	}
 
@@ -48,7 +48,7 @@ public class BlockProcedureModel extends BlockElementModel {
 			node.appendChild(param.getElement());
 		}
 
-		for (BlockCommandModel model : bodyBlocks) {
+		for (BlockElementModel model : bodyBlocks) {
 			for (Element element : model.getBlockElements()) {
 				node.appendChild(element);
 			}
