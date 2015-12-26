@@ -27,13 +27,10 @@ public class UniDoWhile extends UniExpr {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null || !(obj instanceof UniDoWhile))
-			return false;
-		UniDoWhile that = (UniDoWhile) obj;
-		return (this.statement == null ? that.statement == null
-				: this.statement.equals(that.statement))
-				&& (this.cond == null ? that.cond == null : this.cond
-						.equals(that.cond));
+		if (obj == null || !(obj instanceof UniDoWhile)) return false;
+		UniDoWhile that = (UniDoWhile)obj;
+		return (this.statement == null ? that.statement == null : this.statement.equals(that.statement))
+			&& (this.cond == null ? that.cond == null : this.cond.equals(that.cond));
 	}
 
 	@Override
