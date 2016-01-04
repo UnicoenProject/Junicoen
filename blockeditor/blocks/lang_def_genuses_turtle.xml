@@ -202,7 +202,7 @@
 	</BlockConnectors>
 </BlockGenus>
 
-<BlockGenus name="Turtle-print[@number]" kind="command"
+<BlockGenus name="Turtle-print[@int]" kind="command"
 	initlabel="コンソールに出力する" color="255 0 0">
 	<description>
 		<text>セットした文字をコンソールに出力します。</text>
@@ -1001,7 +1001,7 @@
 	</BlockConnectors>
 </BlockGenus>
 
-<BlockGenus name="ListTurtle-addFirst[@turtle]" kind="command"
+<BlockGenus name="ListTurtle-addFirst[@object]" kind="command"
 	initlabel="最初に追加する" color="255 255 100">
 	<Name>addFirst</Name>
 	<BlockConnectors>
@@ -1010,7 +1010,7 @@
 	</BlockConnectors>
 </BlockGenus>
 
-<BlockGenus name="ListTurtle-addLast[@turtle]" kind="command"
+<BlockGenus name="ListTurtle-addLast[@object]" kind="command"
 	initlabel="最後に追加する" color="255 255 100">
 	<Name>addLast</Name>
 	<BlockConnectors>
@@ -1019,7 +1019,7 @@
 	</BlockConnectors>
 </BlockGenus>
 
-<BlockGenus name="ListTurtle-addAll[@listturtle]" kind="command"
+<BlockGenus name="ListTurtle-addAll[@object]" kind="command"
 	initlabel="中身を全て追加する" color="255 255 100">
 	<Name>addAll</Name>
 	<BlockConnectors>
@@ -1028,7 +1028,7 @@
 	</BlockConnectors>
 </BlockGenus>
 
-<BlockGenus name="ListTurtle-moveAllTo[@listturtle]" kind="command"
+<BlockGenus name="ListTurtle-moveAllTo[@object]" kind="command"
 	initlabel="全ての中身を移動する" color="255 255 100">
 	<Name>moveAllTo</Name>
 	<BlockConnectors>
@@ -1098,7 +1098,7 @@
 	</BlockConnectors>
 </BlockGenus>
 
-<BlockGenus name="ListTurtle-addToBeforeCursor[@turtle]"
+<BlockGenus name="ListTurtle-addToBeforeCursor[@object]"
 	kind="command" initlabel="カーソルの前に追加する" color="255 255 100">
 	<!-- <Name>addToBeforeCursor</Name> -->
 	<BlockConnectors>
@@ -1107,7 +1107,7 @@
 	</BlockConnectors>
 </BlockGenus>
 
-<BlockGenus name="ListTurtle-addToAfterCursor[@turtle]" kind="command"
+<BlockGenus name="ListTurtle-addToAfterCursor[@object]" kind="command"
 	initlabel="カーソルの後に追加する" color="255 255 100">
 	<Name>addToAfterCursor</Name>
 	<BlockConnectors>
@@ -1383,7 +1383,7 @@
 			<MethodName>Turtle-input[]</MethodName>
 			<MethodName>Turtle-print[@string]</MethodName>
 		</CategoryName>
-		<CategoryName name="TextTurtleへの命令">
+		<CategoryName name="TextTurtle">
 			<MethodName>TextTurtle-text[@string]</MethodName>
 			<MethodName>TextTurtle-getText[]</MethodName>
 		</CategoryName>

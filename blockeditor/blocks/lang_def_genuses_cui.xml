@@ -210,7 +210,7 @@
 	<ClassMethods>
 		<CategoryName name="Random" className="Random">
 			<MethodName>Random-nextInt[]</MethodName>
-			<MethodName>Random-nextInt[@number]</MethodName>
+			<MethodName>Random-nextInt[@int]</MethodName>
 			<MethodName>Random-nextDouble[]</MethodName>
 		</CategoryName>
 	</ClassMethods>
@@ -251,7 +251,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="Random-nextInt[@number]" kind="function"
+<BlockGenus name="Random-nextInt[@int]" kind="function"
 	initlabel="上限値より小さい乱数を生成する(int型)" color="255 0 0">
 	<Name>nextInt</Name>
 	<Type>int</Type>
@@ -325,7 +325,7 @@
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="boolean" />
 		<BlockConnector connector-kind="socket" connector-type="string"
-			label="どの文字？" />
+			label="文字" />
 	</BlockConnectors>
 </BlockGenus>
 
@@ -336,7 +336,7 @@
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="boolean" />
 		<BlockConnector connector-kind="socket" connector-type="string"
-			label="どの文字？" />
+			label="文字" />
 	</BlockConnectors>
 </BlockGenus>
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<BlockGenus name="BCanvas-drawLine[@object@number@number@number@number]" kind="command"
+<BlockGenus name="BCanvas-drawLine[@object@int@int@int@int]" kind="command"
 	initlabel="線を描く" color="255 0 0">
 	<description>
 		<text>
@@ -32,7 +32,7 @@
 </BlockGenus>
 
 
-<BlockGenus name="BCanvas-drawFillTriangle[@object@number@number@number@number@number@number]" kind="command" initlabel="塗りつぶした三角形を書く" color="255 0 0">
+<BlockGenus name="BCanvas-drawFillTriangle[@object@int@int@int@int@int@int]" kind="command" initlabel="塗りつぶした三角形を書く" color="255 0 0">
 	<description>
 		<text>
 			塗りつぶした三角形を描きます
@@ -69,7 +69,7 @@
 </BlockGenus>
 
 
-<BlockGenus name="BCanvas-drawArc[@object@number@number@number@number@number@number]" kind="command"
+<BlockGenus name="BCanvas-drawArc[@object@int@int@int@int@int@int]" kind="command"
 	initlabel="円弧を描く" color="255 0 0">
 	<description>
 		<text>
@@ -106,7 +106,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="BCanvas-drawText[@object@string@number@number]" kind="command"
+<BlockGenus name="BCanvas-drawText[@object@string@int@int]" kind="command"
 	initlabel="文字を描く" color="255 0 0">
 	<description>
 		<text>
@@ -302,7 +302,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="BCanvas-isKeyPressing[@number]" kind="function"
+<BlockGenus name="BCanvas-isKeyPressing[@int]" kind="function"
 	color="255 0 0" initlabel="指定したキーが押されたか調べる">
 	<BlockConnectors>
 		<BlockConnector connector-type="boolean"
@@ -395,7 +395,7 @@
 </BlockGenus>
 
 
-<BlockGenus name="BCanvas-sleep[@number]" kind="command"
+<BlockGenus name="BCanvas-sleep[@int]" kind="command"
 	initlabel="待つ" color="255 0 0">
 	<description>
 		<text>
@@ -442,7 +442,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="BCanvas-drawImage[@string@number@number@number@number]"
+<BlockGenus name="BCanvas-drawImage[@string@int@int@int@int]"
 	kind="command" color="255 0 0" initlabel="画像を描きます">
 	<BlockConnectors>
 		<BlockConnector label="画像のパス" connector-type="string"
@@ -464,7 +464,7 @@
 </BlockGenus>
 
 <BlockGenus
-	name="BCanvas-drawFillArc[@object@number@number@number@number@number@number]"
+	name="BCanvas-drawFillArc[@object@int@int@int@int@int@int]"
 	kind="command" color="255 0 0" initlabel="塗りつぶした円を描きます">
 	<JavaLabel>drawFillArc</JavaLabel>
 	<BlockConnectors>
@@ -491,7 +491,7 @@
 </BlockGenus>
 
 
-<BlockGenus name="BWindow-setLocation[@number@number]" kind="command"
+<BlockGenus name="BWindow-setLocation[@int@int]" kind="command"
 	color="255 0 0" initlabel="位置を設定します">
 	<BlockConnectors>
 		<BlockConnector label="X座標" connector-type="number"
@@ -521,7 +521,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="BWindow-setSize[@number@number]" kind="command"
+<BlockGenus name="BWindow-setSize[@int@int]" kind="command"
 	color="255 0 0" initlabel="サイズを指定する">
 	<BlockConnectors>
 		<BlockConnector label="幅" connector-type="number"
@@ -564,7 +564,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="BSound-setVolume[@number]" kind="command" color="255 0 0"
+<BlockGenus name="BSound-setVolume[@int]" kind="command" color="255 0 0"
 	initlabel="ボリュームを設定します">
 	<BlockConnectors>
 		<BlockConnector label="音量" connector-type="number"

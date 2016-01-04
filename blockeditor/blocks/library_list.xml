@@ -5,6 +5,7 @@
 		<CategoryName name="Object" command="add">
 			<MethodName>Object-toString[]</MethodName>
 			<MethodName>Object-hashCode[]</MethodName>
+			<MethodName>Object-equals[@object]</MethodName>
 		</CategoryName>
 	</LibraryClass>
 

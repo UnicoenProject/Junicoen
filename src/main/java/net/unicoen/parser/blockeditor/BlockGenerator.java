@@ -33,21 +33,26 @@ import net.unicoen.node.UniBinOp;
 import net.unicoen.node.UniBlock;
 import net.unicoen.node.UniBoolLiteral;
 import net.unicoen.node.UniBreak;
+import net.unicoen.node.UniCast;
 import net.unicoen.node.UniClassDec;
 import net.unicoen.node.UniContinue;
 import net.unicoen.node.UniDoWhile;
 import net.unicoen.node.UniDoubleLiteral;
+import net.unicoen.node.UniEmptyStatement;
 import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniFieldAccess;
 import net.unicoen.node.UniFieldDec;
+import net.unicoen.node.UniFile;
 import net.unicoen.node.UniFor;
 import net.unicoen.node.UniIdent;
 import net.unicoen.node.UniIf;
+import net.unicoen.node.UniImport;
 import net.unicoen.node.UniIntLiteral;
 import net.unicoen.node.UniLongLiteral;
 import net.unicoen.node.UniMemberDec;
 import net.unicoen.node.UniMethodCall;
 import net.unicoen.node.UniMethodDec;
+import net.unicoen.node.UniNamespace;
 import net.unicoen.node.UniNew;
 import net.unicoen.node.UniNewArray;
 import net.unicoen.node.UniReturn;
@@ -66,6 +71,7 @@ import net.unicoen.parser.blockeditor.blockmodel.BlockContinueModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockDoWhileModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockDoubleLiteralModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockElementModel;
+import net.unicoen.parser.blockeditor.blockmodel.BlockEmptyModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockExCallGetterModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockExCallerModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockExprModel;
@@ -117,30 +123,27 @@ public class BlockGenerator extends UniModelVisitor {
 	private Document document;
 	private Stack<String> idStack = new Stack<>();
 
-	public static String PARENT_ID_NULL="-1";
-	
+	public static String PARENT_ID_NULL = "-1";
+
 	public BlockGenerator(PrintStream out, String langdefRootPath) throws SAXException, IOException {
 		this.out = out;
 		resolver = new BlockResolver(langdefRootPath, false);
 	}
-	
+
 	public BlockGenerator(PrintStream out, String langdefRootPath, boolean isTest) throws SAXException, IOException {
 		this.out = out;
 		resolver = new BlockResolver(langdefRootPath, isTest);
 	}
-	
-	/*
-	 * Unicoenモデルを解析し、xmlファイルを作成し返す
-	 */
-	public void parse(UniClassDec classDec) throws IOException, RuntimeException {
+
+	public void parse(UniClassDec dec) {
 		// クラス名のxmlファイルを作成する
 		addedModels.clear(); // cashクリア
 
-		out.print(getSaveString(classDec));
+		out.print(getSaveString(dec));
 
 		out.close();
 	}
-	
+
 	/**
 	 * UniClassModelを解析して，BockEditorのソースコード形式のxmlNodeを文字列として取得する
 	 * 
@@ -150,7 +153,7 @@ public class BlockGenerator extends UniModelVisitor {
 	public String getSaveString(UniClassDec classDec) throws RuntimeException {
 		try {
 			Node node = getSaveNode(classDec);
-			
+
 			StringWriter writer = new StringWriter();
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			Transformer transformer = transformerFactory.newTransformer();
@@ -165,7 +168,7 @@ public class BlockGenerator extends UniModelVisitor {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	/**
 	 * UniClassModelを解析して，BockEditorのソースコード形式のxmlNodeを生成する
 	 * 
@@ -176,11 +179,11 @@ public class BlockGenerator extends UniModelVisitor {
 	public Node getSaveNode(UniClassDec classDec) throws RuntimeException {
 		try {
 			this.document = DOMUtil.createDocumentInstance();
-			
+
 			Element documentElement = document.createElementNS(XML_CODEBLOCKS_NS, "cb:CODEBLOCKS");
 			documentElement.setAttributeNS(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "xsi:schemaLocation", XML_CODEBLOCKS_NS + " " + XML_CODEBLOCKS_SCHEMA_URI);
 
-			BlockClassModel model = (BlockClassModel)visitClassDec(classDec);
+			BlockClassModel model = (BlockClassModel) visitClassDec(classDec);
 			PageModel pageModel = new PageModel(classDec, model.createBlockNodes(document), document);
 
 			List<PageModel> pages = new ArrayList<PageModel>();
@@ -195,6 +198,30 @@ public class BlockGenerator extends UniModelVisitor {
 		} catch (ParserConfigurationException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public String getSaveString(Node node) throws TransformerException {
+		StringWriter writer = new StringWriter();
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		Transformer transformer = transformerFactory.newTransformer();
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+		transformer.setOutputProperty(OutputKeys.ENCODING, BLOCK_ENC);
+		transformer.transform(new DOMSource(node), new StreamResult(writer));
+		return writer.toString();
+	}
+
+	/**
+	 * UniClassModelを解析して，PageNodeを作成する
+	 * 
+	 * @param classDec
+	 *            UniClassModel
+	 * @return
+	 */
+	public PageModel getPageNode(UniClassDec classDec) throws RuntimeException {
+		BlockClassModel model = (BlockClassModel) visitClassDec(classDec);
+		PageModel pageModel = new PageModel(classDec, model.createBlockNodes(document), document);
+
+		return pageModel;
 	}
 
 	@Override
@@ -253,8 +280,8 @@ public class BlockGenerator extends UniModelVisitor {
 	public Object visitFieldAccess(UniFieldAccess node) {
 		String genusName = resolver.getForceConvertionMap().getBlockGenusName(node);
 		BlockExprModel expr = new BlockExprModel();
-		expr.setElement(expr.createBlockElement(document, genusName, ID_COUNTER++,BlockElementModel.BLOCKKINDS.DATA.toString()));
-		
+		expr.setElement(expr.createBlockElement(document, genusName, ID_COUNTER++, BlockElementModel.BLOCKKINDS.DATA.toString()));
+
 		BlockPlugModel plugInfo = new BlockPlugModel(resolver.getPlugElement(expr.getGenusName()), getParentId());
 		expr.setPlugElement(document, plugInfo);
 		return expr;
@@ -284,10 +311,10 @@ public class BlockGenerator extends UniModelVisitor {
 			}
 		}
 	}
-	
-	public BlockElementModel visitExpr(UniExpr expr, String parentId){
+
+	public BlockElementModel visitExpr(UniExpr expr, String parentId) {
 		idStack.push(parentId);
-		return (BlockElementModel)visitExpr(expr);
+		return (BlockElementModel) visitExpr(expr);
 	}
 
 	public List<BlockElementModel> parseArgs(List<UniExpr> args, String parentId) {
@@ -387,7 +414,7 @@ public class BlockGenerator extends UniModelVisitor {
 		String parentId = getParentId();
 		if (node.operator.equals("=")) {// 他の二項演算と扱いが別（ソケットが一つのみ）
 			return createEqualOperatorModel(node, document);
-		} else {			
+		} else {
 			Long id = ID_COUNTER++;
 
 			BlockElementModel leftBlock = visitExpr(node.left, String.valueOf(id));
@@ -408,11 +435,11 @@ public class BlockGenerator extends UniModelVisitor {
 			return binOpModel;
 		}
 	}
-	
+
 	public boolean isParamNode(Node node) {
 		return DOMUtil.getAttribute(node, BlockElementModel.GENUS_NAME_ATTR).startsWith("proc-param");
 	}
-	
+
 	public BlockElementModel createEqualOperatorModel(UniBinOp binopExpr, Document document) {
 		if (binopExpr.left instanceof UniIdent) {
 			UniIdent ident = (UniIdent) binopExpr.left;
@@ -466,7 +493,7 @@ public class BlockGenerator extends UniModelVisitor {
 
 	@Override
 	public Object visitBreak(UniBreak node) {
-		return new BlockBreakModel(document,ID_COUNTER++);
+		return new BlockBreakModel(document, ID_COUNTER++);
 	}
 
 	@Override
@@ -496,9 +523,9 @@ public class BlockGenerator extends UniModelVisitor {
 		}), document, socketsInfo);
 
 		return model;
-		
+
 	}
-	
+
 	public List<BlockCommandModel> parseBody(UniExpr statement) throws RuntimeException {
 		String parentId = getParentId();
 		if (statement == null) {
@@ -517,7 +544,7 @@ public class BlockGenerator extends UniModelVisitor {
 		if (statementBlock.body != null) {
 			for (int i = 0; i < statementBlock.body.size(); i++) {
 				UniExpr expr = statementBlock.body.get(i);
-				BlockElementModel command = (BlockElementModel)visitExpr(expr);
+				BlockElementModel command = (BlockElementModel) visitExpr(expr);
 
 				// statement以外は弾く
 				if (!(command instanceof BlockCommandModel)) {
@@ -582,7 +609,7 @@ public class BlockGenerator extends UniModelVisitor {
 		// ソケットの出力
 		model.addSocketsAndNodes(blockSockets, document, socketsInfo);
 	}
-	
+
 	@Override
 	public Object visitFor(UniFor node) {
 		UniBlock forBlock = new UniBlock(new ArrayList<>(), "for");
@@ -646,10 +673,11 @@ public class BlockGenerator extends UniModelVisitor {
 				UniExpr expr = statementBlock.body.get(i);
 				BlockElementModel command = (BlockElementModel) visitExpr(expr);
 
-//				// statement以外は弾く
-//				if (!(command instanceof BlockCommandModel)) {
-//					throw new RuntimeException("cant use the expression" + expr.toString());
-//				}
+				// // statement以外は弾く
+				// if (!(command instanceof BlockCommandModel)) {
+				// throw new RuntimeException("cant use the expression" +
+				// expr.toString());
+				// }
 
 				command.addBeforeBlockNode(document, beforeId);
 
@@ -695,18 +723,18 @@ public class BlockGenerator extends UniModelVisitor {
 		resolver.getVariableNameResolver().addLocalVariable(name, model.getElement());
 		return model;
 	}
-	
-	
+
 	public List<BlockProcParmModel> parseFunctionArgs(List<UniArg> args, String parent) {
 		List<BlockProcParmModel> argModels = new ArrayList<>();
 		if (args != null) {
 			for (UniArg arg : args) {
 				idStack.push(parent);
-				argModels.add((BlockProcParmModel)visitArg(arg));
+				argModels.add((BlockProcParmModel) visitArg(arg));
 			}
 		}
 		return argModels;
 	}
+
 	@Override
 	public Object visitVariableDec(UniVariableDec node) {
 		BlockLocalVarDecModel model = parseVarDec(node.type, node.name);
@@ -722,7 +750,7 @@ public class BlockGenerator extends UniModelVisitor {
 		List<BlockElementModel> args = new ArrayList<>();
 		if (initializer != null) {
 			args.add(initializer);
-		} 
+		}
 
 		model.addSocketsAndNodes(args, document, sockets);
 
@@ -755,26 +783,26 @@ public class BlockGenerator extends UniModelVisitor {
 
 	@Override
 	public Object visitMethodDec(UniMethodDec node) {
-		BlockProcedureModel model  = new BlockProcedureModel(node, document, ID_COUNTER++);
+		BlockProcedureModel model = new BlockProcedureModel(node, document, ID_COUNTER++);
 
 		// //引数を解析して引数モデルを生成
-		List<BlockProcParmModel> args = parseFunctionArgs(node.args, model.getBlockID());		
-		
-		//メソッドモデルに引数ノードを追加
+		List<BlockProcParmModel> args = parseFunctionArgs(node.args, model.getBlockID());
+
+		// メソッドモデルに引数ノードを追加
 		model.addSocketsAndNodes(Lists.transform(args, new Function<BlockProcParmModel, BlockElementModel>() {
 			@Override
 			public BlockElementModel apply(BlockProcParmModel input) {
 				return input;
 			}
 		}), document, null);
-		
-		//Locationの追加
-		
-		//TODO 可視状態の追加 コメントが追加されたら即修正すること
-		if(node.methodName.equals("main")){
+
+		// Locationの追加
+
+		// TODO 可視状態の追加 コメントが追加されたら即修正すること
+		if (node.methodName.equals("main")) {
 			model.addInvisibleNode(document, "@invisible");
 		}
-		
+
 		List<BlockElementModel> bodyBlocks = new ArrayList<>();
 		model.setBodyBlocks(bodyBlocks);
 		// funcDec.body ボディのパース
@@ -784,7 +812,7 @@ public class BlockGenerator extends UniModelVisitor {
 			List<UniExpr> body = node.block.body;
 			for (int i = 0; i < body.size(); i++) {
 				// expressionの解析 行き掛け順
-				BlockElementModel commandBlock = (BlockElementModel)visitExpr(body.get(i));// 木で返す．
+				BlockElementModel commandBlock = (BlockElementModel) visitExpr(body.get(i));// 木で返す．
 
 				if (i + 1 < body.size()) {
 					commandBlock.addAfterBlockNode(document, String.valueOf(ID_COUNTER));
@@ -802,7 +830,7 @@ public class BlockGenerator extends UniModelVisitor {
 
 		return model;
 	}
-	
+
 	public boolean hasBody(UniMethodDec funcDec) {
 		if (funcDec.block != null && funcDec.block.body != null && funcDec.block.body.size() > 0) {
 			return true;
@@ -829,13 +857,13 @@ public class BlockGenerator extends UniModelVisitor {
 			if (member instanceof UniMethodDec) {
 				UniMethodDec mDec = (UniMethodDec) member;
 				ID_COUNTER = resolver.getMehtodResolver().getFieldMethodInfo().getId(BlockMethodCallModel.calcMethodCallGenusName(mDec.methodName, transformArgToString(mDec.args)));
-				BlockProcedureModel blockMethodCall = (BlockProcedureModel)visitMethodDec(mDec);
+				BlockProcedureModel blockMethodCall = (BlockProcedureModel) visitMethodDec(mDec);
 				addLocation(blockMethodCall, document, model.getMethods().size());
 				model.addMethod(blockMethodCall);
 			}
 		}
 	}
-	
+
 	public List<String> transformArgToString(List<UniArg> args) {
 		if (args == null) {
 			return new ArrayList<String>();
@@ -848,7 +876,7 @@ public class BlockGenerator extends UniModelVisitor {
 			});
 		}
 	}
-	
+
 	public void addLocation(BlockElementModel mDec, Document document, int size) {
 		int x = 50 + 200 * size;
 		int y = 50;
@@ -858,7 +886,7 @@ public class BlockGenerator extends UniModelVisitor {
 
 		mDec.addLocationElement(document, Integer.toString(x), Integer.toString(y), mDec.getBlockElement());
 	}
-	
+
 	@Override
 	public Object visitClassDec(UniClassDec node) {
 		if (node.superClass != null && node.superClass.size() > 0) {
@@ -877,7 +905,7 @@ public class BlockGenerator extends UniModelVisitor {
 		superClass = "";
 		return model;
 	}
-	
+
 	public void addUserDefineMethodToResolver(UniClassDec classDec) {
 		for (UniMemberDec member : classDec.members) {
 			if (member instanceof UniMethodDec) {
@@ -886,7 +914,7 @@ public class BlockGenerator extends UniModelVisitor {
 			}
 		}
 	}
-	
+
 	public void parseFieldVariable(UniClassDec classDec, BlockClassModel model, Document document) {
 		for (UniMemberDec member : classDec.members) {
 			if (member instanceof UniFieldDec) {
@@ -894,7 +922,7 @@ public class BlockGenerator extends UniModelVisitor {
 			}
 		}
 	}
-	
+
 	public BlockFieldVarDecModel createBlockFieldVariableDecModel(UniFieldDec member, Document document) {
 		UniFieldDec varDec = member;
 		BlockFieldVarDecModel blockModel = new BlockFieldVarDecModel(member.type, member.name, document, resolver, ID_COUNTER++);
@@ -950,18 +978,18 @@ public class BlockGenerator extends UniModelVisitor {
 			}
 		});
 		String tmpGenusName = BlockMethodCallModel.calcMethodCallGenusName(methodName, socketTypes);
-//		try {
+		try {
 			if (resolver.getMehtodResolver().getFieldMethodInfo().isFieldMethod(tmpGenusName)) {// フィールドメソッドコール
 				return createDefinedMethodCallerModel(methodName, sockets, callerId, document, parent);
 			} else {// 継承メソッドorライブラリメソッド
 				String genusName = resolver.getMehtodResolver().getMethodGenusName(identifier, tmpGenusName);
-				System.out.println(genusName);
+				System.out.println("create " + methodName);
 				return createMethodCallModel(genusName, callerId, sockets, document, parent);
 			}
-//		} catch (Exception e) {
-//			// create special
-//			return createSpecialMethodCallModel(methodName, sockets, document, callerId, parent);
-//		}
+		} catch (Exception e) {
+			// create special
+			return createSpecialMethodCallModel(methodName, sockets, document, callerId, parent);
+		}
 	}
 
 	public BlockElementModel createSpecialMethodCallModel(String methodName, List<BlockElementModel> sockets, Document document, Long callerId, String parentId) {
@@ -1144,12 +1172,70 @@ public class BlockGenerator extends UniModelVisitor {
 			});
 		}
 	}
-	
-	public String getParentId(){
-		if(!idStack.isEmpty()){
+
+	public String getParentId() {
+		if (!idStack.isEmpty()) {
 			return idStack.pop();
 		}
 		return PARENT_ID_NULL;
 	}
-	
+
+	@Override
+	public Object visitCast(UniCast node) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visitNamesapce(UniNamespace node) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visitEmpty(UniEmptyStatement node) {
+		BlockElementModel model = new BlockEmptyModel(ID_COUNTER++, document);
+		return model;
+	}
+
+	public void parse(UniFile node) throws ParserConfigurationException, TransformerException {
+		Element root = createRootNode();
+		PagesModel pages = (PagesModel) visitFile(node);
+
+		root.appendChild(pages.getPagesElement());
+		out.print(getSaveString(root));
+
+		out.close();
+	}
+
+	@Override
+	public Object visitFile(UniFile node) {
+		try {
+			List<PageModel> pages = new ArrayList<>();
+			for (UniClassDec dec : node.classes) {
+				BlockClassModel model = (BlockClassModel) visitClassDec(dec);
+				PageModel page = new PageModel(dec, model.createBlockNodes(document), document);
+				pages.add(page);
+			}
+			return new PagesModel(pages, document);
+		} catch (RuntimeException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public Element createRootNode() throws ParserConfigurationException {
+		this.document = DOMUtil.createDocumentInstance();
+		Element documentElement = document.createElementNS(XML_CODEBLOCKS_NS, "cb:CODEBLOCKS");
+		documentElement.setAttributeNS(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "xsi:schemaLocation", XML_CODEBLOCKS_NS + " " + XML_CODEBLOCKS_SCHEMA_URI);
+
+		return documentElement;
+	}
+
+	@Override
+	public Object visitImport(UniImport nodec) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

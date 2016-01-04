@@ -87,7 +87,7 @@
 				<name>Math</name>
 			</receiver>
 		</UniModel>
-		<GenusName>Math-sin[@number]</GenusName>
+		<GenusName>Math-sin[@int]</GenusName>
 	</Item>
 
 	<Item>
@@ -97,7 +97,7 @@
 				<name>Math</name>
 			</receiver>
 		</UniModel>
-		<GenusName>Math-sqrt[@number]</GenusName>
+		<GenusName>Math-sqrt[@int]</GenusName>
 	</Item>
 
 	<Item>
@@ -107,7 +107,7 @@
 				<name>Math</name>
 			</receiver>
 		</UniModel>
-		<GenusName>Math-cos[@number]</GenusName>
+		<GenusName>Math-cos[@int]</GenusName>
 	</Item>
 
 	<Item>
@@ -117,7 +117,7 @@
 				<name>Math</name>
 			</receiver>
 		</UniModel>
-		<GenusName>Math-tan[@number]</GenusName>
+		<GenusName>Math-tan[@int]</GenusName>
 	</Item>
 
 	<Item>
@@ -127,7 +127,7 @@
 				<name>Math</name>
 			</receiver>
 		</UniModel>
-		<GenusName>Math-log[@number]</GenusName>
+		<GenusName>Math-log[@int]</GenusName>
 	</Item>
 
 	<Item>
@@ -137,7 +137,17 @@
 				<name>Math</name>
 			</receiver>
 		</UniModel>
-		<GenusName>Math-toRadians[@number]</GenusName>
+		<GenusName>Math-toRadians[@int]</GenusName>
+	</Item>
+
+	<Item>
+		<UniModel unimodel="UniMethodCall">
+			<name>acos</name>
+			<receiver unimodel="UniIdent">
+				<name>Math</name>
+			</receiver>
+		</UniModel>
+		<GenusName>Math-acos[@int]</GenusName>
 	</Item>
 
 	<!-- 変換系 -->

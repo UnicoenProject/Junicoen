@@ -6,21 +6,26 @@ import net.unicoen.node.UniBinOp;
 import net.unicoen.node.UniBlock;
 import net.unicoen.node.UniBoolLiteral;
 import net.unicoen.node.UniBreak;
+import net.unicoen.node.UniCast;
 import net.unicoen.node.UniClassDec;
 import net.unicoen.node.UniContinue;
 import net.unicoen.node.UniDoWhile;
 import net.unicoen.node.UniDoubleLiteral;
+import net.unicoen.node.UniEmptyStatement;
 import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniFieldAccess;
 import net.unicoen.node.UniFieldDec;
+import net.unicoen.node.UniFile;
 import net.unicoen.node.UniFor;
 import net.unicoen.node.UniIdent;
 import net.unicoen.node.UniIf;
+import net.unicoen.node.UniImport;
 import net.unicoen.node.UniIntLiteral;
 import net.unicoen.node.UniLongLiteral;
 import net.unicoen.node.UniMemberDec;
 import net.unicoen.node.UniMethodCall;
 import net.unicoen.node.UniMethodDec;
+import net.unicoen.node.UniNamespace;
 import net.unicoen.node.UniNew;
 import net.unicoen.node.UniNewArray;
 import net.unicoen.node.UniReturn;
@@ -31,6 +36,17 @@ import net.unicoen.node.UniVariableDec;
 import net.unicoen.node.UniWhile;
 
 public abstract class UniModelVisitor {
+	
+	public abstract Object visitCast(UniCast node);
+	
+	public abstract Object visitNamesapce(UniNamespace node);
+	
+	public abstract Object visitEmpty(UniEmptyStatement node);
+	
+	public abstract Object visitFile(UniFile node);
+	
+	public abstract Object visitImport(UniImport nodec);
+	
 	public abstract Object visitBoolLiteral(UniBoolLiteral node);
 
 	public abstract Object visitIntLiteral(UniIntLiteral node);

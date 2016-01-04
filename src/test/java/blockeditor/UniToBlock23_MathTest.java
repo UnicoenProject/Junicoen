@@ -12,7 +12,6 @@ public class UniToBlock23_MathTest {
 	public void test() throws IOException {
 		UniClassDec classModel = UniToBlockTestUtil.createClassDec("blockeditor/testcases/BlockConvertTest/_23MathTest.java");
 		UniToBlockTestUtil.parseTestToBG2(classModel);
-		
 	}
 
 }

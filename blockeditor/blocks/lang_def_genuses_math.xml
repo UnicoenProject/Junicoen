@@ -9,7 +9,7 @@
 	</BlockConnectors>
 </BlockGenus>
 
-<BlockGenus name="Math-round[@number]" kind="function" initlabel="四捨五入する"
+<BlockGenus name="Math-round[@int]" kind="function" initlabel="四捨五入する"
 	color="15 20 220">
 		<Type>double</Type>
 	<Name>round</Name>
@@ -23,7 +23,21 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="Math-min[@number@number]" kind="function" initlabel="小さい方"
+<BlockGenus name="Math-acos[@int]" kind="function" initlabel="acos"
+	color="15 20 220">
+		<Type>double</Type>
+	<Name>acos</Name>
+	<BlockConnectors>
+		<BlockConnector connector-kind="plug" connector-type="number"></BlockConnector>
+		<BlockConnector connector-kind="socket" connector-type="number"></BlockConnector>
+	</BlockConnectors>
+	<LangSpecProperties>
+		<LangSpecProperty key="vm-cmd-name" value="round"></LangSpecProperty>
+		<LangSpecProperty key="is-monitorable" value="yes"></LangSpecProperty>
+	</LangSpecProperties>
+</BlockGenus>
+
+<BlockGenus name="Math-min[@int@int]" kind="function" initlabel="小さい方"
 	color="15 20 220">
 		<Type>int</Type>
 	<Name>min</Name>
@@ -41,7 +55,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="Math-max[@number@number]" kind="function" initlabel="大きい方"
+<BlockGenus name="Math-max[@int@int]" kind="function" initlabel="大きい方"
 	color="15 20 220">
 		<Type>int</Type>
 	<Name>max</Name>
@@ -59,7 +73,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="Math-pow[@number@number]" kind="function" initlabel="power"
+<BlockGenus name="Math-pow[@int@int]" kind="function" initlabel="power"
 	color="15 20 220">
 		<Type>int</Type>
 	<Name>pow</Name>
@@ -77,7 +91,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="Math-abs[@number]" kind="function" initlabel="絶対値にする"
+<BlockGenus name="Math-abs[@int]" kind="function" initlabel="絶対値にする"
 	color="15 20 220">
 		<Type>int</Type>
 	<Name>abs</Name>
@@ -91,7 +105,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="Math-sqrt[@number]" kind="function" initlabel="平方根にする"
+<BlockGenus name="Math-sqrt[@int]" kind="function" initlabel="平方根にする"
 	color="15 20 220">
 		<Type>double</Type>
 	<Name>sqrt</Name>
@@ -107,7 +121,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="Math-sin[@number]" kind="function" initlabel="sin" color="15 20 220">
+<BlockGenus name="Math-sin[@int]" kind="function" initlabel="sin" color="15 20 220">
 			<Type>double</Type>
 	<Name>sin</Name>
 	<BlockConnectors>
@@ -123,7 +137,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="Math-cos[@number]" kind="function" initlabel="cos" color="15 20 220">
+<BlockGenus name="Math-cos[@int]" kind="function" initlabel="cos" color="15 20 220">
 		<Type>double</Type>
 	<Name>cos</Name>
 	<BlockConnectors>
@@ -139,7 +153,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="Math-tan[@number]" kind="function" initlabel="tan" color="15 20 220">
+<BlockGenus name="Math-tan[@int]" kind="function" initlabel="tan" color="15 20 220">
 		<Type>double</Type>
 	<Name>tan</Name>
 	<BlockConnectors>
@@ -155,7 +169,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="Math-atan[@number]" kind="function" initlabel="atan"
+<BlockGenus name="Math-atan[@int]" kind="function" initlabel="atan"
 	color="15 20 220">
 			<Type>double</Type>
 	<Name>atan</Name>
@@ -172,7 +186,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="Math-asin[@number]" kind="function" initlabel="asin"
+<BlockGenus name="Math-asin[@int]" kind="function" initlabel="asin"
 	color="15 20 220">
 			<Type>double</Type>
 	<Name>asin</Name>
@@ -186,7 +200,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="Math-acos[@number]" kind="function" initlabel="acos"
+<BlockGenus name="Math-acos[@int]" kind="function" initlabel="acos"
 	color="15 20 220">
 			<Type>double</Type>
 	<Name>acos</Name>
@@ -200,7 +214,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="Math-log[@number]" kind="function" initlabel="log" color="15 20 220">
+<BlockGenus name="Math-log[@int]" kind="function" initlabel="log" color="15 20 220">
 			<Type>double</Type>
 	<Name>log</Name>
 	<BlockConnectors>
@@ -215,7 +229,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="Math-log[@number]" kind="function" initlabel="log" color="15 20 220">
+<BlockGenus name="Math-log[@int]" kind="function" initlabel="log" color="15 20 220">
 		<Type>double</Type>
 	<Name>log</Name>
 	<BlockConnectors>
@@ -228,7 +242,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="Math-toRadians[@number]" kind="function" initlabel="ラジアンにする" color="15 20 220">
+<BlockGenus name="Math-toRadians[@int]" kind="function" initlabel="ラジアンにする" color="15 20 220">
 			<Type>double</Type>
 	<Name>toRadians</Name>
 	<BlockConnectors>
@@ -243,7 +257,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="Math-ceil[@number]" kind="function" initlabel="小数点以下を繰り上げた" color="15 20 220">
+<BlockGenus name="Math-ceil[@int]" kind="function" initlabel="小数点以下を繰り上げた" color="15 20 220">
 		<Type>double</Type>
 	<Name>ceil</Name>
 	<BlockConnectors>
@@ -258,7 +272,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="Math-max[@number@number]" kind="function" initlabel="大きい方の値" color="15 20 220">
+<BlockGenus name="Math-max[@int@int]" kind="function" initlabel="大きい方の値" color="15 20 220">
 		<Type>double</Type>
 	<Name>max</Name>
 	<BlockConnectors>
@@ -272,7 +286,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="Math-min[@number@number]" kind="function" initlabel="小さい方の値" color="15 20 220">
+<BlockGenus name="Math-min[@int@int]" kind="function" initlabel="小さい方の値" color="15 20 220">
 		<Type>double</Type>
 	<Name>min</Name>
 	<BlockConnectors>
@@ -286,7 +300,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="Math-floor[@number]" kind="function" initlabel="小数点以下を繰り下げた値" color="15 20 220">
+<BlockGenus name="Math-floor[@int]" kind="function" initlabel="小数点以下を繰り下げた値" color="15 20 220">
 		<Type>double</Type>
 	<Name>floor</Name>
 	<BlockConnectors>

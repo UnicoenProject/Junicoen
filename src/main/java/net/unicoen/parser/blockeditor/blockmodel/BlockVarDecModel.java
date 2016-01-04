@@ -8,6 +8,7 @@ import org.w3c.dom.Element;
 import com.google.common.collect.Lists;
 
 import net.unicoen.parser.blockeditor.BlockResolver;
+import net.unicoen.parser.blockeditor.DOMUtil;
 
 public class BlockVarDecModel extends BlockCommandModel{
 
@@ -18,12 +19,11 @@ public class BlockVarDecModel extends BlockCommandModel{
 	public Element createElement(String type, String name, Document document, BlockResolver resolver, Long ID_COUNTER){
 		String genusName = getGenusNameFromResolver(resolver, type);
 		Element blockElement;
-
 		if(genusName == null){
-			blockElement = createSpecialVariableDecModel(type, name, getKind(), document, resolver, ID_COUNTER);
+			blockElement = createSpecialVariableDecModel(type, name, "local-variable", document, resolver, ID_COUNTER);
 			addElement(BlockElementModel.LABEL_NODE, document, type + "型の変数を作り、" + name + "と名付ける", blockElement);
 		}else{
-			blockElement = createBlockElement(document, genusName, ID_COUNTER++, getKind());
+			blockElement = createBlockElement(document, genusName, ID_COUNTER++, DOMUtil.getAttribute(resolver.getBlockNode(genusName), BlockElementModel.KIND_ATTR));
 			addElement(BlockElementModel.LABEL_NODE, document, name, blockElement);
 		}
 

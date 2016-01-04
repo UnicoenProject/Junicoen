@@ -99,12 +99,12 @@
 
 	<BlockDrawer name="数学" type="factory" button-color="102 129 255">
 		<BlockGenusMember>Math-random[]</BlockGenusMember>
-		<BlockGenusMember>Math-sqrt[@number]</BlockGenusMember>
-		<BlockGenusMember>Math-sin[@number]</BlockGenusMember>
-		<BlockGenusMember>Math-cos[@number]</BlockGenusMember>
-		<BlockGenusMember>Math-tan[@number]</BlockGenusMember>
-		<BlockGenusMember>Math-log[@number]</BlockGenusMember>
-		<BlockGenusMember>Math-toRadians[@number]</BlockGenusMember>
+		<BlockGenusMember>Math-sqrt[@int]</BlockGenusMember>
+		<BlockGenusMember>Math-sin[@int]</BlockGenusMember>
+		<BlockGenusMember>Math-cos[@int]</BlockGenusMember>
+		<BlockGenusMember>Math-tan[@int]</BlockGenusMember>
+		<BlockGenusMember>Math-log[@int]</BlockGenusMember>
+		<BlockGenusMember>Math-toRadians[@int]</BlockGenusMember>
 	</BlockDrawer>
 
 	<BlockDrawer name="変数の定義" type="factory" button-color="230 0 255">
