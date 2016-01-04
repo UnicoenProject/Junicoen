@@ -355,7 +355,10 @@ public class BlockMapper {
 		} else if (blockGenusName.startsWith(BlockPrePostModel.PRE_POST_GENUSHEADER.POST_DEC.toString())) {
 			UniUnaryOp op = new UniUnaryOp("_--", new UniIdent(DOMUtil.getChildText(node, BlockElementModel.LABEL_NODE)));
 			return op;
-		} else {
+		} else if(resolver.getForceConvertionMap().getUniFieldAccessModel(blockGenusName) != null){ 
+			return resolver.getForceConvertionMap().getUniFieldAccessModel(blockGenusName);
+		}
+		else {
 			throw new RuntimeException("not supported data type:" + blockGenusName);
 		}
 	}
@@ -409,7 +412,7 @@ public class BlockMapper {
 			uniNewModel.args = sockets;
 			return uniNewModel;
 		} else if (resolver.getForceConvertionMap().getUniMethodCallModel(blockGenusName) != null) {
-			UniMethodCall model = (UniMethodCall) resolver.getForceConvertionMap().getUniMethodCallModel(blockGenusName);
+			UniMethodCall model = resolver.getForceConvertionMap().getUniMethodCallModel(blockGenusName);
 			Node sockets = getSocketsNode(node);
 			model.args = parseSocket(sockets, map);
 			return model;
@@ -558,7 +561,7 @@ public class BlockMapper {
 			UniMethodCall call = new UniMethodCall(null, methodName, args);
 			return call;
 		} else if (resolver.getForceConvertionMap().getUniMethodCallModel(blockGenusName) != null) {
-			UniMethodCall model = (UniMethodCall) resolver.getForceConvertionMap().getUniMethodCallModel(blockGenusName);
+			UniMethodCall model = resolver.getForceConvertionMap().getUniMethodCallModel(blockGenusName);
 			Node sockets = getSocketsNode(node);
 			model.args = parseSocket(sockets, map);
 			return model;

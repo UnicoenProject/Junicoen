@@ -20,6 +20,9 @@ public class UniToBlock30_MethodTest {
 		UniClassDec classModel = UniToBlockTestUtil.createClassDec("blockeditor/testcases/BlockConvertTest/_30MethodTest.java");
 		classModel.superClass = Lists.newArrayList("Turtle");
 		
+		UniMethodDec main = (UniMethodDec) classModel.members.get(0);
+		main.args = Lists.newArrayList(new UniArg("String[]", "args"));
+		
 		UniMethodDec m1 = (UniMethodDec)classModel.members.get(3);
 		m1.args = Lists.newArrayList(new UniArg("int", "x"));
 		

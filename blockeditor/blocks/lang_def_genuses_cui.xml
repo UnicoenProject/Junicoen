@@ -2,6 +2,19 @@
 
 <!-- CUI -->
 
+<BlockGenus name="new-object-Scanner[@object]" kind="function"
+	initlabel="Scanner" editable-label="yes" header-label="新しく"
+	footer-label="を作る" color="16 240 27">
+	<Type>Scanner</Type>
+	<BlockConnectors>
+		<BlockConnector connector-kind="plug" connector-type="object"></BlockConnector>
+		<BlockConnector label="" connector-kind="socket"
+			connector-type="object">
+			<DefaultArg genus-name="systemin"></DefaultArg>
+		</BlockConnector>
+	</BlockConnectors>
+</BlockGenus>
+
 <BlockGenus name="cui-print[@string]" kind="command"
 	initlabel="(CUI)出力する" color="255 0 0">
 	<BlockConnectors>
@@ -11,7 +24,7 @@
 	</BlockConnectors>
 </BlockGenus>
 
-<BlockGenus name="systemin" kind="function" initlabel="System.in"
+<BlockGenus name="systemin" kind="data" initlabel="System.in"
 	color="255 0 0">
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="object">

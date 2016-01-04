@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
+import net.unicoen.node.UniArg;
 import net.unicoen.node.UniBinOp;
 import net.unicoen.node.UniBlock;
 import net.unicoen.node.UniClassDec;
@@ -22,6 +23,10 @@ public class UniToBlock11_LogicText {
 	public void test() throws IOException {
 		UniClassDec classModel = UniToBlockTestUtil.createClassDec("blockeditor/testcases/BlockConvertTest/_11LogicTest.java");
 		classModel.superClass = Lists.newArrayList("Turtle");
+		
+		UniMethodDec main = (UniMethodDec) classModel.members.get(0);
+		main.args = Lists.newArrayList(new UniArg("String[]", "args"));
+		
 		UniMethodDec run = (UniMethodDec)classModel.members.get(1);
 		UniBlock block = (UniBlock)run.block.body.get(0);
 		block.body.set(4, new UniVariableDec(new ArrayList<>(), "boolean", "b5", new UniUnaryOp("!", new UniIdent("b1"))));
