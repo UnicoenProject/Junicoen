@@ -109,7 +109,7 @@ public class BlockMapper {
 		List<UniMemberDec> ret = new ArrayList<>();
 		for (Node procNode : procs) {
 			UniMethodDec d = new UniMethodDec(DOMUtil.getChildText(procNode, BlockElementModel.LABEL_NODE), new ArrayList<>(), methodsReturnTypes.get(DOMUtil.getAttribute(procNode, BlockElementModel.ID_ATTR)), new ArrayList<>(), null);
-			d.modifiers.add("public");
+			d.modifiers = getModifiers(procNode);
 			d.args = createArgumentsModel(procNode);
 
 			UniBlock body = new UniBlock(new ArrayList<>(), null);
@@ -125,6 +125,26 @@ public class BlockMapper {
 			resolver.getVariableNameResolver().resetLocalVariables();
 		}
 		return ret;
+	}
+	
+	public List<String> getModifiers(Node node){
+		List<String> modifiers = new ArrayList<>();
+		
+		Node modifiersNode = DOMUtil.getChildNode(node, BlockProcedureModel.MODIFIERS_NODE);
+		if(modifiersNode == null){
+			modifiers.add("public");
+			return modifiers;
+		}else{
+			NodeList modifierNodes = modifiersNode.getChildNodes();
+			for(int i = 0; i < modifierNodes.getLength();i++){
+				Node item = modifierNodes.item(i);
+				if(BlockProcedureModel.MODIFIER_NODE.equals(item.getNodeName())){
+					modifiers.add(item.getTextContent());
+				}
+			}
+		}
+		
+		return modifiers;
 	}
 
 	/**
@@ -189,15 +209,6 @@ public class BlockMapper {
 		classDec.members = new ArrayList<>();
 
 		return classDec;
-	}
-
-	public UniMethodDec createPrototypeMethodDecModel(Node procNode) {
-		UniMethodDec d = new UniMethodDec();
-		d.methodName = DOMUtil.getChildText(procNode, BlockElementModel.LABEL_NODE);
-		d.modifiers = new ArrayList<>();
-		d.modifiers.add("");
-		d.returnType = "void";
-		return d;
 	}
 
 	public void putAllBlockNodes(Node pageBlock) {
@@ -300,8 +311,10 @@ public class BlockMapper {
 	private UniExpr parseAbstraction(Node node, HashMap<String, Node> map) {
 		Node argsNode = DOMUtil.getChildNode(node, BlockSocketsModel.NODE_NAME);
 		List<UniExpr> args = parseSocket(argsNode, map);
-
-		UniBlock block = (UniBlock) args.get(0);
+		UniBlock block = new UniBlock(new ArrayList<>(), "");
+		if(!args.isEmpty()){
+			block = (UniBlock) args.get(0);
+		}
 		block.blockLabel = DOMUtil.getChildText(node, BlockElementModel.LABEL_NODE);
 
 		return block;

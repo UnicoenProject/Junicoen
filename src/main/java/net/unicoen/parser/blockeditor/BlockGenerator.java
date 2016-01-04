@@ -796,6 +796,9 @@ public class BlockGenerator extends UniModelVisitor {
 			}
 		}), document, null);
 
+		//modifier情報を付与
+		model.addModifierNode(document, node.modifiers);
+
 		// Locationの追加
 
 		// TODO 可視状態の追加 コメントが追加されたら即修正すること

@@ -318,7 +318,8 @@ public class JavaGenerator extends Traverser {
 		parseExpr(node.cond);
 		print(")");
 		if (node.trueStatement == null) {
-			print("{");
+			print(" {");
+			newline();
 			print("}");
 		} else if (node.trueStatement instanceof UniBlock) {
 			print(" ");
