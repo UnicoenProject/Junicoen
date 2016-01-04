@@ -1147,7 +1147,7 @@
 	<Type>boolean</Type>
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="boolean"
-			position-type="mirror"></BlockConnector>
+			position-type="single"></BlockConnector>
 		<BlockConnector connector-kind="socket" connector-type="object" label=""></BlockConnector>
 	</BlockConnectors>
 </BlockGenus>
