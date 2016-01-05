@@ -214,7 +214,8 @@ public class JavaGenerator extends Traverser {
 	@Override
 	public void traverseMethodCall(UniMethodCall mCall) {
 		if (mCall.receiver != null) {
-			parseExpr(mCall.receiver);
+			//("abc" + "def").hashcode();，のようにreceiverにbinopが入る場合もあるのでpriorityをセットする
+			parseExpr(mCall.receiver, priorityTable("*") * 10 + 1);
 			print(".");
 		}
 		print(mCall.methodName);
