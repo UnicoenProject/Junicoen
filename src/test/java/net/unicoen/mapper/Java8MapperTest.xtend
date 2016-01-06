@@ -2,17 +2,14 @@ package net.unicoen.mapper
 
 import com.google.common.collect.Lists
 import java.util.HashMap
+import net.unicoen.node.UniBoolLiteral
 import net.unicoen.node.UniClassDec
+import net.unicoen.node.UniDoubleLiteral
+import net.unicoen.node.UniIntLiteral
+import net.unicoen.node.UniStringLiteral
 import org.junit.Test
 
 import static net.unicoen.node_helper.Builder.*
-import static org.hamcrest.Matchers.*
-import static org.junit.Assert.*
-import net.unicoen.node.UniIntLiteral
-import net.unicoen.node.UniDoubleLiteral
-import net.unicoen.node.UniBoolLiteral
-import net.unicoen.node.UniStringLiteral
-import java.util.List
 
 class Java8MapperTest extends MapperTest {
 	val mapper = new Java8Mapper(true)

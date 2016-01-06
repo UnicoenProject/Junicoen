@@ -24,19 +24,24 @@ import net.unicoen.node.UniStringLiteral
 import net.unicoen.node.UniBinOp
 import net.unicoen.node.UniIdent
 import net.unicoen.node.UniNewArray
+import net.unicoen.node.UniTernaryOp
+import net.unicoen.node.UniNew
 
 class MapperTest {
 
 	protected def void evaluate(Object expected, Object actual) {
 		if (expected == null) {
-			assertThat(actual, equalTo(expected))
+			if (actual != null) {
+				assertThat(actual, instanceOf(typeof(List)))
+				assertThat((actual as List<?>).size, is(0))
+			} else {
+				assertNull(actual)
+			}
 			return
 		}
 		switch (expected) {
 			UniClassDec:
 				expected.evaluateClass(actual)
-			List<?>:
-				expected.evaluateList(actual)
 			UniIntLiteral:
 				expected.evaluateIntLiteral(actual)
 			UniDoubleLiteral:
@@ -61,8 +66,16 @@ class MapperTest {
 				expected.evaluateFieldDec(actual)
 			UniNewArray:
 				expected.evaluateNewArray(actual)
-				UniArray:
+			UniArray:
 				expected.evaluateArray(actual)
+			UniVariableDec:
+				expected.evaluateVariableDec(actual)
+			UniTernaryOp:
+				expected.evaluateTernaryOp(actual)
+			UniNew:
+				expected.evaluateNew(actual)
+			List<?>:
+				expected.evaluateList(actual)
 			String,
 			Integer,
 			Double,
@@ -72,8 +85,32 @@ class MapperTest {
 				throw new RuntimeException("Unsuspected type: " + expected.class.typeName)
 		}
 	}
-	
-	private def evaluateArray(UniArray expected, Object actual){
+
+	private def evaluateNew(UniNew expected, Object actual) {
+		assertThat(actual, instanceOf(typeof(UniNew)))
+		val newstat = actual as UniNew
+		expected.args.evaluate(newstat.args)
+		expected.type.evaluate(newstat.type)
+	}
+
+	private def evaluateTernaryOp(UniTernaryOp expected, Object actual) {
+		assertThat(actual, instanceOf(typeof(UniTernaryOp)))
+		val ternaryOp = actual as UniTernaryOp
+		expected.cond.evaluate(ternaryOp.cond)
+		expected.trueExpr.evaluate(ternaryOp.trueExpr)
+		expected.falseExpr.evaluate(ternaryOp.falseExpr)
+	}
+
+	private def evaluateVariableDec(UniVariableDec expected, Object actual) {
+		assertThat(actual, instanceOf(typeof(UniVariableDec)))
+		val variableDec = actual as UniVariableDec
+		expected.modifiers.evaluate(variableDec.modifiers)
+		expected.name.evaluate(variableDec.name)
+		expected.type.evaluate(variableDec.type)
+		expected.value.evaluate(variableDec.value)
+	}
+
+	private def evaluateArray(UniArray expected, Object actual) {
 		assertThat(actual, instanceOf(typeof(UniArray)))
 		val array = actual as UniArray
 		expected.items.evaluate(array.items)
@@ -193,7 +230,9 @@ class MapperTest {
 	 * @param className 期待するクラス名.
 	 * @param superClass 期待するスーパークラス名の配列(ない場合はnull.)
 	 * @param superInterfaces 期待する実装インタフェース名の配列(ない場合はnull.)
+	 * @deprecated Use {@link #evaluate(Object, Object)}
 	 */
+	@Deprecated
 	def evaluateClass(Object node, String className, List<String> superClasses, List<String> superInterfaces) {
 		assertThat(node, instanceOf(typeof(UniClassDec)))
 		val cls = node as UniClassDec
@@ -267,6 +306,7 @@ class MapperTest {
 		}
 	}
 
+	@Deprecated
 	def evaluateFieldDec(Object node, String type, String name, UniExpr value, String... modifiers) {
 
 		//For Primitive/ Reference field declarations
@@ -285,6 +325,7 @@ class MapperTest {
 		assertEquals(cls.value, value)
 	}
 
+	@Deprecated
 	def evaluateVariableDec(Object node, String type, String name, UniExpr value, String... modifiers) {
 
 		//check object node
@@ -306,6 +347,7 @@ class MapperTest {
 	// ///
 	// statements
 	// ///
+	@Deprecated
 	def evaluateIf(Object node, UniExpr cond, UniBlock trueBlock, UniBlock falseBlock) {
 		assertThat(node, instanceOf(typeof(UniIf)))
 		val cls = node as UniIf
@@ -314,6 +356,7 @@ class MapperTest {
 		assertEquals(cls.falseStatement, falseBlock)
 	}
 
+	@Deprecated
 	def evaluateWhile(Object node, UniExpr cond, UniBlock block) {
 		assertThat(node, instanceOf(typeof(UniWhile)))
 		val cls = node as UniWhile
@@ -321,6 +364,7 @@ class MapperTest {
 		assertEquals(cls.statement, block)
 	}
 
+	@Deprecated
 	def evaluateDoWhile(Object node, UniExpr cond, UniBlock block) {
 		assertThat(node, instanceOf(typeof(UniDoWhile)))
 		val cls = node as UniDoWhile
@@ -328,6 +372,7 @@ class MapperTest {
 		assertEquals(cls.statement, block)
 	}
 
+	@Deprecated
 	def evaluateFor(Object node, UniExpr init, UniExpr cond, UniExpr step, UniBlock block) {
 		assertThat(node, instanceOf(typeof(UniFor)))
 		val cls = node as UniFor
@@ -337,6 +382,7 @@ class MapperTest {
 		assertEquals(cls.statement, block)
 	}
 
+	@Deprecated
 	def evaluateBreak(Object node) {
 		assertThat(node, instanceOf(typeof(UniBreak)))
 	}
@@ -344,6 +390,7 @@ class MapperTest {
 	/////
 	// evaluate Array
 	/////
+	@Deprecated
 	def evaluateIntArray(Object node, UniArray arr) {
 		assertThat(node, instanceOf(UniArray))
 		val cls = node as UniArray

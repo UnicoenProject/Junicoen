@@ -1,235 +1,291 @@
 package net.unicoen.mapper
 
-import org.junit.Test
-import static org.hamcrest.Matchers.*
-import static org.junit.Assert.*
-import net.unicoen.node.UniClassDec
-import org.junit.Ignore
-import net.unicoen.node.UniFieldDec
 import net.unicoen.node.UniArray
-import net.unicoen.node.UniStringLiteral
-import net.unicoen.node.UniIntLiteral
-import net.unicoen.node.UniDoubleLiteral
 import net.unicoen.node.UniBoolLiteral
-import net.unicoen.node.UniUnaryOp
+import net.unicoen.node.UniClassDec
+import net.unicoen.node.UniDoubleLiteral
+import net.unicoen.node.UniExpr
+import net.unicoen.node.UniFieldDec
+import net.unicoen.node.UniIntLiteral
+import net.unicoen.node.UniMemberDec
 import net.unicoen.node.UniNew
 import net.unicoen.node.UniNewArray
+import net.unicoen.node.UniStringLiteral
 import net.unicoen.node.UniTernaryOp
+import org.junit.Ignore
+import org.junit.Test
 
 class Java8MapperInterfaceFieldVariableTest extends MapperTest {
 	val mapper = new Java8Mapper(true)
 
 	@Test
 	def void parseSinglePrimitiveVarAttDec() {
+		val actual = mapper.parse("public interface A{public static final int a;}")
 
-		//Single Primitive Variable Attribute Declaration
-		val main = mapper.parse("public interface A{public static final int a;}")
-		val String[] modifiers = #["public", "static", "final"]
-		evaluateFieldDec((main as UniClassDec).members.get(0), "int", "a", null, modifiers)
+		val constant = new UniFieldDec
+		constant.modifiers = #["public", "static", "final"]
+		constant.name = "a"
+		constant.type = "int"
 
+		val expected = new UniClassDec
+		expected.className = "A"
+		expected.members = #[constant as UniMemberDec]
+		expected.modifiers = #["public"]
+
+		expected.evaluate(actual)
 	}
 
 	@Test
 	def void parseTernaryOp() {
-		//Single Primitive Variable Attribute Declaration
-		val main = mapper.parse("public interface A{public static final int a = true ? 1 : 2;}")
-		val String[] modifiers = #["public", "static", "final"]
-		val value = new UniTernaryOp
-		value.cond = new UniBoolLiteral(true)
-		value.trueExpr = new UniIntLiteral(1)
-		value.falseExpr = new UniIntLiteral(2)
-		evaluateFieldDec((main as UniClassDec).members.get(0), "int", "a", value, modifiers)
+		val actual = mapper.parse("public interface A{public static final int a = true ? 1 : 2;}")
 
+		val ternaryOp = new UniTernaryOp
+		ternaryOp.cond = new UniBoolLiteral(true)
+		ternaryOp.trueExpr = new UniIntLiteral(1)
+		ternaryOp.falseExpr = new UniIntLiteral(2)
+
+		val constant = new UniFieldDec
+		constant.modifiers = #["public", "static", "final"]
+		constant.name = "a"
+		constant.type = "int"
+		constant.value = ternaryOp
+
+		val expected = new UniClassDec
+		expected.className = "A"
+		expected.members = #[constant as UniMemberDec]
+		expected.modifiers = #["public"]
+
+		expected.evaluate(actual)
 	}
 
 	@Test
 	def void parseMultiplePrimitiveVarAttDec() {
-		val main = mapper.parse("public interface A{public static final int temp, temp1, temp2;}")
-		main.evaluateClass("A", null, null)
+		val actual = mapper.parse("public interface A{public static final int temp, temp1, temp2;}")
 
-		val String[] modifiers = #["public", "static", "final"]
-		evaluateFieldDec((main as UniClassDec).members.get(0), "int", "temp", null, modifiers)
-		evaluateFieldDec((main as UniClassDec).members.get(1), "int", "temp1", null, modifiers)
-		evaluateFieldDec((main as UniClassDec).members.get(2), "int", "temp2", null, modifiers)
+		val constant0 = new UniFieldDec
+		constant0.modifiers = #["public", "static", "final"]
+		constant0.name = "temp"
+		constant0.type = "int"
+
+		val constant1 = new UniFieldDec
+		constant1.modifiers = #["public", "static", "final"]
+		constant1.name = "temp1"
+		constant1.type = "int"
+
+		val constant2 = new UniFieldDec
+		constant2.modifiers = #["public", "static", "final"]
+		constant2.name = "temp2"
+		constant2.type = "int"
+
+		val expected = new UniClassDec
+		expected.className = "A"
+		expected.members = #[constant0 as UniMemberDec, constant1 as UniMemberDec, constant2 as UniMemberDec]
+		expected.modifiers = #["public"]
+
+		expected.evaluate(actual)
 	}
 
 	@Test
-	@Ignore
 	def void parseSinglePrimitiveVarAttDecWithStringValue() {
-		val main = mapper.parse("public interface A{public static final String a=\"abc\";}");
-		main.evaluateClass("A", null, null)
+		val actual = mapper.parse("public interface A{public static final String a=\"abc\";}");
 
-		val String[] modifiers = #["public", "static", "final"]
-		val UniStringLiteral literal = new UniStringLiteral
-		literal.value = "abc"
-		val UniUnaryOp value = new UniUnaryOp
-		value.expr = literal
-		evaluateFieldDec((main as UniClassDec).members.get(0), "String", "a", value, modifiers)
+		val constant = new UniFieldDec
+		constant.modifiers = #["public", "static", "final"]
+		constant.name = "a"
+		constant.type = "String"
+		constant.value = new UniStringLiteral("abc")
+
+		val expected = new UniClassDec
+		expected.className = "A"
+		expected.members = #[constant as UniMemberDec]
+		expected.modifiers = #["public"]
+
+		expected.evaluate(actual)
 	}
 
 	@Test
-	@Ignore
 	def void parseSinglePrimitiveVarAttDecWithIntValue() {
-		val main = mapper.parse("public interface A{public static final int a=5;}");
-		main.evaluateClass("A", null, null)
+		val actual = mapper.parse("public interface A{public static final int a=5;}");
 
-		val String[] modifiers = #["public", "static", "final"]
-		val UniIntLiteral literal = new UniIntLiteral
-		literal.value = 5
-		val UniUnaryOp value = new UniUnaryOp
-		value.expr = literal
-		evaluateFieldDec((main as UniClassDec).members.get(0), "int", "a", value, modifiers)
+		val constant = new UniFieldDec
+		constant.modifiers = #["public", "static", "final"]
+		constant.name = "a"
+		constant.type = "int"
+		constant.value = new UniIntLiteral(5)
+
+		val expected = new UniClassDec
+		expected.className = "A"
+		expected.members = #[constant as UniMemberDec]
+		expected.modifiers = #["public"]
+
+		expected.evaluate(actual)
 	}
 
 	@Test
-	@Ignore
 	def void parseSinglePrimitiveVarAttDecWithDoubleValue() {
-		val main = mapper.parse("public interface A{public static final double a=5.5;}");
-		main.evaluateClass("A", null, null)
+		val actual = mapper.parse("public interface A{public static final double a=5.5;}");
 
-		val String[] modifiers = #["public", "static", "final"]
-		val UniDoubleLiteral literal = new UniDoubleLiteral
-		literal.value = 5.5
-		val UniUnaryOp value = new UniUnaryOp
-		value.expr = literal
-		evaluateFieldDec((main as UniClassDec).members.get(0), "double", "a", value, modifiers)
+		val constant = new UniFieldDec
+		constant.modifiers = #["public", "static", "final"]
+		constant.name = "a"
+		constant.type = "double"
+		constant.value = new UniDoubleLiteral(5.5)
+
+		val expected = new UniClassDec
+		expected.className = "A"
+		expected.members = #[constant as UniMemberDec]
+		expected.modifiers = #["public"]
+
+		expected.evaluate(actual)
 	}
 
 	@Test
-	@Ignore
 	def void parseSinglePrimitiveVarAttDecWithBooleanValue() {
-		val main = mapper.parse("public interface A{public static final boolean a=true;}");
-		main.evaluateClass("A", null, null)
+		val actual = mapper.parse("public interface A{public static final boolean a=true;}");
 
-		val String[] modifiers = #["public", "static", "final"]
-		val UniBoolLiteral literal = new UniBoolLiteral
-		literal.value = true
-		val UniUnaryOp value = new UniUnaryOp
-		value.expr = literal
-		evaluateFieldDec((main as UniClassDec).members.get(0), "boolean", "a", value, modifiers)
+		val constant = new UniFieldDec
+		constant.modifiers = #["public", "static", "final"]
+		constant.name = "a"
+		constant.type = "boolean"
+		constant.value = new UniBoolLiteral(true)
+
+		val expected = new UniClassDec
+		expected.className = "A"
+		expected.members = #[constant as UniMemberDec]
+		expected.modifiers = #["public"]
+
+		expected.evaluate(actual)
 	}
 
 	@Test
-	@Ignore
 	def void ParseMultiplePrimitiveVarAttDecWithValue() {
-		val main = mapper.parse("public interface A{public static final int temp, temp1, temp2=5;}")
-		main.evaluateClass("A", null, null)
+		val actual = mapper.parse("public interface A{public static final int temp, temp1, temp2=5;}")
 
-		val String[] modifiers = #["public", "static", "final"]
-		evaluateFieldDec((main as UniClassDec).members.get(0), "int", "temp", null, modifiers)
-		evaluateFieldDec((main as UniClassDec).members.get(1), "int", "temp1", null, modifiers)
-		val UniIntLiteral literal = new UniIntLiteral
-		literal.value = 5
-		val UniUnaryOp value = new UniUnaryOp
-		value.expr = literal
-		evaluateFieldDec((main as UniClassDec).members.get(2), "int", "temp2", value, modifiers)
+		val constant0 = new UniFieldDec
+		constant0.modifiers = #["public", "static", "final"]
+		constant0.name = "temp"
+		constant0.type = "int"
+
+		val constant1 = new UniFieldDec
+		constant1.modifiers = #["public", "static", "final"]
+		constant1.name = "temp1"
+		constant1.type = "int"
+
+		val constant2 = new UniFieldDec
+		constant2.modifiers = #["public", "static", "final"]
+		constant2.name = "temp2"
+		constant2.type = "int"
+		constant2.value = new UniIntLiteral(5)
+
+		val expected = new UniClassDec
+		expected.className = "A"
+		expected.members = #[constant0 as UniMemberDec, constant1 as UniMemberDec, constant2 as UniMemberDec]
+		expected.modifiers = #["public"]
+
+		expected.evaluate(actual)
 	}
 
 	@Test
 	def void ParseClassInstanceDec() {
-		val main = mapper.parse("interface A{public static final Temp tt;}");
-		main.evaluateClass("A", null, null)
-		val String[] modifiers = #["public", "static", "final"]
-		evaluateFieldDec((main as UniClassDec).members.get(0), "Temp", "tt", null, modifiers)
+		val actual = mapper.parse("interface A{public static final Temp tt;}");
 
+		val constant = new UniFieldDec
+		constant.modifiers = #["public", "static", "final"]
+		constant.name = "tt"
+		constant.type = "Temp"
+
+		val expected = new UniClassDec
+		expected.className = "A"
+		expected.members = #[constant as UniMemberDec]
+
+		expected.evaluate(actual)
 	}
 
 	@Test
 	@Ignore
 	def void ParseClassInstanceDecWithValue() {
-		val main = mapper.parse("interface A{public static final Temp tt = new Temp();}");
-		main.evaluateClass("A", null, null)
-		val String[] modifiers = #["public", "static", "final"]
+		val actual = mapper.parse("interface A{public static final Temp tt = new Temp();}");
 
-		//"new" statements
-		val UniNew literal = new UniNew
-		literal.type = "Temp"
-		literal.args = null
-		val UniUnaryOp value = new UniUnaryOp
-		value.expr = literal
-		evaluateFieldDec((main as UniClassDec).members.get(0), "Temp", "tt", value, modifiers)
+		val newstat = new UniNew
+		newstat.type = "Temp"
 
+		val constant = new UniFieldDec
+		constant.modifiers = #["public", "static", "final"]
+		constant.name = "tt"
+		constant.type = "Temp"
+		constant.value = newstat
+
+		val expected = new UniClassDec
+		expected.className = "A"
+		expected.members = #[constant as UniMemberDec]
+
+		expected.evaluate(actual)
 	}
 
 	@Test
-	@Ignore
 	def void ParseArrayInstanceDec() {
-		val main = mapper.parse("interface A{ public static final int[] arr = new int[3]; }")
-		main.evaluateClass("A", null, null)
+		val actual = mapper.parse("interface A{ public static final int[] arr = new int[3]; }")
 
-		val String[] modifiers = #["public", "static", "final"]
+		val newarray = new UniNewArray
+		newarray.elementsNum = #[new UniIntLiteral(3) as UniExpr]
+		newarray.type = "int"
+		newarray.value = new UniArray
 
-		//"new" statements
-		val UniNewArray literal = new UniNewArray
-		literal.type = "int"
-		val UniIntLiteral intnum = new UniIntLiteral
-		intnum.value = 3
-		val UniUnaryOp num = new UniUnaryOp
-		num.expr = intnum
-		val UniUnaryOp[] elementsNum = #[num]
-		literal.elementsNum = elementsNum
-		literal.value = null
-		val UniUnaryOp value = new UniUnaryOp
-		value.expr = literal
-		evaluateFieldDec((main as UniClassDec).members.get(0), "int[]", "arr", value, modifiers)
+		val constant = new UniFieldDec
+		constant.modifiers = #["public", "static", "final"]
+		constant.name = "arr"
+		constant.type = "int[]"
+		constant.value = newarray
+
+		val expected = new UniClassDec
+		expected.className = "A"
+		expected.members = #[constant as UniMemberDec]
+
+		expected.evaluate(actual)
 	}
 
 	@Test
-	@Ignore
 	def void ParseArrayInstanceDecWithValue() {
-		val main = mapper.parse("interface A{ public static int[] arr = {1,2,3}; }")
-		main.evaluateClass("A", null, null)
-		var varAttDec = (main as UniClassDec).members.get(0) as UniFieldDec
-		assertThat((main as UniClassDec).members.get(0), equalTo(varAttDec))
-		assertThat((varAttDec as UniFieldDec).name, equalTo("arr"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(0), equalTo("public"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(1), equalTo("static"))
-		assertThat((varAttDec as UniFieldDec).type, equalTo("int[]"))
-		assertThat((varAttDec.value), instanceOf(UniArray))
-		var varArrValue = varAttDec.value as UniArray
+		val actual = mapper.parse("interface A{ public static int[] arr = {1,2,3}; }")
 
-		val varAttDecVal = varArrValue.items
-		assertThat(varAttDecVal.get(0), instanceOf(UniUnaryOp))
-		assertThat((varAttDecVal.get(0) as UniUnaryOp).expr, instanceOf(UniIntLiteral))
-		assertThat(((varAttDecVal.get(0) as UniUnaryOp).expr as UniIntLiteral).value, equalTo(1))
-		assertThat(varAttDecVal.get(1), instanceOf(UniUnaryOp))
-		assertThat((varAttDecVal.get(1) as UniUnaryOp).expr, instanceOf(UniIntLiteral))
-		assertThat(((varAttDecVal.get(1) as UniUnaryOp).expr as UniIntLiteral).value, equalTo(2))
-		assertThat(varAttDecVal.get(2), instanceOf(UniUnaryOp))
-		assertThat((varAttDecVal.get(2) as UniUnaryOp).expr, instanceOf(UniIntLiteral))
-		assertThat(((varAttDecVal.get(2) as UniUnaryOp).expr as UniIntLiteral).value, equalTo(3))
+		val array = new UniArray
+		array.items = #[new UniIntLiteral(1) as UniExpr, new UniIntLiteral(2) as UniExpr, new UniIntLiteral(3) as UniExpr]
+		
+		val constant = new UniFieldDec
+		constant.modifiers = #["public", "static"]
+		constant.name = "arr"
+		constant.type = "int[]"
+		constant.value = array
 
+		val expected = new UniClassDec
+		expected.className = "A"
+		expected.members = #[constant as UniMemberDec]
+
+		expected.evaluate(actual)
 	}
 
 	@Test
-	@Ignore
 	def void ParseArrayInstanceDecWithValue2() {
-		val main = mapper.parse("interface A{ public static int[] arr = new int[]{1,2,3}; }")
-		main.evaluateClass("A", null, null)
-		var varAttDec = (main as UniClassDec).members.get(0) as UniFieldDec
-		assertThat((main as UniClassDec).members.get(0), equalTo(varAttDec))
-		assertThat((varAttDec as UniFieldDec).name, equalTo("arr"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(0), equalTo("public"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(1), equalTo("static"))
-		assertThat((varAttDec as UniFieldDec).type, equalTo("int[]"))
-		assertThat(varAttDec.value, instanceOf(UniUnaryOp))
-		assertThat((varAttDec.value as UniUnaryOp).expr, instanceOf(UniNewArray))
-		var varArrValue = (varAttDec.value as UniUnaryOp).expr as UniNewArray
-		assertThat((varArrValue as UniNewArray).type, equalTo("int"))
-		assertThat((varArrValue.value), instanceOf(UniArray))
-		var arrliteral = varArrValue.value as UniArray
+		val actual = mapper.parse("interface A{ public static int[] arr = new int[]{1,2,3}; }")
 
-		val eachliteral = arrliteral.items
-		assertThat(eachliteral.get(0), instanceOf(UniUnaryOp))
-		assertThat((eachliteral.get(0) as UniUnaryOp).expr, instanceOf(UniIntLiteral))
-		assertThat(((eachliteral.get(0) as UniUnaryOp).expr as UniIntLiteral).value, equalTo(1))
-		assertThat(eachliteral.get(1), instanceOf(UniUnaryOp))
-		assertThat((eachliteral.get(1) as UniUnaryOp).expr, instanceOf(UniIntLiteral))
-		assertThat(((eachliteral.get(1) as UniUnaryOp).expr as UniIntLiteral).value, equalTo(2))
-		assertThat(eachliteral.get(2), instanceOf(UniUnaryOp))
-		assertThat((eachliteral.get(2) as UniUnaryOp).expr, instanceOf(UniIntLiteral))
-		assertThat(((eachliteral.get(2) as UniUnaryOp).expr as UniIntLiteral).value, equalTo(3))
+		val array = new UniArray
+		array.items = #[new UniIntLiteral(1) as UniExpr, new UniIntLiteral(2) as UniExpr, new UniIntLiteral(3) as UniExpr]
+		
+		val newarray = new UniNewArray
+		newarray.type = "int"
+		newarray.value = array
+		
+		val constant = new UniFieldDec
+		constant.modifiers = #["public", "static"]
+		constant.name = "arr"
+		constant.type = "int[]"
+		constant.value = newarray
 
+		val expected = new UniClassDec
+		expected.className = "A"
+		expected.members = #[constant as UniMemberDec]
+
+		expected.evaluate(actual)
 	}
 
 }

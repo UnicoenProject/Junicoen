@@ -1,21 +1,35 @@
 package net.unicoen.mapper
 
 import org.junit.Test
-import static org.hamcrest.Matchers.*
-import static org.junit.Assert.*
 import net.unicoen.node.UniClassDec
-import org.junit.Ignore
-import net.unicoen.node.UniFieldDec
-import net.unicoen.node.UniArray
+import net.unicoen.node.UniMemberDec
+import net.unicoen.node.UniMethodDec
+import net.unicoen.node.UniBlock
+import net.unicoen.node.UniArg
 
 class Java8MapperInterfaceFieldMethodTest extends MapperTest {
 	val mapper = new Java8Mapper(true)
 	
 	@Test
 	def void parseEmptyMethod() {
-		val main = mapper.parse("public interface Main{ public static void main(String[] args){}}")
-		assertThat(main, instanceOf(UniClassDec))
-		val cls = main as UniClassDec
-		cls.evaluateClass("Main", null, null)
+		val actual = mapper.parse("public interface Main{ public static void main(String[] args){}}")
+		
+		val arg = new UniArg
+		arg.name = "args"
+		arg.type = "String[]"
+		
+		val method = new UniMethodDec
+		method.args = #[arg]
+		method.block = new UniBlock
+		method.methodName = "main"
+		method.modifiers = #["public", "static"]
+		method.returnType = "void"
+		
+		val expected = new UniClassDec
+		expected.className = "Main"
+		expected.members = #[method as UniMemberDec]
+		expected.modifiers = #["public"]
+		
+		expected.evaluate(actual)
 	}
 }
