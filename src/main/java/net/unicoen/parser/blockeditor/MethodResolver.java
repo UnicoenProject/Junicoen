@@ -8,6 +8,7 @@ public class MethodResolver {
 	private Map<String, ClassMethodMap> avaiableClassMethods = new HashMap<>();//キー：クラス名，値：利用可能メソッド（キー：クラス名，値：ブロックのメソッド名）
 	private FieldMethodResolver fieldMethodResolver = new FieldMethodResolver();
 	
+	
 	/**
 	 * クラスが利用可能なメソッドを登録する（キー：クラス名，値：ClassMethodMap（キー：クラス名，値：利用可能メソッド
 	 * 

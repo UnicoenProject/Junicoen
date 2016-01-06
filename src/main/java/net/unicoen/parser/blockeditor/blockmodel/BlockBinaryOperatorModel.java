@@ -46,15 +46,16 @@ public class BlockBinaryOperatorModel extends BlockExprModel {
 
 	public String calcConnectorType(String leftConnectorType, String rightConnectorType) {
 		String returnType = "number";
+		if (leftConnectorType.equals(rightConnectorType)) {
+			return leftConnectorType;
+		}
 
 		if (rightConnectorType.equals("string") || leftConnectorType.equals("string")) {
 			return "string";
 		}
 
-		if (leftConnectorType.equals(rightConnectorType)) {
-			returnType = leftConnectorType;
-		} else if ((leftConnectorType.equals("number") && rightConnectorType.equals("double-number")) || (leftConnectorType.equals("double-number") && rightConnectorType.equals("number"))) {
-			returnType = "number";
+		if ((leftConnectorType.equals("number") && rightConnectorType.equals("double-number")) || (leftConnectorType.equals("double-number") && rightConnectorType.equals("number"))) {
+			return "double-number";
 		}
 		return returnType;
 	}
@@ -107,6 +108,10 @@ public class BlockBinaryOperatorModel extends BlockExprModel {
 		String genusName = "equals-";
 		if (operator.equals("!=")) {
 			genusName = "not-" + genusName;
+		}
+		
+		if(connectorType.equals("double-number")){
+			connectorType = "number-double";
 		}
 
 		return genusName + connectorType;

@@ -163,7 +163,6 @@ public class BlockResolver {
 	private void addAvaiableMethodToResolver(Node node) {
 		String kind = DOMUtil.getAttribute(node, "kind");
 		if (BlockLocalVarDecModel.KIND.equals(kind)) {
-			System.out.println(DOMUtil.getChildText(node, BlockElementModel.TYPE_NODE));
 			Node methodsNode = DOMUtil.getChildNode(node, "ClassMethods");
 			if (methodsNode != null) {
 				addClassMethodsToResolver(DOMUtil.getChildTextFromBlockNode(node, "Type"), methodsNode);
@@ -261,6 +260,7 @@ public class BlockResolver {
 	}
 
 	public String getType(String genusName) {
+		System.out.println(genusName);
 		Node typeNode = DOMUtil.getChildNode(allAvailableBlocks.get(genusName), BlockElementModel.TYPE_NODE);
 		if (typeNode == null) {
 			return "void";

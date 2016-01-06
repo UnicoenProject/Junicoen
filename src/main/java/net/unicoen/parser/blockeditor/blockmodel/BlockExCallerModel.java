@@ -9,7 +9,7 @@ import org.w3c.dom.Element;
 public class BlockExCallerModel extends BlockCommandModel {
 
 	private BlockCommandModel methodBlock;
-	private static String GENUS_NAME = "callActionMethod2";
+	public static String GENUS_NAME = "callActionMethod2";
 
 	public BlockExCallerModel(Document document, Long id) {
 		this.element = createBlockElement(document, GENUS_NAME, id, KIND);
