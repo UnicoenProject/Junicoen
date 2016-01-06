@@ -20,7 +20,7 @@ public class UniToBlock24_HashcodeTest {
 	@Test
 	public void test() throws IOException {
 		UniClassDec classModel = UniToBlockTestUtil.createClassDec("blockeditor/testcases/BlockConvertTest/_24HashcodeTest.java");
-		classModel.superClass = Lists.newArrayList("Turtle");
+		
 		UniMethodDec main = (UniMethodDec) classModel.members.get(0);
 		main.args = Lists.newArrayList(new UniArg("String[]", "args"));
 		

@@ -20,7 +20,6 @@ public class UniToBlock00_BasicTest {
 	public void test() throws IOException {
 
 		UniClassDec classModel = UniToBlockTestUtil.createClassDec("blockeditor/testcases/BlockConvertTest/_00BasicTest.java");
-		classModel.superClass = Lists.newArrayList("Turtle");
 		
 		UniMethodDec main = (UniMethodDec) classModel.members.get(0);
 		main.args = Lists.newArrayList(new UniArg("String[]", "args"));

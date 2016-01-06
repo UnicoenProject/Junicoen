@@ -86,7 +86,9 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		// :	classModifier* 'class' className typeParameters? superclass? superinterfaces? classBody		
 		val nodes = createNodeMap(ctx)
 		val ret = new UniClassDec()
+		
 		ret.modifiers = nodes.getOrEmpty(JavaParser.RULE_classModifier).map[it.toString].toList
+		ret.superClass = nodes.getOrEmpty(JavaParser.RULE_superclass).map[it.toString].toList
 		ret.className = nodes.getOneNode(JavaParser.RULE_className).toString
 		ret.members = nodes.getOneNode(JavaParser.RULE_classBody).flattenForBuilding
 		ret
@@ -109,6 +111,10 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		// className
 		// :	Identifier
 		new StringNode(ctx.children.head.text)
+	}
+	
+	override visitClassType(JavaParser.ClassTypeContext ctx) {
+		return new StringNode(ctx.children.head.text)
 	}
 
 	override visitClassBody(JavaParser.ClassBodyContext ctx) {
@@ -954,4 +960,5 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	private static def getTerminals(ParserRuleContext ctx) {
 		ctx.children.filter[it instanceof TerminalNodeImpl].map[it.text]
 	}
+	
 }
