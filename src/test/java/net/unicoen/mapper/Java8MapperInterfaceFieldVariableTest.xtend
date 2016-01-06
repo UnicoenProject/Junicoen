@@ -31,7 +31,6 @@ class Java8MapperInterfaceFieldVariableTest extends MapperTest {
 
 	@Test
 	def void parseTernaryOp() {
-
 		//Single Primitive Variable Attribute Declaration
 		val main = mapper.parse("public interface A{public static final int a = true ? 1 : 2;}")
 		val String[] modifiers = #["public", "static", "final"]

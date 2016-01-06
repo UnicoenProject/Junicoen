@@ -15465,6 +15465,7 @@ public class Java8Parser extends Parser {
 		public ConditionalOrExpressionContext conditionalOrExpression() {
 			return getRuleContext(ConditionalOrExpressionContext.class,0);
 		}
+		public TerminalNode OR() { return getToken(Java8Parser.OR, 0); }
 		public ConditionalOrExpressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -15540,6 +15541,7 @@ public class Java8Parser extends Parser {
 		public ConditionalAndExpressionContext conditionalAndExpression() {
 			return getRuleContext(ConditionalAndExpressionContext.class,0);
 		}
+		public TerminalNode AND() { return getToken(Java8Parser.AND, 0); }
 		public ConditionalAndExpressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -15615,6 +15617,7 @@ public class Java8Parser extends Parser {
 		public InclusiveOrExpressionContext inclusiveOrExpression() {
 			return getRuleContext(InclusiveOrExpressionContext.class,0);
 		}
+		public TerminalNode BITOR() { return getToken(Java8Parser.BITOR, 0); }
 		public InclusiveOrExpressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -15690,6 +15693,7 @@ public class Java8Parser extends Parser {
 		public ExclusiveOrExpressionContext exclusiveOrExpression() {
 			return getRuleContext(ExclusiveOrExpressionContext.class,0);
 		}
+		public TerminalNode CARET() { return getToken(Java8Parser.CARET, 0); }
 		public ExclusiveOrExpressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -15765,6 +15769,7 @@ public class Java8Parser extends Parser {
 		public AndExpressionContext andExpression() {
 			return getRuleContext(AndExpressionContext.class,0);
 		}
+		public TerminalNode BITAND() { return getToken(Java8Parser.BITAND, 0); }
 		public AndExpressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -15840,6 +15845,8 @@ public class Java8Parser extends Parser {
 		public EqualityExpressionContext equalityExpression() {
 			return getRuleContext(EqualityExpressionContext.class,0);
 		}
+		public TerminalNode EQUAL() { return getToken(Java8Parser.EQUAL, 0); }
+		public TerminalNode NOTEQUAL() { return getToken(Java8Parser.NOTEQUAL, 0); }
 		public EqualityExpressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -15932,6 +15939,11 @@ public class Java8Parser extends Parser {
 		public RelationalExpressionContext relationalExpression() {
 			return getRuleContext(RelationalExpressionContext.class,0);
 		}
+		public TerminalNode LT() { return getToken(Java8Parser.LT, 0); }
+		public TerminalNode GT() { return getToken(Java8Parser.GT, 0); }
+		public TerminalNode LE() { return getToken(Java8Parser.LE, 0); }
+		public TerminalNode GE() { return getToken(Java8Parser.GE, 0); }
+		public TerminalNode INSTANCEOF() { return getToken(Java8Parser.INSTANCEOF, 0); }
 		public ReferenceTypeContext referenceType() {
 			return getRuleContext(ReferenceTypeContext.class,0);
 		}
@@ -16063,6 +16075,14 @@ public class Java8Parser extends Parser {
 		public ShiftExpressionContext shiftExpression() {
 			return getRuleContext(ShiftExpressionContext.class,0);
 		}
+		public List<TerminalNode> LT() { return getTokens(Java8Parser.LT); }
+		public TerminalNode LT(int i) {
+			return getToken(Java8Parser.LT, i);
+		}
+		public List<TerminalNode> GT() { return getTokens(Java8Parser.GT); }
+		public TerminalNode GT(int i) {
+			return getToken(Java8Parser.GT, i);
+		}
 		public ShiftExpressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -16175,6 +16195,8 @@ public class Java8Parser extends Parser {
 		public AdditiveExpressionContext additiveExpression() {
 			return getRuleContext(AdditiveExpressionContext.class,0);
 		}
+		public TerminalNode ADD() { return getToken(Java8Parser.ADD, 0); }
+		public TerminalNode SUB() { return getToken(Java8Parser.SUB, 0); }
 		public AdditiveExpressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -16267,6 +16289,9 @@ public class Java8Parser extends Parser {
 		public MultiplicativeExpressionContext multiplicativeExpression() {
 			return getRuleContext(MultiplicativeExpressionContext.class,0);
 		}
+		public TerminalNode MUL() { return getToken(Java8Parser.MUL, 0); }
+		public TerminalNode DIV() { return getToken(Java8Parser.DIV, 0); }
+		public TerminalNode MOD() { return getToken(Java8Parser.MOD, 0); }
 		public MultiplicativeExpressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -16371,9 +16396,11 @@ public class Java8Parser extends Parser {
 		public PreDecrementExpressionContext preDecrementExpression() {
 			return getRuleContext(PreDecrementExpressionContext.class,0);
 		}
+		public TerminalNode ADD() { return getToken(Java8Parser.ADD, 0); }
 		public UnaryExpressionContext unaryExpression() {
 			return getRuleContext(UnaryExpressionContext.class,0);
 		}
+		public TerminalNode SUB() { return getToken(Java8Parser.SUB, 0); }
 		public UnaryExpressionNotPlusMinusContext unaryExpressionNotPlusMinus() {
 			return getRuleContext(UnaryExpressionNotPlusMinusContext.class,0);
 		}
@@ -16471,6 +16498,7 @@ public class Java8Parser extends Parser {
 	}
 
 	public static class PreIncrementExpressionContext extends ParserRuleContext {
+		public TerminalNode INC() { return getToken(Java8Parser.INC, 0); }
 		public UnaryExpressionContext unaryExpression() {
 			return getRuleContext(UnaryExpressionContext.class,0);
 		}
@@ -16509,6 +16537,7 @@ public class Java8Parser extends Parser {
 	}
 
 	public static class PreDecrementExpressionContext extends ParserRuleContext {
+		public TerminalNode DEC() { return getToken(Java8Parser.DEC, 0); }
 		public UnaryExpressionContext unaryExpression() {
 			return getRuleContext(UnaryExpressionContext.class,0);
 		}
@@ -16550,9 +16579,11 @@ public class Java8Parser extends Parser {
 		public PostfixExpressionContext postfixExpression() {
 			return getRuleContext(PostfixExpressionContext.class,0);
 		}
+		public TerminalNode TILDE() { return getToken(Java8Parser.TILDE, 0); }
 		public UnaryExpressionContext unaryExpression() {
 			return getRuleContext(UnaryExpressionContext.class,0);
 		}
+		public TerminalNode BANG() { return getToken(Java8Parser.BANG, 0); }
 		public CastExpressionContext castExpression() {
 			return getRuleContext(CastExpressionContext.class,0);
 		}

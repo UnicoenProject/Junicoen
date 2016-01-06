@@ -17,6 +17,7 @@ import net.unicoen.node.UniIdent
 import net.unicoen.node.UniIntLiteral
 import net.unicoen.node.UniVariableDec
 import net.unicoen.node.UniUnaryOp
+import com.google.common.collect.Lists
 
 class Java8MapperClassFieldMethodTest extends MapperTest {
 	val mapper = new Java8Mapper(true)
@@ -48,7 +49,6 @@ class Java8MapperClassFieldMethodTest extends MapperTest {
 	}
 
 	@Test
-	@Ignore
 	def void parseMethodWithSingleLocalVar() {
 
 		//Class
@@ -69,7 +69,6 @@ class Java8MapperClassFieldMethodTest extends MapperTest {
 	}
 
 	@Test
-	@Ignore
 	def void parseMethodWithMultipleLocalVar() {
 
 		//Class
@@ -80,7 +79,7 @@ class Java8MapperClassFieldMethodTest extends MapperTest {
 		val method = (main as UniClassDec).members.get(0) as UniMethodDec
 		val String[] modifiers = #["public", "static"]
 		val UniArg[] args = #[]
-		method.evaluateMethodDec("main", "void", modifiers, 1, args)
+		method.evaluateMethodDec("main", "void", modifiers, 3, args)
 
 		//MethodBody
 		val block = method.block as UniBlock
@@ -91,7 +90,6 @@ class Java8MapperClassFieldMethodTest extends MapperTest {
 	}
 
 	@Test
-	@Ignore
 	def void parseMethodWithSingleLocalVarWithValue() {
 
 		//Class
@@ -109,11 +107,10 @@ class Java8MapperClassFieldMethodTest extends MapperTest {
 		val String[] modifiers2 = #[]
 		val UniIntLiteral literal = new UniIntLiteral
 		literal.value = 1
-		evaluateVariableDec((block.body.get(2)), "int", "a", literal, modifiers2)
+		evaluateVariableDec((block.body.get(0)), "int", "a", literal, modifiers2)
 	}
 
 	@Test
-	@Ignore
 	def void parseMethodWithMultipleLocalVarWithValue() {
 
 		//Class
@@ -124,7 +121,7 @@ class Java8MapperClassFieldMethodTest extends MapperTest {
 		val method = (main as UniClassDec).members.get(0) as UniMethodDec
 		val String[] modifiers = #["public", "static"]
 		val UniArg[] args = #[]
-		method.evaluateMethodDec("main", "void", modifiers, 1, args)
+		method.evaluateMethodDec("main", "void", modifiers, 3, args)
 
 		//MethodBody
 		val block = method.block as UniBlock
@@ -137,29 +134,57 @@ class Java8MapperClassFieldMethodTest extends MapperTest {
 	}
 
 	@Test
-	@Ignore
 	def void parseMethodWithIfStatement() {
+		val expected = new UniClassDec
+		expected.className = "Main"
+		expected.members = Lists.newArrayList
+		expected.modifiers = #["public"]
+		expected.interfaces = #[]
+		expected.superClass = #[]
+
+		val method = new UniMethodDec
+		expected.members += method
+		method.args = Lists.newArrayList
+		method.methodName = "main"
+		method.modifiers = #["public", "static"]
+		method.returnType = "void"
+
+		val block = new UniBlock
+		method.block = block
+		block.body = Lists.newArrayList
+
+		val ifstat = new UniIf
+		block.body += ifstat
+		ifstat.cond = new UniBoolLiteral(true)
+
+		val trueStatement = new UniBlock
+		ifstat.trueStatement = trueStatement
+		trueStatement.body = Lists.newArrayList
+
+		val binop = new UniBinOp
+		trueStatement.body += binop
+		binop.operator = "="
+		binop.left = new UniIdent("a")
+		binop.right = new UniIntLiteral(1)
 
 		//Class
-		val main = mapper.parse("public class Main{ public static void main(){if(true){a=1;}}}")
-		assertThat(main, instanceOf(UniClassDec))
-		val cls = main as UniClassDec
+		val actual = mapper.parse("public class Main{ public static void main(){if(true){a=1;}}}")
+		assertThat(actual, instanceOf(UniClassDec))
+		val cls = actual as UniClassDec
 		cls.evaluateClass("Main", null, null)
 
 		//Method
-		val method = cls.members.get(0) as UniMethodDec
+		val oldmethod = cls.members.get(0) as UniMethodDec
 		val String[] modifiers = #["public", "static"]
 		val UniArg[] args = #[]
-		method.evaluateMethodDec("main", "void", modifiers, 1, args)
+		oldmethod.evaluateMethodDec("main", "void", modifiers, 1, args)
 
 		//MethodBody
-		val block = method.block as UniBlock
+		val oldblock = oldmethod.block as UniBlock
 
 		//cond
-		val UniUnaryOp cond = new UniUnaryOp
 		val UniBoolLiteral condliteral = new UniBoolLiteral
 		condliteral.value = true
-		cond.expr = condliteral
 
 		//statement
 		val UniIdent variable = new UniIdent
@@ -167,16 +192,16 @@ class Java8MapperClassFieldMethodTest extends MapperTest {
 
 		val UniIntLiteral literal = new UniIntLiteral
 		literal.value = 1
-		val UniUnaryOp value = new UniUnaryOp
-		value.expr = literal
-		val UniBinOp binop = new UniBinOp
-		binop.left = variable
-		binop.right = value
-		binop.operator = "="
-		val UniBlock trueStatement = new UniBlock
-		val UniBinOp[] statements = #[binop]
-		trueStatement.body = statements
-		evaluateIf(block.body.get(0), cond, trueStatement, null)
+		val UniBinOp oldbinop = new UniBinOp
+		oldbinop.left = variable
+		oldbinop.right = literal
+		oldbinop.operator = "="
+		val UniBlock oldtrueStatement = new UniBlock
+		val UniBinOp[] statements = #[oldbinop]
+		oldtrueStatement.body = statements
+		evaluateIf(oldblock.body.get(0), condliteral, oldtrueStatement, null)
+		
+		expected.evaluate(actual)
 	}
 
 	@Test

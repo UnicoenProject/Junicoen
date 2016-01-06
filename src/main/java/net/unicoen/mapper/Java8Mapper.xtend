@@ -4,6 +4,7 @@ import com.google.common.collect.Lists
 import com.google.common.collect.Maps
 import java.io.FileInputStream
 import java.util.List
+import java.util.ArrayList
 import java.util.Map
 import net.unicoen.node.*
 import net.unicoen.parser.Java8BaseVisitor
@@ -129,7 +130,15 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			temp.forEach [ key, value |
 				switch key {
 					case "add": {
-						ret += value.castToList(clazz)
+						if (value instanceof Map<?,?>) {
+							ret += value.castTo(clazz)
+						} else if (value instanceof List<?>) {
+							value.forEach[
+								ret += it.castTo(clazz)
+							]
+						} else {
+							ret += value.castToList(clazz)
+						}
 					}
 					default: {
 						if (!add) {
@@ -156,7 +165,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				temp.forEach [ key, value |
 					builder.append(value.castTo(clazz))
 				]
-				return if(builder.length > 0) clazz.getConstructor(StringBuilder).newInstance(builder) else null
+				return if (builder.length > 0) clazz.getConstructor(StringBuilder).newInstance(builder) else null
 			}
 			val instance = clazz.newInstance
 			val fields = clazz.fields
@@ -182,7 +191,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				temp.forEach [
 					builder.append(it.castTo(clazz))
 				]
-				return if(builder.length > 0) clazz.getConstructor(StringBuilder).newInstance(builder) else null
+				return if (builder.length > 0) clazz.getConstructor(StringBuilder).newInstance(builder) else null
 			}
 			val first = temp.findFirst[clazz.isAssignableFrom(it.class)]
 			return if (first == null) {
@@ -194,7 +203,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 	}
 
 	override public visitIntegerLiteral(Java8Parser.IntegerLiteralContext ctx) {
-		val text = ctx.children.findFirst[
+		val text = ctx.children.findFirst [
 			if (it instanceof TerminalNodeImpl) {
 				if (it.symbol.type == Java8Parser.IntegerLiteral) {
 					return true;
@@ -206,7 +215,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 	}
 	
 	override public visitFloatingPointLiteral(Java8Parser.FloatingPointLiteralContext ctx) {
-		val text = ctx.children.findFirst[
+		val text = ctx.children.findFirst [
 			if (it instanceof TerminalNodeImpl) {
 				if (it.symbol.type == Java8Parser.FloatingPointLiteral) {
 					return true;
@@ -218,7 +227,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 	}
 	
 	override public visitBooleanLiteral(Java8Parser.BooleanLiteralContext ctx) {
-		val text = ctx.children.findFirst[
+		val text = ctx.children.findFirst [
 			if (it instanceof TerminalNodeImpl) {
 				if (it.symbol.type == Java8Parser.BooleanLiteral) {
 					return true;
@@ -230,7 +239,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 	}
 	
 	override public visitStringLiteral(Java8Parser.StringLiteralContext ctx) {
-		val text = ctx.children.findFirst[
+		val text = ctx.children.findFirst [
 			if (it instanceof TerminalNodeImpl) {
 				if (it.symbol.type == Java8Parser.StringLiteral) {
 					return true;
@@ -239,6 +248,72 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			return false;
 		].text
 		return new UniStringLiteral(text.substring(1, text.length - 1))
+	}
+	
+	override public visitClassType(Java8Parser.ClassTypeContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(String)
+	}
+	
+	override public visitInterfaceType(Java8Parser.InterfaceTypeContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(String)
+	}
+	
+	override public visitDims(Java8Parser.DimsContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(String)
 	}
 	
 	override public visitExpressionName(Java8Parser.ExpressionNameContext ctx) {
@@ -250,10 +325,18 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
+					default: {
+						none += it.visit
+					}
 				}
 			} else if (it instanceof TerminalNode) {
-				if (it.symbol.type == Java8Parser.Identifier) {
-					name += it.text
+				switch it.symbol.type {
+					case Java8Parser.Identifier: {
+						name += it.visit
+					}
+					default: {
+						none += it.visit
+					}
 				}
 			}
 		]
@@ -271,8 +354,16 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					case 774: {
 						merge += it.visit
 					}
+					default: {
+						none += it.visit
+					}
 				}
 			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
 			}
 		]
 		val node = map.castTo(UniClassDec)
@@ -294,8 +385,16 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					case 830: {
 						merge += it.visit
 					}
+					default: {
+						none += it.visit
+					}
 				}
 			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
 			}
 		]
 		val node = map.castTo(UniClassDec)
@@ -314,8 +413,16 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					case 834: {
 						merge += it.visit
 					}
+					default: {
+						none += it.visit
+					}
 				}
 			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
 			}
 		]
 		val node = map.castTo(UniClassDec)
@@ -355,11 +462,41 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					case 850: {
 						members += it.visit
 					}
+					default: {
+						none += it.visit
+					}
 				}
 			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
 			}
 		]
 		map.castTo(UniClassDec)
+	}
+	
+	override public visitClassName(Java8Parser.ClassNameContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(String)
 	}
 	
 	override public visitClassModifiers(Java8Parser.ClassModifiersContext ctx) {
@@ -375,11 +512,42 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 						case 854: {
 							add += it.visit
 						}
+						default: {
+							none += it.visit
+						}
+					}
+				} else if (it instanceof TerminalNode) {
+					switch it.symbol.type {
+						default: {
+							none += it.visit
+						}
 					}
 				}
 			]
 		}
 		map.castToList(String)
+	}
+	
+	override public visitClassModifier(Java8Parser.ClassModifierContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(String)
 	}
 	
 	override public visitSuperclass(Java8Parser.SuperclassContext ctx) {
@@ -394,6 +562,15 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					switch it.invokingState {
 						case 883: {
 							add += it.visit
+						}
+						default: {
+							none += it.visit
+						}
+					}
+				} else if (it instanceof TerminalNode) {
+					switch it.symbol.type {
+						default: {
+							none += it.visit
 						}
 					}
 				}
@@ -414,6 +591,15 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					switch it.invokingState {
 						case 886: {
 							add += it.visit
+						}
+						default: {
+							none += it.visit
+						}
+					}
+				} else if (it instanceof TerminalNode) {
+					switch it.symbol.type {
+						default: {
+							none += it.visit
 						}
 					}
 				}
@@ -438,6 +624,15 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 						case 890: {
 							add += it.visit
 						}
+						default: {
+							none += it.visit
+						}
+					}
+				} else if (it instanceof TerminalNode) {
+					switch it.symbol.type {
+						default: {
+							none += it.visit
+						}
 					}
 				}
 			]
@@ -457,6 +652,15 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					switch it.invokingState {
 						case 897: {
 							add += it.visit
+						}
+						default: {
+							none += it.visit
+						}
+					}
+				} else if (it instanceof TerminalNode) {
+					switch it.symbol.type {
+						default: {
+							none += it.visit
 						}
 					}
 				}
@@ -481,6 +685,15 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 						case 908: {
 							add += it.visit
 						}
+						default: {
+							none += it.visit
+						}
+					}
+				} else if (it instanceof TerminalNode) {
+					switch it.symbol.type {
+						default: {
+							none += it.visit
+						}
 					}
 				}
 			]
@@ -503,6 +716,15 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 						}
 						case 912: {
 							add += it.visit
+						}
+						default: {
+							none += it.visit
+						}
+					}
+				} else if (it instanceof TerminalNode) {
+					switch it.symbol.type {
+						default: {
+							none += it.visit
 						}
 					}
 				}
@@ -533,13 +755,26 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 						case 920: {
 							merge += it.visit
 						}
+						default: {
+							none += it.visit
+						}
+					}
+				} else if (it instanceof TerminalNode) {
+					switch it.symbol.type {
+						default: {
+							none += it.visit
+						}
 					}
 				}
 			]
 		}
 		val node = map.castTo(UniFieldDec)
-		merge.castToList(UniFieldDec).forEach[it.merge(node)]
-		merge
+		val ret = Lists.newArrayList
+		merge.castToList(UniFieldDec).forEach [
+			it.merge(node)
+			ret += it
+		]
+		ret
 	}
 	
 	override public visitFieldModifiers(Java8Parser.FieldModifiersContext ctx) {
@@ -555,11 +790,42 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 						case 923: {
 							add += it.visit
 						}
+						default: {
+							none += it.visit
+						}
+					}
+				} else if (it instanceof TerminalNode) {
+					switch it.symbol.type {
+						default: {
+							none += it.visit
+						}
 					}
 				}
 			]
 		}
 		map.castToList(String)
+	}
+	
+	override public visitFieldModifier(Java8Parser.FieldModifierContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(String)
 	}
 	
 	override public visitVariableDeclaratorList(Java8Parser.VariableDeclaratorListContext ctx) {
@@ -568,45 +834,125 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		map.put("none", none)
 		val add = Lists.newArrayList
 		map.put("add", add)
-		if (ctx.children != null) {
-			ctx.children.forEach [
-				if (it instanceof RuleContext) {
-					switch it.invokingState {
-						case 939: {
-							add += it.visit
-						}
-						case 941: {
-							add += it.visit
-						}
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 939: {
+						add += it.visit
+					}
+					case 941: {
+						add += it.visit
+					}
+					default: {
+						none += it.visit
 					}
 				}
-			]
-		}
-		map.castToList(UniFieldDec)
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map
 	}
 	
 	override public visitVariableDeclarator(Java8Parser.VariableDeclaratorContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
 		map.put("none", none)
-		val name = Lists.newArrayList
-		map.put("name", name)
 		val value = Lists.newArrayList
 		map.put("value", value)
+		val merge = Lists.newArrayList
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 947: {
-						name += it.visit
+						merge += it.visit
 					}
 					case 949: {
 						value += it.visit
 					}
+					default: {
+						none += it.visit
+					}
 				}
 			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
 			}
 		]
-		map.castTo(UniFieldDec)
+		val node = map
+		merge.forEach [
+			if (it instanceof Map<?, ?>) {
+				it.forEach [ k, v |
+					if (node.containsKey(k)) {
+						node.get(k) += v
+					} else {
+						node.put(k, v as ArrayList<Object>)
+					}
+				]
+			}
+		]
+		node
+	}
+	
+	override public visitVariableDeclaratorId(Java8Parser.VariableDeclaratorIdContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		val name = Lists.newArrayList
+		map.put("name", name)
+		val type = Lists.newArrayList
+		map.put("type", type)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 953: {
+						type += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					case Java8Parser.Identifier: {
+						name += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map
+	}
+	
+	override public visitUnannType(Java8Parser.UnannTypeContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(String)
 	}
 	
 	override public visitMethodDeclaration(Java8Parser.MethodDeclarationContext ctx) {
@@ -630,13 +976,43 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					case 1043: {
 						block += it.visit
 					}
+					default: {
+						none += it.visit
+					}
 				}
 			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
 			}
 		]
 		val node = map.castTo(UniMethodDec)
 		merge.forEach[node.merge(it.castTo(UniMethodDec))]
 		node
+	}
+	
+	override public visitMethodModifier(Java8Parser.MethodModifierContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(String)
 	}
 	
 	override public visitMethodHeader(Java8Parser.MethodHeaderContext ctx) {
@@ -661,13 +1037,43 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					case 1070: {
 						merge += it.visit
 					}
+					default: {
+						none += it.visit
+					}
 				}
 			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
 			}
 		]
 		val node = map.castTo(UniMethodDec)
 		merge.forEach[node.merge(it.castTo(UniMethodDec))]
 		node
+	}
+	
+	override public visitResult(Java8Parser.ResultContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(String)
 	}
 	
 	override public visitMethodDeclarator(Java8Parser.MethodDeclaratorContext ctx) {
@@ -692,11 +1098,41 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					case 1086: {
 						returnType += it.visit
 					}
+					default: {
+						none += it.visit
+					}
 				}
 			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
 			}
 		]
 		map.castTo(UniMethodDec)
+	}
+	
+	override public visitMethodName(Java8Parser.MethodNameContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(String)
 	}
 	
 	override public visitFormalParameterList(Java8Parser.FormalParameterListContext ctx) {
@@ -717,6 +1153,15 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 						}
 						case 1095: {
 							add += it.visit
+						}
+						default: {
+							none += it.visit
+						}
+					}
+				} else if (it instanceof TerminalNode) {
+					switch it.symbol.type {
+						default: {
+							none += it.visit
 						}
 					}
 				}
@@ -741,6 +1186,15 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 						case 1100: {
 							add += it.visit
 						}
+						default: {
+							none += it.visit
+						}
+					}
+				} else if (it instanceof TerminalNode) {
+					switch it.symbol.type {
+						default: {
+							none += it.visit
+						}
 					}
 				}
 			]
@@ -764,8 +1218,16 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					case 1123: {
 						merge += it.visit
 					}
+					default: {
+						none += it.visit
+					}
 				}
 			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
 			}
 		]
 		val node = map.castTo(UniArg)
@@ -790,11 +1252,41 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					case 1126: {
 						type += it.visit
 					}
+					default: {
+						none += it.visit
+					}
 				}
 			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
 			}
 		]
 		map.castTo(UniArg)
+	}
+	
+	override public visitParameterName(Java8Parser.ParameterNameContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(String)
 	}
 	
 	override public visitMethodBody(Java8Parser.MethodBodyContext ctx) {
@@ -808,8 +1300,16 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					case 1182: {
 						merge += it.visit
 					}
+					default: {
+						none += it.visit
+					}
 				}
 			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
 			}
 		]
 		val node = map.castTo(UniBlock)
@@ -838,13 +1338,43 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					case 1201: {
 						block += it.visit
 					}
+					default: {
+						none += it.visit
+					}
 				}
 			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
 			}
 		]
 		val node = map.castTo(UniMethodDec)
 		merge.forEach[node.merge(it.castTo(UniMethodDec))]
 		node
+	}
+	
+	override public visitConstructorModifier(Java8Parser.ConstructorModifierContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(String)
 	}
 	
 	override public visitConstructorDeclarator(Java8Parser.ConstructorDeclaratorContext ctx) {
@@ -864,11 +1394,41 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					case 1214: {
 						args += it.visit
 					}
+					default: {
+						none += it.visit
+					}
 				}
 			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
 			}
 		]
 		map.castTo(UniMethodDec)
+	}
+	
+	override public visitSimpleTypeName(Java8Parser.SimpleTypeNameContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(String)
 	}
 	
 	override public visitInterfaceDeclaration(Java8Parser.InterfaceDeclarationContext ctx) {
@@ -882,8 +1442,16 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					case 1337: {
 						merge += it.visit
 					}
+					default: {
+						none += it.visit
+					}
 				}
 			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
 			}
 		]
 		val node = map.castTo(UniClassDec)
@@ -918,8 +1486,16 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					case 1350: {
 						members += it.visit
 					}
+					default: {
+						none += it.visit
+					}
 				}
 			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
 			}
 		]
 		map.castTo(UniClassDec)
@@ -938,11 +1514,64 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 						case 1352: {
 							add += it.visit
 						}
+						default: {
+							none += it.visit
+						}
+					}
+				} else if (it instanceof TerminalNode) {
+					switch it.symbol.type {
+						default: {
+							none += it.visit
+						}
 					}
 				}
 			]
 		}
 		map.castToList(String)
+	}
+	
+	override public visitInterfaceName(Java8Parser.InterfaceNameContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(String)
+	}
+	
+	override public visitInterfaceModifier(Java8Parser.InterfaceModifierContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(String)
 	}
 	
 	override public visitExtendsInterfaces(Java8Parser.ExtendsInterfacesContext ctx) {
@@ -957,6 +1586,15 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					switch it.invokingState {
 						case 1370: {
 							add += it.visit
+						}
+						default: {
+							none += it.visit
+						}
+					}
+				} else if (it instanceof TerminalNode) {
+					switch it.symbol.type {
+						default: {
+							none += it.visit
 						}
 					}
 				}
@@ -977,6 +1615,15 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					switch it.invokingState {
 						case 1373: {
 							add += it.visit
+						}
+						default: {
+							none += it.visit
+						}
+					}
+				} else if (it instanceof TerminalNode) {
+					switch it.symbol.type {
+						default: {
+							none += it.visit
 						}
 					}
 				}
@@ -1000,6 +1647,15 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 						}
 						case 1382: {
 							add += it.visit
+						}
+						default: {
+							none += it.visit
+						}
+					}
+				} else if (it instanceof TerminalNode) {
+					switch it.symbol.type {
+						default: {
+							none += it.visit
 						}
 					}
 				}
@@ -1030,13 +1686,26 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 						case 1390: {
 							merge += it.visit
 						}
+						default: {
+							none += it.visit
+						}
+					}
+				} else if (it instanceof TerminalNode) {
+					switch it.symbol.type {
+						default: {
+							none += it.visit
+						}
 					}
 				}
 			]
 		}
 		val node = map.castTo(UniFieldDec)
-		merge.castToList(UniFieldDec).forEach[it.merge(node)]
-		merge
+		val ret = Lists.newArrayList
+		merge.castToList(UniFieldDec).forEach [
+			it.merge(node)
+			ret += it
+		]
+		ret
 	}
 	
 	override public visitConstantModifiers(Java8Parser.ConstantModifiersContext ctx) {
@@ -1052,11 +1721,42 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 						case 1393: {
 							add += it.visit
 						}
+						default: {
+							none += it.visit
+						}
+					}
+				} else if (it instanceof TerminalNode) {
+					switch it.symbol.type {
+						default: {
+							none += it.visit
+						}
 					}
 				}
 			]
 		}
 		map.castToList(String)
+	}
+	
+	override public visitConstantModifier(Java8Parser.ConstantModifierContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(String)
 	}
 	
 	override public visitInterfaceMethodDeclaration(Java8Parser.InterfaceMethodDeclarationContext ctx) {
@@ -1080,8 +1780,16 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					case 1407: {
 						block += it.visit
 					}
+					default: {
+						none += it.visit
+					}
 				}
 			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
 			}
 		]
 		val node = map.castTo(UniMethodDec)
@@ -1102,11 +1810,42 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 						case 1409: {
 							add += it.visit
 						}
+						default: {
+							none += it.visit
+						}
+					}
+				} else if (it instanceof TerminalNode) {
+					switch it.symbol.type {
+						default: {
+							none += it.visit
+						}
 					}
 				}
 			]
 		}
 		map.castToList(String)
+	}
+	
+	override public visitInterfaceMethodModifier(Java8Parser.InterfaceMethodModifierContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(String)
 	}
 	
 	override public visitArrayInitializer(Java8Parser.ArrayInitializerContext ctx) {
@@ -1121,8 +1860,16 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					case 1533: {
 						items += it.visit
 					}
+					default: {
+						none += it.visit
+					}
 				}
 			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
 			}
 		]
 		map.castTo(UniArray)
@@ -1144,6 +1891,15 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 						case 1543: {
 							add += it.visit
 						}
+						default: {
+							none += it.visit
+						}
+					}
+				} else if (it instanceof TerminalNode) {
+					switch it.symbol.type {
+						default: {
+							none += it.visit
+						}
 					}
 				}
 			]
@@ -1163,8 +1919,16 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					case 1550: {
 						body += it.visit
 					}
+					default: {
+						none += it.visit
+					}
 				}
 			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
 			}
 		]
 		map.castTo(UniBlock)
@@ -1186,11 +1950,91 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 						case 1556: {
 							add += it.visit
 						}
+						default: {
+							none += it.visit
+						}
+					}
+				} else if (it instanceof TerminalNode) {
+					switch it.symbol.type {
+						default: {
+							none += it.visit
+						}
 					}
 				}
 			]
 		}
 		map.castToList(UniExpr)
+	}
+	
+	override public visitLocalVariableDeclarationStatement(Java8Parser.LocalVariableDeclarationStatementContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		if (ctx.children != null) {
+			for(it : ctx.children) {
+				if (it instanceof RuleContext) {
+					switch it.invokingState {
+						case 1567: {
+							return it.visit
+						}
+						default: {
+							none += it.visit
+						}
+					}
+				} else if (it instanceof TerminalNode) {
+					switch it.symbol.type {
+						default: {
+							none += it.visit
+						}
+					}
+				}
+			}
+		}
+		map.castToList(UniVariableDec)
+	}
+	
+	override public visitLocalVariableDeclaration(Java8Parser.LocalVariableDeclarationContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		val modifiers = Lists.newArrayList
+		map.put("modifiers", modifiers)
+		val type = Lists.newArrayList
+		map.put("type", type)
+		val merge = Lists.newArrayList
+		if (ctx.children != null) {
+			ctx.children.forEach [
+				if (it instanceof RuleContext) {
+					switch it.invokingState {
+						case 1570: {
+							modifiers += it.visit
+						}
+						case 1576: {
+							type += it.visit
+						}
+						case 1577: {
+							merge += it.visit
+						}
+						default: {
+							none += it.visit
+						}
+					}
+				} else if (it instanceof TerminalNode) {
+					switch it.symbol.type {
+						default: {
+							none += it.visit
+						}
+					}
+				}
+			]
+		}
+		val node = map.castTo(UniVariableDec)
+		val ret = Lists.newArrayList
+		merge.castToList(UniVariableDec).forEach [
+			it.merge(node)
+			ret += it
+		]
+		ret
 	}
 	
 	override public visitExpressionStatement(Java8Parser.ExpressionStatementContext ctx) {
@@ -1203,8 +2047,16 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					case 1618: {
 						return it.visit
 					}
+					default: {
+						none += it.visit
+					}
 				}
 			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
 			}
 		}
 		map.castTo(UniBinOp)
@@ -1227,11 +2079,186 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					case 1634: {
 						trueStatement += it.visit
 					}
+					default: {
+						none += it.visit
+					}
 				}
 			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
 			}
 		]
 		map.castTo(UniIf)
+	}
+	
+	override public visitPrimary(Java8Parser.PrimaryContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		for(it : ctx.children) {
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 1923: {
+						return it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		}
+		map
+	}
+	
+	override public visitPrimaryNoNewArray_lfno_primary(Java8Parser.PrimaryNoNewArray_lfno_primaryContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		for(it : ctx.children) {
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 2011: {
+						return it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		}
+		map
+	}
+	
+	override public visitArrayCreationExpression(Java8Parser.ArrayCreationExpressionContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		val type = Lists.newArrayList
+		map.put("type", type)
+		val value = Lists.newArrayList
+		map.put("value", value)
+		val merge = Lists.newArrayList
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 2603: {
+						type += it.visit
+					}
+					case 2604: {
+						merge += it.visit
+					}
+					case 2605: {
+						type += it.visit
+					}
+					case 2609: {
+						type += it.visit
+					}
+					case 2610: {
+						merge += it.visit
+					}
+					case 2611: {
+						type += it.visit
+					}
+					case 2615: {
+						type += it.visit
+					}
+					case 2617: {
+						value += it.visit
+					}
+					case 2620: {
+						type += it.visit
+					}
+					case 2622: {
+						value += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		val node = map.castTo(UniNewArray)
+		merge.forEach[node.merge(it.castTo(UniNewArray))]
+		node
+	}
+	
+	override public visitDimExprs(Java8Parser.DimExprsContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		val merge = Lists.newArrayList
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 2626: {
+						merge += it.visit
+					}
+					case 2627: {
+						merge += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		val node = map.castTo(UniNewArray)
+		merge.forEach[node.merge(it.castTo(UniNewArray))]
+		node
+	}
+	
+	override public visitDimExpr(Java8Parser.DimExprContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		val elementsNum = Lists.newArrayList
+		map.put("elementsNum", elementsNum)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 2640: {
+						elementsNum += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(UniNewArray)
 	}
 	
 	override public visitAssignment(Java8Parser.AssignmentContext ctx) {
@@ -1256,11 +2283,41 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					case 2683: {
 						right += it.visit
 					}
+					default: {
+						none += it.visit
+					}
 				}
 			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
 			}
 		]
 		map.castTo(UniBinOp)
+	}
+	
+	override public visitAssignmentOperator(Java8Parser.AssignmentOperatorContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(String)
 	}
 	
 	override public visitConditionalExpression(Java8Parser.ConditionalExpressionContext ctx) {
@@ -1288,11 +2345,653 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					case 2697: {
 						falseExpr += it.visit
 					}
+					default: {
+						none += it.visit
+					}
 				}
 			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
 			}
 		}
 		map.castTo(UniTernaryOp)
+	}
+	
+	override public visitConditionalOrExpression(Java8Parser.ConditionalOrExpressionContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		val op = Lists.newArrayList
+		map.put("op", op)
+		val left = Lists.newArrayList
+		map.put("left", left)
+		val right = Lists.newArrayList
+		map.put("right", right)
+		for(it : ctx.children) {
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 2702: {
+						return it.visit
+					}
+					case 464: {
+						left += it.visit
+					}
+					case 2706: {
+						right += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					case Java8Parser.OR: {
+						op += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		}
+		map.castTo(UniBinOp)
+	}
+	
+	override public visitConditionalAndExpression(Java8Parser.ConditionalAndExpressionContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		val op = Lists.newArrayList
+		map.put("op", op)
+		val left = Lists.newArrayList
+		map.put("left", left)
+		val right = Lists.newArrayList
+		map.put("right", right)
+		for(it : ctx.children) {
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 2713: {
+						return it.visit
+					}
+					case 466: {
+						left += it.visit
+					}
+					case 2717: {
+						right += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					case Java8Parser.AND: {
+						op += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		}
+		map.castTo(UniBinOp)
+	}
+	
+	override public visitInclusiveOrExpression(Java8Parser.InclusiveOrExpressionContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		val op = Lists.newArrayList
+		map.put("op", op)
+		val left = Lists.newArrayList
+		map.put("left", left)
+		val right = Lists.newArrayList
+		map.put("right", right)
+		for(it : ctx.children) {
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 2724: {
+						return it.visit
+					}
+					case 468: {
+						left += it.visit
+					}
+					case 2728: {
+						right += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					case Java8Parser.BITOR: {
+						op += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		}
+		map.castTo(UniBinOp)
+	}
+	
+	override public visitExclusiveOrExpression(Java8Parser.ExclusiveOrExpressionContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		val op = Lists.newArrayList
+		map.put("op", op)
+		val left = Lists.newArrayList
+		map.put("left", left)
+		val right = Lists.newArrayList
+		map.put("right", right)
+		for(it : ctx.children) {
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 2735: {
+						return it.visit
+					}
+					case 470: {
+						left += it.visit
+					}
+					case 2739: {
+						right += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					case Java8Parser.CARET: {
+						op += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		}
+		map.castTo(UniBinOp)
+	}
+	
+	override public visitAndExpression(Java8Parser.AndExpressionContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		val op = Lists.newArrayList
+		map.put("op", op)
+		val left = Lists.newArrayList
+		map.put("left", left)
+		val right = Lists.newArrayList
+		map.put("right", right)
+		for(it : ctx.children) {
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 2746: {
+						return it.visit
+					}
+					case 472: {
+						left += it.visit
+					}
+					case 2750: {
+						right += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					case Java8Parser.BITAND: {
+						op += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		}
+		map.castTo(UniBinOp)
+	}
+	
+	override public visitEqualityExpression(Java8Parser.EqualityExpressionContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		val op = Lists.newArrayList
+		map.put("op", op)
+		val left = Lists.newArrayList
+		map.put("left", left)
+		val right = Lists.newArrayList
+		map.put("right", right)
+		for(it : ctx.children) {
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 2757: {
+						return it.visit
+					}
+					case 474: {
+						left += it.visit
+					}
+					case 2761: {
+						right += it.visit
+					}
+					case 2764: {
+						right += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					case Java8Parser.EQUAL: {
+						op += it.visit
+					}
+					case Java8Parser.NOTEQUAL: {
+						op += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		}
+		map.castTo(UniBinOp)
+	}
+	
+	override public visitRelationalExpression(Java8Parser.RelationalExpressionContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		val op = Lists.newArrayList
+		map.put("op", op)
+		val left = Lists.newArrayList
+		map.put("left", left)
+		val right = Lists.newArrayList
+		map.put("right", right)
+		for(it : ctx.children) {
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 2771: {
+						return it.visit
+					}
+					case 476: {
+						left += it.visit
+					}
+					case 2775: {
+						right += it.visit
+					}
+					case 2778: {
+						right += it.visit
+					}
+					case 2781: {
+						right += it.visit
+					}
+					case 2784: {
+						right += it.visit
+					}
+					case 2787: {
+						right += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					case Java8Parser.LT: {
+						op += it.visit
+					}
+					case Java8Parser.GT: {
+						op += it.visit
+					}
+					case Java8Parser.LE: {
+						op += it.visit
+					}
+					case Java8Parser.GE: {
+						op += it.visit
+					}
+					case Java8Parser.INSTANCEOF: {
+						op += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		}
+		map.castTo(UniBinOp)
+	}
+	
+	override public visitShiftExpression(Java8Parser.ShiftExpressionContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		val op = Lists.newArrayList
+		map.put("op", op)
+		val left = Lists.newArrayList
+		map.put("left", left)
+		val right = Lists.newArrayList
+		map.put("right", right)
+		for(it : ctx.children) {
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 2794: {
+						return it.visit
+					}
+					case 478: {
+						left += it.visit
+					}
+					case 2799: {
+						right += it.visit
+					}
+					case 2803: {
+						right += it.visit
+					}
+					case 2808: {
+						right += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					case Java8Parser.LT: {
+						op += it.visit
+					}
+					case Java8Parser.GT: {
+						op += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		}
+		map.castTo(UniBinOp)
+	}
+	
+	override public visitAdditiveExpression(Java8Parser.AdditiveExpressionContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		val op = Lists.newArrayList
+		map.put("op", op)
+		val left = Lists.newArrayList
+		map.put("left", left)
+		val right = Lists.newArrayList
+		map.put("right", right)
+		for(it : ctx.children) {
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 2815: {
+						return it.visit
+					}
+					case 480: {
+						left += it.visit
+					}
+					case 2819: {
+						right += it.visit
+					}
+					case 2822: {
+						right += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					case Java8Parser.ADD: {
+						op += it.visit
+					}
+					case Java8Parser.SUB: {
+						op += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		}
+		map.castTo(UniBinOp)
+	}
+	
+	override public visitMultiplicativeExpression(Java8Parser.MultiplicativeExpressionContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		val op = Lists.newArrayList
+		map.put("op", op)
+		val left = Lists.newArrayList
+		map.put("left", left)
+		val right = Lists.newArrayList
+		map.put("right", right)
+		for(it : ctx.children) {
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 2829: {
+						return it.visit
+					}
+					case 482: {
+						left += it.visit
+					}
+					case 2833: {
+						right += it.visit
+					}
+					case 2836: {
+						right += it.visit
+					}
+					case 2839: {
+						right += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					case Java8Parser.MUL: {
+						op += it.visit
+					}
+					case Java8Parser.DIV: {
+						op += it.visit
+					}
+					case Java8Parser.MOD: {
+						op += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		}
+		map.castTo(UniBinOp)
+	}
+	
+	override public visitUnaryExpression(Java8Parser.UnaryExpressionContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		val expr = Lists.newArrayList
+		map.put("expr", expr)
+		val operator = Lists.newArrayList
+		map.put("operator", operator)
+		for(it : ctx.children) {
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 2845: {
+						return it.visit
+					}
+					case 2846: {
+						return it.visit
+					}
+					case 2848: {
+						expr += it.visit
+					}
+					case 2850: {
+						expr += it.visit
+					}
+					case 2851: {
+						return it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					case Java8Parser.ADD: {
+						operator += it.visit
+					}
+					case Java8Parser.SUB: {
+						operator += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		}
+		map.castTo(UniUnaryOp)
+	}
+	
+	override public visitPreIncrementExpression(Java8Parser.PreIncrementExpressionContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		val expr = Lists.newArrayList
+		map.put("expr", expr)
+		val operator = Lists.newArrayList
+		map.put("operator", operator)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 2855: {
+						expr += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					case Java8Parser.INC: {
+						operator += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(UniUnaryOp)
+	}
+	
+	override public visitPreDecrementExpression(Java8Parser.PreDecrementExpressionContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		val expr = Lists.newArrayList
+		map.put("expr", expr)
+		val operator = Lists.newArrayList
+		map.put("operator", operator)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 2858: {
+						expr += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					case Java8Parser.DEC: {
+						operator += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(UniUnaryOp)
+	}
+	
+	override public visitUnaryExpressionNotPlusMinus(Java8Parser.UnaryExpressionNotPlusMinusContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		val expr = Lists.newArrayList
+		map.put("expr", expr)
+		val operator = Lists.newArrayList
+		map.put("operator", operator)
+		for(it : ctx.children) {
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 2860: {
+						return it.visit
+					}
+					case 2862: {
+						expr += it.visit
+					}
+					case 2864: {
+						expr += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					case Java8Parser.TILDE: {
+						operator += it.visit
+					}
+					case Java8Parser.BANG: {
+						operator += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		}
+		map.castTo(UniUnaryOp)
+	}
+	
+	override public visitPostfixExpression(Java8Parser.PostfixExpressionContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		for(it : ctx.children) {
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 2868: {
+						return it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		}
+		map.castTo(UniUnaryOp)
 	}
 	
 }

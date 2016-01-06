@@ -19,52 +19,63 @@ class Java8MapperTest extends MapperTest {
 
 	@Test
 	def void parseClass() {
+		val expected = new UniClassDec
+		expected.className = "A"
+		expected.interfaces = #[]
+		expected.members = #[]
+		expected.modifiers = #["public"]
+		expected.superClass = #[]
 
-		//Empty Class Declaration
-		val classDec = mapper.parse("public class A {}") as UniClassDec
-		assertThat(classDec.className, equalTo("A"))
+		val actual = mapper.parse("public class A {}")
+
+		expected.evaluate(actual)
 	}
 
 	@Test
 	def void parseClassWithExtendsAndImplements() {
-		val classDec = mapper.parse("public static class A extends SuperClass implements Interface,Interface1 {}")
-		assertThat(classDec, instanceOf(UniClassDec))
-		assertThat((classDec as UniClassDec).modifiers.get(0), equalTo("public"))
-		assertThat((classDec as UniClassDec).modifiers.get(1), equalTo("static"))
-		assertThat((classDec as UniClassDec).superClass.get(0), equalTo("SuperClass"))
-		assertThat((classDec as UniClassDec).interfaces.get(0), equalTo("Interface"))
-		assertThat((classDec as UniClassDec).interfaces.get(1), equalTo("Interface1"))
-		assertThat((classDec as UniClassDec).className, equalTo("A"))
+		val expected = new UniClassDec
+		expected.className = "A"
+		expected.interfaces = #["Interface", "Interface1"]
+		expected.members = #[]
+		expected.modifiers = #["public", "static"]
+		expected.superClass = #["SuperClass"]
+
+		val actual = mapper.parse("public static class A extends SuperClass implements Interface,Interface1 {}")
+
+		expected.evaluate(actual)
 	}
 
 	@Test
 	def void parseInterface() {
-
 		//Empty InterfaceDeclaration
-		val interfaceDec = mapper.parse("public interface A extends SuperInterface1 {}")
-		assertThat(interfaceDec, instanceOf(UniClassDec))
-		assertThat((interfaceDec as UniClassDec).modifiers.get(0), equalTo("public"))
-		assertThat((interfaceDec as UniClassDec).superClass.get(0), equalTo("SuperInterface1"))
-		assertThat((interfaceDec as UniClassDec).className, equalTo("A"))
+		val expected = new UniClassDec
+		expected.className = "A"
+		expected.members = #[]
+		expected.modifiers = #["public"]
+		expected.superClass = #["SuperInterface1"]
+
+		val actual = mapper.parse("public interface A extends SuperInterface1 {}")
+
+		expected.evaluate(actual)
 	}
 
 	@Test
 	def void parseLiteral() {
 		{
 			val literal = mapper.castTo(mapper.parse("1", [p|p.literal]), UniIntLiteral)
-			assertThat(literal, equalTo(lit(1)))
+			lit(1).evaluate(literal)
 		}
 		{
 			val literal = mapper.castTo(mapper.parse("1.0", [p|p.literal]), UniDoubleLiteral)
-			assertThat(literal, equalTo(lit(1.0)))
+			lit(1.0).evaluate(literal)
 		}
 		{
 			val literal = mapper.castTo(mapper.parse("true", [p|p.literal]), UniBoolLiteral)
-			assertThat(literal, equalTo(lit(true)))
+			lit(true).evaluate(literal)
 		}
 		{
 			val literal = mapper.castTo(mapper.parse("\"Hello\"", [p|p.literal]), UniStringLiteral)
-			assertThat(literal, equalTo(lit("Hello")))
+			lit("Hello").evaluate(literal)
 		}
 	}
 
@@ -88,13 +99,4 @@ class Java8MapperTest extends MapperTest {
 		println(result)
 	}
 
-	@Test
-	def void testIsAssignableFrom() {
-		val clazz = UniClassDec
-		val fields = clazz.fields
-		val fieldsName = Lists.newArrayList
-		fields.forEach[fieldsName.add(it.name)]
-		val field = fields.get(fieldsName.indexOf("interfaces"))
-		assertTrue(List.isAssignableFrom(field.type))
-	}
 }

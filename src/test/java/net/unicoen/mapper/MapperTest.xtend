@@ -18,8 +18,173 @@ import static org.hamcrest.Matchers.*
 import static org.junit.Assert.*
 import net.unicoen.node.UniIntLiteral
 import net.unicoen.node.UniArray
+import net.unicoen.node.UniDoubleLiteral
+import net.unicoen.node.UniBoolLiteral
+import net.unicoen.node.UniStringLiteral
+import net.unicoen.node.UniBinOp
+import net.unicoen.node.UniIdent
+import net.unicoen.node.UniNewArray
 
 class MapperTest {
+
+	protected def void evaluate(Object expected, Object actual) {
+		if (expected == null) {
+			assertThat(actual, equalTo(expected))
+			return
+		}
+		switch (expected) {
+			UniClassDec:
+				expected.evaluateClass(actual)
+			List<?>:
+				expected.evaluateList(actual)
+			UniIntLiteral:
+				expected.evaluateIntLiteral(actual)
+			UniDoubleLiteral:
+				expected.evaluateDoubleLiteral(actual)
+			UniBoolLiteral:
+				expected.evaluateBoolLiteral(actual)
+			UniStringLiteral:
+				expected.evaluateStringLiteral(actual)
+			UniMethodDec:
+				expected.evaluateMethodDec(actual)
+			UniArg:
+				expected.evaluateArg(actual)
+			UniBlock:
+				expected.evaluateBlock(actual)
+			UniIf:
+				expected.evaluateIf(actual)
+			UniBinOp:
+				expected.evaluateBinOp(actual)
+			UniIdent:
+				expected.evaluateIdent(actual)
+			UniFieldDec:
+				expected.evaluateFieldDec(actual)
+			UniNewArray:
+				expected.evaluateNewArray(actual)
+				UniArray:
+				expected.evaluateArray(actual)
+			String,
+			Integer,
+			Double,
+			Boolean:
+				assertThat(expected, equalTo(actual))
+			default:
+				throw new RuntimeException("Unsuspected type: " + expected.class.typeName)
+		}
+	}
+	
+	private def evaluateArray(UniArray expected, Object actual){
+		assertThat(actual, instanceOf(typeof(UniArray)))
+		val array = actual as UniArray
+		expected.items.evaluate(array.items)
+	}
+
+	private def evaluateNewArray(UniNewArray expected, Object actual) {
+		assertThat(actual, instanceOf(typeof(UniNewArray)))
+		val newarray = actual as UniNewArray
+		expected.elementsNum.evaluate(newarray.elementsNum)
+		expected.type.evaluate(newarray.type)
+		expected.value.evaluate(newarray.value)
+	}
+
+	private def evaluateFieldDec(UniFieldDec expected, Object actual) {
+		assertThat(actual, instanceOf(typeof(UniFieldDec)))
+		val field = actual as UniFieldDec
+		expected.modifiers.evaluate(field.modifiers)
+		expected.name.evaluate(field.name)
+		expected.type.evaluate(field.type)
+		expected.value.evaluate(field.value)
+	}
+
+	private def evaluateIdent(UniIdent expected, Object actual) {
+		assertThat(actual, instanceOf(typeof(UniIdent)))
+		val ident = expected as UniIdent
+		expected.name.evaluate(ident.name)
+	}
+
+	private def evaluateBinOp(UniBinOp expected, Object actual) {
+		assertThat(actual, instanceOf(typeof(UniBinOp)))
+		val binop = actual as UniBinOp
+		expected.left.evaluate(binop.left)
+		expected.operator.evaluate((binop.operator))
+		expected.right.evaluate(binop.right)
+	}
+
+	private def evaluateIf(UniIf expected, Object actual) {
+		assertThat(actual, instanceOf(typeof(UniIf)))
+		val ifstat = actual as UniIf
+		expected.cond.evaluate(ifstat.cond)
+		expected.trueStatement.evaluate(ifstat.trueStatement)
+		expected.falseStatement.evaluate(ifstat.falseStatement)
+	}
+
+	private def evaluateBlock(UniBlock expected, Object actual) {
+		assertThat(actual, instanceOf(typeof(UniBlock)))
+		val block = actual as UniBlock
+		expected.blockLabel.evaluate(block.blockLabel)
+		expected.body.evaluate(block.body)
+	}
+
+	private def evaluateArg(UniArg expected, Object actual) {
+		assertThat(actual, instanceOf(typeof(UniArg)))
+		val arg = actual as UniArg
+		expected.name.evaluate(arg.name)
+		expected.type.evaluate(arg.type)
+	}
+
+	private def evaluateMethodDec(UniMethodDec expected, Object actual) {
+		assertThat(actual, instanceOf(typeof(UniMethodDec)))
+		val method = actual as UniMethodDec
+		expected.args.evaluate(method.args)
+		expected.block.evaluate(method.block)
+		expected.methodName.evaluate(method.methodName)
+		expected.modifiers.evaluate(method.modifiers)
+		expected.returnType.evaluate(method.returnType)
+	}
+
+	private def evaluateIntLiteral(UniIntLiteral expected, Object actual) {
+		assertThat(actual, instanceOf(typeof(UniIntLiteral)))
+		val literal = actual as UniIntLiteral
+		expected.value.evaluate(literal.value)
+	}
+
+	private def evaluateDoubleLiteral(UniDoubleLiteral expected, Object actual) {
+		assertThat(actual, instanceOf(typeof(UniDoubleLiteral)))
+		val literal = actual as UniDoubleLiteral
+		expected.value.evaluate(literal.value)
+	}
+
+	private def evaluateBoolLiteral(UniBoolLiteral expected, Object actual) {
+		assertThat(actual, instanceOf(typeof(UniBoolLiteral)))
+		val literal = actual as UniBoolLiteral
+		expected.value.evaluate(literal.value)
+	}
+
+	private def evaluateStringLiteral(UniStringLiteral expected, Object actual) {
+		assertThat(actual, instanceOf(typeof(UniStringLiteral)))
+		val literal = actual as UniStringLiteral
+		expected.value.evaluate(literal.value)
+	}
+
+	private def evaluateClass(UniClassDec expected, Object actual) {
+		assertThat(actual, instanceOf(typeof(UniClassDec)))
+		val node = actual as UniClassDec
+		expected.className.evaluate(node.className)
+		expected.innerClasses.evaluate(node.innerClasses)
+		expected.interfaces.evaluate(node.interfaces)
+		expected.members.evaluate(node.members)
+		expected.modifiers.evaluate(node.modifiers)
+		expected.superClass.evaluate(node.superClass)
+	}
+
+	private def evaluateList(List<?> expected, Object actual) {
+		assertThat(actual, instanceOf(typeof(List)))
+		val list = actual as List<?>
+		assertThat(expected.size, equalTo(list.size))
+		for (var i = 0; i < list.size; i++) {
+			expected.get(i).evaluate(list.get(i))
+		}
+	}
 
 	/**
 	 * 引数に与えられたUniClassDecを評価する.
