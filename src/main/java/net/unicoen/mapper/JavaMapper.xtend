@@ -33,6 +33,7 @@ import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.TerminalNodeImpl
 import org.eclipse.xtext.xbase.lib.Functions.Function1
 import net.unicoen.node.UniTernaryOp
+import net.unicoen.node.UniArg
 
 class JavaMapper extends JavaBaseVisitor<UniNode> {
 	def parse(String code) {
@@ -86,7 +87,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		// :	classModifier* 'class' className typeParameters? superclass? superinterfaces? classBody		
 		val nodes = createNodeMap(ctx)
 		val ret = new UniClassDec()
-		
+
 		ret.modifiers = nodes.getOrEmpty(JavaParser.RULE_classModifier).map[it.toString].toList
 		ret.superClass = nodes.getOrEmpty(JavaParser.RULE_superclass).map[it.toString].toList
 		ret.className = nodes.getOneNode(JavaParser.RULE_className).toString
@@ -112,7 +113,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		// :	Identifier
 		new StringNode(ctx.children.head.text)
 	}
-	
+
 	override visitClassType(JavaParser.ClassTypeContext ctx) {
 		return new StringNode(ctx.children.head.text)
 	}
@@ -177,6 +178,12 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		val methodDeclaratorMaps = methodHeaderMaps.item.getOne(JavaParser.RULE_methodDeclarator) as MapNode
 		methodDec.methodName = methodDeclaratorMaps.item.identifierStr
 		methodDec.block = nodes.getOneNode(JavaParser.RULE_methodBody)
+		methodDec.args = new ArrayList
+		val args = methodDeclaratorMaps.item.get(JavaParser.RULE_formalParameterList)
+		if (args != null) {
+			args.forEach [methodDec.args.add(it as UniArg)]
+		}
+
 		methodDec
 	}
 
@@ -672,6 +679,18 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		}
 	}
 
+	override visitFormalParameter(JavaParser.FormalParameterContext ctx) {
+		val nodes = createMap(ctx)
+		val model = new UniArg
+		val name = nodes.getOne(
+			JavaParser.RULE_variableDeclaratorId) as net.unicoen.mapper.JavaMapper.DummyNode<Pair<String, String>>
+
+		model.name = name.item.key
+		model.type = nodes.getOne(JavaParser.RULE_unannType).toString
+
+		return model
+	}
+
 	override visitPrimaryNoNewArray_lfno_primary(JavaParser.PrimaryNoNewArray_lfno_primaryContext ctx) {
 		// primaryNoNewArray_lfno_primary
 		// :	literal
@@ -960,5 +979,5 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	private static def getTerminals(ParserRuleContext ctx) {
 		ctx.children.filter[it instanceof TerminalNodeImpl].map[it.text]
 	}
-	
+
 }

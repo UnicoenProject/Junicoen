@@ -1,6 +1,6 @@
 package net.unicoen.node;
 
-public class UniArg {
+public class UniArg extends UniNode{
 	public String type;
 	public String name;
 

@@ -4,9 +4,6 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import com.google.common.collect.Lists;
-
-import net.unicoen.node.UniArg;
 import net.unicoen.node.UniBlock;
 import net.unicoen.node.UniClassDec;
 import net.unicoen.node.UniIdent;
@@ -22,7 +19,7 @@ public class UniToBlock00_BasicTest {
 		UniClassDec classModel = UniToBlockTestUtil.createClassDec("blockeditor/testcases/BlockConvertTest/_00BasicTest.java");
 		
 		UniMethodDec main = (UniMethodDec) classModel.members.get(0);
-		main.args = Lists.newArrayList(new UniArg("String[]", "args"));
+
 		
 		UniMethodDec run = (UniMethodDec)classModel.members.get(1);
 		UniWhile model = (UniWhile)run.block.body.get(1);
