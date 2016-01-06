@@ -134,11 +134,26 @@ public class ForceConvertionMap {
 	}
 
 	public UniMethodCall getUniMethodCallModel(String genusName) {
-		return b2uFCMap.getMethodCallModel(genusName);
+		UniMethodCall origin = b2uFCMap.getMethodCallModel(genusName);
+		if(origin == null){
+			return null;
+		}
+		UniMethodCall model = new UniMethodCall();
+		model.args = origin.args;
+		model.methodName = origin.methodName;
+		model.receiver = origin.receiver;
+		return model;
 	}
 	
 	public UniFieldAccess getUniFieldAccessModel(String genusName){
-		return b2uFCMap.getFieldAccessMdel(genusName);
+		UniFieldAccess origin = b2uFCMap.getFieldAccessMdel(genusName);
+		if(origin == null){
+			return null;
+		}
+		UniFieldAccess model = new UniFieldAccess();
+		model.fieldName = origin.fieldName;
+		model.receiver = origin.receiver;
+		return model;
 	}
 	
 

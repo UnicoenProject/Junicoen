@@ -1453,6 +1453,19 @@
 	</BlockConnectors>
 </BlockGenus>
 
+<BlockGenus name="new-object-Scanner[@object]" kind="function"
+	initlabel="Scanner" editable-label="yes" header-label="新しく"
+	footer-label="を作る" color="16 240 27">
+	<Type>Scanner</Type>
+	<BlockConnectors>
+		<BlockConnector connector-kind="plug" connector-type="object"></BlockConnector>
+		<BlockConnector label="" connector-kind="socket"
+			connector-type="string">
+			<DefaultArg genus-name="string" label="abc"></DefaultArg>
+		</BlockConnector>
+	</BlockConnectors>
+</BlockGenus>
+
 <BlockGenus name="new-object-Turtle[]" kind="function"
 	initlabel="Turtle" editable-label="yes" header-label="新しく"
 	footer-label="を作る" color="16 240 27">

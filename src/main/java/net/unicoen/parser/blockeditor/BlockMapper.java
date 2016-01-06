@@ -417,14 +417,12 @@ public class BlockMapper {
 		} else if (resolver.getForceConvertionMap().getUniMethodCallModel(blockGenusName) != null) {
 			UniMethodCall model = new UniMethodCall();
 			model.merge(resolver.getForceConvertionMap().getUniMethodCallModel(blockGenusName));
-			Node sockets = getSocketsNode(node);
-			model.args = parseSocket(sockets, map, blockGenusName);
+			model.args = functionArgs;
 			return model;
 		} else if (isExCallerGetterModel(blockGenusName)) {
-			Node sockets = getSocketsNode(node);
-			List<UniExpr> args = parseSocket(sockets, map, blockGenusName);
-			UniMethodCall method = (UniMethodCall) args.get(1);
-			method.receiver = args.get(0);
+			UniMethodCall method = new UniMethodCall();
+			method = (UniMethodCall) functionArgs.get(1);
+			method.receiver = functionArgs.get(0);
 			return method;
 		} else {
 			// MethodCallとする
