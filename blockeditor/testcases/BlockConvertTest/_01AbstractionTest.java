@@ -7,7 +7,7 @@ public class _01AbstractionTest extends Turtle {
 	
 	//起動処理
 	public static void main(String[] args) {
-		Turtle.startTurtle(new _01AbstractionTest());
+		Turtle.startTurtle(new _01AbstractionTest(), args);
 	}
 	
 	//タートルを動かす処理

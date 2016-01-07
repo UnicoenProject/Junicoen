@@ -7,7 +7,7 @@ public class _02IfElseTest extends Turtle {
 	
 	//起動処理
 	public static void main(String[] args) {
-		Turtle.startTurtle(new _02IfElseTest());
+		Turtle.startTurtle(new _02IfElseTest(), args);
 	}
 	
 	//タートルを動かす処理

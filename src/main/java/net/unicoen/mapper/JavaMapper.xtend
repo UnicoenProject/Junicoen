@@ -34,6 +34,7 @@ import org.antlr.v4.runtime.tree.TerminalNodeImpl
 import org.eclipse.xtext.xbase.lib.Functions.Function1
 import net.unicoen.node.UniTernaryOp
 import net.unicoen.node.UniArg
+import net.unicoen.node.UniUnaryOp
 
 class JavaMapper extends JavaBaseVisitor<UniNode> {
 	def parse(String code) {
@@ -634,15 +635,20 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		}
 	}
 
-	override visitUnaryExpressionNotPlusMinus(JavaParser.UnaryExpressionNotPlusMinusContext ctx) {
-		// unaryExpressionNotPlusMinus
-		// :	postfixExpression
-		// |	'~' unaryExpression
-		// |	'!' unaryExpression
-		// |	castExpression
-		if (ctx.children.size == 1) {
-			ctx.children.head.accept(this)
-		}
+
+
+	override public visitPostIncrementExpression(JavaParser.PostIncrementExpressionContext ctx) {
+		val bind = new UniUnaryOp
+		bind.operator = "_" + ctx.children.last.text
+		bind.expr = ctx.children.head.accept(this) as UniExpr
+		bind
+	}
+
+	override public visitPostDecrementExpression(JavaParser.PostDecrementExpressionContext ctx) {
+		val bind = new UniUnaryOp
+		bind.operator = "_" + ctx.children.last.text
+		bind.expr = ctx.children.head.accept(this) as UniExpr
+		bind
 	}
 
 	override visitPostfixExpression(JavaParser.PostfixExpressionContext ctx) {

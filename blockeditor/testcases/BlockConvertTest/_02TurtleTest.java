@@ -7,7 +7,7 @@ public class _02TurtleTest extends Turtle {
 	
 	//起動処理
 	public static void main(String[] args) {
-		Turtle.startTurtle(new _02TurtleTest());
+		Turtle.startTurtle(new _02TurtleTest(), args);
 	}
 	
 	

@@ -7,7 +7,7 @@ public class _03TextImageTest extends Turtle {
 	
 	//起動処理
 	public static void main(String[] args) {
-		Turtle.startTurtle(new _03TextImageTest());
+		Turtle.startTurtle(new _03TextImageTest(), args);
 	}
 	
 	//タートルを動かす処理

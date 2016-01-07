@@ -171,6 +171,7 @@ public class BlockMapper {
 			String kind = DOMUtil.getAttribute(node, BlockElementModel.KIND_ATTR);
 			String genusName = DOMUtil.getAttribute(node, BlockElementModel.GENUS_NAME_ATTR);
 			if (BlockProcedureModel.KIND.equals(kind)) {
+				System.out.println(DOMUtil.getChildText(node, BlockElementModel.LABEL_NODE));
 				procs.add(node);
 				if (returnTypes.get(nodeId) == null) {
 					returnTypes.put(nodeId, "void");
