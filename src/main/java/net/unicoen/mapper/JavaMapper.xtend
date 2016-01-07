@@ -182,7 +182,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		methodDec.args = new ArrayList
 		val args = methodDeclaratorMaps.item.get(JavaParser.RULE_formalParameterList)
 		if (args != null) {
-			args.forEach [methodDec.args.add(it as UniArg)]
+			args.forEach[methodDec.args.add(it as UniArg)]
 		}
 
 		methodDec
@@ -635,8 +635,6 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		}
 	}
 
-
-
 	override public visitPostIncrementExpression(JavaParser.PostIncrementExpressionContext ctx) {
 		val bind = new UniUnaryOp
 		bind.operator = "_" + ctx.children.last.text
@@ -649,6 +647,24 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		bind.operator = "_" + ctx.children.last.text
 		bind.expr = ctx.children.head.accept(this) as UniExpr
 		bind
+	}
+
+	override public visitUnaryExpressionNotPlusMinus(JavaParser.UnaryExpressionNotPlusMinusContext ctx) {
+//			:	postfixExpression
+//	|	'~' unaryExpression
+//	|	'!' unaryExpression
+//	|	castExpression
+//	;
+		if (ctx.childCount == 1) {
+			// postfix?
+			return ctx.children.head.accept(this) as UniExpr
+		} else { 
+			val model = new UniUnaryOp
+			model.operator=ctx.children.head.text
+			model.expr = ctx.children.last.accept(this) as UniExpr
+			
+			model
+		}
 	}
 
 	override visitPostfixExpression(JavaParser.PostfixExpressionContext ctx) {
