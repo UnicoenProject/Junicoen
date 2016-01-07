@@ -249,6 +249,19 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		throw new RuntimeException("Not implemented")
 	}
 
+	override visitFieldAccess(JavaParser.FieldAccessContext ctx){
+//			:	primary '.' Identifier
+//	|	'super' '.' Identifier
+//	|	typeName '.' 'super' '.' Identifier
+//	;
+		val model = new UniFieldAccess
+		model.receiver = ctx.children.head.accept(this) as UniExpr
+		model.fieldName = ctx.children.last.text
+		
+		model
+	}
+	
+
 	override visitTypeName(JavaParser.TypeNameContext ctx) {
 		// typeName
 		// :	Identifier
@@ -468,8 +481,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	override visitAssignment(JavaParser.AssignmentContext ctx) {
 		// assignment
 		// :	leftHandSide assignmentOperator expression
-		new UniBinOp(ctx.children.get(1).text, ctx.children.head.accept(this) as UniExpr,
-			ctx.children.last.accept(this) as UniExpr)
+		new UniBinOp(ctx.children.get(1).text, ctx.children.head.accept(this) as UniExpr, ctx.children.last.accept(this) as UniExpr)
 	}
 
 	override visitLeftHandSide(JavaParser.LeftHandSideContext ctx) {
@@ -686,7 +698,28 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		// |	ambiguousName '.' Identifier
 		if (ctx.children.size == 1) {
 			new UniIdent(ctx.children.head.text)
+		}else{
+			val model = new UniFieldAccess()
+			model.receiver = ctx.children.head.accept(this) as UniExpr
+			model.fieldName = ctx.children.last.text
+			
+			model	
 		}
+	}
+	
+	override visitAmbiguousName(JavaParser.AmbiguousNameContext ctx) {
+//		ambiguousName
+//	:	Identifier
+//	|	ambiguousName '.' Identifier
+//	; 
+		if(ctx.children.length == 1){
+			new UniIdent(ctx.children.head.text)
+		}else{
+			val model = new UniFieldAccess
+			model.receiver = ctx.children.head.accept(this) as UniExpr
+			model.fieldName = ctx.children.last.text
+			model
+		}	
 	}
 
 	override visitPrimary(JavaParser.PrimaryContext ctx) {
