@@ -38,6 +38,7 @@ import net.unicoen.node.UniUnaryOp
 import org.antlr.v4.runtime.RuleContext
 import net.unicoen.node.UniReturn
 import net.unicoen.node.UniEmptyStatement
+import net.unicoen.node.UniCast
 
 class JavaMapper extends JavaBaseVisitor<UniNode> {
 	def parse(String code) {
@@ -433,6 +434,14 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		return new StringNode(ctx.children.head.text)
 	}
 
+	override visitPrimitiveType(JavaParser.PrimitiveTypeContext ctx) {
+//		primitiveType
+//	:	annotation* numericType
+//	|	annotation* 'boolean'
+//	;
+		return new StringNode(ctx.children.last.text)
+	}
+
 	override visitVariableDeclaratorList(JavaParser.VariableDeclaratorListContext ctx) {
 		// variableDeclaratorList
 		// :	variableDeclarator (',' variableDeclarator)*
@@ -689,6 +698,20 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 
 			model
 		}
+	}
+	
+	override public visitCastExpression(JavaParser.CastExpressionContext ctx) {
+//		castExpression
+//	:	'(' primitiveType ')' unaryExpression
+//	|	'(' referenceType additionalBound* ')' unaryExpressionNotPlusMinus
+//	|	'(' referenceType additionalBound* ')' lambdaExpression
+//	;
+		val nodes = createMap(ctx)
+		val model = new UniCast
+		model.type = nodes.getOne(JavaParser.RULE_primitiveType).toString
+		model.value = nodes.getOne(JavaParser.RULE_unaryExpression)
+				
+		model
 	}
 
 	override visitPostfixExpression(JavaParser.PostfixExpressionContext ctx) {

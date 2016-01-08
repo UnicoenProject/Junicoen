@@ -26,7 +26,7 @@ public class BlockExprModel extends BlockElementModel {
 
 	public void addPlugElement(Document document, Element target, String parentBlockID, String plugType, String positionType) {
 		Element plugNode = document.createElement(BlockPlugModel.NODE_NAME);
-		Element blockConnectorNode = document.createElement("BlockConnector");
+		Element blockConnectorNode = document.createElement(BlockConnector.CONNECTOR_NODE);
 
 		blockConnectorNode.setAttribute(BlockPlugModel.CONNECTOR_BLOCK_ID_ATTR, parentBlockID);
 		blockConnectorNode.setAttribute(BlockPlugModel.CONNECTOR_KIND_ATTR, "plug");

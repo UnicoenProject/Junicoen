@@ -9,7 +9,7 @@ public class BlockSocketModel extends BlockConnector{
 	public static String CONNECTOR_TYPE = "socket";
 	
 	public BlockSocketModel(BlockExprModel param) {
-		this.label = param.getLabel();
+		this.label = "";
 		this.positionType = "single";
 		this.connectorType = convertTypeToBlockConnectorType(param.getType());
 		this.initType = convertTypeToBlockConnectorType(param.getType());

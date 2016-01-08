@@ -45,7 +45,12 @@ public class BlockExCallGetterModel extends BlockExprModel {
 	 * このブロックのノードにPlugノードを追加する
 	 */
 	public void setPlugElement(Document document, BlockPlugModel plugInfo) {
-		plugInfo.connectorType = convertTypeToBlockConnectorType(getType());
+		String socketBlockType = getType();
+		if(socketBlockType != null){
+			plugInfo.connectorType = convertTypeToBlockConnectorType(getType());	
+		}else{
+			plugInfo.connectorType = convertTypeToBlockConnectorType("poly");
+		}
 		this.element.appendChild(plugInfo.createElemnet(document));
 	}
 

@@ -40,7 +40,7 @@ public class BlockElementModel {
 	public static enum BLOCKKINDS{
 		FUNCTION("function"),COMMAND("command"),DATA("data"),LOCAL_VARDEC("local-variable"),
 		GLOBAL_VARDEC("global-variable"),PROCEDURE("procedure"),PARAM("param"),RETURN("return"),SPECIAL("special"),SPECIAL_VARDEC("special-variable")
-		,ABSTRACTION("abstraction");
+		,ABSTRACTION("abstraction"), CAST("cast");
 		
 		private final String text;
 		private BLOCKKINDS(String text){
@@ -214,7 +214,7 @@ public class BlockElementModel {
 			Element socketsElement = document.createElement(BlockSocketsModel.NODE_NAME);
 			socketsElement.setAttribute(BlockSocketsModel.NUMSOCKETS_ATTR, String.valueOf(sockets.getSockets().size()));
 			for (int i = 0;i<sockets.getSockets().size();i++) {
-				if(getSocketBlocks().size() > i && getSocketBlocks().get(i)!= null){
+				if(getSocketBlocks().size() > i && getSocketBlocks().get(i)!= null){//実引数とブロックの引数が異なる場合
 					sockets.getSockets().get(i).setConnectorBlockID(getSocketBlocks().get(i).getBlockID());
 				}
 				addSocketNode(document, socketsElement, sockets.getSockets().get(i));

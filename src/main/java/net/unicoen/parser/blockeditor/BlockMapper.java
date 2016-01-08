@@ -23,6 +23,7 @@ import net.unicoen.node.UniBinOp;
 import net.unicoen.node.UniBlock;
 import net.unicoen.node.UniBoolLiteral;
 import net.unicoen.node.UniBreak;
+import net.unicoen.node.UniCast;
 import net.unicoen.node.UniClassDec;
 import net.unicoen.node.UniContinue;
 import net.unicoen.node.UniDoWhile;
@@ -174,7 +175,6 @@ public class BlockMapper {
 			String kind = DOMUtil.getAttribute(node, BlockElementModel.KIND_ATTR);
 			String genusName = DOMUtil.getAttribute(node, BlockElementModel.GENUS_NAME_ATTR);
 			if (BlockProcedureModel.KIND.equals(kind)) {
-				System.out.println(DOMUtil.getChildText(node, BlockElementModel.LABEL_NODE));
 				procs.add(node);
 				if (returnTypes.get(nodeId) == null) {
 					returnTypes.put(nodeId, "void");
@@ -311,6 +311,8 @@ public class BlockMapper {
 			return parseLocalVariable(node, map);// ローカル変数を解析して，式モデルを返す
 		} else if (BlockElementModel.BLOCKKINDS.ABSTRACTION.toString().equals(blockKind)) {
 			return parseAbstraction(node, map);
+		} else if(BlockElementModel.BLOCKKINDS.CAST.toString().equals(blockKind)){
+			return parseCast(node, map);
 		} else {
 			throw new RuntimeException("Unsupported node: " + blockKind);
 		}
@@ -326,6 +328,13 @@ public class BlockMapper {
 		block.blockLabel = DOMUtil.getChildText(node, BlockElementModel.LABEL_NODE);
 
 		return block;
+	}
+	
+	private UniExpr parseCast(Node node, HashMap<String, Node> map){
+		Node argsNode = DOMUtil.getChildNode(node, BlockSocketsModel.NODE_NAME);
+		List<UniExpr> args = parseSocket(argsNode, map, DOMUtil.getAttribute(node, BlockElementModel.GENUS_NAME_ATTR));
+		
+		return new UniCast(DOMUtil.getChildText(node, BlockElementModel.TYPE_NODE), args.get(0));
 	}
 
 	private UniExpr parseLiteral(Node node) {
@@ -365,7 +374,10 @@ public class BlockMapper {
 			return op;
 		} else if (resolver.getForceConvertionMap().getUniFieldAccessModel(blockGenusName) != null) {
 			return resolver.getForceConvertionMap().getUniFieldAccessModel(blockGenusName);
-		} else {
+		}else if (blockGenusName.endsWith(BlockSpecialModel.SPECIAL_IDENT_GENUS_NAME)) {
+			return new UniIdent(DOMUtil.getChildText(node, BlockElementModel.LABEL_NODE));
+		}  
+		else {
 			throw new RuntimeException("not supported data type:" + blockGenusName);
 		}
 	}

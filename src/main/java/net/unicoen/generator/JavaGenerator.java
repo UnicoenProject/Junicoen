@@ -506,7 +506,9 @@ public class JavaGenerator extends Traverser {
 
 	@Override
 	public void traverseCast(UniCast node) {
-		// TODO Auto-generated method stub
-		
+		print("(" + node.type + ")");
+		print("(");
+		parseExpr(node.value);
+		print(")");
 	}
 }

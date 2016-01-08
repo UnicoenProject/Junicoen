@@ -132,6 +132,10 @@ public abstract class Traverser {
 			traverseEmptyStatement((UniEmptyStatement)node);
 			return;
 		}
+		if (node instanceof UniCast) {
+			traverseCast((UniCast)node);
+			return;
+		}
 		
 		throw new RuntimeException("Unknown node: " + node);
 	}
@@ -173,14 +177,7 @@ public abstract class Traverser {
 			traverseNamespace((UniNamespace)node);
 			return;
 		}
-		if (node instanceof UniEmptyStatement) {
-			traverseEmptyStatement((UniEmptyStatement)node);
-			return;
-		}
-		if (node instanceof UniCast) {
-			traverseCast((UniCast)node);
-			return;
-		}
+
 		throw new RuntimeException("Unknown node: " + node);
 	}
 }

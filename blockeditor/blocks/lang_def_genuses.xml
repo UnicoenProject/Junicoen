@@ -116,6 +116,9 @@
 	</Stubs>
 </BlockGenus>
 
+<BlockGenus name="special-ident" kind="data" color="255 0 0" initlabel="special block" editable-label="no" is-label-value="yes">
+</BlockGenus>
+
 <BlockGenus name="special-expression" kind="function" color="255 0 0"
 	initlabel="special block" editable-label="no" is-label-value="yes">
 	<BlockConnectors>

@@ -176,7 +176,10 @@ public abstract class UniModelVisitor {
 		}
 		if (node instanceof UniEmptyStatement) {
 			return visitEmpty((UniEmptyStatement) node);
-		}		
+		}
+		if (node instanceof UniCast) {
+			return visitCast((UniCast) node);
+		}
 		throw new RuntimeException("Unknown node: " + node);
 	}
 
