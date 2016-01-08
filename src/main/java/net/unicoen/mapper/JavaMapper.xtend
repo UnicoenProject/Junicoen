@@ -35,6 +35,8 @@ import org.eclipse.xtext.xbase.lib.Functions.Function1
 import net.unicoen.node.UniTernaryOp
 import net.unicoen.node.UniArg
 import net.unicoen.node.UniUnaryOp
+import org.antlr.v4.runtime.RuleContext
+import net.unicoen.node.UniReturn
 
 class JavaMapper extends JavaBaseVisitor<UniNode> {
 	def parse(String code) {
@@ -182,7 +184,9 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		methodDec.args = new ArrayList
 		val args = methodDeclaratorMaps.item.get(JavaParser.RULE_formalParameterList)
 		if (args != null) {
-			args.forEach[methodDec.args.add(it as UniArg)]
+			val argsList = args.get(0) as ListNode<UniArg>
+			
+			argsList.item.forEach[methodDec.args.add(it as UniArg)]
 		}
 
 		methodDec
@@ -249,7 +253,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		throw new RuntimeException("Not implemented")
 	}
 
-	override visitFieldAccess(JavaParser.FieldAccessContext ctx){
+	override visitFieldAccess(JavaParser.FieldAccessContext ctx) {
 //			:	primary '.' Identifier
 //	|	'super' '.' Identifier
 //	|	typeName '.' 'super' '.' Identifier
@@ -257,10 +261,9 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		val model = new UniFieldAccess
 		model.receiver = ctx.children.head.accept(this) as UniExpr
 		model.fieldName = ctx.children.last.text
-		
+
 		model
 	}
-	
 
 	override visitTypeName(JavaParser.TypeNameContext ctx) {
 		// typeName
@@ -481,7 +484,8 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	override visitAssignment(JavaParser.AssignmentContext ctx) {
 		// assignment
 		// :	leftHandSide assignmentOperator expression
-		new UniBinOp(ctx.children.get(1).text, ctx.children.head.accept(this) as UniExpr, ctx.children.last.accept(this) as UniExpr)
+		new UniBinOp(ctx.children.get(1).text, ctx.children.head.accept(this) as UniExpr,
+			ctx.children.last.accept(this) as UniExpr)
 	}
 
 	override visitLeftHandSide(JavaParser.LeftHandSideContext ctx) {
@@ -644,7 +648,10 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		// |	unaryExpressionNotPlusMinus
 		if (ctx.children.size == 1) {
 			ctx.children.head.accept(this)
+		} else {
+			ctx.children.last.accept(this)
 		}
+
 	}
 
 	override public visitPostIncrementExpression(JavaParser.PostIncrementExpressionContext ctx) {
@@ -670,11 +677,11 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		if (ctx.childCount == 1) {
 			// postfix?
 			return ctx.children.head.accept(this) as UniExpr
-		} else { 
+		} else {
 			val model = new UniUnaryOp
-			model.operator=ctx.children.head.text
+			model.operator = ctx.children.head.text
 			model.expr = ctx.children.last.accept(this) as UniExpr
-			
+
 			model
 		}
 	}
@@ -698,28 +705,28 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		// |	ambiguousName '.' Identifier
 		if (ctx.children.size == 1) {
 			new UniIdent(ctx.children.head.text)
-		}else{
+		} else {
 			val model = new UniFieldAccess()
 			model.receiver = ctx.children.head.accept(this) as UniExpr
 			model.fieldName = ctx.children.last.text
-			
-			model	
+
+			model
 		}
 	}
-	
+
 	override visitAmbiguousName(JavaParser.AmbiguousNameContext ctx) {
 //		ambiguousName
 //	:	Identifier
 //	|	ambiguousName '.' Identifier
 //	; 
-		if(ctx.children.length == 1){
+		if (ctx.children.length == 1) {
 			new UniIdent(ctx.children.head.text)
-		}else{
+		} else {
 			val model = new UniFieldAccess
 			model.receiver = ctx.children.head.accept(this) as UniExpr
 			model.fieldName = ctx.children.last.text
 			model
-		}	
+		}
 	}
 
 	override visitPrimary(JavaParser.PrimaryContext ctx) {
@@ -731,19 +738,102 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		// )*
 		if (ctx.children.size == 1) {
 			ctx.children.head.accept(this)
+		} else {
+			val head = ctx.children.head.accept(this)
+			val las = ctx.children.last.accept(this)
+			val model = las as UniMethodCall
+			model.receiver = head as UniExpr
+
+			model
 		}
+	}
+
+	override visitPrimaryNoNewArray_lf_primary(JavaParser.PrimaryNoNewArray_lf_primaryContext ctx) {
+//			:	classInstanceCreationExpression_lf_primary
+//	|	fieldAccess_lf_primary
+//	|	arrayAccess_lf_primary
+//	|	methodInvocation_lf_primary
+//	|	methodReference_lf_primary
+//	;
+		ctx.children.head.accept(this)
+	}
+
+	override visitMethodInvocation_lf_primary(JavaParser.MethodInvocation_lf_primaryContext ctx) {
+		// TODO should impl
+		val model = new UniMethodCall
+		model.args = new ArrayList
+		model.methodName = ctx.children.get(1).text
+		model
+	}
+
+	override visitFieldAccess_lf_primary(JavaParser.FieldAccess_lf_primaryContext ctx) {
+		// TODO should impl
+	}
+
+	override visitFormalParameterList(JavaParser.FormalParameterListContext ctx) {
+//formalParameterList
+//			:	formalParameters ',' lastFormalParameter
+//	|	lastFormalParameter
+//
+		val nodes = createMap(ctx)
+		if(nodes.size == 1){
+			val args = new ArrayList<UniArg>
+			args.add(nodes.getOne(JavaParser.RULE_lastFormalParameter))
+			new ListNode(args)
+		}else{
+			val parameters = ctx.children.head.accept(this) as ListNode<UniArg>
+			val last = ctx.children.last.accept(this) as UniArg
+			val args = parameters.item as ArrayList<UniArg>
+			args.add(last)
+			
+			new ListNode(args)
+		}
+	}
+	
+	override visitFormalParameters(JavaParser.FormalParametersContext ctx) {
+//formalParameters
+//	:	formalParameter (',' formalParameter)*
+//	|	receiverParameter (',' formalParameter)*
+//	;
+		val list = new ArrayList<UniArg>
+		
+		ctx.children.forEach[
+			if(it instanceof RuleContext){
+				list.add(it.accept(this) as UniArg)
+			}
+
+		]
+		new ListNode(list)
 	}
 
 	override visitFormalParameter(JavaParser.FormalParameterContext ctx) {
 		val nodes = createMap(ctx)
 		val model = new UniArg
-		val name = nodes.getOne(
-			JavaParser.RULE_variableDeclaratorId) as net.unicoen.mapper.JavaMapper.DummyNode<Pair<String, String>>
+		val name = nodes.getOne(JavaParser.RULE_variableDeclaratorId) as net.unicoen.mapper.JavaMapper.DummyNode<Pair<String, String>>
 
 		model.name = name.item.key
 		model.type = nodes.getOne(JavaParser.RULE_unannType).toString
-
+		
 		return model
+	}
+	
+	override visitLastFormalParameter(JavaParser.LastFormalParameterContext ctx) {
+		val nodes = createMap(ctx)
+
+		return nodes.getOne(JavaParser.RULE_formalParameter)
+	}
+	
+	override visitReturnStatement(JavaParser.ReturnStatementContext ctx) {
+//returnStatement
+//	:	'return' expression? ';'
+//	;
+		if(ctx.childCount == 2){
+			new UniReturn(null)
+		}else{
+			val model = new UniReturn
+			model.value = ctx.children.get(1).accept(this) as UniExpr
+			model
+		}
 	}
 
 	override visitPrimaryNoNewArray_lfno_primary(JavaParser.PrimaryNoNewArray_lfno_primaryContext ctx) {

@@ -54,6 +54,7 @@ import net.unicoen.parser.blockeditor.blockmodel.BlockPrePostModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockProcedureModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockReturnModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockSocketsModel;
+import net.unicoen.parser.blockeditor.blockmodel.BlockSpecialModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockStringLiteralModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockVariableGetterModel;
 import net.unicoen.parser.blockeditor.blockmodel.PageModel;
@@ -567,7 +568,10 @@ public class BlockMapper {
 			Node sockets = getSocketsNode(node);
 			model.args = parseSocket(sockets, map, blockGenusName);
 			return model;
-		} else {
+		}else if(blockGenusName.equals(BlockSpecialModel.GENUS_NAME)){
+			String methodName = DOMUtil.getChildTextFromBlockNode(node, BlockElementModel.NAME_NODE);
+			return new UniMethodCall(null,methodName, args);
+		}else {
 			String methodName = DOMUtil.getChildTextFromBlockNode(resolver.getBlockNode(blockGenusName), BlockElementModel.NAME_NODE);
 
 			UniMethodCall mcall = getProtoType(methodName);
