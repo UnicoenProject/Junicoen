@@ -1,6 +1,6 @@
 package net.unicoen.node;
 
-public class UniEmptyStatement extends UniNode {
+public class UniEmptyStatement extends UniExpr {
 
 	public UniEmptyStatement() {
 	}
@@ -21,5 +21,11 @@ public class UniEmptyStatement extends UniNode {
 	}
 
 	public void merge(UniEmptyStatement that) {
+	}
+
+	@Override
+	public boolean isStatement() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

@@ -174,6 +174,9 @@ public abstract class UniModelVisitor {
 		if (node instanceof UniVariableDec) {
 			return visitVariableDec((UniVariableDec) node);
 		}
+		if (node instanceof UniEmptyStatement) {
+			return visitEmpty((UniEmptyStatement) node);
+		}		
 		throw new RuntimeException("Unknown node: " + node);
 	}
 

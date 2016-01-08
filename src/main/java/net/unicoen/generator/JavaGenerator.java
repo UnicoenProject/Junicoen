@@ -501,8 +501,7 @@ public class JavaGenerator extends Traverser {
 
 	@Override
 	public void traverseEmptyStatement(UniEmptyStatement node) {
-		// TODO Auto-generated method stub
-		
+		print("");
 	}
 
 	@Override

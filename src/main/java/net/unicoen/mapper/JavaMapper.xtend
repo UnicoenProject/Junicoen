@@ -37,6 +37,7 @@ import net.unicoen.node.UniArg
 import net.unicoen.node.UniUnaryOp
 import org.antlr.v4.runtime.RuleContext
 import net.unicoen.node.UniReturn
+import net.unicoen.node.UniEmptyStatement
 
 class JavaMapper extends JavaBaseVisitor<UniNode> {
 	def parse(String code) {
@@ -109,6 +110,10 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		// |	'final'
 		// |	'strictfp'
 		new StringNode(ctx.children.head.text) // TODO: this code treat annotation as a string
+	}
+	
+	override visitEmptyStatement(JavaParser.EmptyStatementContext ctx) {
+		new UniEmptyStatement
 	}
 
 	override visitClassName(JavaParser.ClassNameContext ctx) {

@@ -27,6 +27,7 @@ import net.unicoen.node.UniClassDec;
 import net.unicoen.node.UniContinue;
 import net.unicoen.node.UniDoWhile;
 import net.unicoen.node.UniDoubleLiteral;
+import net.unicoen.node.UniEmptyStatement;
 import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniFieldDec;
 import net.unicoen.node.UniIdent;
@@ -46,6 +47,7 @@ import net.unicoen.parser.blockeditor.blockmodel.BlockBooleanLiteralModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockConnector;
 import net.unicoen.parser.blockeditor.blockmodel.BlockDoubleLiteralModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockElementModel;
+import net.unicoen.parser.blockeditor.blockmodel.BlockEmptyModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockExCallGetterModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockExCallerModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockFieldVarDecModel;
@@ -571,6 +573,8 @@ public class BlockMapper {
 		}else if(blockGenusName.equals(BlockSpecialModel.GENUS_NAME)){
 			String methodName = DOMUtil.getChildTextFromBlockNode(node, BlockElementModel.NAME_NODE);
 			return new UniMethodCall(null,methodName, args);
+		}else if(blockGenusName.equals(BlockEmptyModel.GENUS_NAME)){
+			return new UniEmptyStatement();
 		}else {
 			String methodName = DOMUtil.getChildTextFromBlockNode(resolver.getBlockNode(blockGenusName), BlockElementModel.NAME_NODE);
 

@@ -128,6 +128,11 @@ public abstract class Traverser {
 			traverseVariableDec((UniVariableDec)node);
 			return;
 		}
+		if (node instanceof UniEmptyStatement) {
+			traverseEmptyStatement((UniEmptyStatement)node);
+			return;
+		}
+		
 		throw new RuntimeException("Unknown node: " + node);
 	}
 
