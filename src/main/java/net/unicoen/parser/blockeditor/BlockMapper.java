@@ -16,6 +16,9 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.google.common.collect.Lists;
+
+import net.unicoen.node.UniArg;
 import net.unicoen.node.UniBinOp;
 import net.unicoen.node.UniBlock;
 import net.unicoen.node.UniBoolLiteral;
@@ -25,6 +28,7 @@ import net.unicoen.node.UniContinue;
 import net.unicoen.node.UniDoWhile;
 import net.unicoen.node.UniDoubleLiteral;
 import net.unicoen.node.UniExpr;
+import net.unicoen.node.UniFieldDec;
 import net.unicoen.node.UniIdent;
 import net.unicoen.node.UniIf;
 import net.unicoen.node.UniIntLiteral;
@@ -37,9 +41,13 @@ import net.unicoen.node.UniStringLiteral;
 import net.unicoen.node.UniUnaryOp;
 import net.unicoen.node.UniVariableDec;
 import net.unicoen.node.UniWhile;
+import net.unicoen.parser.blockeditor.blockmodel.BlockConnectorInfo;
 import net.unicoen.parser.blockeditor.blockmodel.BlockElementModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockExCallGetterModel;
+import net.unicoen.parser.blockeditor.blockmodel.BlockExCallerModel;
+import net.unicoen.parser.blockeditor.blockmodel.BlockFieldVarDecModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockProcedureModel;
+import net.unicoen.parser.blockeditor.blockmodel.BlockReturnModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockSocketsModel;
 import net.unicoen.parser.blockeditor.blockmodel.PageModel;
 
@@ -54,73 +62,125 @@ public class BlockMapper {
 	}
 
 	public UniClassDec parse(File xmlFile) {
-		UniClassDec classDec = createProcotypeClassModel(xmlFile);
 		// Blockノードの親ノードを取得する
-		Node pageBlock = getPageBlocksNode(xmlFile);
-
-		ArrayList<Node> procs = new ArrayList<>();// Blockのidをキー該当ノードをvalueとしてメソッド定義ブロックのBlockNodeを保持する変数
+		Node pageBlock = getNode(xmlFile, PageModel.PAGE_BLOCKS);
+		UniClassDec classDec = createProcotypeClassModel(xmlFile.getName().substring(0, xmlFile.getName().indexOf(".xml")), getNode(xmlFile, PageModel.PAGE_INFO_NODE));
+		
+		List<Node> procs = new ArrayList<>();// Blockのidをキー該当ノードをvalueとしてメソッド定義ブロックのBlockNodeを保持する変数
 		Map<String, String> methodsReturnTypes = new HashMap<>();// 返り値の型を保持する
-
+		List<Node>  fieldVariables = new ArrayList<>();
+		
 		// mapに全てのBlockNodeを,procsに全てのメソッド定義のBlockNodeを保存する
-		putAllBlockNodes(pageBlock, procs);
+		putAllBlockNodes(pageBlock);
+		preparseNodes(pageBlock, procs, methodsReturnTypes, fieldVariables);
+		
+		classDec.members = parseFieldVariableNodes(fieldVariables);
 
-		putReturnTypesToMap(pageBlock, procs, methodsReturnTypes);
+		classDec.members.addAll(parseMethodNodes(procs, methodsReturnTypes));
 
+		return classDec;
+	}
+	
+	public List<UniMemberDec> parseFieldVariableNodes(List<Node> procs){
+		List<UniMemberDec> fieldVariables = new ArrayList<>();
+		for(Node node : procs){
+			UniFieldDec dec = new UniFieldDec();
+			dec.name = DOMUtil.getChildText(node, BlockElementModel.NAME_NODE);
+			dec.type = DOMUtil.getChildText(node, BlockElementModel.TYPE_NODE);
+			dec.modifiers = Lists.newArrayList("private");
+			
+			List<UniExpr> initValues = parseSocket(DOMUtil.getChildNode(node, BlockSocketsModel.NODE_NAME), map);
+			
+			if (!initValues.isEmpty()) {
+				dec.value=initValues.get(0);
+			}
+			fieldVariables.add(dec);
+		}
+		return fieldVariables;
+	}
+
+	public List<UniMemberDec> parseMethodNodes(List<Node> procs, Map<String, String> methodsReturnTypes){
 		List<UniMemberDec> ret = new ArrayList<>();
 		for (Node procNode : procs) {
-			UniMethodDec d = new UniMethodDec(DOMUtil.getChildText(procNode, BlockElementModel.LABEL_NODE_NAME), new ArrayList<>(), methodsReturnTypes.get(DOMUtil.getAttribute(procNode, BlockElementModel.ID_ATTRIBUTE_TAG)), new ArrayList<>(), null);
+			UniMethodDec d = new UniMethodDec(DOMUtil.getChildText(procNode, BlockElementModel.LABEL_NODE), new ArrayList<>(), methodsReturnTypes.get(DOMUtil.getAttribute(procNode, BlockElementModel.ID_ATTR)), new ArrayList<>(), null);
 			d.modifiers.add("public");
-			d.args = new ArrayList<>();
+			if(DOMUtil.getChildNode(procNode, BlockProcedureModel.INVISIBLE_NODE) != null){
+				d.modifiers.add("static");
+			}
+			
+			d.args = createArgumentsModel(procNode);
 
 			UniBlock body = new UniBlock(new ArrayList<>(), null);
 
-			String nextNodeId = DOMUtil.getChildText(procNode, BlockElementModel.AFTERBLOCKID_NODE_NAME);
+			String nextNodeId = DOMUtil.getChildText(procNode, BlockElementModel.AFTERBLOCKID_NODE);
 			if (nextNodeId != null) {
 				body = parseBody(map.get(nextNodeId), map);
 			}
 
 			d.block = body;
-			d.returnType = methodsReturnTypes.get(DOMUtil.getAttribute(procNode, BlockElementModel.ID_ATTRIBUTE_TAG));
+			d.returnType = methodsReturnTypes.get(DOMUtil.getAttribute(procNode, BlockElementModel.ID_ATTR));
 			ret.add(d);
 			variableResolver.resetLocalVariables();
 		}
-
-		classDec.members = ret;
-
-		return classDec;
+		return ret;
 	}
-
-	public void putReturnTypesToMap(Node pageBlock, ArrayList<Node> procs, Map<String, String> returnTypes) {
+	
+	/**
+	 * 一度pageblocksノードを全て解析し，インスタンス変数ノード，メソッドノード，メソッド名と返り値を取得する
+	 * @param pageBlock pageblocksノード
+	 * @param procs メソッド定義ノードを格納するリスト
+	 * @param returnTypes メソッド名とその返り値を登録するマップ
+	 */
+	public void preparseNodes(Node pageBlock, List<Node> procs, Map<String, String> returnTypes, List<Node> fieldVariables) {
 		// xmlのPageの子ノードから，メソッド定義のBlockノードのみを抽出する
 		for (Node node : DOMUtil.eachChild(pageBlock)) {
 			String name = node.getNodeName();
 			if (name.startsWith("#")) {
 				continue;
-			} else if (name.equals(BlockElementModel.BLOCK_STUB_NODE_NAME)) {
-				node = DOMUtil.getChildNode(node, BlockElementModel.BLOCK_NODE_NAME);
+			} else if (name.equals(BlockElementModel.BLOCK_STUB_NODE)) {
+				node = DOMUtil.getChildNode(node, BlockElementModel.BLOCK_NODE);
 			}
-			String genusName = DOMUtil.getAttribute(node, BlockElementModel.GENUS_NAME_ATTRIBUTE_TAG);
-			String nodeId = DOMUtil.getAttribute(node, BlockElementModel.ID_ATTRIBUTE_TAG);
-
-			if (BlockProcedureModel.GENUS_NAME.equals(genusName)) {
+			
+			String nodeId = DOMUtil.getAttribute(node, BlockElementModel.ID_ATTR);
+			String kind = DOMUtil.getAttribute(node, BlockElementModel.KIND_ATTR);
+			if (BlockProcedureModel.KIND.equals(kind)) {
 				procs.add(node);
 				if (returnTypes.get(nodeId) == null) {
 					returnTypes.put(nodeId, "void");
 				}
-			}
-
-			if ("return".equals(genusName)) {
+			} else if(BlockFieldVarDecModel.KIND.equals(kind)){
+				fieldVariables.add(node);
+			} else if (BlockReturnModel.KIND.equals(kind)) {
 				Node socketNode = DOMUtil.getChildNode(getSocketsNode(node), "BlockConnector");
-				returnTypes.put(DOMUtil.getAttribute(getTopBlockNode(node), BlockElementModel.ID_ATTRIBUTE_TAG), getSocketType(socketNode));
+				returnTypes.put(DOMUtil.getAttribute(getTopBlockNode(node), BlockElementModel.ID_ATTR), getSocketType(socketNode));
 			}
 		}
 	}
+	
+	public List<UniArg> createArgumentsModel(Node procedureNode){
+		Node socketNode = DOMUtil.getChildNode(procedureNode, BlockSocketsModel.NODE_NAME);
+		List<Node> connectors = DOMUtil.getChildNodes(socketNode);
+		List<UniArg> args = new ArrayList<>();
+		for(Node connector : connectors){
+			if(connector.getNodeName().equals(BlockConnectorInfo.CONNECTOR_NODE)){
+				Node connectorBlock = map.get(DOMUtil.getAttribute(connector, BlockConnectorInfo.CONNECTOR_BLOCK_ID_TAG));
+				if(connectorBlock != null){
+					String name = DOMUtil.getChildText(connectorBlock, BlockElementModel.NAME_NODE);
+					String type = DOMUtil.getChildText(connectorBlock, BlockElementModel.TYPE_NODE);
+					args.add(new UniArg(type, name));					
+				}
+			}
+		}
+		return args;
+	}
 
-	public UniClassDec createProcotypeClassModel(File xmlFile) {
+	public UniClassDec createProcotypeClassModel(String className, Node pageInfoNode) {
 		UniClassDec classDec = new UniClassDec();
-		classDec.className = xmlFile.getName().substring(0, xmlFile.getName().indexOf(".xml"));
-		classDec.modifiers = new ArrayList<String>();
-		classDec.modifiers.add("");
+		classDec.className = className;
+		classDec.interfaces = DOMUtil.getListFromNode(DOMUtil.getChildNode(pageInfoNode, PageModel.INTERFASES_NODE), PageModel.INTERFASE_NAME_NODE);
+		classDec.superClass = DOMUtil.getListFromNode(DOMUtil.getChildNode(pageInfoNode, PageModel.SUPER_CLASSES_NODE), PageModel.SUPERCLASS_NAME_NODE);
+		classDec.modifiers = DOMUtil.getListFromNode(DOMUtil.getChildNode(pageInfoNode, PageModel.MODIFIERS_NODE), PageModel.MODIFIER_NODE);
+		classDec.members = new ArrayList<>();
 
 		return classDec;
 	}
@@ -134,32 +194,32 @@ public class BlockMapper {
 		return d;
 	}
 
-	public void putAllBlockNodes(Node pageBlock, ArrayList<Node> procs) {
+	public void putAllBlockNodes(Node pageBlock) {
 		// xmlのPageの子ノードから，メソッド定義のBlockノードのみを抽出する
 		for (Node node : DOMUtil.eachChild(pageBlock)) {
 			String name = node.getNodeName();
 			if (name.startsWith("#")) {
 				continue;
-			} else if (name.equals(BlockElementModel.BLOCK_STUB_NODE_NAME)) {
-				node = DOMUtil.getChildNode(node, BlockElementModel.BLOCK_NODE_NAME);
+			} else if (name.equals(BlockElementModel.BLOCK_STUB_NODE)) {
+				node = DOMUtil.getChildNode(node, BlockElementModel.BLOCK_NODE);
 			}
 
-			String nodeId = DOMUtil.getAttribute(node, BlockElementModel.ID_ATTRIBUTE_TAG);
+			String nodeId = DOMUtil.getAttribute(node, BlockElementModel.ID_ATTR);
 			map.put(nodeId, node);
 		}
 	}
 
 	public Node getTopBlockNode(Node node) {
-		if (BlockProcedureModel.GENUS_NAME.equals(DOMUtil.getAttribute(node, BlockElementModel.GENUS_NAME_ATTRIBUTE_TAG))) {
+		if (BlockProcedureModel.GENUS_NAME.equals(DOMUtil.getAttribute(node, BlockElementModel.GENUS_NAME_ATTR))) {
 			return node;
 		}
 		Node tmpNode = node;
 
 		while (tmpNode != null) {
-			if (DOMUtil.getChildNode(tmpNode, BlockElementModel.BEFOREBLOCKID_NODE_NAME) == null) {
+			if (DOMUtil.getChildNode(tmpNode, BlockElementModel.BEFOREBLOCKID_NODE) == null) {
 				return tmpNode;
 			}
-			String beforeBlockID = DOMUtil.getChildText(node, BlockElementModel.BEFOREBLOCKID_NODE_NAME);
+			String beforeBlockID = DOMUtil.getChildText(node, BlockElementModel.BEFOREBLOCKID_NODE);
 			tmpNode = map.get(beforeBlockID);
 		}
 
@@ -171,7 +231,7 @@ public class BlockMapper {
 		String id = DOMUtil.getAttribute(node, "con-block-id");
 
 		if (id != null) {
-			type = DOMUtil.getChildText(map.get(id), BlockElementModel.TYPE_NODE_NAME);
+			type = DOMUtil.getChildText(map.get(id), BlockElementModel.TYPE_NODE);
 		}
 
 		return type;
@@ -193,7 +253,7 @@ public class BlockMapper {
 
 		body.add(parseToExpr(bodyNode, map));
 
-		String nextNodeId = DOMUtil.getChildText(bodyNode, BlockElementModel.AFTERBLOCKID_NODE_NAME);
+		String nextNodeId = DOMUtil.getChildText(bodyNode, BlockElementModel.AFTERBLOCKID_NODE);
 		while (true) {
 			if (nextNodeId == null)
 				break;
@@ -201,7 +261,7 @@ public class BlockMapper {
 			// add body
 			UniExpr expr = parseToExpr(next, map);
 			body.add(expr);
-			nextNodeId = DOMUtil.getChildText(next, BlockElementModel.AFTERBLOCKID_NODE_NAME);
+			nextNodeId = DOMUtil.getChildText(next, BlockElementModel.AFTERBLOCKID_NODE);
 		}
 
 		UniBlock block = new UniBlock(body, null);
@@ -352,7 +412,7 @@ public class BlockMapper {
 			uniNewModel.args = sockets;
 			return uniNewModel;
 		} else if (resolver.getForceConvertionMap().getUniMethodCallModel(blockGenusName) != null) {
-			UniMethodCall model = resolver.getForceConvertionMap().getUniMethodCallModel(blockGenusName);
+			UniMethodCall model = (UniMethodCall)resolver.getForceConvertionMap().getUniMethodCallModel(blockGenusName);
 			Node sockets = getSocketsNode(node);
 			model.args = parseSocket(sockets, map);
 			return model;
@@ -365,7 +425,7 @@ public class BlockMapper {
 		} else {
 			// MethodCallとする
 			// TODO should fix
-			UniMethodCall call = new UniMethodCall(null, DOMUtil.getChildText(resolver.getBlockNode(blockGenusName), BlockElementModel.NAME_NODE_NAME), functionArgs);
+			UniMethodCall call = new UniMethodCall(null, DOMUtil.getChildText(resolver.getBlockNode(blockGenusName), BlockElementModel.NAME_NODE), functionArgs);
 			return call;
 		}
 	}
@@ -439,17 +499,23 @@ public class BlockMapper {
 
 	}
 
+	/**
+	 * Socketsノードを解析し，UniModelを作成する．
+	 * @param argsNode Socketsノード
+	 * @param map id,Blockノードのマップ
+	 * @return ソケットのUniModel
+	 */
 	private List<UniExpr> parseSocket(Node argsNode, HashMap<String, Node> map) {
 		List<UniExpr> args = new ArrayList<>();
 		if (argsNode != null) {
 			for (Node argNode : DOMUtil.eachChild(argsNode)) {
-				assert argNode.getNodeName().equals("BlockConnector");
-				String argElemId = DOMUtil.getAttribute(argNode, "con-block-id");
+				assert argNode.getNodeName().equals(BlockConnectorInfo.CONNECTOR_NODE);
+				String argElemId = DOMUtil.getAttribute(argNode, BlockConnectorInfo.CONNECTOR_BLOCK_ID_TAG);
 				Node realArgNode = map.get(argElemId);
 				if (realArgNode != null) {
 					// beforeを持たないElementNodeは引数なので，引数の解析
-					Node beforeBlock = map.get(DOMUtil.getChildText(realArgNode, "BeforeBlockId"));
-					if (DOMUtil.getChildText(realArgNode, "BeforeBlockId") == null || DOMUtil.getAttribute(beforeBlock, "genus-name").equals("callActionMethod2")) {
+					Node beforeBlock = map.get(DOMUtil.getChildText(realArgNode, BlockElementModel.BEFOREBLOCKID_NODE));
+					if (DOMUtil.getChildText(realArgNode, BlockElementModel.BEFOREBLOCKID_NODE) == null || DOMUtil.getAttribute(beforeBlock, BlockElementModel.GENUS_NAME_ATTR).equals(BlockExCallerModel.GENUS_NAME_ATTR)) {
 						args.add(parseToExpr(realArgNode, map));
 					} else {
 						args.add(parseBody(realArgNode, map));
@@ -543,7 +609,7 @@ public class BlockMapper {
 			UniMethodCall call = new UniMethodCall(null, methodName, args);
 			return call;
 		} else if (resolver.getForceConvertionMap().getUniMethodCallModel(blockGenusName) != null) {
-			UniMethodCall model = resolver.getForceConvertionMap().getUniMethodCallModel(blockGenusName);
+			UniMethodCall model = (UniMethodCall)resolver.getForceConvertionMap().getUniMethodCallModel(blockGenusName);
 			Node sockets = getSocketsNode(node);
 			model.args = parseSocket(sockets, map);
 			return model;
@@ -571,10 +637,10 @@ public class BlockMapper {
 		}
 	}
 
-	private static Node getPageBlocksNode(File xmlFile) {
+	private static Node getNode(File xmlFile, String nodeName) {
 		Document d = toXmlDoc(xmlFile);
 
-		NodeList list = d.getElementsByTagName("PageBlocks");
+		NodeList list = d.getElementsByTagName(nodeName);
 		if (list.getLength() != 1)
 			throw new RuntimeException("Root node must be one.");
 		Node pageBlock = list.item(0);

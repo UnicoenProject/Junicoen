@@ -13,17 +13,17 @@ public class UniToBlockSpecialBlockTest {
 	@Test
 	public void test() throws IOException {
 
-		UniClassDec spClass = UniToBlockTestUtil.createEmptyTurtleClassModel("Special");
-		UniMethodDec start = UniToBlockTestUtil.createEmptyMethodDec("start");
+		UniClassDec spClass = UniModelMaker.createEmptyTurtleClassModel("Special");
+		UniMethodDec start = UniModelMaker.createEmptyMethodDec("start");
 
-		start.block.body.add(UniToBlockTestUtil.createLocalVariable("l", "Long"));
-		start.block.body.add(UniToBlockTestUtil.createLocalVariable("i", "int"));
+		start.block.body.add(UniModelMaker.createLocalVariable("l", "Long"));
+		start.block.body.add(UniModelMaker.createLocalVariable("i", "int"));
 
 		spClass.members.add(start);
 
 
 
-		BlockGenerator gen = UniToBlockTestUtil.createBlockGenerator("UniToBlockSpetial");
+		BlockGenerator gen = UniModelMaker.createBlockGenerator("UniToBlockSpetial");
 		gen.parse(spClass);
 
 

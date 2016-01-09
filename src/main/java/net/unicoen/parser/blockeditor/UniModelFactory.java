@@ -1,30 +1,22 @@
 package net.unicoen.parser.blockeditor;
 
-import java.util.List;
-
-import net.unicoen.node.UniArg;
 import net.unicoen.node.UniArray;
 import net.unicoen.node.UniBinOp;
 import net.unicoen.node.UniBlock;
 import net.unicoen.node.UniBoolLiteral;
 import net.unicoen.node.UniBreak;
-import net.unicoen.node.UniClassDec;
 import net.unicoen.node.UniContinue;
 import net.unicoen.node.UniDoubleLiteral;
 import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniFieldAccess;
-import net.unicoen.node.UniFieldDec;
 import net.unicoen.node.UniFor;
 import net.unicoen.node.UniIdent;
 import net.unicoen.node.UniIf;
 import net.unicoen.node.UniIntLiteral;
 import net.unicoen.node.UniLongLiteral;
-import net.unicoen.node.UniMemberDec;
 import net.unicoen.node.UniMethodCall;
-import net.unicoen.node.UniMethodDec;
 import net.unicoen.node.UniNew;
 import net.unicoen.node.UniNewArray;
-import net.unicoen.node.UniNode;
 import net.unicoen.node.UniReturn;
 import net.unicoen.node.UniStringLiteral;
 import net.unicoen.node.UniTernaryOp;
@@ -70,17 +62,14 @@ public class UniModelFactory {
 			this.text = text;
 		}
 		
-		
 		@Override
 		public String toString(){
 			return this.text;
 		}
 	}
 	
-	public static Object createUniModel(String uniModelName, UniModelInitializerMap map){
-		if(uniModelName.equals(UniBlockNames.UNIARG.toString())){
-			return new UniArg();
-		}else if(uniModelName.equals(UniBlockNames.UNIARRAY.toString())){
+	public static UniExpr createUniExprModel(String uniModelName, UniModelData map) {
+		if(uniModelName.equals(UniBlockNames.UNIARRAY.toString())){
 			return new UniArray();
 		}else if(uniModelName.equals(UniBlockNames.UNIBINOP.toString())){
 			return new UniBinOp();
@@ -90,8 +79,6 @@ public class UniModelFactory {
 			return new UniBoolLiteral();
 		}else if(uniModelName.equals(UniBlockNames.UNIBREAK.toString())){
 			return new UniBreak();
-		}else if(uniModelName.equals(UniBlockNames.UNICLASSDEC.toString())){
-			return new UniClassDec();
 		}else if(uniModelName.equals(UniBlockNames.UNICONTINUE.toString())){
 			return new UniContinue();
 		}else if(uniModelName.equals(UniBlockNames.UNIDOUBLELITERAL.toString())){
@@ -104,44 +91,28 @@ public class UniModelFactory {
 				}
 			};
 		}else if(uniModelName.equals(UniBlockNames.UNIFIELDACCESS.toString())){
-			UniExpr receiver = (UniExpr)(map.get(UniModelInitializerMap.UniModelParameters.RECEIVER.toString()));
-			String name = (String)(map.get(UniModelInitializerMap.UniModelParameters.NAME.toString()));
+			UniExpr receiver = (UniExpr)(map.get(UniModelData.UniModelParameters.RECEIVER.toString()));
+			String name = (String)(map.get(UniModelData.UniModelParameters.NAME.toString()));
 			return new UniFieldAccess(receiver, name);
-		}else if(uniModelName.equals(UniBlockNames.UNIFIELDDEC.toString())){
-			@SuppressWarnings("unchecked")
-			List<String> modifiers = (List<String>)(map.get(UniModelInitializerMap.UniModelParameters.MODIFIERS.toString()));
-			String type = (String)(map.get(UniModelInitializerMap.UniModelParameters.TYPE.toString()));
-			UniExpr value = (UniExpr)(map.get(UniModelInitializerMap.UniModelParameters.VALUE.toString()));
-			String name = (String)(map.get(UniModelInitializerMap.UniModelParameters.NAME.toString()));
-			
-			return new UniFieldDec(modifiers, type, name,value);
 		}else if(uniModelName.equals(UniBlockNames.UNIFOR.toString())){
 			return new UniFor();
 		}else if(uniModelName.equals(UniBlockNames.UNIIDENT.toString())){
-			return new UniIdent((String)(map.get(UniModelInitializerMap.UniModelParameters.NAME.toString())));
+			return new UniIdent((String)(map.get(UniModelData.UniModelParameters.NAME.toString())));
 		}else if(uniModelName.equals(UniBlockNames.UNIIF)){
 			return new UniIf();
 		}else if(uniModelName.equals(UniBlockNames.UNIINTLITERAL.toString())){
 			return new UniIntLiteral();
 		}else if(uniModelName.equals(UniBlockNames.UNILONGLITERAL.toString())){
 			return new UniLongLiteral();
-		}else if(uniModelName.equals(UniBlockNames.UNIMEMBERDEC.toString())){
-			return new UniMemberDec() {
-			};
 		}else if(uniModelName.equals(UniBlockNames.UNIMETHODCALL.toString())){
-			String name = (String)(map.get(UniModelInitializerMap.UniModelParameters.NAME.toString()));
-			UniExpr receiver = (UniExpr)(map.get(UniModelInitializerMap.UniModelParameters.RECEIVER.toString()));
+			String name = (String)(map.get(UniModelData.UniModelParameters.NAME.toString()));
+			UniExpr receiver = (UniExpr)(map.get(UniModelData.UniModelParameters.RECEIVER.toString()));
 			
 			return new UniMethodCall(receiver,name,null);
-		}else if(uniModelName.equals(UniBlockNames.UNIMETHODDEC.toString())){
-			return new UniMethodDec();
 		}else if(uniModelName.equals(UniBlockNames.UNINEW.toString())){
 			return new UniNew();
 		}else if(uniModelName.equals(UniBlockNames.UNINEWARRAY.toString())){
 			return new UniNewArray();
-		}else if(uniModelName.equals(UniBlockNames.UNINODE.toString())){
-			return new UniNode() {
-			};
 		}else if(uniModelName.equals(UniBlockNames.UNIRETURN.toString())){
 			return new UniReturn();
 		}else if(uniModelName.equals(UniBlockNames.UNISTRINGLITERAL.toString())){
@@ -158,5 +129,4 @@ public class UniModelFactory {
 			throw new RuntimeException("not supported model:" + uniModelName);
 		}
 	}
-	
 }

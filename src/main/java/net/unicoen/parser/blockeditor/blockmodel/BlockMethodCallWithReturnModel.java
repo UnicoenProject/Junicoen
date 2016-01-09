@@ -3,13 +3,13 @@ package net.unicoen.parser.blockeditor.blockmodel;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.unicoen.node.UniMethodCall;
-import net.unicoen.parser.blockeditor.BlockResolver;
-import net.unicoen.parser.blockeditor.DOMUtil;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
+import net.unicoen.node.UniMethodCall;
+import net.unicoen.parser.blockeditor.BlockResolver;
+import net.unicoen.parser.blockeditor.DOMUtil;
 
 public class BlockMethodCallWithReturnModel extends BlockExprModel {
 
@@ -21,17 +21,18 @@ public class BlockMethodCallWithReturnModel extends BlockExprModel {
 
 	public Element createPrototypeElement(UniMethodCall method, Document document, BlockResolver resolver, Long ID_COUNTER, Node parent){
 		String genusName = "";
-		String kind = DOMUtil.getAttribute(resolver.getBlockNode(genusName), "kind");
+		String kind = DOMUtil.getAttribute(resolver.getBlockNode(genusName), BlockElementModel.KIND_ATTR);
 		Element element = createBlockElement(document, genusName, ID_COUNTER, kind);
-		addElement("Name", document, method.methodName, element);
+		addElement(BlockElementModel.NAME_NODE, document, method.methodName, element);
 
 		if(!"void".equals(resolver.getType(genusName))){
-			addElement("Type", document, resolver.getType(genusName), element);
+			addElement(BlockElementModel.TYPE_NODE, document, resolver.getType(genusName), element);
 		}
 
 		return element;
 	}
 
+	@Override
 	public List<Element> getBlockElements() {
 		List<Element> elements = new ArrayList<Element>();
 		elements.add(getElement());

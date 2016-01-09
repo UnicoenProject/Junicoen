@@ -3,23 +3,41 @@ package net.unicoen.parser.blockeditor.blockmodel;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.unicoen.parser.blockeditor.BlockResolver;
-
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import net.unicoen.parser.blockeditor.BlockResolver;
 
 public class BlockBinaryOperatorModel extends BlockExprModel {
 
 	private BlockElementModel left;
 	private BlockElementModel right;
-
-	public BlockBinaryOperatorModel(String operator, Element binOpElement, BlockElementModel left, BlockElementModel right,BlockResolver resolver) {
-		this.element = binOpElement;
-		this.left = left;
-		this.right = right;
-			//genusName書き換え
-		this.element.setAttribute(BlockElementModel.GENUS_NAME_ATTRIBUTE_TAG, calcGenusName(operator, left, right));
+	
+	public static String KIND = "function";
+	
+	public static enum BINOP_BLOCKGENUSNAMES{
+		AND("and"), OR("or"),EQUALS_NUMBER("equals-number"), NOT_EQUALS_NUMBER("not-equals-number"),
+		GREATERTHAN_OR_EQUALTO("greaterthanorequalto"),GREATERTHAN("greaterthan"),LESSTHAN_OR_EQUALTO("lessthanorequalto"),
+		LESSTHAN("lessthan"), SUM("sum"),DIFFERENCE("difference"),PRODUCT("product"),QUOTIENT("quotient"),REMAINDER("remainder");
+		
+		private final String text;
+		private BINOP_BLOCKGENUSNAMES(String text){
+			this.text = text;
+		}
+		
+		@Override
+		public String toString(){
+			return this.text;
+		}
 	}
 
+	public BlockBinaryOperatorModel(Document document ,String operator, Long id,  BlockElementModel left, BlockElementModel right,BlockResolver resolver) {
+		this.element = createBlockElement(document, calcGenusName(operator, left, right), id, KIND);
+		this.left = left;
+		this.right = right;
+	}
+
+	@Override
 	public List<Element> getBlockElements() {
 		List<Element> elements = new ArrayList<Element>();
 		elements.addAll(left.getBlockElements());

@@ -21,9 +21,9 @@ public class BlockUserMethodCallWithReturnModel extends BlockExprModel {
 		String parentID =  resolver.getMehtodResolver().getFieldMethodInfo().getId(BlockMethodCallModel.calcMethodCallGenusName(methodName, sockets)).toString();
 		Element root = createBlockStubNode(document, methodName, BlockProcedureModel.GENUS_NAME, parentID);
 		Element element = createBlockElement(document, BlockUserMethodCallModel.GENUS_NAME, ID_COUNTER, KIND);
-		addElement(BlockElementModel.NAME_NODE_NAME, document, methodName, element);
-		addElement(BlockElementModel.LABEL_NODE_NAME, document, methodName, element);
-		addElement(BlockElementModel.TYPE_NODE_NAME, document, resolver.getMehtodResolver().getFieldMethodInfo().getReturnType(BlockMethodCallModel.calcMethodCallGenusName(methodName, sockets)), element);
+		addElement(BlockElementModel.NAME_NODE, document, methodName, element);
+		addElement(BlockElementModel.LABEL_NODE, document, methodName, element);
+		addElement(BlockElementModel.TYPE_NODE, document, resolver.getMehtodResolver().getFieldMethodInfo().getReturnType(BlockMethodCallModel.calcMethodCallGenusName(methodName, sockets)), element);
 
 		root.appendChild(element);
 		return root;
@@ -31,7 +31,7 @@ public class BlockUserMethodCallWithReturnModel extends BlockExprModel {
 
 	//TODO should fix Stubクラスを作ってまとめる?　
 	public Element createBlockStubNode(Document document, String parentName, String parentGenusName, String parentID) {
-		Element blockStubElement = document.createElement(BlockElementModel.BLOCK_STUB_NODE_NAME);
+		Element blockStubElement = document.createElement(BlockElementModel.BLOCK_STUB_NODE);
 		addElement("StubParentName", document, parentName, blockStubElement);
 		addElement("StubParentGenus", document, parentGenusName, blockStubElement);
 		addElement("StubParentID", document, parentID, blockStubElement);
@@ -40,7 +40,7 @@ public class BlockUserMethodCallWithReturnModel extends BlockExprModel {
 
 	@Override
 	public Element getBlockElement(){
-		return (Element) DOMUtil.getChildNode(getElement(), BlockElementModel.BLOCK_NODE_NAME);
+		return (Element) DOMUtil.getChildNode(getElement(), BlockElementModel.BLOCK_NODE);
 	}
 
 	@Override

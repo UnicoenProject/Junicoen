@@ -1179,108 +1179,84 @@ conditionalExpression
 
 conditionalOrExpression
 	:	conditionalAndExpression 
-	|	conditionalOrExpression '||' conditionalAndExpression 
+	|	conditionalOrExpression OR conditionalAndExpression 
 	;
 
 conditionalAndExpression
 	:	inclusiveOrExpression 
-	|	conditionalAndExpression '&&' inclusiveOrExpression 
+	|	conditionalAndExpression AND inclusiveOrExpression 
 	;
 
 inclusiveOrExpression
 	:	exclusiveOrExpression 
-	|	inclusiveOrExpression '|' exclusiveOrExpression 
+	|	inclusiveOrExpression BITOR exclusiveOrExpression 
 	;
 
 exclusiveOrExpression
 	:	andExpression 
-	|	exclusiveOrExpression '^' andExpression 
+	|	exclusiveOrExpression CARET andExpression 
 	;
 
 andExpression
 	:	equalityExpression 
-	|	andExpression '&' equalityExpression 
+	|	andExpression BITAND equalityExpression 
 	;
 
 equalityExpression
 	:	relationalExpression 
-	|	equalityExpression '==' relationalExpression 
-	|	equalityExpression '!=' relationalExpression 
+	|	equalityExpression EQUAL relationalExpression 
+	|	equalityExpression NOTEQUAL relationalExpression 
 	;
 
 relationalExpression
 	:	shiftExpression 
-	|	relationalExpression '<' shiftExpression 
-	|	relationalExpression '>' shiftExpression 
-	|	relationalExpression '<=' shiftExpression 
-	|	relationalExpression '>=' shiftExpression 
-	|	relationalExpression 'instanceof' referenceType 
+	|	relationalExpression LT shiftExpression 
+	|	relationalExpression GT shiftExpression 
+	|	relationalExpression LE shiftExpression 
+	|	relationalExpression GE shiftExpression 
+	|	relationalExpression INSTANCEOF referenceType 
 	;
 
 shiftExpression
 	:	additiveExpression 
-	|	shiftExpression '<' '<' additiveExpression 
-	|	shiftExpression '>' '>' additiveExpression 
-	|	shiftExpression '>' '>' '>' additiveExpression 
+	|	shiftExpression LT LT additiveExpression 
+	|	shiftExpression GT GT additiveExpression 
+	|	shiftExpression GT GT GT additiveExpression 
 	;
 
 additiveExpression
 	:	multiplicativeExpression 
-	|	additiveExpression '+' multiplicativeExpression 
-	|	additiveExpression '-' multiplicativeExpression 
+	|	additiveExpression ADD multiplicativeExpression 
+	|	additiveExpression SUB multiplicativeExpression 
 	;
 
 multiplicativeExpression
 	:	unaryExpression 
-	|	multiplicativeExpression '*' unaryExpression 
-	|	multiplicativeExpression '/' unaryExpression 
-	|	multiplicativeExpression '%' unaryExpression 
-	;
-
-add
-	:	ADD 
-	;
-
-sub
-	:	SUB 
+	|	multiplicativeExpression MUL unaryExpression 
+	|	multiplicativeExpression DIV unaryExpression 
+	|	multiplicativeExpression MOD unaryExpression 
 	;
 
 unaryExpression
 	:	preIncrementExpression 
 	|	preDecrementExpression 
-	|	add unaryExpression 
-	|	sub unaryExpression 
+	|	ADD unaryExpression 
+	|	SUB unaryExpression 
 	|	unaryExpressionNotPlusMinus 
 	;
 
-inc
-	:	INC 
-	;
-
 preIncrementExpression
-	:	inc unaryExpression 
-	;
-
-dec
-	:	DEC 
+	:	INC unaryExpression 
 	;
 
 preDecrementExpression
-	:	dec unaryExpression 
-	;
-
-tilde
-	:	TILDE 
-	;
-
-bang
-	:	BANG 
+	:	DEC unaryExpression 
 	;
 
 unaryExpressionNotPlusMinus
 	:	postfixExpression 
-	|	tilde unaryExpression 
-	|	bang unaryExpression 
+	|	TILDE unaryExpression 
+	|	BANG unaryExpression 
 	|	castExpression 
 	;
 

@@ -3,7 +3,7 @@ package net.unicoen.parser.blockeditor;
 import java.util.HashMap;
 import java.util.Map;
 
-public class UniModelInitializerMap {
+public class UniModelData {
 	private Map<String, Object> map = new HashMap<>();
 	
 	public static enum UniModelParameters{

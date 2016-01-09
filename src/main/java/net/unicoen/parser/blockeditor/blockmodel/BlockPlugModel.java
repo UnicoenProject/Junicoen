@@ -1,10 +1,10 @@
 package net.unicoen.parser.blockeditor.blockmodel;
 
-import net.unicoen.parser.blockeditor.DOMUtil;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
+import net.unicoen.parser.blockeditor.DOMUtil;
 
 public class BlockPlugModel extends BlockConnectorInfo{
 

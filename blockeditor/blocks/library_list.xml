@@ -34,7 +34,7 @@
 			<MethodName>Turtle-isShow[]</MethodName>
 			<MethodName>Turtle-looks[@object]</MethodName>
 			<MethodName>Turtle-contains[@int@int]</MethodName>
-			<MethodName>Turtle-intersects[]</MethodName>
+			<MethodName>Turtle-intersects[@object]</MethodName>
 		</CategoryName>
 		<CategoryName name="タートル（キーとマウス）" command="add">
 			<MethodName>Turtle-key[]</MethodName>
@@ -71,7 +71,7 @@
 			<MethodName>SoundTurtle-stop[]</MethodName>
 			<MethodName>SoundTurtle-isPlaying[]</MethodName>
 			<MethodName>SoundTurtle-getVolume[]</MethodName>
-			<MethodName>SoundTurtle-setVolume[]</MethodName>
+			<MethodName>SoundTurtle-setVolume[@int]</MethodName>
 			<MethodName>SoundTurtle-loadOnMemory[]</MethodName>
 		</CategoryName>
 	</LibraryClass>
@@ -131,7 +131,7 @@
 		<CategoryName name="TextTurtle" command="add">
 			<MethodName>TextTurtle-text[@string]</MethodName>
 			<MethodName>TextTurtle-text[@int]</MethodName>
-			<MethodName>TextTurtle-getText[@int]</MethodName>			
+			<MethodName>TextTurtle-getText[]</MethodName>			
 		</CategoryName>
 	</LibraryClass>
 	<LibraryClass name="Random">

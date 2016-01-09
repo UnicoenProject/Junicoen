@@ -18,20 +18,20 @@ public class UniToBlockLibraryMethodTest {
 
 	@Test
 	public void test() throws IOException {
-		UniClassDec dec = UniToBlockTestUtil.createEmptyClassModel("LibMethodTest", Lists.newArrayList("Object"));
+		UniClassDec dec = UniModelMaker.createEmptyClassModel("LibMethodTest", Lists.newArrayList("Object"));
 		
-		UniMethodDec start = UniToBlockTestUtil.createEmptyMethodDec("start");
+		UniMethodDec start = UniModelMaker.createEmptyMethodDec("start");
 		dec.members.add(start);
 		
 		//Random random = new Random();
-		start.block.body.add(UniToBlockTestUtil.createLocalObjectVariableBlockModel("random", "Random"));
+		start.block.body.add(UniModelMaker.createLocalObjectVariableBlockModel("random", "Random"));
 		
 		//int i;
-		start.block.body.add(UniToBlockTestUtil.createLocalVariable("i", "int"));
+		start.block.body.add(UniModelMaker.createLocalVariable("i", "int"));
 		
 		//i = random.nextInt(10);
 		UniMethodCall call = new UniMethodCall(new UniIdent("random"), "nextInt", Lists.newArrayList(new UniIntLiteral(10)));
-		start.block.body.add(UniToBlockTestUtil.createVariableSetterModel(new UniIdent("i"), call));
+		start.block.body.add(UniModelMaker.createVariableSetterModel(new UniIdent("i"), call));
 		
 		//System.out.println("hogehoge");
 		UniMethodCall sysout = new UniMethodCall(new UniFieldAccess(new UniIdent("System"), "out"),"println", Lists.newArrayList(new UniStringLiteral("hogehoge")));
