@@ -253,11 +253,66 @@ class Java8MapperClassFieldMethodTest extends MapperTest {
 	}
 
 	@Test
-	def void parseMethodWithForStatement() {
+	def void parseMethodWithForStatement(){
+		val main = mapper.parse("public class Main{ public static void main(){for(int i=0;i<5;i++)j++;}}")
 	}
 
 	@Test
-	def void parseMethodWithForStatement2() {
+	def void parseMethodWithForStatement2(){
+/* 		val main = mapper.parse("public class Main{ public static void main(){for(i=0;i<5;i++)j++;}}")
+		assertThat(main, instanceOf(UniClassDec))
+		val cls = main as UniClassDec
+		cls.evaluateClass("Main", null, null,1)
+		//Method
+		val method = cls.members.get(0) as UniMethodDec
+		val String[] modifiers = #["public","static"]
+		val UniArg[] args = #[]
+		method.evaluateMethodDec("main","void",modifiers,1,args)
+		//MethodBody
+		val block = method.block as UniBlock
+		//init->Binop
+		val UniIdent variable = new UniIdent
+		variable.name = "i"
+		
+		val UniIntLiteral literal = new UniIntLiteral
+		literal.value = 0
+		val UniUnaryOp value = new UniUnaryOp
+		value.expr = literal
+		val UniBinOp init = new UniBinOp
+		init.left = variable
+		init.right = value
+		init.operator = "="
+		//expression->Binop
+		val UniIdent invariable2 = new UniIdent
+		invariable2.name = "i"
+		val UniUnaryOp variable2 = new UniUnaryOp
+		variable2.expr = invariable2
+		
+		val UniIntLiteral literal2 = new UniIntLiteral
+		literal2.value = 5
+		val UniUnaryOp value2 = new UniUnaryOp
+		value2.expr = literal2
+		val UniBinOp cond = new UniBinOp
+		cond.left = variable2
+		cond.right = value2
+		cond.operator = "<"
+		//Update->UnaryOp
+		val UniIdent variable3 = new UniIdent
+		variable3.name = "i"
+		val UniUnaryOp step = new UniUnaryOp
+		step.expr = variable3
+		step.operator = "++"
+		//j++->UnaryOp
+		val UniBlock body = new UniBlock
+		val UniUnaryOp inbody = new UniUnaryOp
+		val UniIdent variable4 = new UniIdent
+		variable4.name = "j"
+		inbody.expr = variable4
+		inbody.operator = "++"
+		val UniUnaryOp[] statements = #[inbody]
+		body.body = statements
+		evaluateFor(block.body.get(0),init,cond,step,body)
+		*/
 	}
 
 	@Test

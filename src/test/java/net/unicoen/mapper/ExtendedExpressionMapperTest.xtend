@@ -10,7 +10,6 @@ import org.junit.Ignore
 class ExtendedExpressionMapperTest extends MapperTest {
 	val mapper = new ExtendedExpressionMapper(true)
 
-	@Test @Ignore
 	def void parseInteger() {
 		val node = mapper.parse("class Main{void func(){int a=123;}}")
 		assertThat(node, instanceOf(typeof(UniClassDec)))

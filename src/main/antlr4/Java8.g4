@@ -1265,7 +1265,7 @@ postfixExpression
 	;
 
 postIncrementExpression
-	:	postfixExpression '++' 
+	:	postfixExpression INC 
 	;
 
 postIncrementExpression_lf_postfixExpression
@@ -1273,7 +1273,7 @@ postIncrementExpression_lf_postfixExpression
 	;
 
 postDecrementExpression
-	:	postfixExpression '--' 
+	:	postfixExpression DEC 
 	;
 
 postDecrementExpression_lf_postfixExpression

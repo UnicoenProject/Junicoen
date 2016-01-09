@@ -16747,6 +16747,7 @@ public class Java8Parser extends Parser {
 		public PostfixExpressionContext postfixExpression() {
 			return getRuleContext(PostfixExpressionContext.class,0);
 		}
+		public TerminalNode INC() { return getToken(Java8Parser.INC, 0); }
 		public PostIncrementExpressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -16818,6 +16819,7 @@ public class Java8Parser extends Parser {
 		public PostfixExpressionContext postfixExpression() {
 			return getRuleContext(PostfixExpressionContext.class,0);
 		}
+		public TerminalNode DEC() { return getToken(Java8Parser.DEC, 0); }
 		public PostDecrementExpressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
