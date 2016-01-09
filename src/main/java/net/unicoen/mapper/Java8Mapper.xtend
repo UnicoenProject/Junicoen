@@ -2094,6 +2094,48 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		map.castTo(UniIf)
 	}
 	
+	override public visitBasicForStatement(Java8Parser.BasicForStatementContext ctx) {
+		val map = Maps.newHashMap
+		val none = Lists.newArrayList
+		map.put("none", none)
+		val init = Lists.newArrayList
+		map.put("init", init)
+		val statement = Lists.newArrayList
+		map.put("statement", statement)
+		val step = Lists.newArrayList
+		map.put("step", step)
+		val cond = Lists.newArrayList
+		map.put("cond", cond)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 1739: {
+						init += it.visit
+					}
+					case 1743: {
+						cond += it.visit
+					}
+					case 1747: {
+						step += it.visit
+					}
+					case 1751: {
+						statement += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(UniFor)
+	}
+	
 	override public visitPrimary(Java8Parser.PrimaryContext ctx) {
 		val map = Maps.newHashMap
 		val none = Lists.newArrayList
@@ -2960,31 +3002,6 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					case Java8Parser.BANG: {
 						operator += it.visit
 					}
-					default: {
-						none += it.visit
-					}
-				}
-			}
-		}
-		map.castTo(UniUnaryOp)
-	}
-	
-	override public visitPostfixExpression(Java8Parser.PostfixExpressionContext ctx) {
-		val map = Maps.newHashMap
-		val none = Lists.newArrayList
-		map.put("none", none)
-		for(it : ctx.children) {
-			if (it instanceof RuleContext) {
-				switch it.invokingState {
-					case 2868: {
-						return it.visit
-					}
-					default: {
-						none += it.visit
-					}
-				}
-			} else if (it instanceof TerminalNode) {
-				switch it.symbol.type {
 					default: {
 						none += it.visit
 					}
