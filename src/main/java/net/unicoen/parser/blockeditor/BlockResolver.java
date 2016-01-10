@@ -22,7 +22,7 @@ import net.unicoen.parser.blockeditor.blockmodel.BlockProcParmModel;
 
 public class BlockResolver {
 
-	private String langdefRootPath = "not available";
+	public String langdefRootPath = "not available";
 	public static final String ORIGIN_LANG_DEF_ROOT_PATH = "ext/block2/";
 	public static final String ORIGIN_LANG_DEF_ROOT_PATH_FOR_UNI = "blockeditor/blocks/";
 	public static final String LIBRARYMETHODLIST_FILENAME="library_list.xml";
@@ -33,7 +33,7 @@ public class BlockResolver {
 	private VariableNameResolver vnResolver = new VariableNameResolver();
 	private MethodResolver methodResolver = new MethodResolver();
 	private VariableBlockNameResolver variableResolver = new VariableBlockNameResolver();
-	private ForceConvertionMap forceConvertionMap;
+	protected ForceConvertionMap forceConvertionMap;
 
 	/**
 	 * ブロック変換の諸リゾルバクラス
@@ -47,6 +47,13 @@ public class BlockResolver {
 	}
 
 	public void initMethodResolver(boolean isTest) throws SAXException, IOException {
+		createLibratyMethodsMap(isTest);
+		
+		//強制変換リストを作成（System.out.println -> cui-printという1個のブロックに変換）というリスト
+		createForceConvertionMap(isTest);
+	}
+	
+	public void createLibratyMethodsMap(boolean isTest) throws SAXException, IOException{
 		//ライブラリクラスとその利用可能メソッドのマップを初期化
 		DOMParser parser = new DOMParser();
 		if(isTest){
@@ -55,10 +62,10 @@ public class BlockResolver {
 			parser.parse(ORIGIN_LANG_DEF_ROOT_PATH + LIBRARYMETHODLIST_FILENAME);
 		}
 		createLibraryMethodsMap(parser.getDocument().getFirstChild());
-		
-		//強制変換リストを作成（System.out.println -> cui-printという1個のブロックに変換）というリスト
-		
-		parser = new DOMParser();
+	}
+	
+	public void createForceConvertionMap(boolean isTest) throws SAXException, IOException{
+		DOMParser parser = new DOMParser();
 		if(isTest){
 			parser.parse(langdefRootPath + FORCECONVERION_FILENAME);			
 		}else{
