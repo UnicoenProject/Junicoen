@@ -296,4 +296,8 @@ public class BlockResolver {
 		return this.forceConvertionMap;
 	}
 	
+	public Map<String, Node> getAllBlockNodes(){
+		return allAvailableBlocks;
+	}
+	
 }
