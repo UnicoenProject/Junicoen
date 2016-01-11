@@ -3,11 +3,11 @@
 * 作成者： 
 * 作成日： Thu Nov 08 10:57:58 JST 2012
 */
-public class _02IfElseTest extends Turtle {
+public class _13WhileTest extends Turtle {
 	
 	//起動処理
 	public static void main(String[] args) {
-		Turtle.startTurtle(new _02IfElseTest(), args);
+		Turtle.startTurtle(new _13WhileTest(), args);
 	}
 	
 	//タートルを動かす処理

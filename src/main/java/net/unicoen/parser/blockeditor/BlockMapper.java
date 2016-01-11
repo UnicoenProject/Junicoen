@@ -489,7 +489,7 @@ public class BlockMapper {
 						args.add(parseBody(realArgNode, map));
 					}
 				} else {
-					args.add(null);
+					return args;
 				}
 			}
 		}

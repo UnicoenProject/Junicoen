@@ -631,7 +631,7 @@ public class BlockGenerator extends UniModelVisitor {
 			block.body.add(node.step);
 		}
 
-		UniWhile whileModel = new UniWhile(node.cond, node.statement);
+		UniWhile whileModel = new UniWhile(node.cond, block);
 
 		forBlock.body.add(whileModel);
 
