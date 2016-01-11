@@ -39,6 +39,7 @@ import org.antlr.v4.runtime.RuleContext
 import net.unicoen.node.UniReturn
 import net.unicoen.node.UniEmptyStatement
 import net.unicoen.node.UniCast
+import net.unicoen.node.UniFor
 
 class JavaMapper extends JavaBaseVisitor<UniNode> {
 	def parse(String code) {
@@ -818,6 +819,42 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		}
 	}
 	
+	override visitForStatement(JavaParser.ForStatementContext ctx) {
+//		forStatement
+//	:	basicForStatement
+//	|	enhancedForStatement
+//	;
+		ctx.children.head.accept(this)
+	}
+	
+	override visitBasicForStatement(JavaParser.BasicForStatementContext ctx) {
+//		basicForStatement
+//	:	'for' '(' forInit? ';' expression? ';' forUpdate? ')' statement
+//	;
+		val nodes = createNodeMap(ctx)
+		val model = new UniFor
+		val init = nodes.getOneNodeOrEmpty(JavaParser.RULE_forInit).flattenForBuilding
+		
+		if(!init.empty){
+			model.init = init.get(0)
+		}
+		
+		model.cond = nodes.getOneNode(JavaParser.RULE_expression)
+		model.step = nodes.getOneNode(JavaParser.RULE_forUpdate)
+		model.statement = nodes.getOneNode(JavaParser.RULE_statement)
+		
+		model
+	}
+	
+	override visitForInit(JavaParser.ForInitContext ctx) {
+		//	forInit
+//	:	statementExpressionList
+//	|	localVariableDeclaration
+//	;
+		return ctx.children.head.accept(this)
+	}
+	
+	
 	override visitFormalParameters(JavaParser.FormalParametersContext ctx) {
 //formalParameters
 //	:	formalParameter (',' formalParameter)*
@@ -1125,6 +1162,17 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		}
 		throw new RuntimeException("No item")
 	}
+	
+	private static def <T extends UniNode> T getOneNodeOrEmpty(Map<Integer, List<UniNode>> map, Integer key) {
+		if (map.containsKey(key)) {
+			val items = map.get(key)
+			if (items.size() > 0) {
+				return items.get(0) as T
+			}
+		}
+		new net.unicoen.mapper.JavaMapper.ListNode(new ArrayList()) as T
+	}
+	
 
 	private static def <T> T getOne(Map<Integer, List<Object>> map, Integer key) {
 		if (map.containsKey(key)) {

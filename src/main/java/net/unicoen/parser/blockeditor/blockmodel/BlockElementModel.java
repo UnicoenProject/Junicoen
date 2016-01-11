@@ -17,38 +17,37 @@ public class BlockElementModel {
 
 	protected Element element;
 	public static String BLOCK_NODE = "Block";
-	public static String GENUS_NAME_ATTR = "genus-name";//必須
-	public static String ID_ATTR = "id";//必須
-	public static String KIND_ATTR = "kind";//必須
-	public static String TYPE_NODE = "Type";//任意（モデルによって必要）
-	public static String LABEL_NODE = "Label";//任意（モデルによって必要）
-	public static String NAME_NODE = "Name";//任意（モデルによって必要）
-	public static String LOCATION_NODE = "Location";//任意
-	
+	public static String GENUS_NAME_ATTR = "genus-name";// 必須
+	public static String ID_ATTR = "id";// 必須
+	public static String KIND_ATTR = "kind";// 必須
+	public static String TYPE_NODE = "Type";// 任意（モデルによって必要）
+	public static String LABEL_NODE = "Label";// 任意（モデルによって必要）
+	public static String NAME_NODE = "Name";// 任意（モデルによって必要）
+	public static String LOCATION_NODE = "Location";// 任意
+
 	public static String BLOCK_STUB_NODE = "BlockStub";
 	public static String STUBPARENTNAME_NODE = "StubParentName";
 	public static String STUBPARENTGENUS_NODE = "StubParentGenus";
 	public static String STUBPARENTID_NODE = "StubParentID";
-	
-	public static String AFTERBLOCKID_NODE = "AfterBlockId";//任意（モデルによって必要）
-	public static String BEFOREBLOCKID_NODE = "BeforeBlockId";//任意（モデルによって必要）
-	public static String COMMENT_NODE = "Comment";//任意
+
+	public static String AFTERBLOCKID_NODE = "AfterBlockId";// 任意（モデルによって必要）
+	public static String BEFOREBLOCKID_NODE = "BeforeBlockId";// 任意（モデルによって必要）
+	public static String COMMENT_NODE = "Comment";// 任意
 	public static String INITLABEL_ATTR = "initlabel";
-	
+
 	private List<BlockElementModel> socketBlocksElements = new ArrayList<>();
-	
-	public static enum BLOCKKINDS{
-		FUNCTION("function"),COMMAND("command"),DATA("data"),LOCAL_VARDEC("local-variable"),
-		GLOBAL_VARDEC("global-variable"),PROCEDURE("procedure"),PARAM("param"),RETURN("return"),SPECIAL("special"),SPECIAL_VARDEC("special-variable")
-		,ABSTRACTION("abstraction"), CAST("cast");
-		
+
+	public static enum BLOCKKINDS {
+		FUNCTION("function"), COMMAND("command"), DATA("data"), LOCAL_VARDEC("local-variable"), GLOBAL_VARDEC("global-variable"), PROCEDURE("procedure"), PARAM("param"), RETURN("return"), SPECIAL("special"), SPECIAL_VARDEC("special-variable"), ABSTRACTION("abstraction"), CAST("cast");
+
 		private final String text;
-		private BLOCKKINDS(String text){
+
+		private BLOCKKINDS(String text) {
 			this.text = text;
 		}
-		
+
 		@Override
-		public String toString(){
+		public String toString() {
 			return this.text;
 		}
 	}
@@ -66,18 +65,18 @@ public class BlockElementModel {
 	}
 
 	public String getGenusName() {
-		return DOMUtil.getAttribute(this.element,GENUS_NAME_ATTR);
+		return DOMUtil.getAttribute(this.element, GENUS_NAME_ATTR);
 	}
 
 	public String getKind() {
 		return DOMUtil.getAttribute(this.element, KIND_ATTR);
 	}
 
-	public String getType(){
+	public String getType() {
 		Node typeNode = DOMUtil.getChildNode(getBlockElement(), TYPE_NODE);
-		if(typeNode == null){
+		if (typeNode == null) {
 			return "Object";
-		}else{
+		} else {
 			return typeNode.getTextContent();
 		}
 	}
@@ -92,7 +91,6 @@ public class BlockElementModel {
 
 		return commandBlocks;
 	}
-
 
 	public List<BlockElementModel> getSocketBlocks() {
 		return this.socketBlocksElements;
@@ -119,29 +117,29 @@ public class BlockElementModel {
 
 	public String getLabel() {
 		Node label = DOMUtil.getChildNode(element, BlockElementModel.LABEL_NODE);
-		if(label == null){
+		if (label == null) {
 			return "";
-		}else{
-			return label.getTextContent();			
+		} else {
+			return label.getTextContent();
 		}
 	}
-	
-	public Node getPlugNode(){
+
+	public Node getPlugNode() {
 		return DOMUtil.getChildNode(this.element, BlockPlugModel.NODE_NAME);
 	}
 
-	public String getPlugAttribute(String attribute){
+	public String getPlugAttribute(String attribute) {
 		return DOMUtil.getAttribute(DOMUtil.getChildNode(getPlugNode(), BlockConnector.CONNECTOR_NODE), attribute);
 	}
 
-	public Element getBlockElement(){
-		if(this.getElement().getNodeName().equals(BlockElementModel.BLOCK_NODE)){
+	public Element getBlockElement() {
+		if (this.getElement().getNodeName().equals(BlockElementModel.BLOCK_NODE)) {
 			return this.getElement();
-		}else{
-			return (Element) DOMUtil.getChildNode(getElement(), BlockElementModel.BLOCK_NODE);			
+		} else {
+			return (Element) DOMUtil.getChildNode(getElement(), BlockElementModel.BLOCK_NODE);
 		}
 	}
-	
+
 	protected void addSocketBlock(BlockElementModel socket) {
 		this.socketBlocksElements.add(socket);
 	}
@@ -149,8 +147,8 @@ public class BlockElementModel {
 	/*
 	 * 以下BlockNode生成に関連するメソッド
 	 * 
-	 * */	
-	
+	 */
+
 	public void addLocationElement(Document document, String x, String y, Element blockElement) {
 		Element locationElement = document.createElement(BlockElementModel.LOCATION_NODE);
 		Element xElement = document.createElement("X");
@@ -197,26 +195,31 @@ public class BlockElementModel {
 
 	/**
 	 * ブロックモデルにソケットに結合されるBlockモデルを追加し，ブロックモデルにソケットノードを追加する
+	 * 
 	 * @param socketBlocks
 	 * @param document
 	 * @param sockets
 	 */
-	public void addSocketsAndNodes(List<BlockElementModel> socketBlocks, Document document, BlockSocketsModel sockets){
-		for(BlockElementModel socket : socketBlocks){
+	public void addSocketsAndNodes(List<BlockElementModel> socketBlocks, Document document, BlockSocketsModel sockets) {
+		for (BlockElementModel socket : socketBlocks) {
 			addSocketBlock(socket);
 		}
 		addSocketsNode(document, sockets);
 	}
 
-
 	public void addSocketsNode(Document document, BlockSocketsModel sockets) {
 		if (sockets.getSockets().size() > 0) {
 			Element socketsElement = document.createElement(BlockSocketsModel.NODE_NAME);
 			socketsElement.setAttribute(BlockSocketsModel.NUMSOCKETS_ATTR, String.valueOf(sockets.getSockets().size()));
-			for (int i = 0;i<sockets.getSockets().size();i++) {
-				if(getSocketBlocks().size() > i && getSocketBlocks().get(i)!= null){//実引数とブロックの引数が異なる場合
+			for (int i = 0; i < sockets.getSockets().size(); i++) {
+				// ソケット情報の更新
+				if (getSocketBlocks().size() > i && getSocketBlocks().get(i) != null) {
 					sockets.getSockets().get(i).setConnectorBlockID(getSocketBlocks().get(i).getBlockID());
+					if(sockets.getSockets().get(i).getConnectorKind() != null && sockets.getSockets().get(i).getConnectorKind().equals("poly")){
+						sockets.getSockets().get(i).updateSocketConnectorType(getSocketBlocks().get(i));	
+					}
 				}
+				// ソケットノードの追加
 				addSocketNode(document, socketsElement, sockets.getSockets().get(i));
 			}
 			getBlockElement().appendChild(socketsElement);
@@ -268,7 +271,7 @@ public class BlockElementModel {
 		getBlockElement().appendChild(element);
 	}
 
-	public List<String> transformToTypeStringList(List<BlockElementModel> args){
+	public List<String> transformToTypeStringList(List<BlockElementModel> args) {
 		return Lists.transform(args, new Function<BlockElementModel, String>() {
 			@Override
 			public String apply(BlockElementModel input) {
@@ -276,11 +279,11 @@ public class BlockElementModel {
 			}
 		});
 	}
-	
-	public void addCommentNode(String comment, Document document){
+
+	public void addCommentNode(String comment, Document document) {
 		Element commentElement = document.createElement(COMMENT_NODE);
 		commentElement.setTextContent(AnnotationCommentGetter.getCommentText(comment));
 		getBlockElement().appendChild(commentElement);
 	}
-	
+
 }

@@ -11,11 +11,11 @@ import net.unicoen.parser.blockeditor.DOMUtil;
 
 public class BlockMethodCallModel extends BlockCommandModel{
 	
-	public BlockMethodCallModel(String genusName, List<BlockElementModel> sockets ,Document document, BlockResolver resolver, Long ID_COUNTER, String parentId){
-		this.element = createPrototypeElement(genusName, sockets, document, resolver, ID_COUNTER, parentId);
+	public BlockMethodCallModel(String genusName,Document document, BlockResolver resolver, Long ID_COUNTER, String parentId){
+		this.element = createPrototypeElement(genusName, document, resolver, ID_COUNTER, parentId);
 	}
 
-	public Element createPrototypeElement(String genusName, List<BlockElementModel> sockets,Document document, BlockResolver resolver, Long ID_COUNTER, String parentId){
+	public Element createPrototypeElement(String genusName,Document document, BlockResolver resolver, Long ID_COUNTER, String parentId){
 		Node originNode = resolver.getBlockNode(genusName);
 		String kind = DOMUtil.getAttribute(originNode, BlockElementModel.KIND_ATTR);
 		Element element = createBlockElement(document, genusName, ID_COUNTER, kind);

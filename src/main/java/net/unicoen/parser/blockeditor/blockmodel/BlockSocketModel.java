@@ -70,5 +70,12 @@ public class BlockSocketModel extends BlockConnector{
 		}
 		return connector;
 	}
+	
+	public void updateSocketConnectorType(BlockElementModel realArgBlock){
+		if(realArgBlock == null){
+			return;
+		}
+		this.connectorType = BlockElementModel.calcParamType(realArgBlock);
+	}
 
 }

@@ -81,6 +81,7 @@ import net.unicoen.parser.blockeditor.blockmodel.BlockIfModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockIntLiteralModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockLocalVarDecModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockMethodCallModel;
+import net.unicoen.parser.blockeditor.blockmodel.BlockMethodCallWithReturnModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockNewModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockNotOperatorModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockPlugModel;
@@ -337,7 +338,10 @@ public class BlockGenerator extends UniModelVisitor {
 		List<Node> socketNodes = resolver.getSocketNodes(model.getGenusName());
 		BlockSocketsModel socketsInfo = calcSocketsInfo(socketNodes);
 		model.addSocketsAndNodes(socketModels, document, socketsInfo);
-
+		int i = 0;
+		for(;i<5;i++){
+		}
+		
 		return model;
 	}
 
@@ -451,7 +455,7 @@ public class BlockGenerator extends UniModelVisitor {
 			BlockElementModel right = visitExpr(binopExpr.right, String.valueOf(id));
 			List<Node> socketNodes = resolver.getSocketNodes(DOMUtil.getAttribute(varDecNode, BlockElementModel.GENUS_NAME_ATTR));
 
-			// paramにはソケット情報が無いため，plub情報からソケットモデルを生成する
+			// paramにはソケット情報が無いため，plug情報からソケットモデルを生成する
 			if (isParamNode(varDecNode)) {
 				String connectorType = BlockElementModel.convertTypeToBlockConnectorType(right.getType());
 				BlockSocketModel socket = new BlockSocketModel("", "single", connectorType, connectorType, right.getBlockID());
@@ -618,6 +622,11 @@ public class BlockGenerator extends UniModelVisitor {
 			forBlock.body.add(node.init);
 		}
 		UniBlock block = (UniBlock) node.statement;
+		
+		if(block != null){
+			block = new UniBlock(new ArrayList<>(), null);
+		}
+		
 		if (node.step != null) {
 			block.body.add(node.step);
 		}
@@ -674,19 +683,13 @@ public class BlockGenerator extends UniModelVisitor {
 				UniExpr expr = statementBlock.body.get(i);
 				BlockElementModel command = (BlockElementModel) visitExpr(expr);
 
-				// // statement以外は弾く
-				// if (!(command instanceof BlockCommandModel)) {
-				// throw new RuntimeException("cant use the expression" +
-				// expr.toString());
-				// }
-
 				command.addBeforeBlockNode(document, beforeId);
 
 				if (i + 1 < statementBlock.body.size()) {
 					command.addAfterBlockNode(document, String.valueOf(ID_COUNTER));
 					beforeId = command.getBlockElement().getAttribute(BlockElementModel.ID_ATTR);
 				}
-
+				System.out.println(command.getGenusName());
 				blocks.add((BlockCommandModel) command);
 			}
 		}
@@ -1074,8 +1077,9 @@ public class BlockGenerator extends UniModelVisitor {
 			}
 
 			// id, methodNameを使って，ライブラリメソッドor他のオブジェクトのフィールドメソッドモデルを生成
-			BlockElementModel callMethodModel = createMethodCallModel(receiverModel.getType(), method.methodName, sockets, document, callerId, caller.getBlockID());
-
+			BlockElementModel callMethodModel = createMethodCallModel(receiverModel.getType(), method.methodName, sockets, document, callerId, PARENT_ID_NULL);
+			callMethodModel.addBeforeBlockNode(document, caller.getBlockID());
+			
 			// モデルにソケットに結合されるモデルを追加
 			caller.setCallMethod((BlockCommandModel) callMethodModel);
 
@@ -1148,19 +1152,26 @@ public class BlockGenerator extends UniModelVisitor {
 	 * @return BlockMethodCallModelをBlockElementModelとして返す
 	 */
 	public BlockElementModel createMethodCallModel(String genusName, Long id, List<BlockElementModel> argModels, Document document, String parentId) {
-		BlockMethodCallModel caller = new BlockMethodCallModel(genusName, argModels, document, resolver, id, parentId);
+		if(parentId.equals(PARENT_ID_NULL)){
+			//command
+			BlockMethodCallModel caller = new BlockMethodCallModel(genusName, document, resolver, id, parentId);
 
-		List<Node> socketNodes = resolver.getSocketNodes(caller.getGenusName());
-		BlockSocketsModel socketsInfo = calcSocketsInfo(socketNodes);
+			List<Node> socketNodes = resolver.getSocketNodes(caller.getGenusName());
+			BlockSocketsModel socketsInfo = calcSocketsInfo(socketNodes);
 
-		caller.addSocketsAndNodes(argModels, document, socketsInfo);
+			caller.addSocketsAndNodes(argModels, document, socketsInfo);
+			return caller;
+		}else{
+			BlockMethodCallWithReturnModel caller = new BlockMethodCallWithReturnModel(genusName, document, resolver, id, parentId);
 
-		Node plugElement = resolver.getPlugElement(caller.getGenusName());
-		if (plugElement != null) {
-			caller.setPlugElement(document, new BlockPlugModel(plugElement, parentId));
+			List<Node> socketNodes = resolver.getSocketNodes(caller.getGenusName());
+			BlockSocketsModel socketsInfo = calcSocketsInfo(socketNodes);
+
+			caller.addSocketsAndNodes(argModels, document, socketsInfo);
+			
+			return caller;
 		}
 
-		return caller;
 	}
 
 	public List<BlockElementModel> transformToBlockElementModel(List<BlockExprModel> argModels) {
