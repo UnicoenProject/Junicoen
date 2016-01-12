@@ -11,7 +11,6 @@ import net.unicoen.node.UniDoubleLiteral
 import net.unicoen.node.UniBoolLiteral
 import net.unicoen.node.UniNewArray
 import net.unicoen.node.UniNew
-import com.google.common.collect.Lists
 import net.unicoen.node.UniMemberDec
 import net.unicoen.node.UniExpr
 
@@ -214,8 +213,7 @@ class Java8MapperClassFieldVariableTest extends MapperTest {
 		val actual = mapper.parse("class A{ public static final int[] arr = new int[3]; }")
 
 		val newarray = new UniNewArray
-		newarray.elementsNum = Lists.newArrayList
-		newarray.elementsNum += new UniIntLiteral(3)
+		newarray.elementsNum = #[new UniIntLiteral(3) as UniExpr]
 		newarray.type = "int"
 		newarray.value = new UniArray
 

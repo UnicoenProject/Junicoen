@@ -125,7 +125,7 @@ Dsl.define_node do |x|
         d.mem "args", "Arg", list: true
         d.mem "block", "Block"
       end
-      x.node "Arg", nil do |d|
+      x.node "Arg" do |d|
         d.mem "type", String
         d.mem "name", String
       end

@@ -1,6 +1,6 @@
 // Generated from Java8.g4 by ANTLR 4.5.1
 
-	package net.unicoen.parser;
+package net.unicoen.parser;
 
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -642,6 +642,7 @@ public class Java8Parser extends Parser {
 		public AnnotationContext annotation(int i) {
 			return getRuleContext(AnnotationContext.class,i);
 		}
+		public TerminalNode BOOLEAN() { return getToken(Java8Parser.BOOLEAN, 0); }
 		public PrimitiveTypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1018,6 +1019,7 @@ public class Java8Parser extends Parser {
 		public ClassOrInterfaceTypeContext classOrInterfaceType() {
 			return getRuleContext(ClassOrInterfaceTypeContext.class,0);
 		}
+		public TerminalNode DOT() { return getToken(Java8Parser.DOT, 0); }
 		public ClassTypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1483,6 +1485,14 @@ public class Java8Parser extends Parser {
 	}
 
 	public static class DimsContext extends ParserRuleContext {
+		public List<TerminalNode> LBRACK() { return getTokens(Java8Parser.LBRACK); }
+		public TerminalNode LBRACK(int i) {
+			return getToken(Java8Parser.LBRACK, i);
+		}
+		public List<TerminalNode> RBRACK() { return getTokens(Java8Parser.RBRACK); }
+		public TerminalNode RBRACK(int i) {
+			return getToken(Java8Parser.RBRACK, i);
+		}
 		public List<AnnotationContext> annotation() {
 			return getRuleContexts(AnnotationContext.class);
 		}
@@ -16747,7 +16757,6 @@ public class Java8Parser extends Parser {
 		public PostfixExpressionContext postfixExpression() {
 			return getRuleContext(PostfixExpressionContext.class,0);
 		}
-		public TerminalNode INC() { return getToken(Java8Parser.INC, 0); }
 		public PostIncrementExpressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -16819,7 +16828,6 @@ public class Java8Parser extends Parser {
 		public PostfixExpressionContext postfixExpression() {
 			return getRuleContext(PostfixExpressionContext.class,0);
 		}
-		public TerminalNode DEC() { return getToken(Java8Parser.DEC, 0); }
 		public PostDecrementExpressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}

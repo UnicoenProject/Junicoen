@@ -1,7 +1,7 @@
 grammar Java8;
 
 @header {
-	package net.unicoen.parser;
+package net.unicoen.parser;
 }
 
 literal
@@ -44,7 +44,7 @@ type
 
 primitiveType
 	:	annotation* numericType 
-	|	annotation* 'boolean' 
+	|	annotation* BOOLEAN 
 	;
 
 numericType
@@ -77,7 +77,7 @@ classOrInterfaceType
 
 classType
 	:	annotation* Identifier typeArguments? 
-	|	classOrInterfaceType '.' annotation* Identifier typeArguments? 
+	|	classOrInterfaceType DOT annotation* Identifier typeArguments? 
 	;
 
 classType_lf_classOrInterfaceType
@@ -111,7 +111,7 @@ arrayType
 	;
 
 dims
-	:	annotation* '[' ']' (annotation* '[' ']' )* 
+	:	annotation* LBRACK RBRACK (annotation* LBRACK RBRACK )* 
 	;
 
 typeParameter
@@ -1265,7 +1265,7 @@ postfixExpression
 	;
 
 postIncrementExpression
-	:	postfixExpression INC 
+	:	postfixExpression '++' 
 	;
 
 postIncrementExpression_lf_postfixExpression
@@ -1273,7 +1273,7 @@ postIncrementExpression_lf_postfixExpression
 	;
 
 postDecrementExpression
-	:	postfixExpression DEC 
+	:	postfixExpression '--' 
 	;
 
 postDecrementExpression_lf_postfixExpression

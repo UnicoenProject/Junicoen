@@ -10,6 +10,7 @@ import net.unicoen.node.UniStringLiteral
 import org.junit.Test
 
 import static net.unicoen.node_helper.Builder.*
+import org.junit.Ignore
 
 class Java8MapperTest extends MapperTest {
 	val mapper = new Java8Mapper(true)
@@ -44,6 +45,7 @@ class Java8MapperTest extends MapperTest {
 
 	@Test
 	def void parseInterface() {
+
 		//Empty InterfaceDeclaration
 		val expected = new UniClassDec
 		expected.className = "A"
@@ -94,6 +96,28 @@ class Java8MapperTest extends MapperTest {
 		map3.put("none", list3)
 		val result = mapper.castToList(map, String)
 		println(result)
+	}
+
+	@Test
+	@Ignore
+	def void testProgram() {
+		val actual = mapper.parse(
+			"public class ClassName<E> extends AnyClass implements InterfaceName<String> {
+	enum Color { RED, GREEN, BLUE };
+	/* This comment may span multiple lines. */
+	static Object staticField;
+	// This comment may span only this line
+	private E field;
+	private AbstractClassName field2;
+	// TASK: refactor
+	@SuppressWarnings(value=\"all\")
+	public int foo(Integer parameter) {
+		abstractMethod(inheritedField);
+		int local= 42*hashCode();
+		staticMethod();
+		return bar(local) + parameter;
+	}
+}")
 	}
 
 }

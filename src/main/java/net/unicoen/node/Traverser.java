@@ -161,6 +161,10 @@ public abstract class Traverser {
 			traverseMethodDec((UniMethodDec) node);
 			return;
 		}
+		if (node instanceof UniArg) {
+			traverseArg((UniArg) node);
+			return;
+		}
 		throw new RuntimeException("Unknown node: " + node);
 	}
 
