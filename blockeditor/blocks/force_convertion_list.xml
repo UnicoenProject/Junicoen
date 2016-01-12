@@ -191,7 +191,7 @@
 		<GenusName>Integer-parseInt</GenusName>
 	</Item>
 
-	<!-- Color系 -->
+	<!--				 Color系						 -->
 	<Item>
 		<UniModel unimodel="UniFieldAccess">
 			<name>red</name>
@@ -222,6 +222,22 @@
 			</receiver>
 		</UniModel>
 		<GenusName>black</GenusName>
+	</Item>
+
+	<Item>
+		<UniModel unimodel="UniFieldAccess">
+			<name>orange</name>
+			<receiver unimodel="UniFieldAccess">
+				<name>Color</name>
+				<receiver unimodel="UniFieldAccess">
+					<name>awt</name>
+					<receiver unimodel="UniIdent">
+						<name>java</name>
+					</receiver>
+				</receiver>
+			</receiver>
+		</UniModel>
+		<GenusName>orange</GenusName>
 	</Item>
 
 	<Item>

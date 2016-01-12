@@ -208,19 +208,28 @@ public class BlockElementModel {
 	}
 
 	public void addSocketsNode(Document document, BlockSocketsModel sockets) {
-		if (sockets.getSockets().size() > 0) {
+		if (getSocketBlocks().size() <= sockets.getSockets().size()) {
+			// 実引数<定義引数
 			Element socketsElement = document.createElement(BlockSocketsModel.NODE_NAME);
 			socketsElement.setAttribute(BlockSocketsModel.NUMSOCKETS_ATTR, String.valueOf(sockets.getSockets().size()));
 			for (int i = 0; i < sockets.getSockets().size(); i++) {
 				// ソケット情報の更新
 				if (getSocketBlocks().size() > i && getSocketBlocks().get(i) != null) {
 					sockets.getSockets().get(i).setConnectorBlockID(getSocketBlocks().get(i).getBlockID());
-					if(sockets.getSockets().get(i).getConnectorKind() != null && sockets.getSockets().get(i).getConnectorKind().equals("poly")){
-						sockets.getSockets().get(i).updateSocketConnectorType(getSocketBlocks().get(i));	
+					if (sockets.getSockets().get(i).getConnectorKind() != null && sockets.getSockets().get(i).getConnectorKind().equals("poly")) {
+						sockets.getSockets().get(i).updateSocketConnectorType(getSocketBlocks().get(i));
 					}
 				}
 				// ソケットノードの追加
 				addSocketNode(document, socketsElement, sockets.getSockets().get(i));
+			}
+			getBlockElement().appendChild(socketsElement);
+		} else {// 実引数>定義引数
+			Element socketsElement = document.createElement(BlockSocketsModel.NODE_NAME);
+			socketsElement.setAttribute(BlockSocketsModel.NUMSOCKETS_ATTR, String.valueOf(getSocketBlocks().size()));
+			for (int i = 0; i < getSocketBlocks().size(); i++) {
+				// ソケットノードの追加
+				addSocketNode(document, socketsElement, new BlockSocketModel((BlockExprModel)getSocketBlocks().get(i)));
 			}
 			getBlockElement().appendChild(socketsElement);
 		}

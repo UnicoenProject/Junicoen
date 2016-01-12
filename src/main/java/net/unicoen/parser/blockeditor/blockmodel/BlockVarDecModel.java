@@ -11,7 +11,7 @@ import net.unicoen.parser.blockeditor.BlockResolver;
 import net.unicoen.parser.blockeditor.DOMUtil;
 
 public class BlockVarDecModel extends BlockCommandModel{
-
+	public static String SPECIAL_VARIABLE_GENUS_NAME = "special-variable";
 	public BlockVarDecModel(String type, String name, Document document, BlockResolver resolver, Long ID_COUNTER) {
 		this.element = createElement(type, name, document, resolver, ID_COUNTER);
 	}
@@ -34,7 +34,7 @@ public class BlockVarDecModel extends BlockCommandModel{
 	}
 	
 	public Element createSpecialVariableDecModel(String type, String name, String kind, Document document, BlockResolver resolver, Long ID_COUNTER){
-		Element blockElement = createBlockElement(document, BlockSpecialModel.VARIABLE_GENUS_NAME, ID_COUNTER++, kind);
+		Element blockElement = createBlockElement(document, SPECIAL_VARIABLE_GENUS_NAME, ID_COUNTER++, kind);
 		return blockElement;
 	}
 	
@@ -62,7 +62,7 @@ public class BlockVarDecModel extends BlockCommandModel{
 		}
 
 		//TODO should fix
-		if(getGenusName().equals(BlockSpecialModel.VARIABLE_GENUS_NAME)){
+		if(getGenusName().equals(SPECIAL_VARIABLE_GENUS_NAME)){
 			for(BlockElementModel socket : socketBlocks){
 				sockets.addSocketInfo(new BlockSocketModel((BlockExprModel) socket));
 			}			

@@ -59,6 +59,7 @@ import net.unicoen.parser.blockeditor.blockmodel.BlockPrePostModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockProcedureModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockReturnModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockSocketsModel;
+import net.unicoen.parser.blockeditor.blockmodel.BlockSpecialExpressionModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockSpecialModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockStringLiteralModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockVariableGetterModel;
@@ -377,7 +378,7 @@ public class BlockMapper {
 			return op;
 		} else if (resolver.getForceConvertionMap().getUniFieldAccessModel(blockGenusName) != null) {
 			return resolver.getForceConvertionMap().getUniFieldAccessModel(blockGenusName);
-		} else if (blockGenusName.endsWith(BlockSpecialModel.SPECIAL_IDENT_GENUS_NAME)) {
+		} else if (blockGenusName.endsWith(BlockSpecialExpressionModel.SPECIAL_IDENT_GENUS_NAME)) {
 			return new UniIdent(DOMUtil.getChildText(node, BlockElementModel.LABEL_NODE));
 		} else {
 			throw new RuntimeException("not supported data type:" + blockGenusName);

@@ -132,7 +132,7 @@
 	</LangSpecProperties>
 </BlockGenus>
 
-<BlockGenus name="Turtle-color[@int]" kind="command"
+<BlockGenus name="Turtle-color[@object]" kind="command"
 	initlabel="ペンの色を変える" color="255 0 0">
 	<description>
 		<text>タートルの軌跡に使用したい色を指定します。</text>

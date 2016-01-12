@@ -6,11 +6,11 @@ import org.junit.Test;
 
 import net.unicoen.node.UniClassDec;
 
-public class UniToBlock25_ForTest {
+public class UniToBlock12_ColorTest {
 
 	@Test
 	public void test() throws IOException {
-		UniClassDec classModel = UniToBlockTestUtil.createClassDec("blockeditor/testcases/BlockConvertTest/_25ForTest.java");
+		UniClassDec classModel = UniToBlockTestUtil.createClassDec("blockeditor/testcases/BlockConvertTest/_12ColorTest.java");
 		
 		UniToBlockTestUtil.parseTestToBG2(classModel);
 	}

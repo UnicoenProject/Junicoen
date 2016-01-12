@@ -8,7 +8,6 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import net.unicoen.parser.blockeditor.BlockResolver;
-import net.unicoen.parser.blockeditor.BlockToUniBlockResolver;
 import net.unicoen.parser.blockeditor.DOMUtil;
 import net.unicoen.parser.blockeditor.blockmodel.BlockBinaryOperatorModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockElementModel;
@@ -18,7 +17,6 @@ public class BlockNodeChecker {
 	@Test
 	public void test() throws SAXException, IOException {
 		BlockResolver resolver = new BlockResolver("blockeditor/blocks/", true);
-		BlockToUniBlockResolver b2uresolver = new BlockToUniBlockResolver("blockeditor/blocks/", true);
 
 		Map<String, Node> map = resolver.getAllBlockNodes();
 		for (String key : map.keySet()) {

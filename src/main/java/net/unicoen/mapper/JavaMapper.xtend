@@ -41,6 +41,7 @@ import net.unicoen.node.UniEmptyStatement
 import net.unicoen.node.UniCast
 import net.unicoen.node.UniFor
 
+
 class JavaMapper extends JavaBaseVisitor<UniNode> {
 	def parse(String code) {
 		parseCore(new ANTLRInputStream(code));
@@ -989,6 +990,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		val nodes = createNodeMap(ctx)
 		val texts = createTextMap(ctx)
 		val type = texts.get(JavaParser.Identifier).join(".")
+
 		if (ctx.children.head.text.equals("new")) {
 			val argumentList = if (nodes.containsKey(JavaParser.RULE_argumentList)) {
 					nodes.getOneNode(JavaParser.RULE_argumentList).flattenForBuilding
@@ -1008,6 +1010,23 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		val nodes = createNodeMap(ctx)
 		val texts = createTextMap(ctx)
 		val type = texts.get(-JavaParser.Identifier).join(".")
+		val generics = new ArrayList<String>
+		ctx.children.forEach[
+			if(it instanceof net.unicoen.parser.JavaParser.TypeArgumentsOrDiamondContext){
+				generics.add(it.text)	
+			}
+		]
+		
+		if(!generics.empty){
+			val argumentList = if (nodes.containsKey(JavaParser.RULE_argumentList)) {
+					nodes.getOneNode(JavaParser.RULE_argumentList).flattenForBuilding
+				} else {
+					Collections.emptyList()
+				}
+			return new UniNew(type+generics.head, argumentList)
+		}
+		
+
 		if (ctx.children.head.text.equals("new")) {
 			val argumentList = if (nodes.containsKey(JavaParser.RULE_argumentList)) {
 					nodes.getOneNode(JavaParser.RULE_argumentList).flattenForBuilding
@@ -1018,6 +1037,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		}
 		throw new RuntimeException("Not implemented")
 	}
+
 
 	override visitClassInstanceCreationExpression(JavaParser.ClassInstanceCreationExpressionContext ctx) {
 		// classInstanceCreationExpression

@@ -3,11 +3,10 @@ package net.unicoen.parser.blockeditor.blockmodel;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class BlockSpecialModel extends BlockElementModel{
+public class BlockSpecialModel extends BlockCommandModel{
 
 	public static String GENUS_NAME = "special";
-	public static String VARIABLE_GENUS_NAME = "special-variable";
-	public static String SPECIAL_IDENT_GENUS_NAME = "special-ident";
+
 	
 	public BlockSpecialModel(String genusName, String methodName, Document document, Long id, String kind, String parentId){
 		Element element = createBlockElement(document, genusName, id, kind);

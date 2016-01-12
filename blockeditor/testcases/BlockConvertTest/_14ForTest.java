@@ -3,10 +3,10 @@
 * 作成者： 
 * 作成日： Wed Oct 03 21:54:44 JST 2012
 */
-public class _25ForTest extends Turtle{		
+public class _14ForTest extends Turtle{		
 		//起動処理
 		public static void main(String[] args) {
-			Turtle.startTurtle(new _25ForTest(), args);
+			Turtle.startTurtle(new _14ForTest(), args);
 		}
 		
 		//タートルを動かす処理

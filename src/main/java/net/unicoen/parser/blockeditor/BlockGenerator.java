@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Stack;
 
 import javax.xml.XMLConstants;
@@ -91,6 +89,7 @@ import net.unicoen.parser.blockeditor.blockmodel.BlockProcedureModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockReturnModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockSocketModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockSocketsModel;
+import net.unicoen.parser.blockeditor.blockmodel.BlockSpecialExpressionModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockSpecialModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockStringLiteralModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockUserMethodCallModel;
@@ -115,8 +114,6 @@ public class BlockGenerator extends UniModelVisitor {
 
 	private BlockResolver resolver;
 
-	private Map<String, Element> addedModels = new HashMap<String, Element>();
-
 	private PrintStream out;
 	public static String BLOCK_ENC = "UTF-8";
 
@@ -138,12 +135,27 @@ public class BlockGenerator extends UniModelVisitor {
 	}
 
 	public void parse(UniClassDec dec) {
-		// クラス名のxmlファイルを作成する
-		addedModels.clear(); // cashクリア
 
 		out.print(getSaveString(dec));
 
 		out.close();
+	}
+	
+	public void  parseUniFile(UniFile file) throws TransformerException, ParserConfigurationException{
+		
+		out.print(createBlockXMLString(getSaveNode(file)));
+		out.close();
+	}
+	
+	public Node getSaveNode(UniFile file) throws ParserConfigurationException{
+		Element documentElement = createRootNode();
+		
+		PagesModel pagesModel = (PagesModel)visitFile(file);
+		
+		documentElement.appendChild(pagesModel.getPagesElement());
+		document.appendChild(documentElement);
+
+		return document;
 	}
 
 	/**
@@ -156,19 +168,22 @@ public class BlockGenerator extends UniModelVisitor {
 		try {
 			Node node = getSaveNode(classDec);
 
-			StringWriter writer = new StringWriter();
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			Transformer transformer = transformerFactory.newTransformer();
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			transformer.setOutputProperty(OutputKeys.ENCODING, BLOCK_ENC);
-			transformer.transform(new DOMSource(node), new StreamResult(writer));
-
-			return writer.toString();
+			return createBlockXMLString(node);
 		} catch (TransformerConfigurationException e) {
 			throw new RuntimeException(e);
 		} catch (TransformerException e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	private String createBlockXMLString(Node node) throws TransformerException{
+		StringWriter writer = new StringWriter();
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		Transformer transformer = transformerFactory.newTransformer();
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+		transformer.setOutputProperty(OutputKeys.ENCODING, BLOCK_ENC);
+		transformer.transform(new DOMSource(node), new StreamResult(writer));
+		return writer.toString();
 	}
 
 	/**
@@ -191,7 +206,7 @@ public class BlockGenerator extends UniModelVisitor {
 			List<PageModel> pages = new ArrayList<PageModel>();
 			pages.add(pageModel);
 
-			PagesModel pagesModel = new PagesModel(pages, document);
+			PagesModel pagesModel = new PagesModel(pages, document, new ArrayList<>());
 
 			documentElement.appendChild(pagesModel.getPagesElement());
 			document.appendChild(documentElement);
@@ -266,7 +281,7 @@ public class BlockGenerator extends UniModelVisitor {
 
 			return getterModel;
 		} else {
-			BlockSpecialModel model = new BlockSpecialModel(BlockSpecialModel.SPECIAL_IDENT_GENUS_NAME,node.name, document, ID_COUNTER++, BlockElementModel.BLOCKKINDS.DATA.toString(), parentId);
+			BlockSpecialExpressionModel model = new BlockSpecialExpressionModel(BlockSpecialExpressionModel.SPECIAL_IDENT_GENUS_NAME,node.name, document, ID_COUNTER++, BlockElementModel.BLOCKKINDS.DATA.toString(), parentId);
 			BlockPlugModel plugInfo = new BlockPlugModel("", "object", "mirror", parentId);
 			model.setPlugElement(document, plugInfo);
 			return model;
@@ -283,7 +298,7 @@ public class BlockGenerator extends UniModelVisitor {
 		String genusName = resolver.getForceConvertionMap().getBlockGenusName(node);
 		BlockExprModel expr = new BlockExprModel();
 		expr.setElement(expr.createBlockElement(document, genusName, ID_COUNTER++, BlockElementModel.BLOCKKINDS.DATA.toString()));
-
+		
 		BlockPlugModel plugInfo = new BlockPlugModel(resolver.getPlugElement(expr.getGenusName()), getParentId());
 		expr.setPlugElement(document, plugInfo);
 		return expr;
@@ -338,9 +353,6 @@ public class BlockGenerator extends UniModelVisitor {
 		List<Node> socketNodes = resolver.getSocketNodes(model.getGenusName());
 		BlockSocketsModel socketsInfo = calcSocketsInfo(socketNodes);
 		model.addSocketsAndNodes(socketModels, document, socketsInfo);
-		int i = 0;
-		for(;i<5;i++){
-		}
 		
 		return model;
 	}
@@ -1234,12 +1246,17 @@ public class BlockGenerator extends UniModelVisitor {
 	public Object visitFile(UniFile node) {
 		try {
 			List<PageModel> pages = new ArrayList<>();
+			List<String> importStatements = new ArrayList<>();
+			for(UniImport importStatement : node.imports){
+				importStatements.add(importStatement.packageName);
+			}
+			
 			for (UniClassDec dec : node.classes) {
 				BlockClassModel model = (BlockClassModel) visitClassDec(dec);
 				PageModel page = new PageModel(dec, model.createBlockNodes(document), document);
 				pages.add(page);
 			}
-			return new PagesModel(pages, document);
+			return new PagesModel(pages, document, importStatements);
 		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
