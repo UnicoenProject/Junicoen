@@ -2106,6 +2106,73 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		map.castTo(UniIf)
 	}
 	
+	override public visitForStatement(Java8Parser.ForStatementContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		for(it : ctx.children) {
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 1729: {
+						return it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		}
+		map
+	}
+	
+	override public visitBasicForStatement(Java8Parser.BasicForStatementContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val statement = newArrayList
+		map.put("statement", statement)
+		val init = newArrayList
+		map.put("init", init)
+		val step = newArrayList
+		map.put("step", step)
+		val cond = newArrayList
+		map.put("cond", cond)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 1739: {
+						init += it.visit
+					}
+					case 1743: {
+						cond += it.visit
+					}
+					case 1747: {
+						step += it.visit
+					}
+					case 1751: {
+						statement += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(UniFor)
+	}
+	
 	override public visitReturnStatement(Java8Parser.ReturnStatementContext ctx) {
 		val map = newHashMap
 		val none = newArrayList
