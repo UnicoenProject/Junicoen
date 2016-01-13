@@ -1132,7 +1132,7 @@
 	<Name>shuffle</Name>
 </BlockGenus>
 
-<BlockGenus name="ListTurtle-setBgColor[@int]" kind="command"
+<BlockGenus name="ListTurtle-setBgColor[@object]" kind="command"
 	initlabel="背景色を設定する" color="255 255 100">
 	<Name>setBgColor</Name>
 	<BlockConnectors>
@@ -1342,7 +1342,7 @@
 			<MethodName>Turtle-lt[@int]</MethodName>
 			<MethodName>Turtle-up[]</MethodName>
 			<MethodName>Turtle-down[]</MethodName>
-			<MethodName>Turtle-color[@int]</MethodName>
+			<MethodName>Turtle-color[@object]</MethodName>
 			<MethodName>Turtle-input[]</MethodName>
 			<MethodName>Turtle-print[@string]</MethodName>
 			<MethodName>Turtle-random[@int]</MethodName>
@@ -1594,7 +1594,7 @@
 			<MethodName>Turtle-lt[@int]</MethodName>
 			<MethodName>Turtle-up[]</MethodName>
 			<MethodName>Turtle-down[]</MethodName>
-			<MethodName>Turtle-color[@int]</MethodName>
+			<MethodName>Turtle-color[@object]</MethodName>
 			<MethodName>Turtle-input[]</MethodName>
 			<MethodName>Turtle-print[@string]</MethodName>
 			<MethodName>Turtle-print[@int]</MethodName>
@@ -1684,7 +1684,7 @@
 			<MethodName>Turtle-lt[@int]</MethodName>
 			<MethodName>Turtle-up[]</MethodName>
 			<MethodName>Turtle-down[]</MethodName>
-			<MethodName>Turtle-color[@int]</MethodName>
+			<MethodName>Turtle-color[@object]</MethodName>
 			<MethodName>Turtle-input[]</MethodName>
 			<MethodName>Turtle-print[@string]</MethodName>
 			<MethodName>Turtle-print[@int]</MethodName>
@@ -1782,7 +1782,7 @@
 			<MethodName>Turtle-lt[@int]</MethodName>
 			<MethodName>Turtle-up[]</MethodName>
 			<MethodName>Turtle-down[]</MethodName>
-			<MethodName>Turtle-color[@int]</MethodName>
+			<MethodName>Turtle-color[@object]</MethodName>
 			<MethodName>Turtle-input[]</MethodName>
 			<MethodName>Turtle-print[@string]</MethodName>
 			<MethodName>Turtle-print[@int]</MethodName>
@@ -1881,7 +1881,7 @@
 			<MethodName>Turtle-lt[@int]</MethodName>
 			<MethodName>Turtle-up[]</MethodName>
 			<MethodName>Turtle-down[]</MethodName>
-			<MethodName>Turtle-color[@int]</MethodName>
+			<MethodName>Turtle-color[@object]</MethodName>
 			<MethodName>Turtle-input[]</MethodName>
 			<MethodName>Turtle-print[@string]</MethodName>
 			<MethodName>Turtle-print[@int]</MethodName>
@@ -1933,10 +1933,10 @@
 			<MethodName>ListTurtle-get[@int]</MethodName>
 			<MethodName>ListTurtle-getSize[]</MethodName>
 			<MethodName>ListTurtle-add[@int]</MethodName>
-			<MethodName>ListTurtle-addFirst[@turtle]</MethodName>
-			<MethodName>ListTurtle-addLast[@turtle]</MethodName>
-			<MethodName>ListTurtle-addAll[@listturtle]</MethodName>
-			<MethodName>ListTurtle-moveAllTo[@listturtle]</MethodName>
+			<MethodName>ListTurtle-addFirst[@object]</MethodName>
+			<MethodName>ListTurtle-addLast[@object]</MethodName>
+			<MethodName>ListTurtle-addAll[@object]</MethodName>
+			<MethodName>ListTurtle-moveAllTo[@object]</MethodName>
 			<MethodName>ListTurtle-removeFirst[]</MethodName>
 			<MethodName>ListTurtle-removeLast[]</MethodName>
 			<MethodName>ListTurtle-removeAll[]</MethodName>
@@ -1945,11 +1945,11 @@
 			<MethodName>ListTurtle-moveCursorToNext[]</MethodName>
 			<MethodName>ListTurtle-moveCursorToPrevious[]</MethodName>
 			<MethodName>ListTurtle-getObjectAtCursor[]</MethodName>
-			<MethodName>ListTurtle-addToBeforeCursor[@turtle]</MethodName>
-			<MethodName>ListTurtle-addToAfterCursor[@turtle]</MethodName>
+			<MethodName>ListTurtle-addToBeforeCursor[@object]</MethodName>
+			<MethodName>ListTurtle-addToAfterCursor[@object]</MethodName>
 			<MethodName>ListTurtle-removeAtCursor[]</MethodName>
 			<MethodName>ListTurtle-shuffle[]</MethodName>
-			<MethodName>ListTurtle-setBgColor[@int]</MethodName>
+			<MethodName>ListTurtle-setBgColor[@object]</MethodName>
 		</CategoryName>
 	</ClassMethods>
 	<LangSpecProperties>
@@ -1992,7 +1992,7 @@
 			<MethodName>Turtle-lt[@int]</MethodName>
 			<MethodName>Turtle-up[]</MethodName>
 			<MethodName>Turtle-down[]</MethodName>
-			<MethodName>Turtle-color[@int]</MethodName>
+			<MethodName>Turtle-color[@object]</MethodName>
 			<MethodName>Turtle-input[]</MethodName>
 			<MethodName>Turtle-print[@string]</MethodName>
 			<MethodName>Turtle-print[@int]</MethodName>
@@ -2090,7 +2090,7 @@
 			<MethodName>Turtle-lt[@int]</MethodName>
 			<MethodName>Turtle-up[]</MethodName>
 			<MethodName>Turtle-down[]</MethodName>
-			<MethodName>Turtle-color[@int]</MethodName>
+			<MethodName>Turtle-color[@object]</MethodName>
 			<MethodName>Turtle-input[]</MethodName>
 			<MethodName>Turtle-print[@string]</MethodName>
 			<MethodName>Turtle-print[@int]</MethodName>
@@ -2183,7 +2183,7 @@
 			<MethodName>Turtle-lt[@int]</MethodName>
 			<MethodName>Turtle-up[]</MethodName>
 			<MethodName>Turtle-down[]</MethodName>
-			<MethodName>Turtle-color[@int]</MethodName>
+			<MethodName>Turtle-color[@object]</MethodName>
 			<MethodName>Turtle-input[]</MethodName>
 			<MethodName>Turtle-print[@string]</MethodName>
 			<MethodName>Turtle-print[@int]</MethodName>

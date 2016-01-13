@@ -103,8 +103,8 @@ public class BlockMapper {
 	}
 	
 	public UniClassDec parse(Node pageBlock) {
-		
 		String className = DOMUtil.getAttribute(pageBlock, PageModel.PAGE_NAME_ATTR);
+		Node pageBlocksNode = DOMUtil.getChildNode(pageBlock, PageModel.PAGE_BLOCKS);
 		// Blockノードの親ノードを取得する
 		UniClassDec classDec = createProcotypeClassModel(className, DOMUtil.getChildNode(pageBlock, PageModel.PAGE_INFO_NODE));
 		List<Node> procs = new ArrayList<>();// Blockのidをキー該当ノードをvalueとしてメソッド定義ブロックのBlockNodeを保持する変数
@@ -112,8 +112,8 @@ public class BlockMapper {
 		List<Node> fieldVariables = new ArrayList<>();
 
 		// mapに全てのBlockNodeを,procsに全てのメソッド定義のBlockNodeを保存する
-		putAllBlockNodes(pageBlock);
-		preparseNodes(pageBlock, procs, methodsReturnTypes, fieldVariables);
+		putAllBlockNodes(pageBlocksNode);
+		preparseNodes(pageBlocksNode, procs, methodsReturnTypes, fieldVariables);
 
 		classDec.members = parseFieldVariableNodes(fieldVariables);
 		classDec.members.addAll(parseMethodNodes(procs, methodsReturnTypes));
@@ -133,7 +133,7 @@ public class BlockMapper {
 				List<Node> importStatements = DOMUtil.getChildNodes(node);
 				for(Node importStatement : importStatements){
 					if(PagesModel.IMPORT_STATEMENT_NODE.equals(importStatement.getNodeName())){
-						fileModel.imports.add(new UniImport(importStatement.getTextContent(), true));
+						fileModel.imports.add(new UniImport(importStatement.getTextContent(), false));
 					}
 				}
 			}else if(node.getNodeName().equals(PageModel.NODE_NAME)){

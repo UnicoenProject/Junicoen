@@ -3,6 +3,8 @@ package net.unicoen.generator;
 import java.io.PrintStream;
 
 import net.unicoen.node.UniClassDec;
+import net.unicoen.node.UniFile;
+import net.unicoen.node.UniImport;
 import net.unicoen.node.UniMemberDec;
 
 public class JavaGeneratorForTurtle extends JavaGenerator {
@@ -10,11 +12,7 @@ public class JavaGeneratorForTurtle extends JavaGenerator {
 		super(out);
 	}
 
-	public static void generate(UniClassDec classDec, PrintStream out) {
-		JavaGeneratorForTurtle g = new JavaGeneratorForTurtle(out);
-		g.traverseClassDec(classDec);
-	}
-
+	
 	@Override
 	public void traverseClassDec(UniClassDec classDec) {
 		String mod = safeJoin(classDec.modifiers, " ");
@@ -35,5 +33,20 @@ public class JavaGeneratorForTurtle extends JavaGenerator {
 			}
 		});
 		print("}");
+	}
+	
+	public static void generate(UniFile fileDec, PrintStream out) {
+		JavaGeneratorForTurtle g = new JavaGeneratorForTurtle(out);
+		for(UniImport importStatement : fileDec.imports){
+			g.traverseImport(importStatement);
+		}
+		
+		g.newline();
+		g.newline();
+		
+		for(UniClassDec classDec : fileDec.classes){
+			g.traverseClassDec(classDec);
+		}
+		
 	}
 }

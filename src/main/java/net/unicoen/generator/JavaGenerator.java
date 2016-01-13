@@ -146,17 +146,43 @@ public class JavaGenerator extends Traverser {
 
 	public static String generate(UniClassDec dec) {
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream();
-				PrintStream printer = new PrintStream(out)) {
+			PrintStream printer = new PrintStream(out)) {
 			generate(dec, printer);
 			return out.toString();
 		} catch (IOException e) {
 			return null;
 		}
 	}
+	
 
 	public static void generate(UniClassDec classDec, PrintStream out) {
 		JavaGenerator g = new JavaGenerator(out);
 		g.traverseClassDec(classDec);
+	}
+
+	public static String generate(UniFile file) {
+		try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+			PrintStream printer = new PrintStream(out)) {
+			generate(file, printer);
+			return out.toString();
+		} catch (IOException e) {
+			return null;
+		}
+	}
+	
+	public static void generate(UniFile fileDec, PrintStream out) {
+		JavaGenerator g = new JavaGenerator(out);
+		for(UniImport importStatement : fileDec.imports){
+			g.traverseImport(importStatement);
+		}
+		
+		g.newline();
+		g.newline();
+		
+		for(UniClassDec classDec : fileDec.classes){
+			g.traverseClassDec(classDec);
+		}
+		
 	}
 
 	// ----- ----- ----- ----- HELPER ----- ----- ----- -----
@@ -489,8 +515,7 @@ public class JavaGenerator extends Traverser {
 
 	@Override
 	public void traverseImport(UniImport node) {
-		// TODO Auto-generated method stub
-		
+		print("import " + node.packageName + ";");
 	}
 
 	@Override

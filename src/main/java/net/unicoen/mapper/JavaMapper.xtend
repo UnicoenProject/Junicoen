@@ -40,7 +40,9 @@ import net.unicoen.node.UniReturn
 import net.unicoen.node.UniEmptyStatement
 import net.unicoen.node.UniCast
 import net.unicoen.node.UniFor
-
+import net.unicoen.node.UniFile
+import net.unicoen.node.UniImport
+import net.unicoen.node.UniNamespace
 
 class JavaMapper extends JavaBaseVisitor<UniNode> {
 	def parse(String code) {
@@ -80,6 +82,51 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		val tree = parseAction.apply(parser) // parse
 		visit(tree)
 	}
+	
+	override visitCompilationUnit(JavaParser.CompilationUnitContext ctx) {
+//compilationUnit
+//	:	packageDeclaration? importDeclaration* typeDeclaration* EOF
+//	;
+		var model = new UniFile(new ArrayList<UniClassDec>(), new ArrayList<UniImport>(), new UniNamespace(""))
+		val nodes = createNodeMap(ctx)
+		
+		model.classes.add(nodes.getOneNode(JavaParser.RULE_typeDeclaration))
+		
+		val imports = nodes.getOneNodeOrEmpty(JavaParser.RULE_importDeclaration).flattenForBuilding
+		if(!imports.empty){
+			model.imports = imports
+		}
+		
+		model
+	}
+	
+	override visitSingleTypeImportDeclaration(JavaParser.SingleTypeImportDeclarationContext ctx) {
+//		singleTypeImportDeclaration
+//	:	'import' typeName ';'
+//	;
+		val model =  new UniImport
+		model.isStatic = false
+		model.packageName = ctx.children.get(2).text
+		model	
+	}
+	
+	override visitTypeImportOnDemandDeclaration(JavaParser.TypeImportOnDemandDeclarationContext ctx) {
+//	typeImportOnDemandDeclaration
+//	:	'import' packageOrTypeName '.' '*' ';'
+//	;
+		val model = new UniImport
+		model.isStatic = false
+		model.packageName = ctx.children.get(1).text + ".*" 
+		model
+	}
+	
+//	importDeclaration
+//	:	singleTypeImportDeclaration
+//	|	typeImportOnDemandDeclaration
+//	|	singleStaticImportDeclaration
+//	|	staticImportOnDemandDeclaration
+//	;
+	
 
 	protected override aggregateResult(UniNode aggregate, UniNode nextResult) {
 		if (aggregate == null) {

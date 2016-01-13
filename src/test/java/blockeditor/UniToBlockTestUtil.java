@@ -15,6 +15,13 @@ import net.unicoen.parser.blockeditor.BlockGenerator;
 
 public class UniToBlockTestUtil {
 
+	public static UniFile createFileModel(String path){
+		JavaMapper mapper = new JavaMapper();
+		UniNode dec = mapper.parseFile(path);
+		
+		return (UniFile)dec;
+	}
+	
 	public static UniClassDec createClassDec(String path){
 		JavaMapper mapper = new JavaMapper();
 		UniNode dec = mapper.parseFile(path);
