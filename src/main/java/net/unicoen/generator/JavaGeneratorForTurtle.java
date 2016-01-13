@@ -37,12 +37,13 @@ public class JavaGeneratorForTurtle extends JavaGenerator {
 	
 	public static void generate(UniFile fileDec, PrintStream out) {
 		JavaGeneratorForTurtle g = new JavaGeneratorForTurtle(out);
-		for(UniImport importStatement : fileDec.imports){
-			g.traverseImport(importStatement);
-		}
-		
-		g.newline();
-		g.newline();
+		if(fileDec.imports.size()>0){
+			for(UniImport importStatement : fileDec.imports){
+				g.traverseImport(importStatement);
+			}
+			g.newline();
+			g.newline();
+		}		
 		
 		for(UniClassDec classDec : fileDec.classes){
 			g.traverseClassDec(classDec);

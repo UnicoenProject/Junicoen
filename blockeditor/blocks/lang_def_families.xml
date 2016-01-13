@@ -99,3 +99,24 @@
     <BlockGenusMember>private-var-string-arrayobject</BlockGenusMember>
 </BlockFamily>
 
+<BlockFamily>
+    <BlockGenusMember>new-object-ListTurtle&lt;Turtle&gt;[]</BlockGenusMember>
+	<BlockGenusMember>new-object-ListTurtle&lt;ImageTurtle&gt;[]</BlockGenusMember>
+	<BlockGenusMember>new-object-ListTurtle&lt;CardTurtle&gt;[]</BlockGenusMember>
+	<BlockGenusMember>new-object-ListTurtle&lt;TextTurtle&gt;[]</BlockGenusMember>
+	<BlockGenusMember>new-object-ListTurtle&lt;SoundTurtle&gt;[]</BlockGenusMember>
+	<BlockGenusMember>new-object-ListTurtle&lt;ButtonTurtle&gt;[]</BlockGenusMember>
+	<BlockGenusMember>new-object-ListTurtle&lt;InputTurtle&gt;[]</BlockGenusMember>
+</BlockFamily>
+
+<BlockFamily>
+    <BlockGenusMember>new-object-ListTurtle&lt;Turtle&gt;[@boolean@string]</BlockGenusMember>
+	<BlockGenusMember>new-object-ListTurtle&lt;ImageTurtle&gt;[@boolean@string]</BlockGenusMember>
+	<BlockGenusMember>new-object-ListTurtle&lt;CardTurtle&gt;[@boolean@string]</BlockGenusMember>
+	<BlockGenusMember>new-object-ListTurtle&lt;TextTurtle&gt;[@boolean@string]</BlockGenusMember>
+	<BlockGenusMember>new-object-ListTurtle&lt;SoundTurtle&gt;[@boolean@string]</BlockGenusMember>
+	<BlockGenusMember>new-object-ListTurtle&lt;ButtonTurtle&gt;[@boolean@string]</BlockGenusMember>
+	<BlockGenusMember>new-object-ListTurtle&lt;InputTurtle&gt;[@boolean@string]</BlockGenusMember>
+</BlockFamily>
+
+
