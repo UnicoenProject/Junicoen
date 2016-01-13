@@ -12,7 +12,7 @@ public class PagesModel {
 
 	private static String COLLAPSIBLE_PAGES_TAGNAME = "collapsible-pages";
 	private static String COLLAPSIBLE_PAGES = "no";
-	private static String PAGES_NODE = "Pages";
+	public static String PAGES_NODE = "Pages";
 	public static String IMPORT_STATEMENT_NODE = "ImportStatement"; 
 	public static String IMPORT_STATEMENTS_NODE = "ImportStatements";
 	

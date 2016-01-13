@@ -31,12 +31,15 @@ import net.unicoen.node.UniDoubleLiteral;
 import net.unicoen.node.UniEmptyStatement;
 import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniFieldDec;
+import net.unicoen.node.UniFile;
 import net.unicoen.node.UniIdent;
 import net.unicoen.node.UniIf;
+import net.unicoen.node.UniImport;
 import net.unicoen.node.UniIntLiteral;
 import net.unicoen.node.UniMemberDec;
 import net.unicoen.node.UniMethodCall;
 import net.unicoen.node.UniMethodDec;
+import net.unicoen.node.UniNamespace;
 import net.unicoen.node.UniNew;
 import net.unicoen.node.UniReturn;
 import net.unicoen.node.UniStringLiteral;
@@ -65,6 +68,7 @@ import net.unicoen.parser.blockeditor.blockmodel.BlockStringLiteralModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockVariableGetterModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockWhileModel;
 import net.unicoen.parser.blockeditor.blockmodel.PageModel;
+import net.unicoen.parser.blockeditor.blockmodel.PagesModel;
 
 public class BlockMapper {
 
@@ -86,13 +90,58 @@ public class BlockMapper {
 
 		// mapに全てのBlockNodeを,procsに全てのメソッド定義のBlockNodeを保存する
 		putAllBlockNodes(pageBlock);
+		
 		preparseNodes(pageBlock, procs, methodsReturnTypes, fieldVariables);
 
 		classDec.members = parseFieldVariableNodes(fieldVariables);
 
 		classDec.members.addAll(parseMethodNodes(procs, methodsReturnTypes));
 
+		map.clear();
+		
 		return classDec;
+	}
+	
+	public UniClassDec parse(Node pageBlock) {
+		
+		String className = DOMUtil.getAttribute(pageBlock, PageModel.PAGE_NAME_ATTR);
+		// Blockノードの親ノードを取得する
+		UniClassDec classDec = createProcotypeClassModel(className, DOMUtil.getChildNode(pageBlock, PageModel.PAGE_INFO_NODE));
+		List<Node> procs = new ArrayList<>();// Blockのidをキー該当ノードをvalueとしてメソッド定義ブロックのBlockNodeを保持する変数
+		Map<String, String> methodsReturnTypes = new HashMap<>();// 返り値の型を保持する
+		List<Node> fieldVariables = new ArrayList<>();
+
+		// mapに全てのBlockNodeを,procsに全てのメソッド定義のBlockNodeを保存する
+		putAllBlockNodes(pageBlock);
+		preparseNodes(pageBlock, procs, methodsReturnTypes, fieldVariables);
+
+		classDec.members = parseFieldVariableNodes(fieldVariables);
+		classDec.members.addAll(parseMethodNodes(procs, methodsReturnTypes));
+
+		map.clear();
+		
+		return classDec;
+	}
+	
+	public UniFile parseToUniFile(File xmlFile){
+		Node pagesNode = getNode(xmlFile, PagesModel.PAGES_NODE);
+		List<Node> pagesChildNodes = DOMUtil.getChildNodes(pagesNode);
+		UniFile fileModel = new UniFile(new ArrayList<>(), new ArrayList<>(), new UniNamespace(""));
+		for(Node node : pagesChildNodes){
+			if(node.getNodeName().equals(PagesModel.IMPORT_STATEMENTS_NODE)){
+				//import statements の追加
+				List<Node> importStatements = DOMUtil.getChildNodes(node);
+				for(Node importStatement : importStatements){
+					if(PagesModel.IMPORT_STATEMENT_NODE.equals(importStatement.getNodeName())){
+						fileModel.imports.add(new UniImport(importStatement.getTextContent(), true));
+					}
+				}
+			}else if(node.getNodeName().equals(PageModel.NODE_NAME)){
+				fileModel.classes.add(parse(node));
+			}
+		}
+
+		return fileModel;
 	}
 
 	public List<UniMemberDec> parseFieldVariableNodes(List<Node> procs) {
