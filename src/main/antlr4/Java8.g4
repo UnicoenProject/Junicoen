@@ -159,23 +159,27 @@ packageName
 	;
 
 typeName
-	:	Identifier 
+	:	ident 
 	|	packageOrTypeName '.' Identifier 
 	;
 
 packageOrTypeName
-	:	Identifier 
+	:	ident 
 	|	packageOrTypeName '.' Identifier 
 	;
 
 expressionName
-	:	Identifier 
+	:	ident 
 	|	ambiguousName '.' Identifier 
 	;
 
 ambiguousName
-	:	Identifier 
+	:	ident 
 	|	ambiguousName '.' Identifier 
+	;
+
+ident
+	:	Identifier 
 	;
 
 compilationUnit
@@ -1015,7 +1019,7 @@ classInstanceCreationExpression_lf_primary
 	;
 
 classInstanceCreationExpression_lfno_primary
-	:	'new' typeArguments? annotation* Identifier ('.' annotation* Identifier )* typeArgumentsOrDiamond? '(' argumentList? ')' classBody? 
+	:	'new' typeArguments? annotation* Identifier (DOT annotation* Identifier )* typeArgumentsOrDiamond? '(' argumentList? ')' classBody? 
 	|	expressionName '.' 'new' typeArguments? annotation* Identifier typeArgumentsOrDiamond? '(' argumentList? ')' classBody? 
 	;
 
@@ -1265,7 +1269,7 @@ postfixExpression
 	;
 
 postIncrementExpression
-	:	postfixExpression '++' 
+	:	postfixExpression INC 
 	;
 
 postIncrementExpression_lf_postfixExpression
