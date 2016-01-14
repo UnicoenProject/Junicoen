@@ -255,6 +255,16 @@
 	</BlockConnectors>
 </BlockGenus>
 
+<BlockGenus name="String-split[@string]" kind="function"
+	initlabel="文字列を指定した文字で区切る" color="255 0 0">
+	<Type>String[]</Type>
+	<Name>split</Name>
+	<BlockConnectors>
+		<BlockConnector connector-kind="plug" connector-type="object" />
+		<BlockConnector connector-kind="socket" connector-type="string" />
+	</BlockConnectors>
+</BlockGenus>
+
 
 <BlockGenus name="Input-getInt[]" kind="function" initlabel="キーボードから整数を入力し、その値"
 	color="255 0 0">
