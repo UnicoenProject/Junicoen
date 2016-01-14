@@ -682,7 +682,7 @@ public class BlockGenerator extends UniModelVisitor {
 		}
 
 		if (!(statement instanceof UniBlock)) {
-			return Lists.newArrayList((BlockCommandModel) visitExpr(statement));
+			statement = new UniBlock(Lists.newArrayList(statement), "");
 		}
 
 		UniBlock statementBlock = (UniBlock) statement;
