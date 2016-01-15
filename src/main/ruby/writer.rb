@@ -199,7 +199,7 @@ module Writer
       when /^[A-Z][A-Za-z_]+/
         "(#{name} == null ? 0 : #{name}.hashCode())"
       when /bool/
-        "#{name} ? 1 : 0"
+        "(#{name} ? 1 : 0)"
       when /int/
         name
       when /long/

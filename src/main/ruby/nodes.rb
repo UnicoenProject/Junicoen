@@ -116,6 +116,7 @@ Dsl.define_node do |x|
         d.mem "name", String
         d.mem "value", "Expr"
       end
+      x.node "EmptyStatement"
     end
 
     x.node "MemberDec", abstract: true do
@@ -144,6 +145,21 @@ Dsl.define_node do |x|
       d.mem "superClass", String, list: true
       d.mem "interfaces", String, list: true
       d.mem "innerClasses", "ClassDec", list: true
+    end
+    x.node "Program" do |d|
+      d.mem "classes", "ClassDec", list: true
+      d.mem "imports", "Import", list: true
+      d.mem "namespace", "Namespace"
+    end
+    x.node "Import" do |d|
+      d.mem "targetName", String
+      d.mem "isStatic", :boolean
+    end
+    x.node "Namespace" do |d|
+      d.mem "name", String
+    end
+    x.node "Cast" do |d|
+      d.mem "type", String
     end
   end
 end
