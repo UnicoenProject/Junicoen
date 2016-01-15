@@ -10,15 +10,6 @@ import org.junit.Ignore
 class ExtendedExpressionMapperTest extends MapperTest {
 	val mapper = new ExtendedExpressionMapper(true)
 
-	@Test @Ignore
-	def void parseSimpleIfStatement() {
-		val node = mapper.parse("public class A{void f(int i){if(3>2){}else{}}}")
-		node.evaluateClass("A", null, null)
-
-	//		val methods = (node as UniClassDec).members
-	}
-
-	@Test @Ignore
 	def void parseInteger() {
 		val node = mapper.parse("class Main{void func(){int a=123;}}")
 		assertThat(node, instanceOf(typeof(UniClassDec)))
