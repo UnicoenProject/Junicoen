@@ -14,9 +14,10 @@ public class BlockSpecialExpressionModel extends BlockExprModel {
 		this.element = element;
 
 		if(kind.equals(BlockElementModel.BLOCKKINDS.FUNCTION.toString())){
-			//TODO should fix 返り値をどうにかして取得するように修正するように
 			addElement(BlockElementModel.TYPE_NODE, document, "Object", element);
 		}
+		
+		addPlugElement(document, this.element, parentId, "object", "mirror");
 	}
 		
 	

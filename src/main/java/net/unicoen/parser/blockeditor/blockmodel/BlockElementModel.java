@@ -86,7 +86,9 @@ public class BlockElementModel {
 
 		commandBlocks.add(getElement());
 		for (BlockElementModel socket : socketBlocksElements) {
-			commandBlocks.addAll(socket.getBlockElements());
+			if(socket != null){
+				commandBlocks.addAll(socket.getBlockElements());	
+			}
 		}
 
 		return commandBlocks;
@@ -125,7 +127,7 @@ public class BlockElementModel {
 	}
 
 	public Node getPlugNode() {
-		return DOMUtil.getChildNode(this.element, BlockPlugModel.NODE_NAME);
+		return DOMUtil.getChildNode(getBlockElement(), BlockPlugModel.NODE_NAME);
 	}
 
 	public String getPlugAttribute(String attribute) {

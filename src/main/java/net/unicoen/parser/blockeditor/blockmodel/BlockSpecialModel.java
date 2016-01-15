@@ -6,7 +6,6 @@ import org.w3c.dom.Element;
 public class BlockSpecialModel extends BlockCommandModel{
 
 	public static String GENUS_NAME = "special";
-
 	
 	public BlockSpecialModel(String genusName, String methodName, Document document, Long id, String kind, String parentId){
 		Element element = createBlockElement(document, genusName, id, kind);

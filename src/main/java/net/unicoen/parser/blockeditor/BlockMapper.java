@@ -55,6 +55,7 @@ import net.unicoen.parser.blockeditor.blockmodel.BlockElementModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockEmptyModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockExCallGetterModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockExCallerModel;
+import net.unicoen.parser.blockeditor.blockmodel.BlockFieldAccessModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockFieldVarDecModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockIfModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockIntLiteralModel;
@@ -90,7 +91,7 @@ public class BlockMapper {
 
 		// mapに全てのBlockNodeを,procsに全てのメソッド定義のBlockNodeを保存する
 		putAllBlockNodes(pageBlock);
-		
+
 		preparseNodes(pageBlock, procs, methodsReturnTypes, fieldVariables);
 
 		classDec.members = parseFieldVariableNodes(fieldVariables);
@@ -98,10 +99,10 @@ public class BlockMapper {
 		classDec.members.addAll(parseMethodNodes(procs, methodsReturnTypes));
 
 		map.clear();
-		
+
 		return classDec;
 	}
-	
+
 	public UniClassDec parse(Node pageBlock) {
 		String className = DOMUtil.getAttribute(pageBlock, PageModel.PAGE_NAME_ATTR);
 		Node pageBlocksNode = DOMUtil.getChildNode(pageBlock, PageModel.PAGE_BLOCKS);
@@ -119,24 +120,24 @@ public class BlockMapper {
 		classDec.members.addAll(parseMethodNodes(procs, methodsReturnTypes));
 
 		map.clear();
-		
+
 		return classDec;
 	}
-	
-	public UniFile parseToUniFile(File xmlFile){
+
+	public UniFile parseToUniFile(File xmlFile) {
 		Node pagesNode = getNode(xmlFile, PagesModel.PAGES_NODE);
 		List<Node> pagesChildNodes = DOMUtil.getChildNodes(pagesNode);
 		UniFile fileModel = new UniFile(new ArrayList<>(), new ArrayList<>(), new UniNamespace(""));
-		for(Node node : pagesChildNodes){
-			if(node.getNodeName().equals(PagesModel.IMPORT_STATEMENTS_NODE)){
-				//import statements の追加
+		for (Node node : pagesChildNodes) {
+			if (node.getNodeName().equals(PagesModel.IMPORT_STATEMENTS_NODE)) {
+				// import statements の追加
 				List<Node> importStatements = DOMUtil.getChildNodes(node);
-				for(Node importStatement : importStatements){
-					if(PagesModel.IMPORT_STATEMENT_NODE.equals(importStatement.getNodeName())){
+				for (Node importStatement : importStatements) {
+					if (PagesModel.IMPORT_STATEMENT_NODE.equals(importStatement.getNodeName())) {
 						fileModel.imports.add(new UniImport(importStatement.getTextContent(), false));
 					}
 				}
-			}else if(node.getNodeName().equals(PageModel.NODE_NAME)){
+			} else if (node.getNodeName().equals(PageModel.NODE_NAME)) {
 				fileModel.classes.add(parse(node));
 			}
 		}
@@ -499,6 +500,10 @@ public class BlockMapper {
 		}
 	}
 
+	public boolean isFieldAccessModel(String genusName) {
+		return genusName.equals(BlockFieldAccessModel.GENUS_NAME);
+	}
+
 	public boolean isExCallerGetterModel(String genusName) {
 		return genusName.equals(BlockExCallGetterModel.GENUS_NAME);
 	}
@@ -591,7 +596,7 @@ public class BlockMapper {
 		}
 		return new UniDoWhile(args.get(0), args.get(1));
 	}
-	
+
 	private UniIf parseIfBlock(Node node, HashMap<String, Node> map) {
 		Node argsNode = DOMUtil.getChildNode(node, BlockSocketsModel.NODE_NAME);
 		List<UniExpr> args = new ArrayList<UniExpr>();

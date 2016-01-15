@@ -3160,3 +3160,10 @@
 		<BlockConnector label="" connector-kind="socket" connector-type="object" position-type="single" />
 	</BlockConnectors>
 </BlockGenus>
+
+<BlockGenus name="Turtle-startTurtle[@object]" kind="command" initlabel="プログラムを開始する" color="255 255 100">
+	<Name>startTurtle</Name>
+	<BlockConnectors>
+		<BlockConnector label="" connector-kind="socket" connector-type="object" position-type="single" />
+	</BlockConnectors>
+</BlockGenus>

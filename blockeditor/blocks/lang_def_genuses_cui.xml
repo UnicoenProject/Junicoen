@@ -265,6 +265,14 @@
 	</BlockConnectors>
 </BlockGenus>
 
+<BlockGenus name="String-length" kind="function" initlabel="文字数を取得する" color="255 0 0">
+	<Type>int</Type>
+	<Name>length</Name>
+	<BlockConnectors>
+		<BlockConnector connector-kind="plug" connector-type="number" />
+	</BlockConnectors>
+</BlockGenus>
+
 
 <BlockGenus name="Input-getInt[]" kind="function" initlabel="キーボードから整数を入力し、その値"
 	color="255 0 0">

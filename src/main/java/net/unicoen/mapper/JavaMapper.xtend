@@ -43,6 +43,7 @@ import net.unicoen.node.UniFor
 import net.unicoen.node.UniFile
 import net.unicoen.node.UniImport
 import net.unicoen.node.UniNamespace
+import net.unicoen.node.UniFieldDec
 
 class JavaMapper extends JavaBaseVisitor<UniNode> {
 	def parse(String code) {
@@ -82,52 +83,50 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		val tree = parseAction.apply(parser) // parse
 		visit(tree)
 	}
-	
+
 	override visitCompilationUnit(JavaParser.CompilationUnitContext ctx) {
 //compilationUnit
 //	:	packageDeclaration? importDeclaration* typeDeclaration* EOF
 //	;
 		var model = new UniFile(new ArrayList<UniClassDec>(), new ArrayList<UniImport>(), new UniNamespace(""))
 		val nodes = createNodeMap(ctx)
-		
+
 		model.classes.add(nodes.getOneNode(JavaParser.RULE_typeDeclaration))
-		
+
 		val imports = nodes.getOneNodeOrEmpty(JavaParser.RULE_importDeclaration).flattenForBuilding
-		if(!imports.empty){
+		if (!imports.empty) {
 			model.imports = imports
 		}
-		
+
 		model
 	}
-	
+
 	override visitSingleTypeImportDeclaration(JavaParser.SingleTypeImportDeclarationContext ctx) {
 //		singleTypeImportDeclaration
 //	:	'import' typeName ';'
 //	;
-		val model =  new UniImport
+		val model = new UniImport
 		model.isStatic = false
 		model.packageName = ctx.children.get(2).text
-		model	
+		model
 	}
-	
+
 	override visitTypeImportOnDemandDeclaration(JavaParser.TypeImportOnDemandDeclarationContext ctx) {
 //	typeImportOnDemandDeclaration
 //	:	'import' packageOrTypeName '.' '*' ';'
 //	;
 		val model = new UniImport
 		model.isStatic = false
-		model.packageName = ctx.children.get(1).text + ".*" 
+		model.packageName = ctx.children.get(1).text + ".*"
 		model
 	}
-	
+
 //	importDeclaration
 //	:	singleTypeImportDeclaration
 //	|	typeImportOnDemandDeclaration
 //	|	singleStaticImportDeclaration
 //	|	staticImportOnDemandDeclaration
 //	;
-	
-
 	protected override aggregateResult(UniNode aggregate, UniNode nextResult) {
 		if (aggregate == null) {
 			nextResult
@@ -205,9 +204,30 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		// |	';'
 		val nodes = createNodeMap(ctx)
 		val mems = nodes.get(JavaParser.RULE_methodDeclaration)
-		if (mems.size() > 0) {
-			mems.get(0)
+		if (mems != null) {
+			return mems.get(0)
 		}
+
+		val field = nodes.get(JavaParser.RULE_fieldDeclaration)
+		if (field != null) {
+			return field.get(0)
+		}
+	}
+
+	override visitFieldDeclaration(JavaParser.FieldDeclarationContext ctx) {
+//fieldDeclaration
+//	:	fieldModifier* unannType variableDeclaratorList ';'
+//	;
+		val nodes = createNodeMap(ctx)
+		val modifiers = nodes.getOrEmpty(JavaParser.RULE_variableModifier).map[it.toString]
+		val type = nodes.getOneNode(JavaParser.RULE_unannType).toString
+		val varDecList = (nodes.getOneNode(JavaParser.
+			RULE_variableDeclaratorList) as DummyNode<List<DummyNode<Pair<DummyNode<Pair<String, String>>, UniExpr>>>>).
+			item.map [
+				val nameAndTypeSuffix = it.item.key.item
+				new UniFieldDec(modifiers, type + nameAndTypeSuffix.value, nameAndTypeSuffix.key, it.item.value)
+			]
+		new ListNode(varDecList)
 	}
 
 	override visitMethodModifier(JavaParser.MethodModifierContext ctx) {
@@ -287,6 +307,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		// |	typeName '.' 'super' '.' typeArguments? Identifier '(' argumentList? ')'		
 		val nodes = createNodeMap(ctx)
 		val texts = createTextMap(ctx)
+		
 		val argumentList = if (nodes.containsKey(JavaParser.RULE_argumentList)) {
 				nodes.getOneNode(JavaParser.RULE_argumentList).flattenForBuilding
 			} else {
@@ -305,6 +326,12 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 			} else {
 			}
 		}
+		if(nodes.containsKey(JavaParser.RULE_primary)){
+			val primary = nodes.getOneNode(JavaParser.RULE_primary)
+			return new UniMethodCall(primary, texts.identifierStr, argumentList)
+		}
+		
+		
 		throw new RuntimeException("Not implemented")
 	}
 
@@ -1058,21 +1085,20 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		val texts = createTextMap(ctx)
 		val type = texts.get(-JavaParser.Identifier).join(".")
 		val generics = new ArrayList<String>
-		ctx.children.forEach[
-			if(it instanceof net.unicoen.parser.JavaParser.TypeArgumentsOrDiamondContext){
-				generics.add(it.text)	
+		ctx.children.forEach [
+			if (it instanceof net.unicoen.parser.JavaParser.TypeArgumentsOrDiamondContext) {
+				generics.add(it.text)
 			}
 		]
-		
-		if(!generics.empty){
+
+		if (!generics.empty) {
 			val argumentList = if (nodes.containsKey(JavaParser.RULE_argumentList)) {
 					nodes.getOneNode(JavaParser.RULE_argumentList).flattenForBuilding
 				} else {
 					Collections.emptyList()
 				}
-			return new UniNew(type+generics.head, argumentList)
+			return new UniNew(type + generics.head, argumentList)
 		}
-		
 
 		if (ctx.children.head.text.equals("new")) {
 			val argumentList = if (nodes.containsKey(JavaParser.RULE_argumentList)) {
@@ -1084,7 +1110,6 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		}
 		throw new RuntimeException("Not implemented")
 	}
-
 
 	override visitClassInstanceCreationExpression(JavaParser.ClassInstanceCreationExpressionContext ctx) {
 		// classInstanceCreationExpression
