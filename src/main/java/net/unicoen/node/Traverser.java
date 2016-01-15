@@ -30,7 +30,7 @@ public abstract class Traverser {
 	public abstract void traverseMethodDec(UniMethodDec node);
 	public abstract void traverseArg(UniArg node);
 	public abstract void traverseClassDec(UniClassDec node);
-	public abstract void traverseFile(UniFile node);
+	public abstract void traverseProgram(UniProgram node);
 	public abstract void traverseImport(UniImport node);
 	public abstract void traverseNamespace(UniNamespace node);
 	public abstract void traverseEmptyStatement(UniEmptyStatement node);
@@ -165,8 +165,8 @@ public abstract class Traverser {
 			traverseClassDec((UniClassDec)node);
 			return;
 		}
-		if (node instanceof UniFile) {
-			traverseFile((UniFile)node);
+		if (node instanceof UniProgram) {
+			traverseProgram((UniProgram)node);
 			return;
 		}
 		if (node instanceof UniImport) {
