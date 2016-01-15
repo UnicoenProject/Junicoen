@@ -17,6 +17,7 @@ import net.unicoen.node.UniClassDec;
 import net.unicoen.node.UniContinue;
 import net.unicoen.node.UniDoWhile;
 import net.unicoen.node.UniDoubleLiteral;
+import net.unicoen.node.UniEnhancedFor;
 import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniFieldAccess;
 import net.unicoen.node.UniFieldDec;
@@ -311,5 +312,11 @@ public class DolittleGenerator extends Traverser {
 	public void traverseNew(UniNew node) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void traverseEnhancedFor(UniEnhancedFor node) {
+		// TODO Auto-generated method stub
+		
 	}
 }

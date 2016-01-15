@@ -1,6 +1,6 @@
 // Generated from Java8.g4 by ANTLR 4.5.1
 
-	package net.unicoen.parser;
+package net.unicoen.parser;
 
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -234,6 +234,12 @@ public interface Java8Visitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitAmbiguousName(Java8Parser.AmbiguousNameContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Java8Parser#ident}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIdent(Java8Parser.IdentContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Java8Parser#compilationUnit}.
 	 * @param ctx the parse tree
@@ -486,12 +492,6 @@ public interface Java8Visitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitMethodDeclaration(Java8Parser.MethodDeclarationContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link Java8Parser#methodModifiers}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitMethodModifiers(Java8Parser.MethodModifiersContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Java8Parser#methodModifier}.
 	 * @param ctx the parse tree

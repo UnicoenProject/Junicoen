@@ -18,14 +18,13 @@ public class UniDoubleLiteral extends UniExpr {
 	@Override
 	public int hashCode() {
 		long valueHashCode = Double.doubleToLongBits(value);
-		return (int) (valueHashCode ^ (valueHashCode >> 32));
+		return (int)(valueHashCode^(valueHashCode>>32));
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null || !(obj instanceof UniDoubleLiteral))
-			return false;
-		UniDoubleLiteral that = (UniDoubleLiteral) obj;
+		if (obj == null || !(obj instanceof UniDoubleLiteral)) return false;
+		UniDoubleLiteral that = (UniDoubleLiteral)obj;
 		return this.value == that.value;
 	}
 

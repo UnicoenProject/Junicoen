@@ -1,8 +1,6 @@
 package net.unicoen.mapper
 
 import org.junit.Test
-import static org.hamcrest.Matchers.*
-import static org.junit.Assert.*
 import net.unicoen.node.UniClassDec
 import org.junit.Ignore
 import net.unicoen.node.UniFieldDec
@@ -11,235 +9,328 @@ import net.unicoen.node.UniStringLiteral
 import net.unicoen.node.UniIntLiteral
 import net.unicoen.node.UniDoubleLiteral
 import net.unicoen.node.UniBoolLiteral
+import net.unicoen.node.UniNewArray
+import net.unicoen.node.UniNew
+import net.unicoen.node.UniMemberDec
+import net.unicoen.node.UniExpr
+import net.unicoen.generator.JavaGenerator
 
 class Java8MapperClassFieldVariableTest extends MapperTest {
 	val mapper = new Java8Mapper(true)
-	
+
+	/**
+	 * Test a single primitive variable attribute declaration.
+	 */
 	@Test
-	def void parseSinglePrimitiveVarAttDec(){
-		//Single Primitive Variable Attribute Declaration
-		val main = mapper.parse("public class A{public static final int a;}")
-		assertThat(main,instanceOf(UniClassDec))
-		val varAttDec = (main as UniClassDec).members.get(0) as UniFieldDec
-		assertThat((main as UniClassDec).members.get(0), equalTo(varAttDec))
-		assertThat((varAttDec as UniFieldDec).name, equalTo("a"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(0), equalTo("public"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(1), equalTo("static"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(2), equalTo("final"))
-		assertThat((varAttDec as UniFieldDec).type, equalTo("int"))
+	def void parseSinglePrimitiveVarAttDec() {
+		val actual = mapper.parse("public class A{public static final int a;}")
+
+		val constant = new UniFieldDec
+		constant.modifiers = #["public", "static", "final"]
+		constant.name = "a"
+		constant.type = "int"
+
+		val expected = new UniClassDec
+		expected.className = "A"
+		expected.modifiers = #["public"]
+		expected.members = #[constant as UniMemberDec]
+
+		expected.evaluate(actual)
+		
+		println(JavaGenerator.generate(actual as UniClassDec))
+		
+		evaluate(expected, mapper.parse(JavaGenerator.generate(actual as UniClassDec)))
+
 	}
 
 	@Test
-	def void parseMultiplePrimitiveVarAttDec(){
-		val main = mapper.parse("public class A{public static final int temp, temp1, temp2;}")
-		assertThat(main, instanceOf(UniClassDec))
+	def void parseMultiplePrimitiveVarAttDec() {
+		val actual = mapper.parse("public class A{public static final int temp, temp1, temp2;}")
 
-		var varAttDec = (main as UniClassDec).members.get(0) as UniFieldDec
-		assertThat((main as UniClassDec).members.get(0), equalTo(varAttDec))
-		assertThat((varAttDec as UniFieldDec).name, equalTo("temp"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(0), equalTo("public"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(1), equalTo("static"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(2), equalTo("final"))
-		assertThat((varAttDec as UniFieldDec).type, equalTo("int"))
-		
-		varAttDec = (main as UniClassDec).members.get(1) as UniFieldDec
-		assertThat((main as UniClassDec).members.get(1), equalTo(varAttDec))
-		assertThat((varAttDec as UniFieldDec).name, equalTo("temp1"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(0), equalTo("public"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(1), equalTo("static"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(2), equalTo("final"))
-		assertThat((varAttDec as UniFieldDec).type, equalTo("int"))
-		
-		varAttDec = (main as UniClassDec).members.get(2) as UniFieldDec
-		assertThat((main as UniClassDec).members.get(2), equalTo(varAttDec))
-		assertThat((varAttDec as UniFieldDec).name, equalTo("temp2"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(0), equalTo("public"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(1), equalTo("static"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(2), equalTo("final"))
-		assertThat((varAttDec as UniFieldDec).type, equalTo("int"))
-	}
-	@Test
-	def void parseSinglePrimitiveVarAttDecWithStringValue(){
-		val main = mapper.parse("public class A{public static final String a=\"abc\";}");
-		assertThat(main,instanceOf(UniClassDec))
-		val varAttDec = (main as UniClassDec).members.get(0) as UniFieldDec
-		assertThat((main as UniClassDec).members.get(0), equalTo(varAttDec))
-		assertThat((varAttDec as UniFieldDec).name, equalTo("a"))
-		
-		val varAttDecVal = varAttDec.value
-		assertThat(varAttDecVal, instanceOf(UniStringLiteral))
-		assertThat((varAttDecVal as UniStringLiteral).value, equalTo("abc"))
-		
-		assertThat((varAttDec as UniFieldDec).modifiers.get(0), equalTo("public"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(1), equalTo("static"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(2), equalTo("final"))
-		assertThat((varAttDec as UniFieldDec).type, equalTo("String"))
-	}
-	@Test
-	def void parseSinglePrimitiveVarAttDecWithIntValue(){
-		val main = mapper.parse("public class A{public static final int a=5;}");
-		assertThat(main,instanceOf(UniClassDec))
-		val varAttDec = (main as UniClassDec).members.get(0) as UniFieldDec
-		assertThat((main as UniClassDec).members.get(0), equalTo(varAttDec))
-		assertThat((varAttDec as UniFieldDec).name, equalTo("a"))
-		
-		val varAttDecVal = varAttDec.value
-		assertThat(varAttDecVal, instanceOf(UniIntLiteral))
-		assertThat((varAttDecVal as UniIntLiteral).value, equalTo(5))
-		
-		assertThat((varAttDec as UniFieldDec).modifiers.get(0), equalTo("public"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(1), equalTo("static"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(2), equalTo("final"))
-		assertThat((varAttDec as UniFieldDec).type, equalTo("int"))
-	}
-	@Test
-	def void parseSinglePrimitiveVarAttDecWithDoubleValue(){
-		val main = mapper.parse("public class A{public static final double a=5.5;}");
-		assertThat(main,instanceOf(UniClassDec))
-		val varAttDec = (main as UniClassDec).members.get(0) as UniFieldDec
-		assertThat((main as UniClassDec).members.get(0), equalTo(varAttDec))
-		assertThat((varAttDec as UniFieldDec).name, equalTo("a"))
-		
-		val varAttDecVal = varAttDec.value
-		assertThat(varAttDecVal, instanceOf(UniDoubleLiteral))
-		assertThat((varAttDecVal as UniDoubleLiteral).value, equalTo(5.5))
-		
-		assertThat((varAttDec as UniFieldDec).modifiers.get(0), equalTo("public"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(1), equalTo("static"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(2), equalTo("final"))
-		assertThat((varAttDec as UniFieldDec).type, equalTo("double"))
-	}
-	@Test
-	def void parseSinglePrimitiveVarAttDecWithBooleanValue(){
-		val main = mapper.parse("public class A{public static final boolean a=true;}");
-		assertThat(main,instanceOf(UniClassDec))
-		val varAttDec = (main as UniClassDec).members.get(0) as UniFieldDec
-		assertThat((main as UniClassDec).members.get(0), equalTo(varAttDec))
-		assertThat((varAttDec as UniFieldDec).name, equalTo("a"))
-		
-		val varAttDecVal = varAttDec.value
-		assertThat(varAttDecVal, instanceOf(UniBoolLiteral))
-		assertThat((varAttDecVal as UniBoolLiteral).value, equalTo(true))
-		
-		assertThat((varAttDec as UniFieldDec).modifiers.get(0), equalTo("public"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(1), equalTo("static"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(2), equalTo("final"))
-		assertThat((varAttDec as UniFieldDec).type, equalTo("boolean"))
-	}
-	@Test
-	def void ParseMultiplePrimitiveVarAttDecWithValue(){
-		val main = mapper.parse("public class A{public static final int temp, temp1, temp2=5;}")
-		assertThat(main, instanceOf(UniClassDec))
+		val constant0 = new UniFieldDec
+		constant0.modifiers = #["public", "static", "final"]
+		constant0.name = "temp"
+		constant0.type = "int"
 
-		var varAttDec = (main as UniClassDec).members.get(0) as UniFieldDec
-		assertThat((main as UniClassDec).members.get(0), equalTo(varAttDec))
-		assertThat((varAttDec as UniFieldDec).name, equalTo("temp"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(0), equalTo("public"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(1), equalTo("static"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(2), equalTo("final"))
-		assertThat((varAttDec as UniFieldDec).type, equalTo("int"))
-		
-		varAttDec = (main as UniClassDec).members.get(1) as UniFieldDec
-		assertThat((main as UniClassDec).members.get(1), equalTo(varAttDec))
-		assertThat((varAttDec as UniFieldDec).name, equalTo("temp1"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(0), equalTo("public"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(1), equalTo("static"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(2), equalTo("final"))
-		assertThat((varAttDec as UniFieldDec).type, equalTo("int"))
-		
-		varAttDec = (main as UniClassDec).members.get(2) as UniFieldDec
-		assertThat((main as UniClassDec).members.get(2), equalTo(varAttDec))
-		assertThat((varAttDec as UniFieldDec).name, equalTo("temp2"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(0), equalTo("public"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(1), equalTo("static"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(2), equalTo("final"))
-		assertThat((varAttDec as UniFieldDec).type, equalTo("int"))
+		val constant1 = new UniFieldDec
+		constant1.modifiers = #["public", "static", "final"]
+		constant1.name = "temp1"
+		constant1.type = "int"
 
-		val varAttDecVal = varAttDec.value
-		assertThat(varAttDecVal, instanceOf(UniIntLiteral))
-		assertThat((varAttDecVal as UniIntLiteral).value, equalTo(5))
-		
-	}
-	@Test
-	def void ParseClassInstanceDec(){
-		val main = mapper.parse("class A{public static Temp tt;}");
-		assertThat(main, instanceOf(UniClassDec))
+		val constant2 = new UniFieldDec
+		constant2.modifiers = #["public", "static", "final"]
+		constant2.name = "temp2"
+		constant2.type = "int"
 
-		var varAttDec = (main as UniClassDec).members.get(0) as UniFieldDec
-		assertThat((main as UniClassDec).members.get(0), equalTo(varAttDec))
-		assertThat((varAttDec as UniFieldDec).name, equalTo("tt"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(0), equalTo("public"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(1), equalTo("static"))
-		assertThat((varAttDec as UniFieldDec).type, equalTo("Temp"))
-	}
-	@Test
-	def void ParseClassInstanceDecWithValue(){
-		val main = mapper.parse("class A{public static Temp tt = new Temp();}");
-		assertThat(main, instanceOf(UniClassDec))
+		val expected = new UniClassDec
+		expected.className = "A"
+		expected.members = #[constant0 as UniMemberDec, constant1 as UniMemberDec, constant2 as UniMemberDec]
+		expected.modifiers = #["public"]
 
-		var varAttDec = (main as UniClassDec).members.get(0) as UniFieldDec
-		assertThat((main as UniClassDec).members.get(0), equalTo(varAttDec))
-		assertThat((varAttDec as UniFieldDec).name, equalTo("tt"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(0), equalTo("public"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(1), equalTo("static"))
-		assertThat((varAttDec as UniFieldDec).type, equalTo("Temp"))
+		expected.evaluate(actual)
+		
+		println(JavaGenerator.generate(actual as UniClassDec))
+		
+		evaluate(expected, mapper.parse(JavaGenerator.generate(actual as UniClassDec)))
+
 	}
+
 	@Test
-	def void ParseArrayInstanceDec(){
-		val main = mapper.parse("class A{ public static int[] arr = new int[3]; }")
-		assertThat(main, instanceOf(UniClassDec))
+	def void parseSinglePrimitiveVarAttDecWithStringValue() {
+		val actual = mapper.parse("public class A{public static final String a=\"abc\";}");
+
+		val UniStringLiteral literal = new UniStringLiteral
+		literal.value = "abc"
+
+		val constant = new UniFieldDec
+		constant.modifiers = #["public", "static", "final"]
+		constant.name = "a"
+		constant.type = "String"
+		constant.value = literal
+
+		val expected = new UniClassDec
+		expected.className = "A"
+		expected.members = #[constant as UniMemberDec]
+		expected.modifiers = #["public"]
+		expected.evaluate(actual)
 		
-		var varAttDec = (main as UniClassDec).members.get(0) as UniFieldDec
-		assertThat((main as UniClassDec).members.get(0), equalTo(varAttDec))
-		assertThat((varAttDec as UniFieldDec).name, equalTo("arr"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(0), equalTo("public"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(1), equalTo("static"))
-		assertThat((varAttDec as UniFieldDec).type, equalTo("int[]"))
+		println(JavaGenerator.generate(actual as UniClassDec))
+		
+		evaluate(expected, mapper.parse(JavaGenerator.generate(actual as UniClassDec)))
+
 	}
+
 	@Test
-	def void ParseArrayInstanceDecWithValue(){
-		val main = mapper.parse("class A{ public static int[] arr = {1,2,3}; }")
-		assertThat(main, instanceOf(UniClassDec))
+	def void parseSinglePrimitiveVarAttDecWithIntValue() {
+		val actual = mapper.parse("public class A{public static final int a=5;}");
+
+		val UniIntLiteral literal = new UniIntLiteral
+		literal.value = 5
+
+		val constant = new UniFieldDec
+		constant.modifiers = #["public", "static", "final"]
+		constant.name = "a"
+		constant.type = "int"
+		constant.value = literal
+
+		val expected = new UniClassDec
+		expected.className = "A"
+		expected.members = #[constant as UniMemberDec]
+		expected.modifiers = #["public"]
+		expected.evaluate(actual)
 		
-		var varAttDec = (main as UniClassDec).members.get(0) as UniFieldDec
-		assertThat((main as UniClassDec).members.get(0), equalTo(varAttDec))
-		assertThat((varAttDec as UniFieldDec).name, equalTo("arr"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(0), equalTo("public"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(1), equalTo("static"))
-		assertThat((varAttDec as UniFieldDec).type, equalTo("int[]"))
-		var varArrValue = varAttDec.value as UniArray
+		println(JavaGenerator.generate(actual as UniClassDec))
 		
-		val varAttDecVal = varArrValue.items
-		assertThat(varAttDecVal.get(0), instanceOf(UniIntLiteral))
-		assertThat((varAttDecVal.get(0) as UniIntLiteral).value, equalTo(1))
-		
-		assertThat(varAttDecVal.get(1), instanceOf(UniIntLiteral))
-		assertThat((varAttDecVal.get(1) as UniIntLiteral).value, equalTo(2))
-		
-		assertThat(varAttDecVal.get(2), instanceOf(UniIntLiteral))
-		assertThat((varAttDecVal.get(2) as UniIntLiteral).value, equalTo(3))
+		evaluate(expected, mapper.parse(JavaGenerator.generate(actual as UniClassDec)))
+
 	}
+
 	@Test
-	def void ParseArrayInstanceDecWithValue2(){
-		val main = mapper.parse("class A{ public static int[] arr = new int[]{1,2,3}; }")
-		assertThat(main, instanceOf(UniClassDec))
+	def void parseSinglePrimitiveVarAttDecWithDoubleValue() {
+		val actual = mapper.parse("public class A{public static final double a=5.5;}");
+
+		val UniDoubleLiteral literal = new UniDoubleLiteral
+		literal.value = 5.5
+
+		val constant = new UniFieldDec
+		constant.modifiers = #["public", "static", "final"]
+		constant.name = "a"
+		constant.type = "double"
+		constant.value = literal
+
+		val expected = new UniClassDec
+		expected.className = "A"
+		expected.members = #[constant as UniMemberDec]
+		expected.modifiers = #["public"]
+		expected.evaluate(actual)
 		
-		var varAttDec = (main as UniClassDec).members.get(0) as UniFieldDec
-		assertThat((main as UniClassDec).members.get(0), equalTo(varAttDec))
-		assertThat((varAttDec as UniFieldDec).name, equalTo("arr"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(0), equalTo("public"))
-		assertThat((varAttDec as UniFieldDec).modifiers.get(1), equalTo("static"))
-		assertThat((varAttDec as UniFieldDec).type, equalTo("int[]"))
-		var varArrValue = varAttDec.value as UniArray
-		val varAttDecVal = varArrValue.items
-		assertThat(varAttDecVal.get(0), instanceOf(UniIntLiteral))
-		assertThat((varAttDecVal.get(0) as UniIntLiteral).value, equalTo(1))
+		println(JavaGenerator.generate(actual as UniClassDec))
 		
-		assertThat(varAttDecVal.get(1), instanceOf(UniIntLiteral))
-		assertThat((varAttDecVal.get(1) as UniIntLiteral).value, equalTo(2))
-		
-		assertThat(varAttDecVal.get(2), instanceOf(UniIntLiteral))
-		assertThat((varAttDecVal.get(2) as UniIntLiteral).value, equalTo(3))
+		evaluate(expected, mapper.parse(JavaGenerator.generate(actual as UniClassDec)))
+
 	}
-	
+
+	@Test
+	def void parseSinglePrimitiveVarAttDecWithBooleanValue() {
+		val actual = mapper.parse("public class A{public static final boolean a=true;}");
+
+		val UniBoolLiteral literal = new UniBoolLiteral
+		literal.value = true
+
+		val constant = new UniFieldDec
+		constant.modifiers = #["public", "static", "final"]
+		constant.name = "a"
+		constant.type = "boolean"
+		constant.value = literal
+
+		val expected = new UniClassDec
+		expected.className = "A"
+		expected.members = #[constant as UniMemberDec]
+		expected.modifiers = #["public"]
+		expected.evaluate(actual)
+		
+		println(JavaGenerator.generate(actual as UniClassDec))
+		
+		evaluate(expected, mapper.parse(JavaGenerator.generate(actual as UniClassDec)))
+
+	}
+
+	@Test
+	def void ParseMultiplePrimitiveVarAttDecWithValue() {
+		val actual = mapper.parse("public class A{public static final int temp, temp1, temp2=5;}")
+
+		val constant0 = new UniFieldDec
+		constant0.modifiers = #["public", "static", "final"]
+		constant0.name = "temp"
+		constant0.type = "int"
+
+		val constant1 = new UniFieldDec
+		constant1.modifiers = #["public", "static", "final"]
+		constant1.name = "temp1"
+		constant1.type = "int"
+
+		val constant2 = new UniFieldDec
+		constant2.modifiers = #["public", "static", "final"]
+		constant2.name = "temp2"
+		constant2.type = "int"
+		constant2.value = new UniIntLiteral(5)
+
+		val expected = new UniClassDec
+		expected.className = "A"
+		expected.members = #[constant0 as UniMemberDec, constant1 as UniMemberDec, constant2 as UniMemberDec]
+		expected.modifiers = #["public"]
+		expected.evaluate(actual)
+		
+		println(JavaGenerator.generate(actual as UniClassDec))
+		
+		evaluate(expected, mapper.parse(JavaGenerator.generate(actual as UniClassDec)))
+
+	}
+
+	@Test
+	def void ParseClassInstanceDec() {
+		val actual = mapper.parse("class A{public static final Temp tt;}");
+
+		val constant = new UniFieldDec
+		constant.modifiers = #["public", "static", "final"]
+		constant.name = "tt"
+		constant.type = "Temp"
+
+		val expected = new UniClassDec
+		expected.className = "A"
+		expected.members = #[constant as UniMemberDec]
+		expected.evaluate(actual)
+		
+		println(JavaGenerator.generate(actual as UniClassDec))
+		
+		evaluate(expected, mapper.parse(JavaGenerator.generate(actual as UniClassDec)))
+
+	}
+
+	@Test
+	def void ParseClassInstanceDecWithValue() {
+		val actual = mapper.parse("class A{public static final Temp tt = new Temp(1,2);}");
+
+		val newInstance = new UniNew
+		newInstance.args = #[new UniIntLiteral(1) as UniExpr, new UniIntLiteral(2) as UniExpr]
+		newInstance.type = "Temp"
+
+		val constant = new UniFieldDec
+		constant.modifiers = #["public", "static", "final"]
+		constant.name = "tt"
+		constant.type = "Temp"
+		constant.value = newInstance
+
+		val expected = new UniClassDec
+		expected.className = "A"
+		expected.members = #[constant as UniMemberDec]
+
+		expected.evaluate(actual)
+		
+		println(JavaGenerator.generate(actual as UniClassDec))
+		
+		evaluate(expected, mapper.parse(JavaGenerator.generate(actual as UniClassDec)))
+
+	}
+
+	@Test
+	def void ParseArrayInstanceDec() {
+		val actual = mapper.parse("class A{ public static final int[] arr = new int[3]; }")
+
+		val newarray = new UniNewArray
+		newarray.elementsNum = #[new UniIntLiteral(3) as UniExpr]
+		newarray.type = "int"
+		newarray.value = new UniArray
+
+		val constant = new UniFieldDec
+		constant.modifiers = #["public", "static", "final"]
+		constant.name = "arr"
+		constant.type = "int[]"
+		constant.value = newarray
+
+		val expected = new UniClassDec
+		expected.className = "A"
+		expected.members = #[constant as UniMemberDec]
+
+		expected.evaluate(actual)
+		
+		println(JavaGenerator.generate(actual as UniClassDec))
+		
+		evaluate(expected, mapper.parse(JavaGenerator.generate(actual as UniClassDec)))
+
+	}
+
+	@Test
+	def void ParseArrayInstanceDecWithValue() {
+		val actual = mapper.parse("class A{ public static final int[] arr = {1,2,3}; }")
+
+		val array = new UniArray
+		array.items = #[new UniIntLiteral(1) as UniExpr, new UniIntLiteral(2) as UniExpr, new UniIntLiteral(3) as UniExpr]
+
+		val constant = new UniFieldDec
+		constant.modifiers = #["public", "static", "final"]
+		constant.name = "arr"
+		constant.type = "int[]"
+		constant.value = array
+
+		val expected = new UniClassDec
+		expected.className = "A"
+		expected.members = #[constant as UniMemberDec]
+
+		expected.evaluate(actual)
+		
+		println(JavaGenerator.generate(actual as UniClassDec))
+		
+		evaluate(expected, mapper.parse(JavaGenerator.generate(actual as UniClassDec)))
+
+	}
+
+	@Test
+	def void ParseArrayInstanceDecWithValue2() {
+		val actual = mapper.parse("class A{ public static int[] arr = new int[]{1,2,3}; }")
+
+		val array = new UniArray
+		array.items = #[new UniIntLiteral(1) as UniExpr, new UniIntLiteral(2) as UniExpr, new UniIntLiteral(3) as UniExpr]
+
+		val newarray = new UniNewArray
+		newarray.type = "int[]"
+		newarray.value = array
+
+		val constant = new UniFieldDec
+		constant.modifiers = #["public", "static"]
+		constant.name = "arr"
+		constant.type = "int[]"
+		constant.value = newarray
+
+		val expected = new UniClassDec
+		expected.className = "A"
+		expected.members = #[constant as UniMemberDec]
+
+		expected.evaluate(actual)
+		
+		println(JavaGenerator.generate(actual as UniClassDec))
+		
+		evaluate(expected, mapper.parse(JavaGenerator.generate(actual as UniClassDec)))
+
+	}
 }

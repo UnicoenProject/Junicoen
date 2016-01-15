@@ -17,6 +17,7 @@ import net.unicoen.node.UniClassDec;
 import net.unicoen.node.UniContinue;
 import net.unicoen.node.UniDoWhile;
 import net.unicoen.node.UniDoubleLiteral;
+import net.unicoen.node.UniEnhancedFor;
 import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniFieldAccess;
 import net.unicoen.node.UniFieldDec;
@@ -140,8 +141,7 @@ public class JavaGenerator extends Traverser {
 	}
 
 	public static String generate(UniClassDec dec) {
-		try (ByteArrayOutputStream out = new ByteArrayOutputStream();
-				PrintStream printer = new PrintStream(out)) {
+		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); PrintStream printer = new PrintStream(out)) {
 			generate(dec, printer);
 			return out.toString();
 		} catch (IOException e) {
@@ -343,16 +343,21 @@ public class JavaGenerator extends Traverser {
 
 	@Override
 	public void traverseFor(UniFor node) {
-		throw new RuntimeException("HOGE");
-		// genBlock(node.block, () -> {
-		// print("for (");
-		// parseExpr(node.init);
-		// print("; ");
-		// parseExpr(node.cond);
-		// print("; ");
-		// parseExpr(node.step);
-		// print(")");
-		// }, null);
+		print("for (");
+		parseExpr(node.init);
+		print("; ");
+		parseExpr(node.cond);
+		print("; ");
+		parseExpr(node.step);
+		print(")");
+		if (node.statement instanceof UniBlock) {
+			print(" ");
+			traverseBlock((UniBlock) node.statement);
+		} else {
+			withIndent(() -> {
+				parseStatement(node.statement);
+			});
+		}
 	}
 
 	@Override
@@ -372,12 +377,6 @@ public class JavaGenerator extends Traverser {
 				parseStatement(node.statement);
 			});
 		}
-
-		// genBlock(node.block, () -> {
-		// print("while (");
-		// parseExpr(node.cond);
-		// print(")");
-		// }, null);
 	}
 
 	@Override
@@ -414,22 +413,29 @@ public class JavaGenerator extends Traverser {
 			args.add(arg.type + " " + arg.name);
 		}
 		String argWithParen = "(" + String.join(", ", args) + ")";
-		String declare = String.join(" ", mod, methDec.returnType,
-				methDec.methodName, argWithParen);
+		String declare = String.join(" ", mod, methDec.returnType, methDec.methodName, argWithParen);
 		print(declare + ' ');
 		traverseBlock(methDec.block);
 	}
 
 	@Override
 	public void traverseArg(UniArg node) {
+		throw new RuntimeException("HOGE");
 		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void traverseClassDec(UniClassDec classDec) {
 		String mod = safeJoin(classDec.modifiers, " ");
-		String declare = String.join(" ", mod, "class", classDec.className,
-				"{");
+		String interfaces = safeJoin(classDec.interfaces, ", ");
+		String declare = String.join(" ", mod, "class", classDec.className);
+		if (classDec.superClass != null && classDec.superClass.size() > 0) {
+			declare = String.join(" ", declare, "extends", classDec.superClass.get(0));
+		}
+		if (classDec.interfaces != null && classDec.interfaces.size() > 0) {
+			declare = String.join(" ", declare, "implements", interfaces);
+		}
+		declare = String.join(" ", declare, "{");
 		print(declare);
 		newline();
 
@@ -448,8 +454,8 @@ public class JavaGenerator extends Traverser {
 		String mod = safeJoin(node.modifiers, " ");
 		String dec = String.join(" ", mod, node.type, node.name);
 		print(dec);
-		
-		if(node.value != null){
+
+		if (node.value != null) {
 			print(" = ");
 			parseExpr(node.value);
 		}
@@ -458,12 +464,36 @@ public class JavaGenerator extends Traverser {
 
 	@Override
 	public void traverseArray(UniArray node) {
-		throw new RuntimeException("Not Implemented");
+		if (node.items != null) {
+			print("{");
+			withIndent(() -> {
+				for (UniExpr item : node.items) {
+					if (!item.equals(node.items.get(0))) {
+						print(", ");
+					}
+					parseExpr(item);
+				}
+			});
+			print("}");
+		}
 	}
 
 	@Override
 	public void traverseNewArray(UniNewArray node) {
-		throw new RuntimeException("Not Implemented");
+		print("new ");
+		print(node.type);
+		if (node.elementsNum != null) {
+			withIndent(() -> {
+				for (UniExpr element : node.elementsNum) {
+					print("[");
+					parseExpr(element);
+					print("]");
+				}
+			});
+		}
+		if (node.value != null) {
+			traverseArray(node.value);
+		}
 	}
 
 	public static String safeJoin(Iterable<String> objs, String delimiter) {
@@ -471,6 +501,25 @@ public class JavaGenerator extends Traverser {
 			return "";
 		} else {
 			return String.join(delimiter, objs);
+		}
+	}
+
+	@Override
+	public void traverseEnhancedFor(UniEnhancedFor node) {
+		print("for (");
+		print(node.type);
+		print(" ");
+		print(node.name);
+		print(": ");
+		parseExpr(node.container);
+		print(")");
+		if (node.statement instanceof UniBlock) {
+			print(" ");
+			traverseBlock((UniBlock) node.statement);
+		} else {
+			withIndent(() -> {
+				parseStatement(node.statement);
+			});
 		}
 	}
 }
