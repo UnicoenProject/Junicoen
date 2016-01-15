@@ -89,6 +89,13 @@ Dsl.define_node do |x|
         d.mem "step", "Expr"
         d.mem "statement", "Expr"
       end
+      x.node "EnhancedFor", statement: true do |d|
+      	d.mem "modifiers", String, list:true
+      	d.mem "type", String
+      	d.mem "name", String
+      	d.mem "container", "Expr"
+      	d.mem "statement", "Expr"
+      end
       x.node "While", statement: true do |d|
         d.mem "cond", "Expr"
         d.mem "statement", "Expr"
@@ -109,6 +116,7 @@ Dsl.define_node do |x|
         d.mem "name", String
         d.mem "value", "Expr"
       end
+      x.node "EmptyStatement"
     end
 
     x.node "MemberDec", abstract: true do
@@ -125,7 +133,7 @@ Dsl.define_node do |x|
         d.mem "args", "Arg", list: true
         d.mem "block", "Block"
       end
-      x.node "Arg", nil do |d|
+      x.node "Arg" do |d|
         d.mem "type", String
         d.mem "name", String
       end
@@ -138,19 +146,18 @@ Dsl.define_node do |x|
       d.mem "interfaces", String, list: true
       d.mem "innerClasses", "ClassDec", list: true
     end
-    x.node "File" do |d|
+    x.node "Program" do |d|
       d.mem "classes", "ClassDec", list: true
       d.mem "imports", "Import", list: true
       d.mem "namespace", "Namespace"
     end
     x.node "Import" do |d|
-      d.mem "packageName", String
+      d.mem "targetName", String
       d.mem "isStatic", :boolean
     end
     x.node "Namespace" do |d|
-      d.mem "packageName", String
+      d.mem "name", String
     end
-    x.node "EmptyStatement"
     x.node "Cast" do |d|
       d.mem "type", String
     end

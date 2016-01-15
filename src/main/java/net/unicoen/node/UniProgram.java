@@ -2,15 +2,15 @@ package net.unicoen.node;
 
 import java.util.List;
 
-public class UniFile extends UniNode {
+public class UniProgram extends UniNode {
 	public List<UniClassDec> classes;
 	public List<UniImport> imports;
 	public UniNamespace namespace;
 
-	public UniFile() {
+	public UniProgram() {
 	}
 
-	public UniFile(List<UniClassDec> classes, List<UniImport> imports, UniNamespace namespace) {
+	public UniProgram(List<UniClassDec> classes, List<UniImport> imports, UniNamespace namespace) {
 		this.classes = classes;
 		this.imports = imports;
 		this.namespace = namespace;
@@ -18,7 +18,7 @@ public class UniFile extends UniNode {
 
 	@Override
 	public String toString() {
-		return "File";
+		return "Program";
 	}
 
 	@Override
@@ -32,14 +32,14 @@ public class UniFile extends UniNode {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null || !(obj instanceof UniFile)) return false;
-		UniFile that = (UniFile)obj;
+		if (obj == null || !(obj instanceof UniProgram)) return false;
+		UniProgram that = (UniProgram)obj;
 		return (this.classes == null ? that.classes == null : this.classes.equals(that.classes))
 			&& (this.imports == null ? that.imports == null : this.imports.equals(that.imports))
 			&& (this.namespace == null ? that.namespace == null : this.namespace.equals(that.namespace));
 	}
 
-	public void merge(UniFile that) {
+	public void merge(UniProgram that) {
 		if (that.classes != null) {
 			if (this.classes == null) {
 				this.classes = that.classes;

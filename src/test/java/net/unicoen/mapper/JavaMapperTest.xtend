@@ -11,14 +11,14 @@ import org.junit.Test
 import static net.unicoen.node_helper.Builder.*
 import static org.hamcrest.Matchers.*
 import static org.junit.Assert.*
-import net.unicoen.node.UniFile
+import net.unicoen.node.UniProgram
 
 class JavaMapperTest {
 	val mapper = new JavaMapper()
 
 	@Test
 	def void parseClass() {
-		val classDec = mapper.parse("public class A {}") as UniFile
+		val classDec = mapper.parse("public class A {}") as UniProgram
 		assertThat(classDec.classes.get(0).className, equalTo("A"))
 	}
 
@@ -31,7 +31,7 @@ class JavaMapperTest {
 		sb.append("  }")
 		sb.append("}");
 
-		val classDec = mapper.parse(sb.toString()) as UniFile
+		val classDec = mapper.parse(sb.toString()) as UniProgram
 		val mainMethodDec = classDec.classes.get(0).members.get(0) as UniMethodDec
 		assertThat(mainMethodDec.methodName, equalTo("main"))
 	}
@@ -137,10 +137,10 @@ class JavaMapperTest {
 
 	def regenerate(StringBuilder sb) {
 		val code = sb.toString
-		val classDec = mapper.parse(code) as UniFile
+		val classDec = mapper.parse(code) as UniProgram
 		val generatedCode = JavaGenerator.generate(classDec.classes.get(0));
 		assertThat(MapperTestUtil.normalize(generatedCode), equalTo(MapperTestUtil.normalize(code)))
-		assertThat(MapperTestUtil.normalize(JavaGenerator.generate(mapper.parse(generatedCode) as UniFile)),
+		assertThat(MapperTestUtil.normalize(JavaGenerator.generate(mapper.parse(generatedCode) as UniProgram)),
 			equalTo(MapperTestUtil.normalize(code)))
 	}
 

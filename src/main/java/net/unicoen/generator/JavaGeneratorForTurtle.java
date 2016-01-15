@@ -3,9 +3,9 @@ package net.unicoen.generator;
 import java.io.PrintStream;
 
 import net.unicoen.node.UniClassDec;
-import net.unicoen.node.UniFile;
 import net.unicoen.node.UniImport;
 import net.unicoen.node.UniMemberDec;
+import net.unicoen.node.UniProgram;
 
 public class JavaGeneratorForTurtle extends JavaGenerator {
 	protected JavaGeneratorForTurtle(PrintStream out) {
@@ -35,7 +35,7 @@ public class JavaGeneratorForTurtle extends JavaGenerator {
 		print("}");
 	}
 	
-	public static void generate(UniFile fileDec, PrintStream out) {
+	public static void generate(UniProgram fileDec, PrintStream out) {
 		JavaGeneratorForTurtle g = new JavaGeneratorForTurtle(out);
 		if(fileDec.imports.size()>0){
 			for(UniImport importStatement : fileDec.imports){

@@ -7,7 +7,7 @@ import org.junit.Test
 
 import static org.hamcrest.Matchers.*
 import static org.junit.Assert.*
-import net.unicoen.node.UniFile
+import net.unicoen.node.UniProgram
 
 class ConversionTest {
 	val javaMapper = new JavaMapper()
@@ -81,7 +81,7 @@ class ConversionTest {
 	def convert(StringBuilder java, StringBuilder javaScript) {
 		val javaCode = java.toString
 //		val javaScriptCode = javaScript.toString
-		val javaClassDec = javaMapper.parse(javaCode) as UniFile
+		val javaClassDec = javaMapper.parse(javaCode) as UniProgram
 //		val javaScriptClassDec = javaScriptMapper.parse(javaScriptCode) as UniClassDec
 		assertThat(MapperTestUtil.normalize(JavaGenerator.generate(javaClassDec)),
 			equalTo(MapperTestUtil.normalize(javaCode)))

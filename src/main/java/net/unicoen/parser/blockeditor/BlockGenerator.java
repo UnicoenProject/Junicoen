@@ -40,7 +40,6 @@ import net.unicoen.node.UniEmptyStatement;
 import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniFieldAccess;
 import net.unicoen.node.UniFieldDec;
-import net.unicoen.node.UniFile;
 import net.unicoen.node.UniFor;
 import net.unicoen.node.UniIdent;
 import net.unicoen.node.UniIf;
@@ -53,6 +52,7 @@ import net.unicoen.node.UniMethodDec;
 import net.unicoen.node.UniNamespace;
 import net.unicoen.node.UniNew;
 import net.unicoen.node.UniNewArray;
+import net.unicoen.node.UniProgram;
 import net.unicoen.node.UniReturn;
 import net.unicoen.node.UniStringLiteral;
 import net.unicoen.node.UniTernaryOp;
@@ -142,13 +142,13 @@ public class BlockGenerator extends UniModelVisitor {
 		out.close();
 	}
 
-	public void parseUniFile(UniFile file) throws TransformerException, ParserConfigurationException {
+	public void parseUniFile(UniProgram file) throws TransformerException, ParserConfigurationException {
 
 		out.print(createBlockXMLString(getSaveNode(file)));
 		out.close();
 	}
 
-	public Node getSaveNode(UniFile file) throws ParserConfigurationException {
+	public Node getSaveNode(UniProgram file) throws ParserConfigurationException {
 		Element documentElement = createRootNode();
 
 		PagesModel pagesModel = (PagesModel) visitFile(file);
@@ -1252,7 +1252,7 @@ public class BlockGenerator extends UniModelVisitor {
 		return model;
 	}
 
-	public void parse(UniFile node) throws ParserConfigurationException, TransformerException {
+	public void parse(UniProgram node) throws ParserConfigurationException, TransformerException {
 		Element root = createRootNode();
 		PagesModel pages = (PagesModel) visitFile(node);
 
@@ -1263,12 +1263,12 @@ public class BlockGenerator extends UniModelVisitor {
 	}
 
 	@Override
-	public Object visitFile(UniFile node) {
+	public Object visitFile(UniProgram node) {
 		try {
 			List<PageModel> pages = new ArrayList<>();
 			List<String> importStatements = new ArrayList<>();
 			for (UniImport importStatement : node.imports) {
-				importStatements.add(importStatement.packageName);
+				importStatements.add(importStatement.targetName);
 			}
 
 			for (UniClassDec dec : node.classes) {

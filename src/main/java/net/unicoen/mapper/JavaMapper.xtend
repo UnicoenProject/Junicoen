@@ -40,7 +40,7 @@ import net.unicoen.node.UniReturn
 import net.unicoen.node.UniEmptyStatement
 import net.unicoen.node.UniCast
 import net.unicoen.node.UniFor
-import net.unicoen.node.UniFile
+import net.unicoen.node.UniProgram
 import net.unicoen.node.UniImport
 import net.unicoen.node.UniNamespace
 import net.unicoen.node.UniFieldDec
@@ -88,7 +88,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 //compilationUnit
 //	:	packageDeclaration? importDeclaration* typeDeclaration* EOF
 //	;
-		var model = new UniFile(new ArrayList<UniClassDec>(), new ArrayList<UniImport>(), new UniNamespace(""))
+		var model = new UniProgram(new ArrayList<UniClassDec>(), new ArrayList<UniImport>(), new UniNamespace(""))
 		val nodes = createNodeMap(ctx)
 
 		model.classes.add(nodes.getOneNode(JavaParser.RULE_typeDeclaration))
@@ -107,7 +107,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 //	;
 		val model = new UniImport
 		model.isStatic = false
-		model.packageName = ctx.children.get(2).text
+		model.targetName = ctx.children.get(2).text
 		model
 	}
 
@@ -117,7 +117,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 //	;
 		val model = new UniImport
 		model.isStatic = false
-		model.packageName = ctx.children.get(1).text + ".*"
+		model.targetName = ctx.children.get(1).text + ".*"
 		model
 	}
 

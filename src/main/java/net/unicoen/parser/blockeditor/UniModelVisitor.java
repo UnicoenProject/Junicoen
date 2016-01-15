@@ -15,7 +15,6 @@ import net.unicoen.node.UniEmptyStatement;
 import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniFieldAccess;
 import net.unicoen.node.UniFieldDec;
-import net.unicoen.node.UniFile;
 import net.unicoen.node.UniFor;
 import net.unicoen.node.UniIdent;
 import net.unicoen.node.UniIf;
@@ -28,6 +27,7 @@ import net.unicoen.node.UniMethodDec;
 import net.unicoen.node.UniNamespace;
 import net.unicoen.node.UniNew;
 import net.unicoen.node.UniNewArray;
+import net.unicoen.node.UniProgram;
 import net.unicoen.node.UniReturn;
 import net.unicoen.node.UniStringLiteral;
 import net.unicoen.node.UniTernaryOp;
@@ -43,7 +43,7 @@ public abstract class UniModelVisitor {
 	
 	public abstract Object visitEmpty(UniEmptyStatement node);
 	
-	public abstract Object visitFile(UniFile node);
+	public abstract Object visitFile(UniProgram node);
 	
 	public abstract Object visitImport(UniImport nodec);
 	

@@ -22,17 +22,18 @@ public abstract class Traverser {
 	public abstract void traverseBlock(UniBlock node);
 	public abstract void traverseIf(UniIf node);
 	public abstract void traverseFor(UniFor node);
+	public abstract void traverseEnhancedFor(UniEnhancedFor node);
 	public abstract void traverseWhile(UniWhile node);
 	public abstract void traverseDoWhile(UniDoWhile node);
 	public abstract void traverseVariableDec(UniVariableDec node);
+	public abstract void traverseEmptyStatement(UniEmptyStatement node);
 	public abstract void traverseFieldDec(UniFieldDec node);
 	public abstract void traverseMethodDec(UniMethodDec node);
 	public abstract void traverseArg(UniArg node);
 	public abstract void traverseClassDec(UniClassDec node);
-	public abstract void traverseFile(UniFile node);
+	public abstract void traverseProgram(UniProgram node);
 	public abstract void traverseImport(UniImport node);
 	public abstract void traverseNamespace(UniNamespace node);
-	public abstract void traverseEmptyStatement(UniEmptyStatement node);
 	public abstract void traverseCast(UniCast node);
 
 	public final void traverseExpr(UniExpr node) {
@@ -116,6 +117,10 @@ public abstract class Traverser {
 			traverseFor((UniFor)node);
 			return;
 		}
+		if (node instanceof UniEnhancedFor) {
+			traverseEnhancedFor((UniEnhancedFor)node);
+			return;
+		}
 		if (node instanceof UniWhile) {
 			traverseWhile((UniWhile)node);
 			return;
@@ -132,11 +137,6 @@ public abstract class Traverser {
 			traverseEmptyStatement((UniEmptyStatement)node);
 			return;
 		}
-		if (node instanceof UniCast) {
-			traverseCast((UniCast)node);
-			return;
-		}
-		
 		throw new RuntimeException("Unknown node: " + node);
 	}
 
@@ -147,6 +147,10 @@ public abstract class Traverser {
 		}
 		if (node instanceof UniMethodDec) {
 			traverseMethodDec((UniMethodDec)node);
+			return;
+		}
+		if (node instanceof UniArg) {
+			traverseArg((UniArg)node);
 			return;
 		}
 		throw new RuntimeException("Unknown node: " + node);
@@ -165,8 +169,8 @@ public abstract class Traverser {
 			traverseClassDec((UniClassDec)node);
 			return;
 		}
-		if (node instanceof UniFile) {
-			traverseFile((UniFile)node);
+		if (node instanceof UniProgram) {
+			traverseProgram((UniProgram)node);
 			return;
 		}
 		if (node instanceof UniImport) {
@@ -177,7 +181,10 @@ public abstract class Traverser {
 			traverseNamespace((UniNamespace)node);
 			return;
 		}
-
+		if (node instanceof UniCast) {
+			traverseCast((UniCast)node);
+			return;
+		}
 		throw new RuntimeException("Unknown node: " + node);
 	}
 }

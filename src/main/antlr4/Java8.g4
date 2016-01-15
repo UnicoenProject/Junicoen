@@ -1,7 +1,7 @@
 grammar Java8;
 
 @header {
-	package net.unicoen.parser;
+package net.unicoen.parser;
 }
 
 literal
@@ -44,7 +44,7 @@ type
 
 primitiveType
 	:	annotation* numericType 
-	|	annotation* 'boolean' 
+	|	annotation* BOOLEAN 
 	;
 
 numericType
@@ -77,7 +77,7 @@ classOrInterfaceType
 
 classType
 	:	annotation* Identifier typeArguments? 
-	|	classOrInterfaceType '.' annotation* Identifier typeArguments? 
+	|	classOrInterfaceType DOT annotation* Identifier typeArguments? 
 	;
 
 classType_lf_classOrInterfaceType
@@ -111,7 +111,7 @@ arrayType
 	;
 
 dims
-	:	annotation* '[' ']' (annotation* '[' ']' )* 
+	:	annotation* LBRACK RBRACK (annotation* LBRACK RBRACK )* 
 	;
 
 typeParameter
@@ -159,23 +159,27 @@ packageName
 	;
 
 typeName
-	:	Identifier 
+	:	ident 
 	|	packageOrTypeName '.' Identifier 
 	;
 
 packageOrTypeName
-	:	Identifier 
+	:	ident 
 	|	packageOrTypeName '.' Identifier 
 	;
 
 expressionName
-	:	Identifier 
+	:	ident 
 	|	ambiguousName '.' Identifier 
 	;
 
 ambiguousName
-	:	Identifier 
+	:	ident 
 	|	ambiguousName '.' Identifier 
+	;
+
+ident
+	:	Identifier 
 	;
 
 compilationUnit
@@ -378,11 +382,7 @@ unannArrayType
 	;
 
 methodDeclaration
-	:	methodModifiers methodHeader methodBody 
-	;
-
-methodModifiers
-	:	methodModifier* 
+	:	methodModifier* methodHeader methodBody 
 	;
 
 methodModifier
@@ -1019,7 +1019,7 @@ classInstanceCreationExpression_lf_primary
 	;
 
 classInstanceCreationExpression_lfno_primary
-	:	'new' typeArguments? annotation* Identifier ('.' annotation* Identifier )* typeArgumentsOrDiamond? '(' argumentList? ')' classBody? 
+	:	'new' typeArguments? annotation* Identifier (DOT annotation* Identifier )* typeArgumentsOrDiamond? '(' argumentList? ')' classBody? 
 	|	expressionName '.' 'new' typeArguments? annotation* Identifier typeArgumentsOrDiamond? '(' argumentList? ')' classBody? 
 	;
 
@@ -1183,84 +1183,84 @@ conditionalExpression
 
 conditionalOrExpression
 	:	conditionalAndExpression 
-	|	conditionalOrExpression '||' conditionalAndExpression 
+	|	conditionalOrExpression OR conditionalAndExpression 
 	;
 
 conditionalAndExpression
 	:	inclusiveOrExpression 
-	|	conditionalAndExpression '&&' inclusiveOrExpression 
+	|	conditionalAndExpression AND inclusiveOrExpression 
 	;
 
 inclusiveOrExpression
 	:	exclusiveOrExpression 
-	|	inclusiveOrExpression '|' exclusiveOrExpression 
+	|	inclusiveOrExpression BITOR exclusiveOrExpression 
 	;
 
 exclusiveOrExpression
 	:	andExpression 
-	|	exclusiveOrExpression '^' andExpression 
+	|	exclusiveOrExpression CARET andExpression 
 	;
 
 andExpression
 	:	equalityExpression 
-	|	andExpression '&' equalityExpression 
+	|	andExpression BITAND equalityExpression 
 	;
 
 equalityExpression
 	:	relationalExpression 
-	|	equalityExpression '==' relationalExpression 
-	|	equalityExpression '!=' relationalExpression 
+	|	equalityExpression EQUAL relationalExpression 
+	|	equalityExpression NOTEQUAL relationalExpression 
 	;
 
 relationalExpression
 	:	shiftExpression 
-	|	relationalExpression '<' shiftExpression 
-	|	relationalExpression '>' shiftExpression 
-	|	relationalExpression '<=' shiftExpression 
-	|	relationalExpression '>=' shiftExpression 
-	|	relationalExpression 'instanceof' referenceType 
+	|	relationalExpression LT shiftExpression 
+	|	relationalExpression GT shiftExpression 
+	|	relationalExpression LE shiftExpression 
+	|	relationalExpression GE shiftExpression 
+	|	relationalExpression INSTANCEOF referenceType 
 	;
 
 shiftExpression
 	:	additiveExpression 
-	|	shiftExpression '<' '<' additiveExpression 
-	|	shiftExpression '>' '>' additiveExpression 
-	|	shiftExpression '>' '>' '>' additiveExpression 
+	|	shiftExpression LT LT additiveExpression 
+	|	shiftExpression GT GT additiveExpression 
+	|	shiftExpression GT GT GT additiveExpression 
 	;
 
 additiveExpression
 	:	multiplicativeExpression 
-	|	additiveExpression '+' multiplicativeExpression 
-	|	additiveExpression '-' multiplicativeExpression 
+	|	additiveExpression ADD multiplicativeExpression 
+	|	additiveExpression SUB multiplicativeExpression 
 	;
 
 multiplicativeExpression
 	:	unaryExpression 
-	|	multiplicativeExpression '*' unaryExpression 
-	|	multiplicativeExpression '/' unaryExpression 
-	|	multiplicativeExpression '%' unaryExpression 
+	|	multiplicativeExpression MUL unaryExpression 
+	|	multiplicativeExpression DIV unaryExpression 
+	|	multiplicativeExpression MOD unaryExpression 
 	;
 
 unaryExpression
 	:	preIncrementExpression 
 	|	preDecrementExpression 
-	|	'+' unaryExpression 
-	|	'-' unaryExpression 
+	|	ADD unaryExpression 
+	|	SUB unaryExpression 
 	|	unaryExpressionNotPlusMinus 
 	;
 
 preIncrementExpression
-	:	'++' unaryExpression 
+	:	INC unaryExpression 
 	;
 
 preDecrementExpression
-	:	'--' unaryExpression 
+	:	DEC unaryExpression 
 	;
 
 unaryExpressionNotPlusMinus
 	:	postfixExpression 
-	|	'~' unaryExpression 
-	|	'!' unaryExpression 
+	|	TILDE unaryExpression 
+	|	BANG unaryExpression 
 	|	castExpression 
 	;
 
@@ -1269,7 +1269,7 @@ postfixExpression
 	;
 
 postIncrementExpression
-	:	postfixExpression '++' 
+	:	postfixExpression INC 
 	;
 
 postIncrementExpression_lf_postfixExpression

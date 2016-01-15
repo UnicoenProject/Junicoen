@@ -20,12 +20,12 @@ public class UniEmptyStatement extends UniExpr {
 		return obj != null && obj instanceof UniEmptyStatement;
 	}
 
+	@Override
+	public boolean isStatement() {
+		return false;
+	}
+
 	public void merge(UniEmptyStatement that) {
 	}
 
-	@Override
-	public boolean isStatement() {
-		// TODO Auto-generated method stub
-		return false;
-	}
 }

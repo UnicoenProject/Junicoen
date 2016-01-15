@@ -7,13 +7,13 @@ import javax.xml.transform.TransformerException;
 
 import org.junit.Test;
 
-import net.unicoen.node.UniFile;
+import net.unicoen.node.UniProgram;
 
 public class UniToBlock10_VariableTest {
 
 	@Test
 	public void test() throws IOException, ParserConfigurationException, TransformerException {
-		UniFile fileModel = UniToBlockTestUtil.createFileModel("blockeditor/testcases/BlockConvertTest/_10VariableTest.java");
+		UniProgram fileModel = UniToBlockTestUtil.createFileModel("blockeditor/testcases/BlockConvertTest/_10VariableTest.java");
 		UniToBlockTestUtil.parseTestToBG2(fileModel);
 	}
 

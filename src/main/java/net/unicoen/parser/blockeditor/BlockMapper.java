@@ -31,7 +31,6 @@ import net.unicoen.node.UniDoubleLiteral;
 import net.unicoen.node.UniEmptyStatement;
 import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniFieldDec;
-import net.unicoen.node.UniFile;
 import net.unicoen.node.UniIdent;
 import net.unicoen.node.UniIf;
 import net.unicoen.node.UniImport;
@@ -41,6 +40,7 @@ import net.unicoen.node.UniMethodCall;
 import net.unicoen.node.UniMethodDec;
 import net.unicoen.node.UniNamespace;
 import net.unicoen.node.UniNew;
+import net.unicoen.node.UniProgram;
 import net.unicoen.node.UniReturn;
 import net.unicoen.node.UniStringLiteral;
 import net.unicoen.node.UniUnaryOp;
@@ -124,10 +124,10 @@ public class BlockMapper {
 		return classDec;
 	}
 
-	public UniFile parseToUniFile(File xmlFile) {
+	public UniProgram parseToUniFile(File xmlFile) {
 		Node pagesNode = getNode(xmlFile, PagesModel.PAGES_NODE);
 		List<Node> pagesChildNodes = DOMUtil.getChildNodes(pagesNode);
-		UniFile fileModel = new UniFile(new ArrayList<>(), new ArrayList<>(), new UniNamespace(""));
+		UniProgram fileModel = new UniProgram(new ArrayList<>(), new ArrayList<>(), new UniNamespace(""));
 		for (Node node : pagesChildNodes) {
 			if (node.getNodeName().equals(PagesModel.IMPORT_STATEMENTS_NODE)) {
 				// import statements の追加

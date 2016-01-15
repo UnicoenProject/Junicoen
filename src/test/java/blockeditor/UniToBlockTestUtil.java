@@ -9,17 +9,17 @@ import javax.xml.transform.TransformerException;
 
 import net.unicoen.mapper.JavaMapper;
 import net.unicoen.node.UniClassDec;
-import net.unicoen.node.UniFile;
 import net.unicoen.node.UniNode;
+import net.unicoen.node.UniProgram;
 import net.unicoen.parser.blockeditor.BlockGenerator;
 
 public class UniToBlockTestUtil {
 
-	public static UniFile createFileModel(String path){
+	public static UniProgram createFileModel(String path){
 		JavaMapper mapper = new JavaMapper();
 		UniNode dec = mapper.parseFile(path);
 		
-		return (UniFile)dec;
+		return (UniProgram)dec;
 	}
 	
 	public static UniClassDec createClassDec(String path){
@@ -41,7 +41,7 @@ public class UniToBlockTestUtil {
 		gen.parse(cDec);
 	}
 	
-	public static void parseTestToBG2(UniFile fileDec) throws IOException, ParserConfigurationException, TransformerException{
+	public static void parseTestToBG2(UniProgram fileDec) throws IOException, ParserConfigurationException, TransformerException{
 		UniClassDec dec = fileDec.classes.get(0);
 		BlockGenerator gen = UniModelMaker.createBlockGenerator2(dec.className);
 		gen.parse(fileDec);
