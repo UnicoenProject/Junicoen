@@ -1,6 +1,6 @@
 package net.unicoen.node;
 
-public class UniEmptyStatement extends UniNode {
+public class UniEmptyStatement extends UniExpr {
 
 	public UniEmptyStatement() {
 	}
@@ -18,6 +18,11 @@ public class UniEmptyStatement extends UniNode {
 	@Override
 	public boolean equals(Object obj) {
 		return obj != null && obj instanceof UniEmptyStatement;
+	}
+
+	@Override
+	public boolean isStatement() {
+		return false;
 	}
 
 	public void merge(UniEmptyStatement that) {

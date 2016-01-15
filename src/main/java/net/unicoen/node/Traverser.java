@@ -26,6 +26,7 @@ public abstract class Traverser {
 	public abstract void traverseWhile(UniWhile node);
 	public abstract void traverseDoWhile(UniDoWhile node);
 	public abstract void traverseVariableDec(UniVariableDec node);
+	public abstract void traverseEmptyStatement(UniEmptyStatement node);
 	public abstract void traverseFieldDec(UniFieldDec node);
 	public abstract void traverseMethodDec(UniMethodDec node);
 	public abstract void traverseArg(UniArg node);
@@ -33,7 +34,6 @@ public abstract class Traverser {
 	public abstract void traverseProgram(UniProgram node);
 	public abstract void traverseImport(UniImport node);
 	public abstract void traverseNamespace(UniNamespace node);
-	public abstract void traverseEmptyStatement(UniEmptyStatement node);
 	public abstract void traverseCast(UniCast node);
 
 	public final void traverseExpr(UniExpr node) {
@@ -133,6 +133,10 @@ public abstract class Traverser {
 			traverseVariableDec((UniVariableDec)node);
 			return;
 		}
+		if (node instanceof UniEmptyStatement) {
+			traverseEmptyStatement((UniEmptyStatement)node);
+			return;
+		}
 		throw new RuntimeException("Unknown node: " + node);
 	}
 
@@ -175,10 +179,6 @@ public abstract class Traverser {
 		}
 		if (node instanceof UniNamespace) {
 			traverseNamespace((UniNamespace)node);
-			return;
-		}
-		if (node instanceof UniEmptyStatement) {
-			traverseEmptyStatement((UniEmptyStatement)node);
 			return;
 		}
 		if (node instanceof UniCast) {

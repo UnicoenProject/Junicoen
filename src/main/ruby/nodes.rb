@@ -116,6 +116,7 @@ Dsl.define_node do |x|
         d.mem "name", String
         d.mem "value", "Expr"
       end
+      x.node "EmptyStatement"
     end
 
     x.node "MemberDec", abstract: true do
@@ -157,7 +158,6 @@ Dsl.define_node do |x|
     x.node "Namespace" do |d|
       d.mem "name", String
     end
-    x.node "EmptyStatement"
     x.node "Cast" do |d|
       d.mem "type", String
     end
