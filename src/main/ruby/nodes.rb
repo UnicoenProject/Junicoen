@@ -89,6 +89,13 @@ Dsl.define_node do |x|
         d.mem "step", "Expr"
         d.mem "statement", "Expr"
       end
+      x.node "EnhancedFor", statement: true do |d|
+      	d.mem "modifiers", String, list:true
+      	d.mem "type", String
+      	d.mem "name", String
+      	d.mem "container", "Expr"
+      	d.mem "statement", "Expr"
+      end
       x.node "While", statement: true do |d|
         d.mem "cond", "Expr"
         d.mem "statement", "Expr"

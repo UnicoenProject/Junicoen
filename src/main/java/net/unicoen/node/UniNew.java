@@ -29,13 +29,10 @@ public class UniNew extends UniExpr {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null || !(obj instanceof UniNew))
-			return false;
-		UniNew that = (UniNew) obj;
-		return (this.type == null ? that.type == null : this.type
-				.equals(that.type))
-				&& (this.args == null ? that.args == null : this.args
-						.equals(that.args));
+		if (obj == null || !(obj instanceof UniNew)) return false;
+		UniNew that = (UniNew)obj;
+		return (this.type == null ? that.type == null : this.type.equals(that.type))
+			&& (this.args == null ? that.args == null : this.args.equals(that.args));
 	}
 
 	@Override

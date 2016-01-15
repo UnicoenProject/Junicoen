@@ -6,6 +6,7 @@ import net.unicoen.node.UniMemberDec
 import net.unicoen.node.UniMethodDec
 import net.unicoen.node.UniBlock
 import net.unicoen.node.UniArg
+import net.unicoen.generator.JavaGenerator
 
 class Java8MapperInterfaceFieldMethodTest extends MapperTest {
 	val mapper = new Java8Mapper(true)
@@ -31,5 +32,9 @@ class Java8MapperInterfaceFieldMethodTest extends MapperTest {
 		expected.modifiers = #["public"]
 		
 		expected.evaluate(actual)
+		
+		println(JavaGenerator.generate(actual as UniClassDec))
+		
+		evaluate(expected, mapper.parse(JavaGenerator.generate(actual as UniClassDec)))
 	}
 }

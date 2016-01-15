@@ -13,6 +13,7 @@ import net.unicoen.node.UniNewArray
 import net.unicoen.node.UniNew
 import net.unicoen.node.UniMemberDec
 import net.unicoen.node.UniExpr
+import net.unicoen.generator.JavaGenerator
 
 class Java8MapperClassFieldVariableTest extends MapperTest {
 	val mapper = new Java8Mapper(true)
@@ -35,6 +36,11 @@ class Java8MapperClassFieldVariableTest extends MapperTest {
 		expected.members = #[constant as UniMemberDec]
 
 		expected.evaluate(actual)
+		
+		println(JavaGenerator.generate(actual as UniClassDec))
+		
+		evaluate(expected, mapper.parse(JavaGenerator.generate(actual as UniClassDec)))
+
 	}
 
 	@Test
@@ -62,6 +68,11 @@ class Java8MapperClassFieldVariableTest extends MapperTest {
 		expected.modifiers = #["public"]
 
 		expected.evaluate(actual)
+		
+		println(JavaGenerator.generate(actual as UniClassDec))
+		
+		evaluate(expected, mapper.parse(JavaGenerator.generate(actual as UniClassDec)))
+
 	}
 
 	@Test
@@ -82,6 +93,11 @@ class Java8MapperClassFieldVariableTest extends MapperTest {
 		expected.members = #[constant as UniMemberDec]
 		expected.modifiers = #["public"]
 		expected.evaluate(actual)
+		
+		println(JavaGenerator.generate(actual as UniClassDec))
+		
+		evaluate(expected, mapper.parse(JavaGenerator.generate(actual as UniClassDec)))
+
 	}
 
 	@Test
@@ -102,6 +118,11 @@ class Java8MapperClassFieldVariableTest extends MapperTest {
 		expected.members = #[constant as UniMemberDec]
 		expected.modifiers = #["public"]
 		expected.evaluate(actual)
+		
+		println(JavaGenerator.generate(actual as UniClassDec))
+		
+		evaluate(expected, mapper.parse(JavaGenerator.generate(actual as UniClassDec)))
+
 	}
 
 	@Test
@@ -122,6 +143,11 @@ class Java8MapperClassFieldVariableTest extends MapperTest {
 		expected.members = #[constant as UniMemberDec]
 		expected.modifiers = #["public"]
 		expected.evaluate(actual)
+		
+		println(JavaGenerator.generate(actual as UniClassDec))
+		
+		evaluate(expected, mapper.parse(JavaGenerator.generate(actual as UniClassDec)))
+
 	}
 
 	@Test
@@ -142,6 +168,11 @@ class Java8MapperClassFieldVariableTest extends MapperTest {
 		expected.members = #[constant as UniMemberDec]
 		expected.modifiers = #["public"]
 		expected.evaluate(actual)
+		
+		println(JavaGenerator.generate(actual as UniClassDec))
+		
+		evaluate(expected, mapper.parse(JavaGenerator.generate(actual as UniClassDec)))
+
 	}
 
 	@Test
@@ -169,6 +200,11 @@ class Java8MapperClassFieldVariableTest extends MapperTest {
 		expected.members = #[constant0 as UniMemberDec, constant1 as UniMemberDec, constant2 as UniMemberDec]
 		expected.modifiers = #["public"]
 		expected.evaluate(actual)
+		
+		println(JavaGenerator.generate(actual as UniClassDec))
+		
+		evaluate(expected, mapper.parse(JavaGenerator.generate(actual as UniClassDec)))
+
 	}
 
 	@Test
@@ -184,10 +220,14 @@ class Java8MapperClassFieldVariableTest extends MapperTest {
 		expected.className = "A"
 		expected.members = #[constant as UniMemberDec]
 		expected.evaluate(actual)
+		
+		println(JavaGenerator.generate(actual as UniClassDec))
+		
+		evaluate(expected, mapper.parse(JavaGenerator.generate(actual as UniClassDec)))
+
 	}
 
 	@Test
-	@Ignore
 	def void ParseClassInstanceDecWithValue() {
 		val actual = mapper.parse("class A{public static final Temp tt = new Temp(1,2);}");
 
@@ -206,6 +246,11 @@ class Java8MapperClassFieldVariableTest extends MapperTest {
 		expected.members = #[constant as UniMemberDec]
 
 		expected.evaluate(actual)
+		
+		println(JavaGenerator.generate(actual as UniClassDec))
+		
+		evaluate(expected, mapper.parse(JavaGenerator.generate(actual as UniClassDec)))
+
 	}
 
 	@Test
@@ -228,6 +273,11 @@ class Java8MapperClassFieldVariableTest extends MapperTest {
 		expected.members = #[constant as UniMemberDec]
 
 		expected.evaluate(actual)
+		
+		println(JavaGenerator.generate(actual as UniClassDec))
+		
+		evaluate(expected, mapper.parse(JavaGenerator.generate(actual as UniClassDec)))
+
 	}
 
 	@Test
@@ -248,6 +298,11 @@ class Java8MapperClassFieldVariableTest extends MapperTest {
 		expected.members = #[constant as UniMemberDec]
 
 		expected.evaluate(actual)
+		
+		println(JavaGenerator.generate(actual as UniClassDec))
+		
+		evaluate(expected, mapper.parse(JavaGenerator.generate(actual as UniClassDec)))
+
 	}
 
 	@Test
@@ -258,7 +313,7 @@ class Java8MapperClassFieldVariableTest extends MapperTest {
 		array.items = #[new UniIntLiteral(1) as UniExpr, new UniIntLiteral(2) as UniExpr, new UniIntLiteral(3) as UniExpr]
 
 		val newarray = new UniNewArray
-		newarray.type = "int"
+		newarray.type = "int[]"
 		newarray.value = array
 
 		val constant = new UniFieldDec
@@ -272,5 +327,10 @@ class Java8MapperClassFieldVariableTest extends MapperTest {
 		expected.members = #[constant as UniMemberDec]
 
 		expected.evaluate(actual)
+		
+		println(JavaGenerator.generate(actual as UniClassDec))
+		
+		evaluate(expected, mapper.parse(JavaGenerator.generate(actual as UniClassDec)))
+
 	}
 }

@@ -12,7 +12,6 @@ import net.unicoen.node.UniIntLiteral
 import net.unicoen.node.UniMemberDec
 import net.unicoen.node.UniMethodDec
 import net.unicoen.node.UniVariableDec
-import org.junit.Ignore
 import org.junit.Test
 
 class Java8MapperClassFieldMethodTest extends MapperTest {
@@ -212,7 +211,6 @@ class Java8MapperClassFieldMethodTest extends MapperTest {
 	}
 
 	@Test
-	@Ignore
 	def void parseMethodWithIfElseStatement() {
 		val actual = mapper.parse("public class Main{ public static void main(){if(true){a=1;}else{b=1;}}}")
 
@@ -234,6 +232,7 @@ class Java8MapperClassFieldMethodTest extends MapperTest {
 		val ifstat = new UniIf
 		ifstat.cond = new UniBoolLiteral(true)
 		ifstat.trueStatement = trueStatement
+		ifstat.falseStatement = falseStatement
 
 		val block = new UniBlock
 		block.body = #[ifstat as UniExpr]
