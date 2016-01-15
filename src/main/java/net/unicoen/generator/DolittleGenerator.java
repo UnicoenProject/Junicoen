@@ -13,10 +13,12 @@ import net.unicoen.node.UniBinOp;
 import net.unicoen.node.UniBlock;
 import net.unicoen.node.UniBoolLiteral;
 import net.unicoen.node.UniBreak;
+import net.unicoen.node.UniCast;
 import net.unicoen.node.UniClassDec;
 import net.unicoen.node.UniContinue;
 import net.unicoen.node.UniDoWhile;
 import net.unicoen.node.UniDoubleLiteral;
+import net.unicoen.node.UniEmptyStatement;
 import net.unicoen.node.UniEnhancedFor;
 import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniFieldAccess;
@@ -24,13 +26,16 @@ import net.unicoen.node.UniFieldDec;
 import net.unicoen.node.UniFor;
 import net.unicoen.node.UniIdent;
 import net.unicoen.node.UniIf;
+import net.unicoen.node.UniImport;
 import net.unicoen.node.UniIntLiteral;
 import net.unicoen.node.UniLongLiteral;
 import net.unicoen.node.UniMemberDec;
 import net.unicoen.node.UniMethodCall;
 import net.unicoen.node.UniMethodDec;
+import net.unicoen.node.UniNamespace;
 import net.unicoen.node.UniNew;
 import net.unicoen.node.UniNewArray;
+import net.unicoen.node.UniProgram;
 import net.unicoen.node.UniReturn;
 import net.unicoen.node.UniStringLiteral;
 import net.unicoen.node.UniTernaryOp;
@@ -313,9 +318,39 @@ public class DolittleGenerator extends Traverser {
 		// TODO Auto-generated method stub
 
 	}
+	
+	@Override
+	public void traverseImport(UniImport node) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void traverseNamespace(UniNamespace node) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void traverseEmptyStatement(UniEmptyStatement node) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void traverseCast(UniCast node) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	@Override
 	public void traverseEnhancedFor(UniEnhancedFor node) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void traverseProgram(UniProgram node) {
 		// TODO Auto-generated method stub
 		
 	}
