@@ -1037,8 +1037,8 @@ public class BlockGenerator {
 	/**
 	 * 標準ライブラリのidentifierかどうかを判定する
 	 * 
-	 * @param UniExpression
-	 *            null可
+	 * @param expr
+	 *            UniExpression（null可）
 	 * @return identifierかどうかの真偽値
 	 */
 	public boolean isIdentifier(UniExpr expr) {

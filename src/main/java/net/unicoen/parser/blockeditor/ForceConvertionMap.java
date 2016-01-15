@@ -108,7 +108,7 @@ public class ForceConvertionMap {
 	/**
 	 * 強制変換対象メソッドのブロック名を取得する
 	 * 
-	 * @param mathodCall 対象のUniMethodモデル
+	 * @param methodCall 対象のUniMethodモデル
 	 * @return methodCallに対応するブロック名
 	 */
 	public String getBlockGenusName(UniMethodCall methodCall) {
