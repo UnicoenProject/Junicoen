@@ -109,7 +109,7 @@ public class ForceConvertionMap {
 	/**
 	 * 強制変換対象メソッドのブロック名を取得する
 	 * 
-	 * @param mathodCall
+	 * @param methodCall
 	 *            対象のUniMethodモデル
 	 * @return methodCallに対応するブロック名
 	 */
