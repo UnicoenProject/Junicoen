@@ -43,6 +43,7 @@ class Java8MapperTest extends MapperTest {
 		expected.members = #[]
 		expected.modifiers = #["public"]
 		expected.superClass = #[]
+		expected.comment = "/* AA */"
 
 		expected.evaluate(actual)
 

@@ -1,10 +1,36 @@
 package net.unicoen.mapper
 
 import java.io.FileInputStream
-import java.util.List
+import java.lang.reflect.ParameterizedType
 import java.util.ArrayList
+import java.util.List
 import java.util.Map
-import net.unicoen.node.*
+import net.unicoen.node.UniArg
+import net.unicoen.node.UniArray
+import net.unicoen.node.UniBinOp
+import net.unicoen.node.UniBlock
+import net.unicoen.node.UniBoolLiteral
+import net.unicoen.node.UniClassDec
+import net.unicoen.node.UniDoubleLiteral
+import net.unicoen.node.UniEnhancedFor
+import net.unicoen.node.UniExpr
+import net.unicoen.node.UniFieldAccess
+import net.unicoen.node.UniFieldDec
+import net.unicoen.node.UniFor
+import net.unicoen.node.UniIdent
+import net.unicoen.node.UniIf
+import net.unicoen.node.UniIntLiteral
+import net.unicoen.node.UniMemberDec
+import net.unicoen.node.UniMethodCall
+import net.unicoen.node.UniMethodDec
+import net.unicoen.node.UniNew
+import net.unicoen.node.UniNewArray
+import net.unicoen.node.UniNode
+import net.unicoen.node.UniReturn
+import net.unicoen.node.UniStringLiteral
+import net.unicoen.node.UniTernaryOp
+import net.unicoen.node.UniUnaryOp
+import net.unicoen.node.UniVariableDec
 import net.unicoen.parser.Java8BaseVisitor
 import net.unicoen.parser.Java8Lexer
 import net.unicoen.parser.Java8Parser
@@ -18,11 +44,24 @@ import org.antlr.v4.runtime.tree.RuleNode
 import org.antlr.v4.runtime.tree.TerminalNode
 import org.antlr.v4.runtime.tree.TerminalNodeImpl
 import org.eclipse.xtext.xbase.lib.Functions.Function1
-import java.lang.reflect.ParameterizedType
-import java.util.Stack
 
 class Java8Mapper extends Java8BaseVisitor<Object> {
+
 	val boolean _isDebugMode
+	val List<Comment> _comments = new ArrayList<Comment>;
+	var CommonTokenStream _stream;
+	var UniNode _lastNode;
+	var int _nextTokenIndex;
+
+	static class Comment {
+		val String content
+		var ParseTree parent
+
+		new(String content, ParseTree parent) {
+			this.content = content
+			this.parent = parent
+		}
+	}
 
 	new(boolean isDebugMode) {
 		_isDebugMode = isDebugMode
@@ -63,7 +102,25 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val tokens = new CommonTokenStream(lexer)
 		val parser = new Java8Parser(tokens)
 		val tree = parseAction.apply(parser) // parse
-		tree.visit.flatten
+		_comments.clear()
+		_stream = tokens
+		_lastNode = null
+		_nextTokenIndex = 0
+
+		val ret = tree.visit.flatten
+
+		if (_lastNode !== null) {
+			val count = _stream.size - 1
+			for (var i = _nextTokenIndex; i < count; i++) {
+				var hiddenToken = _stream.get(i) // Includes skipped tokens (maybe)
+				if (_lastNode.comment === null) {
+					_lastNode.comment = ""
+				}
+				_lastNode.comment += hiddenToken.text
+			}
+		}
+
+		ret
 	}
 
 	override public visitChildren(RuleNode node) {
@@ -86,6 +143,23 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			println("enter " + ruleName + " : " + tree.text)
 			val ret = tree.accept(this)
 			println("exit " + ruleName + " : " + ret)
+
+			if (ret instanceof UniNode) {
+				var content = ""
+				for (var i = _comments.size - 1; i >= 0 && _comments.get(i).parent == tree; i--) {
+					content = _comments.get(i).content + content
+					_comments.remove(i)
+				}
+				if (content != "") {
+					ret.comment = content
+				}
+				_lastNode = ret
+			} else {
+				for (var i = _comments.size - 1; i >= 0 && _comments.get(i).parent == tree; i--) {
+					_comments.get(i).parent = _comments.get(i).parent.parent
+				}
+			}
+
 			ret
 		} else {
 			tree.accept(this)
@@ -94,56 +168,31 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 
 	override public visitTerminal(TerminalNode node) {
 		println("visit TERMINAL : " + node.text)
+
+		val token = node.symbol
+		if (token.type > 0) {
+			val count = token.tokenIndex
+			var content = ""
+			for (var i = _nextTokenIndex; i < count; i++) {
+				var hiddenToken = _stream.get(i) // Includes skipped tokens (maybe)
+				if (_lastNode !== null && _stream.get(_nextTokenIndex - 1).line == _stream.get(i).line) {
+					if (_lastNode.comment === null) {
+						_lastNode.comment = ""
+					}
+					_lastNode.comment += hiddenToken.text
+				} else {
+					content += hiddenToken.text
+				}
+			}
+			if (content != "") {
+				_comments.add(new Comment(content, node.parent))
+			}
+			_nextTokenIndex = count + 1;
+		}
+
 		node.text
 	}
 
-//    private var UniNode _dummyRoot;
-//    private var Stack<UniNode> _nodes;
-//    private var CommonTokenStream _stream;
-//    private var String[] _tokenNames;
-//    private var int _nextTokenIndex;
-//    private var int _lastDepth;
-//
-//	override public visitTerminal(TerminalNode node) {
-//		println("visit TERMINAL : " + node.text)
-//
-//		val token = node.symbol
-//        if (token.type > 0) {
-//            var maxDepth = _lastDepth + 1
-//            _lastDepth = (node.parent as RuleNode).ruleContext.depth
-//            for (var i = _lastDepth + 1; i < maxDepth; i++) {
-//                _nodes.pop()
-//            }
-//
-//            var count = token.tokenIndex
-//            for (var i = _nextTokenIndex; i < count; i++) {
-//                var oldToken = _stream.get(i) // Includes skipped tokens (maybe)
-//            }
-//            
-//            
-//            var tokenName = DetermineElementName(token, Code2XmlConstants.TokenSetElementName);
-//            var newNode = CreateTerminalNode(
-//                    tokenName, token, token.Text, count, token.Type.ToString());
-//            _nodes.Peek().AddLast(newNode);
-//            _nextTokenIndex = count + 1;
-//        }
-//		
-//		node.text
-//	}
-//
-//        private CstNode CreateTerminalNode(
-//                string tokenSetName, IToken antlrToken, string text, int exclusiveEndIndex,
-//                string ruleId) {
-//            var hiddenTokens = new List<CstToken>();
-//            for (int i = _nextTokenIndex; i < exclusiveEndIndex; i++) {
-//                var oldToken = _stream.Get(i); // Includes skipped tokens (maybe)
-//                var hiddenName = DetermineElementName(oldToken, Code2XmlConstants.HiddenElementName);
-//                var hiddenElement = CreateHiddenToken(hiddenName, oldToken);
-//                hiddenTokens.Add(hiddenElement);
-//            }
-//            var token = CreateToken(tokenSetName, antlrToken, text, ruleId);
-//            return new CstNode(token, hiddenTokens);
-//        }
 	private def Object flatten(Object obj) {
 		if (obj instanceof List<?>) {
 			if (obj.size == 1) {
@@ -253,7 +302,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				return if(builder.length > 0) clazz.getConstructor(StringBuilder).newInstance(builder) else null
 			}
 			val first = temp.findFirst[clazz.isAssignableFrom(it.class)]
-			return if (first == null) {
+			return if (first === null) {
 				try {
 					clazz.newInstance
 				} catch (InstantiationException e) {
