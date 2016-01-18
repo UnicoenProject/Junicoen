@@ -8,9 +8,10 @@ import org.w3c.dom.Element;
 import com.google.common.collect.Lists;
 
 import net.unicoen.parser.blockeditor.BlockResolver;
+import net.unicoen.parser.blockeditor.DOMUtil;
 
 public class BlockVarDecModel extends BlockCommandModel{
-
+	public static String SPECIAL_VARIABLE_GENUS_NAME = "special-variable";
 	public BlockVarDecModel(String type, String name, Document document, BlockResolver resolver, Long ID_COUNTER) {
 		this.element = createElement(type, name, document, resolver, ID_COUNTER);
 	}
@@ -18,12 +19,11 @@ public class BlockVarDecModel extends BlockCommandModel{
 	public Element createElement(String type, String name, Document document, BlockResolver resolver, Long ID_COUNTER){
 		String genusName = getGenusNameFromResolver(resolver, type);
 		Element blockElement;
-
 		if(genusName == null){
-			blockElement = createSpecialVariableDecModel(type, name, getKind(), document, resolver, ID_COUNTER);
+			blockElement = createSpecialVariableDecModel(type, name, "local-variable", document, resolver, ID_COUNTER);
 			addElement(BlockElementModel.LABEL_NODE, document, type + "型の変数を作り、" + name + "と名付ける", blockElement);
 		}else{
-			blockElement = createBlockElement(document, genusName, ID_COUNTER++, getKind());
+			blockElement = createBlockElement(document, genusName, ID_COUNTER++, DOMUtil.getAttribute(resolver.getBlockNode(genusName), BlockElementModel.KIND_ATTR));
 			addElement(BlockElementModel.LABEL_NODE, document, name, blockElement);
 		}
 
@@ -34,7 +34,7 @@ public class BlockVarDecModel extends BlockCommandModel{
 	}
 	
 	public Element createSpecialVariableDecModel(String type, String name, String kind, Document document, BlockResolver resolver, Long ID_COUNTER){
-		Element blockElement = createBlockElement(document, "special-variable", ID_COUNTER++, kind);
+		Element blockElement = createBlockElement(document, SPECIAL_VARIABLE_GENUS_NAME, ID_COUNTER++, kind);
 		return blockElement;
 	}
 	
@@ -60,9 +60,9 @@ public class BlockVarDecModel extends BlockCommandModel{
 		for(BlockElementModel socket : socketBlocks){
 			addSocketBlock(socket);
 		}
-		
+
 		//TODO should fix
-		if(getGenusName().equals(BlockSpecialModel.GENUS_NAME)){
+		if(getGenusName().equals(SPECIAL_VARIABLE_GENUS_NAME)){
 			for(BlockElementModel socket : socketBlocks){
 				sockets.addSocketInfo(new BlockSocketModel((BlockExprModel) socket));
 			}			

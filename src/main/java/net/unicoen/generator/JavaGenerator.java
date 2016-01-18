@@ -153,10 +153,36 @@ public class JavaGenerator extends Traverser {
 			return null;
 		}
 	}
+	
 
 	public static void generate(UniClassDec classDec, PrintStream out) {
 		JavaGenerator g = new JavaGenerator(out);
 		g.traverseClassDec(classDec);
+	}
+
+	public static String generate(UniProgram file) {
+		try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+			PrintStream printer = new PrintStream(out)) {
+			generate(file, printer);
+			return out.toString();
+		} catch (IOException e) {
+			return null;
+		}
+	}
+	
+	public static void generate(UniProgram fileDec, PrintStream out) {
+		JavaGenerator g = new JavaGenerator(out);
+		for(UniImport importStatement : fileDec.imports){
+			g.traverseImport(importStatement);
+		}
+		
+		g.newline();
+		g.newline();
+		
+		for(UniClassDec classDec : fileDec.classes){
+			g.traverseClassDec(classDec);
+		}
+		
 	}
 
 	// ----- ----- ----- ----- HELPER ----- ----- ----- -----
@@ -214,7 +240,8 @@ public class JavaGenerator extends Traverser {
 	@Override
 	public void traverseMethodCall(UniMethodCall mCall) {
 		if (mCall.receiver != null) {
-			parseExpr(mCall.receiver);
+			//("abc" + "def").hashcode();，のようにreceiverにbinopが入る場合もあるのでpriorityをセットする
+			parseExpr(mCall.receiver, priorityTable("*") * 10 + 1);
 			print(".");
 		}
 		print(mCall.methodName);
@@ -318,7 +345,8 @@ public class JavaGenerator extends Traverser {
 		parseExpr(node.cond);
 		print(")");
 		if (node.trueStatement == null) {
-			print("{");
+			print(" {");
+			newline();
 			print("}");
 		} else if (node.trueStatement instanceof UniBlock) {
 			print(" ");
@@ -511,28 +539,16 @@ public class JavaGenerator extends Traverser {
 
 	@Override
 	public void traverseImport(UniImport node) {
-		// TODO Auto-generated method stub
-		
+		print("import " + node.targetName + ";");
 	}
-
-	@Override
-	public void traverseNamespace(UniNamespace node) {
-		// TODO Auto-generated method stub
-		
-	}
+	
 
 	@Override
 	public void traverseEmptyStatement(UniEmptyStatement node) {
-		// TODO Auto-generated method stub
-		
+		print("");
 	}
 
 	@Override
-	public void traverseCast(UniCast node) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	public void traverseEnhancedFor(UniEnhancedFor node) {
 		print("for (");
 		print(node.type);
@@ -552,7 +568,20 @@ public class JavaGenerator extends Traverser {
 	}
 
 	@Override
+	public void traverseCast(UniCast node) {
+		print("(" + node.type + ")");
+		print("(");
+		parseExpr(node.value);
+		print(")");
+	}
+	@Override
 	public void traverseProgram(UniProgram node) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void traverseNamespace(UniNamespace node) {
 		// TODO Auto-generated method stub
 		
 	}

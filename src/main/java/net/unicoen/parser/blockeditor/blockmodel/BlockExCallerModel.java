@@ -9,8 +9,7 @@ import org.w3c.dom.Element;
 public class BlockExCallerModel extends BlockCommandModel {
 
 	private BlockCommandModel methodBlock;
-	private static String GENUS_NAME = "callActionMethod2";
-	private static String KIND = "command";
+	public static String GENUS_NAME = "callActionMethod2";
 
 	public BlockExCallerModel(Document document, Long id) {
 		this.element = createBlockElement(document, GENUS_NAME, id, KIND);
@@ -20,6 +19,7 @@ public class BlockExCallerModel extends BlockCommandModel {
 		this.methodBlock = method;
 	}
 
+	@Override
 	public List<Element> getBlockElements() {
 		List<Element> commandBlocks = new ArrayList<>();
 		commandBlocks.add(getElement());

@@ -8,8 +8,10 @@ import net.unicoen.parser.blockeditor.DOMUtil;
 
 public class BlockVariableSetterModel extends BlockCommandModel {
 
+	public static String GENUS_HEADER = "setter";
+	
 	public BlockVariableSetterModel(Document document, Node parentNode, Long id) {
-		String genusName = "setter" + DOMUtil.getAttribute(parentNode, BlockElementModel.GENUS_NAME_ATTR);
+		String genusName = GENUS_HEADER + DOMUtil.getAttribute(parentNode, BlockElementModel.GENUS_NAME_ATTR);
 		String variableName = DOMUtil.getChildTextFromBlockNode(parentNode, BlockElementModel.NAME_NODE);
 		// BlockStubノード作成
 		Element blockStubElement = createBlockStubNode(document, variableName, DOMUtil.getAttribute(parentNode, BlockElementModel.GENUS_NAME_ATTR));
@@ -21,16 +23,16 @@ public class BlockVariableSetterModel extends BlockCommandModel {
 
 	@Override
 	public void addBeforeBlockNode(Document document, String id) {
-		Element element = document.createElement("BeforeBlockId");
+		Element element = document.createElement(BlockElementModel.BEFOREBLOCKID_NODE);
 		element.setTextContent(id);
-		DOMUtil.getChildNode(getElement(), BlockElementModel.BLOCK_NODE).appendChild(element);
+		getBlockElement().appendChild(element);
 	}
 
 	@Override
 	public void addAfterBlockNode(Document document, String id) {
-		Element element = document.createElement("AfterBlockId");
+		Element element = document.createElement(BlockElementModel.AFTERBLOCKID_NODE);
 		element.setTextContent(id);
-		DOMUtil.getChildNode(getElement(), "Block").appendChild(element);
+		getBlockElement().appendChild(element);
 	}
 
 	@Override

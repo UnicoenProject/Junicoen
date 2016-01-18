@@ -2,12 +2,12 @@ package net.unicoen.parser.blockeditor.blockmodel;
 
 import java.util.Map;
 
-import net.unicoen.parser.blockeditor.BlockResolver;
-import net.unicoen.parser.blockeditor.DOMUtil;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
+import net.unicoen.parser.blockeditor.BlockResolver;
+import net.unicoen.parser.blockeditor.DOMUtil;
 
 public class BlockLiteralModel extends BlockExprModel {
 	private String genusName;
@@ -17,21 +17,21 @@ public class BlockLiteralModel extends BlockExprModel {
 		element = createLiteralElement(label,document, parentBlockID, ID_COUNTER, resolver);
 	}
 
+	@Override
 	public String getGenusName(){
 		return this.genusName;
 	}
 
 	public Element createLiteralElement(String label, Document document, String parentBlockID, Long ID_COUNTER, BlockResolver resolver) {
-		Element blockElement = createBlockElement(document, getGenusName(), ID_COUNTER, DOMUtil.getAttribute(resolver.getBlockNode(getGenusName()), "kind"));
+		Element blockElement = createBlockElement(document, getGenusName(), ID_COUNTER, DOMUtil.getAttribute(resolver.getBlockNode(getGenusName()), BlockElementModel.KIND_ATTR));
 
-		addElement("Label", document, label, blockElement);
-		addElement("Type", document, DOMUtil.getChildNode(resolver.getBlockNode(getGenusName()), "Type").getTextContent(), blockElement);
-		addElement("ParentBlock", document, parentBlockID, blockElement);
+		addElement(BlockElementModel.LABEL_NODE, document, label, blockElement);
+		addElement(BlockElementModel.TYPE_NODE, document, DOMUtil.getChildNode(resolver.getBlockNode(getGenusName()), BlockElementModel.TYPE_NODE).getTextContent(), blockElement);
 
 		Node plugNode = resolver.getPlugElement(getGenusName());
 		Map<String, String> plugInfo = calcPlugInfo(plugNode);
 
-		addPlugElement(document, blockElement, parentBlockID, plugInfo.get("connector-type"), plugInfo.get("position-type"));
+		addPlugElement(document, blockElement, parentBlockID, plugInfo.get(BlockConnector.CONNECTOR_TYPE_ATTR), plugInfo.get(BlockConnector.CONNECTOR_POSITION_TYPE_ATTR));
 
 		return blockElement;
 	}

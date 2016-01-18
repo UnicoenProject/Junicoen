@@ -1,13 +1,15 @@
 package net.unicoen.node;
 
-public class UniCast extends UniNode {
+public class UniCast extends UniExpr {
 	public String type;
+	public UniExpr value;
 
 	public UniCast() {
 	}
 
-	public UniCast(String type) {
+	public UniCast(String type, UniExpr value) {
 		this.type = type;
+		this.value = value;
 	}
 
 	@Override
@@ -31,5 +33,11 @@ public class UniCast extends UniNode {
 		if (that.type != null) {
 			this.type = that.type;
 		}
+	}
+
+	@Override
+	public boolean isStatement() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

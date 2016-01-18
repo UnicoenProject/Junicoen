@@ -10,9 +10,10 @@ public class BlockClassModel {
 
 	private List<BlockProcedureModel> methods = new ArrayList<>();
 	private List<BlockFieldVarDecModel> fieldVariables = new ArrayList<>();
-
+	public  static String PAGEBLOCKS_NODE = "PageBlocks";
+	
 	public Element createBlockNodes(Document document) {
-		Element pageBlocksElement = document.createElement("PageBlocks");
+		Element pageBlocksElement = document.createElement(PAGEBLOCKS_NODE);
 
 		for(BlockFieldVarDecModel model : fieldVariables){
 			for (Element element : model.getBlockElements()) {

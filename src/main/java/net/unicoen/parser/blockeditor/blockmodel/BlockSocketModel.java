@@ -4,10 +4,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 
-public class BlockSocketModel extends BlockConnectorInfo{
+public class BlockSocketModel extends BlockConnector{
 
+	public static String CONNECTOR_TYPE = "socket";
+	
 	public BlockSocketModel(BlockExprModel param) {
-		this.label = param.getLabel();
+		this.label = "";
 		this.positionType = "single";
 		this.connectorType = convertTypeToBlockConnectorType(param.getType());
 		this.initType = convertTypeToBlockConnectorType(param.getType());
@@ -55,21 +57,25 @@ public class BlockSocketModel extends BlockConnectorInfo{
 	}
 
 	public Element createBlockConnectorElement(Document document){
-		Element connector = document.createElement("BlockConnector");
+		Element connector = document.createElement(BlockConnector.CONNECTOR_NODE);
 
-		connector.setAttribute("connector-kind", "socket");
-		connector.setAttribute("position-type", getPositionType());
-		connector.setAttribute("label", getLabel());
-
+		connector.setAttribute(BlockConnector.CONNECTOR_KIND_ATTR, CONNECTOR_TYPE);
+		connector.setAttribute(BlockConnector.CONNECTOR_POSITION_TYPE_ATTR, getPositionType());
+		connector.setAttribute(BlockConnector.CONNECTOR_LABEL_ATTR, getLabel());
+		
+		connector.setAttribute(BlockConnector.CONNECTOR_TYPE_ATTR, getConnectorType());
+		connector.setAttribute(BlockConnector.CONNECTOR_INIT_TYPE_ATTR, getInitType());
 		if (!"-1".equals(getConnectorBlockID())) {
-			connector.setAttribute("con-block-id", getConnectorBlockID());
-			connector.setAttribute("connector-type", getConnectorType());
-			connector.setAttribute("init-type", getInitType());
-		} else {
-			connector.setAttribute("connector-type", getConnectorType());
-			connector.setAttribute("init-type", getInitType());
+			connector.setAttribute(BlockConnector.CONNECTOR_BLOCK_ID_ATTR, getConnectorBlockID());
 		}
 		return connector;
+	}
+	
+	public void updateSocketConnectorType(BlockElementModel realArgBlock){
+		if(realArgBlock == null){
+			return;
+		}
+		this.connectorType = BlockElementModel.calcParamType(realArgBlock);
 	}
 
 }

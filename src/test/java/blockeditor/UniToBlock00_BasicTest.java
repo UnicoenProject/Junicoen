@@ -2,30 +2,20 @@ package blockeditor;
 
 import java.io.IOException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+
 import org.junit.Test;
 
-import com.google.common.collect.Lists;
-
-import net.unicoen.node.UniBlock;
-import net.unicoen.node.UniClassDec;
-import net.unicoen.node.UniIdent;
-import net.unicoen.node.UniMethodDec;
-import net.unicoen.node.UniUnaryOp;
-import net.unicoen.node.UniWhile;
+import net.unicoen.node.UniProgram;
 
 public class UniToBlock00_BasicTest {
 
 	@Test
-	public void test() throws IOException {
+	public void test() throws IOException, ParserConfigurationException, TransformerException {
 
-		UniClassDec classModel = UniToBlockTestUtil.createClassDec("blockeditor/testcases/BlockConvertTest/_00BasicTest.java");
-		classModel.superClass = Lists.newArrayList("Turtle");
-		UniMethodDec run = (UniMethodDec)classModel.members.get(1);
-		UniWhile model = (UniWhile)run.block.body.get(1);
-		UniBlock stmt = (UniBlock)model.statement;
-		stmt.body.set(2, new UniUnaryOp("_++", new UniIdent("i")));
-		
-		UniToBlockTestUtil.parseTest(classModel);
+		UniProgram fileModel = UniToBlockTestUtil.createFileModel("blockeditor/testcases/BlockConvertTest/_00BasicTest.java");
+		UniToBlockTestUtil.parseTestToBG2(fileModel);
 	}
 
 }

@@ -2,11 +2,11 @@ package blockeditor;
 
 import java.io.IOException;
 
+import org.junit.Test;
+
 import net.unicoen.node.UniClassDec;
 import net.unicoen.node.UniMethodDec;
 import net.unicoen.parser.blockeditor.BlockGenerator;
-
-import org.junit.Test;
 
 public class UniToBlockSpecialBlockTest {
 
@@ -20,8 +20,6 @@ public class UniToBlockSpecialBlockTest {
 		start.block.body.add(UniModelMaker.createLocalVariable("i", "int"));
 
 		spClass.members.add(start);
-
-
 
 		BlockGenerator gen = UniModelMaker.createBlockGenerator("UniToBlockSpetial");
 		gen.parse(spClass);

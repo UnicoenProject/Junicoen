@@ -21,7 +21,6 @@ public class VariableNameResolver {
 			throw new RuntimeException("duplicate variabel name :" + name);
 		}
 	}
-
 	
 	public Node getLocalVariableBlockNode(String name) {
 		return localVariables.get(name);

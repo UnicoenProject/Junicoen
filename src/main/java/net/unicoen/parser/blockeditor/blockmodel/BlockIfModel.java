@@ -10,8 +10,7 @@ public class BlockIfModel extends BlockCommandModel {
 
 	private List<BlockCommandModel> trueBlocks = new ArrayList<>();
 	private List<BlockCommandModel> falseBlocks = new ArrayList<>();
-	private static String GENUS_NAME = "ifelse";
-	private static String KIND = "command";
+	public static String GENUS_NAME = "ifelse";
 
 	public BlockIfModel(Document document, Long id) {
 		this.element = createBlockElement(document, GENUS_NAME, id, KIND);

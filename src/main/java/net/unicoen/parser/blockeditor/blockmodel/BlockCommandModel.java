@@ -5,12 +5,12 @@ import org.w3c.dom.Element;
 
 public class BlockCommandModel extends BlockElementModel {
 
-	public static String KIND = "command";
-	
+	public static String KIND = BlockElementModel.BLOCKKINDS.COMMAND.toString();
+
 	public Element createBlockStubNode(Document document, String parentName, String parentGenusName) {
-		Element blockStubElement = document.createElement("BlockStub");
-		addElement("StubParentName", document, parentName, blockStubElement);
-		addElement("StubParentGenus", document, parentGenusName, blockStubElement);
+		Element blockStubElement = document.createElement(BlockElementModel.BLOCK_STUB_NODE);
+		addElement(BlockElementModel.STUBPARENTNAME_NODE, document, parentName, blockStubElement);
+		addElement(BlockElementModel.STUBPARENTGENUS_NODE, document, parentGenusName, blockStubElement);
 		return blockStubElement;
 	}
 	

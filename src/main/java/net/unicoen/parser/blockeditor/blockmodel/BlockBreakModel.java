@@ -1,11 +1,13 @@
 package net.unicoen.parser.blockeditor.blockmodel;
 
-import org.w3c.dom.Element;
+import org.w3c.dom.Document;
 
 public class BlockBreakModel extends BlockCommandModel {
 
-	public BlockBreakModel(Element element) {
-		this.element = element;
+	public String GENUS_NAME = "continue";
+	
+	public BlockBreakModel(Document document, Long id) {
+		this.element = createBlockElement(document, GENUS_NAME, id, KIND);
 	}
 
 }

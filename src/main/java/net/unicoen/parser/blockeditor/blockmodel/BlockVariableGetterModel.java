@@ -7,14 +7,16 @@ import org.w3c.dom.Node;
 import net.unicoen.parser.blockeditor.DOMUtil;
 
 public class BlockVariableGetterModel extends BlockExprModel {
+	
+	public static String GENUS_HEADER = "getter";
 
 	public BlockVariableGetterModel(Node varDecNode, Document document, Long id) {
-		String genusName = "getter" + DOMUtil.getAttribute(varDecNode, "genus-name");
+		String genusName = GENUS_HEADER + DOMUtil.getAttribute(varDecNode, BlockElementModel.GENUS_NAME_ATTR);
 		String name = DOMUtil.getChildText(varDecNode, BlockElementModel.NAME_NODE);
 		// BlockStubノード作成
-		Element stubElement = createBlockStubNode(document, name, DOMUtil.getAttribute(varDecNode, "genus-name"));
+		Element stubElement = createBlockStubNode(document, name, DOMUtil.getAttribute(varDecNode, BlockElementModel.GENUS_NAME_ATTR));
 		// Blockノード作成
-		Element blockElement = createVariableBlockNode(document, genusName, name, "data", DOMUtil.getChildNode(varDecNode, "Type").getTextContent(), id);
+		Element blockElement = createVariableBlockNode(document, genusName, name, BlockElementModel.BLOCKKINDS.DATA.toString(), DOMUtil.getChildNode(varDecNode, BlockElementModel.TYPE_NODE).getTextContent(), id);
 		stubElement.appendChild(blockElement);
 		this.element = stubElement;
 	}
@@ -42,7 +44,7 @@ public class BlockVariableGetterModel extends BlockExprModel {
 	@Override
 	public String getType(){
 		Node blockElement = DOMUtil.getChildNode(this.element, BlockElementModel.BLOCK_NODE);
-		return DOMUtil.getChildNode(blockElement, "Type").getTextContent();
+		return DOMUtil.getChildNode(blockElement, BlockElementModel.TYPE_NODE).getTextContent();
 	}
 
 	public String getConnectorKind(){
@@ -51,7 +53,7 @@ public class BlockVariableGetterModel extends BlockExprModel {
 
 	@Override
 	public Node getPlugNode(){
-		return DOMUtil.getChildNode(DOMUtil.getChildNode(this.element, BlockElementModel.BLOCK_NODE), "Plug");
+		return DOMUtil.getChildNode(DOMUtil.getChildNode(this.element, BlockElementModel.BLOCK_NODE), BlockPlugModel.NODE_NAME);
 	}
 
 	@Override

@@ -14,6 +14,8 @@ public class BlockNewModel extends BlockExprModel{
 
 	private static String KIND = "function";
 	private static String GENUSNAME_HEADER = "new-object";
+	public static String GENUS_HEADER = "new-";
+	public static String DEFAULT_GENUS_NAME = "new-object";
 
 	public BlockNewModel(UniNew newModel, List<BlockElementModel> sockets, String parentBlockID, Document document, Long ID_COUNTER, BlockResolver resolver){
 		element = createNewElement(newModel, sockets, document, parentBlockID, ID_COUNTER, resolver);
@@ -22,19 +24,16 @@ public class BlockNewModel extends BlockExprModel{
 	public Element createNewElement(UniNew newModel, List<BlockElementModel> sockets, Document document, String parentBlockID, Long ID_COUNTER, BlockResolver resolver){
 
 		String genusName = calcGesnuName(newModel, transformToTypeStringList(sockets), resolver);
-		if(genusName == null){
-			genusName = "new-object";
-		}
 		
 		Element blockElement = createBlockElement(document, genusName, ID_COUNTER, KIND);
 
-		addElement("Label", document, newModel.type, blockElement);
-		addElement("Type", document, newModel.type, blockElement);
+		addElement(BlockElementModel.LABEL_NODE, document, newModel.type, blockElement);
+		addElement(BlockElementModel.TYPE_NODE, document, newModel.type, blockElement);
 
 		//Plug?
 		Node plugNode = resolver.getPlugElement(genusName);
 		Map<String, String> plugInfo = calcPlugInfo(plugNode);
-		addPlugElement(document, blockElement, parentBlockID, plugInfo.get("connector-type"), plugInfo.get("position-type"));
+		addPlugElement(document, blockElement, parentBlockID, plugInfo.get(BlockPlugModel.CONNECTOR_TYPE_ATTR), plugInfo.get(BlockPlugModel.CONNECTOR_POSITION_TYPE_ATTR));
 
 		return blockElement;
 	}
@@ -44,7 +43,7 @@ public class BlockNewModel extends BlockExprModel{
 		if(resolver.getBlockNode(tmpGenus) != null){
 			return tmpGenus;
 		}else{
-			return "new-object";	
+			return DEFAULT_GENUS_NAME;	
 		} 
 	}
 }

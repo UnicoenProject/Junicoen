@@ -7,7 +7,7 @@ public class _06MouseTest extends Turtle {
 	
 	//起動処理
 	public static void main(String[] args) {
-		Turtle.startTurtle(new _06MouseTest());
+		Turtle.startTurtle(new _06MouseTest(), args);
 	}
 	
 	
