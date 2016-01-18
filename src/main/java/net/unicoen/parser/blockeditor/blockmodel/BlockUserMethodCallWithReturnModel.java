@@ -7,7 +7,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import net.unicoen.parser.blockeditor.BlockResolver;
-import net.unicoen.parser.blockeditor.DOMUtil;
 
 public class BlockUserMethodCallWithReturnModel extends BlockExprModel {
 
@@ -32,15 +31,10 @@ public class BlockUserMethodCallWithReturnModel extends BlockExprModel {
 	//TODO should fix Stubクラスを作ってまとめる?　
 	public Element createBlockStubNode(Document document, String parentName, String parentGenusName, String parentID) {
 		Element blockStubElement = document.createElement(BlockElementModel.BLOCK_STUB_NODE);
-		addElement("StubParentName", document, parentName, blockStubElement);
-		addElement("StubParentGenus", document, parentGenusName, blockStubElement);
-		addElement("StubParentID", document, parentID, blockStubElement);
+		addElement(BlockElementModel.STUBPARENTNAME_NODE, document, parentName, blockStubElement);
+		addElement(BlockElementModel.STUBPARENTGENUS_NODE, document, parentGenusName, blockStubElement);
+		addElement(BlockElementModel.STUBPARENTID_NODE, document, parentID, blockStubElement);
 		return blockStubElement;
-	}
-
-	@Override
-	public Element getBlockElement(){
-		return (Element) DOMUtil.getChildNode(getElement(), BlockElementModel.BLOCK_NODE);
 	}
 
 	@Override

@@ -12,11 +12,13 @@ import net.unicoen.parser.blockeditor.AnnotationCommentGetter;
 
 public class BlockProcedureModel extends BlockElementModel {
 
-	private List<BlockCommandModel> bodyBlocks = new ArrayList<>();
+	private List<BlockElementModel> bodyBlocks = new ArrayList<>();
 	public static String GENUS_NAME = "procedure";
 	public static String KIND = "procedure";
 	public static String RETURN_TYPE_NODE = "ReturnType";
 	public static String INVISIBLE_NODE = "Invisible";
+	public static String MODIFIERS_NODE = "Modifiers";
+	public static String MODIFIER_NODE = "Modifier";
 	
 	public BlockProcedureModel(UniMethodDec dec, Document document, Long ID_COUNTER) {
 		initialize(dec, document, ID_COUNTER);
@@ -32,11 +34,11 @@ public class BlockProcedureModel extends BlockElementModel {
 		this.element = procedureElement;
 	}
 
-	public void setBodyBlocks(List<BlockCommandModel> bodyBlocks) {
+	public void setBodyBlocks(List<BlockElementModel> bodyBlocks) {
 		this.bodyBlocks = bodyBlocks;
 	}
 
-	public List<BlockCommandModel> getBodyBlocks() {
+	public List<BlockElementModel> getBodyBlocks() {
 		return this.bodyBlocks;
 	}
 
@@ -48,7 +50,7 @@ public class BlockProcedureModel extends BlockElementModel {
 			node.appendChild(param.getElement());
 		}
 
-		for (BlockCommandModel model : bodyBlocks) {
+		for (BlockElementModel model : bodyBlocks) {
 			for (Element element : model.getBlockElements()) {
 				node.appendChild(element);
 			}
@@ -73,5 +75,18 @@ public class BlockProcedureModel extends BlockElementModel {
 		if(!visible.equals(AnnotationCommentGetter.NOT_FOUND) && AnnotationCommentGetter.containsInvisible(visible)){
 			this.getBlockElement().appendChild(document.createElement(INVISIBLE_NODE));
 		}
+	}
+	
+	public void addModifierNode(Document document, List<String> modifiers){
+		if(modifiers == null){
+			return;
+		}
+		Element modifiersNode = document.createElement(MODIFIERS_NODE);
+		for(String modifier : modifiers){
+			Element modifierNode = document.createElement(MODIFIER_NODE);
+			modifierNode.setTextContent(modifier);
+			modifiersNode.appendChild(modifierNode);
+		}
+		this.getBlockElement().appendChild(modifiersNode);
 	}
 }

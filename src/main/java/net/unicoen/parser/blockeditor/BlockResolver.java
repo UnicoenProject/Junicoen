@@ -14,6 +14,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import net.unicoen.parser.blockeditor.blockmodel.BlockConnector;
 import net.unicoen.parser.blockeditor.blockmodel.BlockElementModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockFieldVarDecModel;
 import net.unicoen.parser.blockeditor.blockmodel.BlockLocalVarDecModel;
@@ -21,20 +22,18 @@ import net.unicoen.parser.blockeditor.blockmodel.BlockProcParmModel;
 
 public class BlockResolver {
 
-	private String langdefRootPath = "not available";
+	public String langdefRootPath = "not available";
 	public static final String ORIGIN_LANG_DEF_ROOT_PATH = "ext/block2/";
 	public static final String ORIGIN_LANG_DEF_ROOT_PATH_FOR_UNI = "blockeditor/blocks/";
 	public static final String LIBRARYMETHODLIST_FILENAME="library_list.xml";
 	public static final String FORCECONVERION_FILENAME="force_convertion_list.xml";
 
 	private Map<String, Node> allAvailableBlocks = new HashMap<String, Node>();// key:genusname, value:node
-	private Map<String, String> availableLocalVariableDecralationTypes = new HashMap<>();// key:variabletype,value: genusName
-	private Map<String, String> availableFieldVariableDecralationTypes = new HashMap<>();
-	private Map<String, String> availableFunctionArgsTypes = new HashMap<>();
+
 	private VariableNameResolver vnResolver = new VariableNameResolver();
 	private MethodResolver methodResolver = new MethodResolver();
-	
-	private ForceConvertionMap forceConvertionMap;
+	private VariableBlockNameResolver variableResolver = new VariableBlockNameResolver();
+	protected ForceConvertionMap forceConvertionMap;
 
 	/**
 	 * ブロック変換の諸リゾルバクラス
@@ -43,11 +42,18 @@ public class BlockResolver {
 	 */
 	public BlockResolver(String langdefRootPath, boolean isTest) throws SAXException, IOException {
 		this.langdefRootPath = langdefRootPath;
-		parseGnuses();
+		initializeResolvers();
 		initMethodResolver(isTest);
 	}
 
 	public void initMethodResolver(boolean isTest) throws SAXException, IOException {
+		createLibratyMethodsMap(isTest);
+		
+		//強制変換リストを作成（System.out.println -> cui-printという1個のブロックに変換）というリスト
+		createForceConvertionMap(isTest);
+	}
+	
+	public void createLibratyMethodsMap(boolean isTest) throws SAXException, IOException{
 		//ライブラリクラスとその利用可能メソッドのマップを初期化
 		DOMParser parser = new DOMParser();
 		if(isTest){
@@ -56,10 +62,10 @@ public class BlockResolver {
 			parser.parse(ORIGIN_LANG_DEF_ROOT_PATH + LIBRARYMETHODLIST_FILENAME);
 		}
 		createLibraryMethodsMap(parser.getDocument().getFirstChild());
-		
-		//強制変換リストを作成（System.out.println -> cui-printという1個のブロックに変換）というリスト
-		
-		parser = new DOMParser();
+	}
+	
+	public void createForceConvertionMap(boolean isTest) throws SAXException, IOException{
+		DOMParser parser = new DOMParser();
 		if(isTest){
 			parser.parse(langdefRootPath + FORCECONVERION_FILENAME);			
 		}else{
@@ -119,15 +125,15 @@ public class BlockResolver {
 	}
 
 	public String getLocalVarDecBlockName(String type) {
-		return availableLocalVariableDecralationTypes.get(type);
+		return variableResolver.getLocalVariableBlockName(type);
 	}
 
 	public String getFieldVarDecBlockName(String type) {
-		return availableFieldVariableDecralationTypes.get(type);
+		return variableResolver.getFieldVariableBlockName(type);
 	}
 
 	public String getFunctionArgBlockName(String type) {
-		return availableFunctionArgsTypes.get(type);
+		return variableResolver.getFunctionVariableBlockName(type);
 	}
 
 	public Node getBlockNode(String genusName) {
@@ -137,7 +143,7 @@ public class BlockResolver {
 	/*
 	 * 全ブロックをハッシュマップに登録する キー：genus-name 値:ノード
 	 */
-	public void parseGnuses() {
+	public void initializeResolvers() {
 		DOMParser parser = new DOMParser();
 		// lang_def.xmlを読み込む
 		try {
@@ -199,14 +205,14 @@ public class BlockResolver {
 	}
 
 	public void addAvaiableVariableTypeToMap(Node node) {
+		
 		// 利用可能な変数型リストに登録
 		if (BlockProcParmModel.KIND.equals(DOMUtil.getAttribute(node, BlockElementModel.KIND_ATTR))) {
-			this.availableFunctionArgsTypes.put(DOMUtil.getChildNode(node, BlockElementModel.TYPE_NODE).getTextContent(), DOMUtil.getAttribute(node, "name"));
+			this.variableResolver.addAvaiableFunctionVariable(DOMUtil.getChildNode(node, BlockElementModel.TYPE_NODE).getTextContent(), DOMUtil.getAttribute(node, "name"));
 		} else if (BlockLocalVarDecModel.KIND.equals(DOMUtil.getAttribute(node, BlockElementModel.KIND_ATTR))) {
-			// 利用可能な関数の引数の型マップに登録
-			this.availableLocalVariableDecralationTypes.put(DOMUtil.getChildNode(node, BlockElementModel.TYPE_NODE).getTextContent(), DOMUtil.getAttribute(node, "name"));
+			this.variableResolver.addAvaiableLocalVariable(DOMUtil.getChildNode(node, BlockElementModel.TYPE_NODE).getTextContent(), DOMUtil.getAttribute(node, "name"));
 		} else if (BlockFieldVarDecModel.KIND.equals(DOMUtil.getAttribute(node, BlockElementModel.KIND_ATTR))) {
-			this.availableFieldVariableDecralationTypes.put(DOMUtil.getChildNode(node, BlockElementModel.TYPE_NODE).getTextContent(), DOMUtil.getAttribute(node, "name"));
+			this.variableResolver.addAvaiableFieldVariable(DOMUtil.getChildNode(node, BlockElementModel.TYPE_NODE).getTextContent(), DOMUtil.getAttribute(node, "name"));
 		}
 	}
 
@@ -251,7 +257,7 @@ public class BlockResolver {
 			Node socketConnectors = DOMUtil.getChildNode(genusNode, "BlockConnectors");
 			for (int i = 0; socketConnectors != null && i < socketConnectors.getChildNodes().getLength(); i++) {
 				Node connector = socketConnectors.getChildNodes().item(i);
-				if (connector.getNodeName().equals("BlockConnector") && DOMUtil.getAttribute(connector, "connector-kind").equals("socket")) {
+				if (connector.getNodeName().equals(BlockConnector.CONNECTOR_NODE) && DOMUtil.getAttribute(connector, BlockConnector.CONNECTOR_KIND_ATTR).equals("socket")) {
 					socketsNode.add(connector);
 				}
 			}
@@ -261,7 +267,8 @@ public class BlockResolver {
 	}
 
 	public String getType(String genusName) {
-		Node typeNode = DOMUtil.getChildNode(allAvailableBlocks.get(genusName), "Type");
+		System.out.println(genusName);
+		Node typeNode = DOMUtil.getChildNode(allAvailableBlocks.get(genusName), BlockElementModel.TYPE_NODE);
 		if (typeNode == null) {
 			return "void";
 		} else {
@@ -287,6 +294,10 @@ public class BlockResolver {
 
 	public ForceConvertionMap getForceConvertionMap(){
 		return this.forceConvertionMap;
+	}
+	
+	public Map<String, Node> getAllBlockNodes(){
+		return allAvailableBlocks;
 	}
 	
 }

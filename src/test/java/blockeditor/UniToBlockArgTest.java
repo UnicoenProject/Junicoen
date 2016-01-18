@@ -2,6 +2,8 @@ package blockeditor;
 
 import java.io.IOException;
 
+import org.junit.Test;
+
 import net.unicoen.node.UniArg;
 import net.unicoen.node.UniBinOp;
 import net.unicoen.node.UniClassDec;
@@ -10,14 +12,12 @@ import net.unicoen.node.UniIntLiteral;
 import net.unicoen.node.UniMethodDec;
 import net.unicoen.parser.blockeditor.BlockGenerator;
 
-import org.junit.Test;
-
 public class UniToBlockArgTest {
 
 	@Test
 	public void test() throws IOException {
 		UniClassDec dec = UniModelMaker.createEmptyTurtleClassModel("UniToBlockArgTest");
-
+		
 		UniMethodDec start = UniModelMaker.createEmptyMethodDec("start");
 		dec.members.add(start);
 

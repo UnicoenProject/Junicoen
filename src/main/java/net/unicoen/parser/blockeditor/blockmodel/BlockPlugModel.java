@@ -6,7 +6,7 @@ import org.w3c.dom.Node;
 
 import net.unicoen.parser.blockeditor.DOMUtil;
 
-public class BlockPlugModel extends BlockConnectorInfo{
+public class BlockPlugModel extends BlockConnector{
 
 	public static String NODE_NAME = "Plug";
 	/**
@@ -15,9 +15,9 @@ public class BlockPlugModel extends BlockConnectorInfo{
 	 * @param connectorID Plugの結合先のID
 	 */
 	public BlockPlugModel(Node plugNode, String connectorID) {
-			this.label = DOMUtil.getAttribute(plugNode, CONNECTOR_LABEL_TAG);
-			this.connectorType = DOMUtil.getAttribute(plugNode, CONNECTOR_TYPE_TAG);
-			this.positionType = DOMUtil.getAttribute(plugNode, CONNECTOR_POSITION_TYPE_TAG);
+			this.label = DOMUtil.getAttribute(plugNode, CONNECTOR_LABEL_ATTR);
+			this.connectorType = DOMUtil.getAttribute(plugNode, CONNECTOR_TYPE_ATTR);
+			this.positionType = DOMUtil.getAttribute(plugNode, CONNECTOR_POSITION_TYPE_ATTR);
 			this.connectorBlockID = connectorID;
 	}
 
@@ -29,15 +29,15 @@ public class BlockPlugModel extends BlockConnectorInfo{
 	}
 
 	public Element createElemnet(Document document){
-		Element plugNode = document.createElement("Plug");
-		Element blockConnectorNode = document.createElement("BlockConnector");
-
-		blockConnectorNode.setAttribute(CONNECTOR_BLOCK_ID_TAG, this.connectorBlockID);
-		blockConnectorNode.setAttribute(CONNECTOR_KIND_TAG , "plug");
-		blockConnectorNode.setAttribute(CONNECTOR_TYPE_TAG, this.connectorType);
-		blockConnectorNode.setAttribute(CONNECTOR_INIT_TYPE_TAG, this.connectorType);
-		blockConnectorNode.setAttribute(CONNECTOR_LABEL_TAG, label);
-		blockConnectorNode.setAttribute(CONNECTOR_POSITION_TYPE_TAG, positionType);
+		Element plugNode = document.createElement(NODE_NAME);
+		Element blockConnectorNode = document.createElement(BlockConnector.CONNECTOR_NODE);
+		
+		blockConnectorNode.setAttribute(CONNECTOR_BLOCK_ID_ATTR, this.connectorBlockID);
+		blockConnectorNode.setAttribute(CONNECTOR_KIND_ATTR , "plug");
+		blockConnectorNode.setAttribute(CONNECTOR_TYPE_ATTR, this.connectorType);
+		blockConnectorNode.setAttribute(CONNECTOR_INIT_TYPE_ATTR, this.connectorType);
+		blockConnectorNode.setAttribute(CONNECTOR_LABEL_ATTR, label);
+		blockConnectorNode.setAttribute(CONNECTOR_POSITION_TYPE_ATTR, positionType);
 
 		plugNode.appendChild(blockConnectorNode);
 

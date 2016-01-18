@@ -16,9 +16,9 @@ public class BlockProcParmModel extends BlockExprModel {
 	public Element createLocalVaribleElement(String type, String name, Document document, BlockResolver resolver, Long ID_COUNTER){
 		Element blockElement = createBlockElement(document, resolver.getFunctionArgBlockName(type), ID_COUNTER++, KIND);
 
-		addElement("Label", document, name, blockElement);
-		addElement("Name", document, name, blockElement);
-		addElement("Type", document, type, blockElement);
+		addElement(BlockElementModel.LABEL_NODE, document, name, blockElement);
+		addElement(BlockElementModel.NAME_NODE, document, name, blockElement);
+		addElement(BlockElementModel.TYPE_NODE, document, type, blockElement);
 
 		return blockElement;
 	}

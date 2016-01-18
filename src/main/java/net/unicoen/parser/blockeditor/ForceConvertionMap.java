@@ -1,8 +1,6 @@
 package net.unicoen.parser.blockeditor;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 
 import org.w3c.dom.Node;
@@ -13,8 +11,8 @@ import net.unicoen.node.UniMethodCall;
 
 public class ForceConvertionMap {
 
-	private Map<UniExpr, String> uniToBlockForceConvertionMap = new HashMap<>();// キー：.メソッド名[param]
-	private Map<String, UniExpr> blockToUniForceConvertionMap = new HashMap<>();// キー：ident.メソッド名[param]
+	private UniToBlockForceConvertionMap u2bFCMap = new UniToBlockForceConvertionMap();
+	private BlockToUniForceConvertionMap b2uFCMap = new BlockToUniForceConvertionMap();
 
 	private static String ITEM_NODE = "Item";
 	private static String UNIMODEL_NODE = "UniModel";
@@ -28,22 +26,25 @@ public class ForceConvertionMap {
 	/**
 	 * 複数の構文要素からなる式を1つのブロックに無理やり変換するもののリストを作成する
 	 * 
-	 * @param node force_convertion_listのConvertListノード
+	 * @param node
+	 *            force_convertion_listのConvertListノード
 	 */
 	public void initForceConvertionList(Node node) {
 		Consumer<Node> addItemToForceConvertionMap = new Consumer<Node>() {
 			@Override
 			public void accept(Node t) {
 				Node uniModelNode = DOMUtil.getChildNode(t, UNIMODEL_NODE);
-				UniMethodCall uniModel = (UniMethodCall) getUniModel(uniModelNode);
+				UniExpr uniModel = (UniExpr) getUniModel(uniModelNode);
 				String blockGenusName = DOMUtil.getChildNode(t, GENUSNAME_NODE).getTextContent();
-				uniToBlockForceConvertionMap.put(uniModel, blockGenusName);
-				blockToUniForceConvertionMap.put(blockGenusName, uniModel);
+				u2bFCMap.put(uniModel, blockGenusName);
+				b2uFCMap.put(blockGenusName, uniModel);
 			}
 
 			/**
 			 * xmlノードに記述した構造化データからUniModelを生成して取得する
-			 * @param node Itemノード
+			 * 
+			 * @param node
+			 *            Itemノード
 			 * @return Uniモデル
 			 */
 			public Object getUniModel(Node node) {
@@ -64,7 +65,8 @@ public class ForceConvertionMap {
 			 * 属性ノードをインプットし，InitalizeMapの値を返す（nameならstring文字列，
 			 * receiverならunimodel）
 			 * 
-			 * @param arrtNode force_convertion_listのUnimodel以下のノード
+			 * @param arrtNode
+			 *            force_convertion_listのUnimodel以下のノード
 			 * @return mapの値
 			 */
 			public Object getAttrObject(Node attrNode) {
@@ -77,30 +79,29 @@ public class ForceConvertionMap {
 		};
 		DOMUtil.doAnythingToNodeList(node, ITEM_NODE, addItemToForceConvertionMap);
 	}
-	
+
 	/**
-	 * 強制変換マップに登録されているモデルとcallerが同一モデルかどうかを調べる 
+	 * 強制変換マップに登録されているモデルとcallerが同一モデルかどうかを調べる
 	 * 同一モデルかどうかは，モデルのreceiverとメソッド名が一致するかどうかで判断する．
-	 * @param forceConvertExpression 強制変換マップに登録されているUniExprモデル
-	 * @param caller 判定対象のUniMethodCallモデル
+	 * 
+	 * @param forceConvertExpression
+	 *            強制変換マップに登録されているUniExprモデル
+	 * @param caller
+	 *            判定対象のUniMethodCallモデル
 	 * @return
 	 */
-	public boolean isSameModel(UniExpr forceConvertExpression, UniMethodCall caller) {
+	public boolean isSameModel(UniMethodCall forceConvertExpression, UniMethodCall caller) {
 		UniExpr receiver = caller.receiver;
-		if (forceConvertExpression instanceof UniMethodCall) {
-			if (receiver.equals(((UniMethodCall) forceConvertExpression).receiver) && caller.methodName.equals(((UniMethodCall) forceConvertExpression).methodName)) {
-				return true;
-			}
+		if (receiver.equals(forceConvertExpression.receiver) && caller.methodName.equals(forceConvertExpression.methodName)) {
+			return true;
 		}
 		return false;
 	}
-	
-	public boolean isSameModel(UniExpr forceConvertExpression, UniFieldAccess accesser) {
+
+	public boolean isSameModel(UniFieldAccess forceConvertExpression, UniFieldAccess accesser) {
 		UniExpr receiver = accesser.receiver;
-		if (forceConvertExpression instanceof UniFieldAccess) {
-			if (receiver.equals(((UniMethodCall) forceConvertExpression).receiver) && accesser.fieldName.equals(((UniFieldAccess) forceConvertExpression).fieldName)) {
-				return true;
-			}
+		if (receiver.equals(forceConvertExpression.receiver) && accesser.fieldName.equals(forceConvertExpression.fieldName)) {
+			return true;
 		}
 		return false;
 	}
@@ -108,30 +109,53 @@ public class ForceConvertionMap {
 	/**
 	 * 強制変換対象メソッドのブロック名を取得する
 	 * 
-	 * @param mathodCall 対象のUniMethodモデル
+	 * @param mathodCall
+	 *            対象のUniMethodモデル
 	 * @return methodCallに対応するブロック名
 	 */
 	public String getBlockGenusName(UniMethodCall methodCall) {
-		for (UniExpr caller : uniToBlockForceConvertionMap.keySet()) {
+		for (UniMethodCall caller : u2bFCMap.getMethodMapKey()) {
 			if (isSameModel(caller, methodCall)) {
-				return uniToBlockForceConvertionMap.get(caller);
+				return u2bFCMap.get(caller);
 			}
 		}
-		
-		return null;
-	}
-	
-	public String getBlockGenusName(UniFieldAccess fieldAccess){
-		for(UniExpr expr : uniToBlockForceConvertionMap.keySet()){
-			if(isSameModel(expr, fieldAccess)){
-				return uniToBlockForceConvertionMap.get(expr);
-			}
-		}
-		
+
 		return null;
 	}
 
-	public UniExpr getUniMethodCallModel(String genusName) {
-		return blockToUniForceConvertionMap.get(genusName);
+	public String getBlockGenusName(UniFieldAccess fieldAccess) {
+		for (UniFieldAccess expr : u2bFCMap.getFieldAccessMapKey()) {
+			if (isSameModel(expr, fieldAccess)) {
+				return u2bFCMap.get(expr);
+			}
+		}
+
+		return null;
 	}
+
+	public UniMethodCall getUniMethodCallModel(String genusName) {
+		UniMethodCall origin = b2uFCMap.getMethodCallModel(genusName);
+		if(origin == null){
+			return null;
+		}
+		UniMethodCall model = new UniMethodCall();
+		model.args = origin.args;
+		model.methodName = origin.methodName;
+		model.receiver = origin.receiver;
+		return model;
+	}
+	
+	public UniFieldAccess getUniFieldAccessModel(String genusName){
+		UniFieldAccess origin = b2uFCMap.getFieldAccessMdel(genusName);
+		if(origin == null){
+			return null;
+		}
+		UniFieldAccess model = new UniFieldAccess();
+		model.fieldName = origin.fieldName;
+		model.receiver = origin.receiver;
+		return model;
+	}
+	
+
+	
 }

@@ -10,32 +10,24 @@ import net.unicoen.parser.blockeditor.BlockResolver;
 import net.unicoen.parser.blockeditor.DOMUtil;
 
 public class BlockMethodCallModel extends BlockCommandModel{
-
-	private String genusName;//必須
-	private List<BlockElementModel> sockets;//任意
-	private Long id;//必須
-	private String beforeBlockID;//必須
-	private String kind;//必須(parentNodeから計算可能)
-	private String name;//必須
-	private String type;//必須
 	
-	public BlockMethodCallModel(String genusName, List<BlockElementModel> sockets ,Document document, BlockResolver resolver, Long ID_COUNTER, String parentId){
-		this.element = createPrototypeElement(genusName, sockets, document, resolver, ID_COUNTER, parentId);
+	public BlockMethodCallModel(String genusName,Document document, BlockResolver resolver, Long ID_COUNTER, String parentId){
+		this.element = createPrototypeElement(genusName, document, resolver, ID_COUNTER, parentId);
 	}
 
-	public Element createPrototypeElement(String genusName, List<BlockElementModel> sockets,Document document, BlockResolver resolver, Long ID_COUNTER, String parentId){
+	public Element createPrototypeElement(String genusName,Document document, BlockResolver resolver, Long ID_COUNTER, String parentId){
 		Node originNode = resolver.getBlockNode(genusName);
 		String kind = DOMUtil.getAttribute(originNode, BlockElementModel.KIND_ATTR);
 		Element element = createBlockElement(document, genusName, ID_COUNTER, kind);
 		addElement(BlockElementModel.NAME_NODE, document, DOMUtil.getChildText(originNode, BlockElementModel.NAME_NODE), element);
 		this.element = element;
 
-		if (kind.equals("command") && parentId != null) {
+		if (kind.equals(BlockElementModel.BLOCKKINDS.COMMAND) && parentId != null) {
 			addBeforeBlockNode(document, parentId);
 		}
 
 		if(!"void".equals(resolver.getType(genusName))){
-			addElement("Type", document, resolver.getType(genusName), element);
+			addElement(BlockElementModel.TYPE_NODE, document, resolver.getType(genusName), element);
 		}
 
 		return element;

@@ -7,7 +7,7 @@ public class _07EmptyBlockTest extends Turtle {
 	
 	//起動処理
 	public static void main(String[] args) {
-		Turtle.startTurtle(new _07EmptyBlockTest());
+		Turtle.startTurtle(new _07EmptyBlockTest(), args);
 	}
 	
 	

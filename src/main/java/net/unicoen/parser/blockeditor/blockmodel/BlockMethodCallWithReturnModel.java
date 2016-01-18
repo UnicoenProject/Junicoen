@@ -1,49 +1,30 @@
 package net.unicoen.parser.blockeditor.blockmodel;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import net.unicoen.node.UniMethodCall;
 import net.unicoen.parser.blockeditor.BlockResolver;
 import net.unicoen.parser.blockeditor.DOMUtil;
 
 public class BlockMethodCallWithReturnModel extends BlockExprModel {
 
-	private List<BlockExprModel> sockets = new ArrayList<>();
-
-	public BlockMethodCallWithReturnModel(UniMethodCall method, Document document, BlockResolver resolver, Long ID_COUNTER, Node parent){
-		this.element = createPrototypeElement(method, document, resolver, ID_COUNTER, parent);
+	public BlockMethodCallWithReturnModel(String genusName, Document document, BlockResolver resolver, Long ID_COUNTER, String parentId) {
+		this.element = createPrototypeElement(genusName, document, resolver, ID_COUNTER, parentId);
 	}
 
-	public Element createPrototypeElement(UniMethodCall method, Document document, BlockResolver resolver, Long ID_COUNTER, Node parent){
-		String genusName = "";
-		String kind = DOMUtil.getAttribute(resolver.getBlockNode(genusName), BlockElementModel.KIND_ATTR);
+	public Element createPrototypeElement(String genusName, Document document, BlockResolver resolver, Long ID_COUNTER, String parent) {
+		String kind = BlockElementModel.BLOCKKINDS.FUNCTION.toString();
+		Node originNode = resolver.getBlockNode(genusName);
 		Element element = createBlockElement(document, genusName, ID_COUNTER, kind);
-		addElement(BlockElementModel.NAME_NODE, document, method.methodName, element);
+		String type = resolver.getType(genusName);
+		addElement(BlockElementModel.NAME_NODE, document, DOMUtil.getChildText(originNode, BlockElementModel.NAME_NODE), element);
+		addElement(BlockElementModel.TYPE_NODE, document, resolver.getType(genusName), element);
 
-		if(!"void".equals(resolver.getType(genusName))){
-			addElement(BlockElementModel.TYPE_NODE, document, resolver.getType(genusName), element);
-		}
-
+		addPlugElement(document, element, parent, convertTypeToBlockConnectorType(type), "single");
+		
 		return element;
 	}
 
-	@Override
-	public List<Element> getBlockElements() {
-		List<Element> elements = new ArrayList<Element>();
-		elements.add(getElement());
-		for (BlockExprModel model : sockets) {
-			elements.addAll(model.getBlockElements());
-		}
-		return elements;
-	}
-
-	public void addSocket(BlockExprModel socket) {
-		sockets.add(socket);
-	}
 
 }

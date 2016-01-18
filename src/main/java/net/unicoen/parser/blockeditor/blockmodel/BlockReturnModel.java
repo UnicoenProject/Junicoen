@@ -9,7 +9,7 @@ import com.google.common.collect.Lists;
 
 public class BlockReturnModel extends BlockCommandModel {
 
-	public static String KIND = "return";
+	public static String KIND = "command";
 	public static String GENUS_NAME = "return";
 	
 	public BlockReturnModel(Document document, Long id, BlockExprModel socket) {

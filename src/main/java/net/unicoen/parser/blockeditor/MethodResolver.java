@@ -28,12 +28,17 @@ public class MethodResolver {
 	 * @param methodName
 	 */
 	public String getMethodGenusName(String className, String methodName) {
-		ClassMethodMap map = avaiableClassMethods.get(className);
+		ClassMethodMap map = avaiableClassMethods.get(getClassName(className));
 		if(map == null){
 			throw new RuntimeException("Class not found");
 		}
 		
 		return map.getGenusName(methodName);
+	}
+	
+	public String getClassName(String type){
+		String[] typeNode = type.split("<");
+		return typeNode[0];
 	}
 
 

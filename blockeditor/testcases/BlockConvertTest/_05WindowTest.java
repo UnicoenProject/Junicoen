@@ -7,7 +7,7 @@ public class _05WindowTest extends Turtle {
 	
 	//起動処理
 	public static void main(String[] args) {
-		Turtle.startTurtle(new _05WindowTest());
+		Turtle.startTurtle(new _05WindowTest(), args);
 	}
 	
 	
