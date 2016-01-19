@@ -26,6 +26,7 @@ public class UniBinOp extends UniExpr {
 		result = result * 31 + (operator == null ? 0 : operator.hashCode());
 		result = result * 31 + (left == null ? 0 : left.hashCode());
 		result = result * 31 + (right == null ? 0 : right.hashCode());
+		result = result * 31 + (comment == null ? 0 : comment.hashCode());
 		return result;
 	}
 
@@ -35,7 +36,8 @@ public class UniBinOp extends UniExpr {
 		UniBinOp that = (UniBinOp)obj;
 		return (this.operator == null ? that.operator == null : this.operator.equals(that.operator))
 			&& (this.left == null ? that.left == null : this.left.equals(that.left))
-			&& (this.right == null ? that.right == null : this.right.equals(that.right));
+			&& (this.right == null ? that.right == null : this.right.equals(that.right))
+			&& (this.comment == null ? that.comment == null : this.comment.equals(that.comment));
 	}
 
 	@Override
@@ -52,6 +54,9 @@ public class UniBinOp extends UniExpr {
 		}
 		if (that.right != null) {
 			this.right = that.right;
+		}
+		if (that.comment != null) {
+			this.comment = that.comment;
 		}
 	}
 }

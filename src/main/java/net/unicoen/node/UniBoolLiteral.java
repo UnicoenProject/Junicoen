@@ -17,14 +17,18 @@ public class UniBoolLiteral extends UniExpr {
 
 	@Override
 	public int hashCode() {
-		return (value ? 1 : 0);
+		int result = 17;
+		result = result * 31 + (value ? 1 : 0);
+		result = result * 31 + (comment == null ? 0 : comment.hashCode());
+		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null || !(obj instanceof UniBoolLiteral)) return false;
 		UniBoolLiteral that = (UniBoolLiteral)obj;
-		return this.value == that.value;
+		return this.value == that.value
+			&& (this.comment == null ? that.comment == null : this.comment.equals(that.comment));
 	}
 
 	@Override
@@ -35,6 +39,9 @@ public class UniBoolLiteral extends UniExpr {
 	public void merge(UniBoolLiteral that) {
 		if (that.value) {
 			this.value = true;
+		}
+		if (that.comment != null) {
+			this.comment = that.comment;
 		}
 	}
 }
