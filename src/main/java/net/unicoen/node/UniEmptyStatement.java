@@ -27,5 +27,4 @@ public class UniEmptyStatement extends UniExpr {
 
 	public void merge(UniEmptyStatement that) {
 	}
-
 }

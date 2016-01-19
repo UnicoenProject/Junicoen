@@ -19,25 +19,31 @@ public class UniCast extends UniExpr {
 
 	@Override
 	public int hashCode() {
-		return (type == null ? 0 : type.hashCode());
+		int result = 17;
+		result = result * 31 + (type == null ? 0 : type.hashCode());
+		result = result * 31 + (value == null ? 0 : value.hashCode());
+		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null || !(obj instanceof UniCast)) return false;
 		UniCast that = (UniCast)obj;
-		return (this.type == null ? that.type == null : this.type.equals(that.type));
+		return (this.type == null ? that.type == null : this.type.equals(that.type))
+			&& (this.value == null ? that.value == null : this.value.equals(that.value));
+	}
+
+	@Override
+	public boolean isStatement() {
+		return false;
 	}
 
 	public void merge(UniCast that) {
 		if (that.type != null) {
 			this.type = that.type;
 		}
-	}
-
-	@Override
-	public boolean isStatement() {
-		// TODO Auto-generated method stub
-		return false;
+		if (that.value != null) {
+			this.value = that.value;
+		}
 	}
 }
