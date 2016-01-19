@@ -755,7 +755,7 @@
 </BlockGenus>
 
 <BlockGenus name="Turtle-leftMouseDown[]" kind="function" initlabel="マウスの左ボタンが押されたか調べる" color="255 0 0">
-	<Name>leftMouseDonw</Name>
+	<Name>leftMouseDown</Name>
 	<Type>boolean</Type>
 	<BlockConnectors>
 		<BlockConnector connector-kind="plug" connector-type="boolean" position-type="mirror"></BlockConnector>

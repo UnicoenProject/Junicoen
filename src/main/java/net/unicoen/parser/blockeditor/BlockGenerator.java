@@ -307,7 +307,7 @@ public class BlockGenerator extends UniModelVisitor {
 
 			BlockElementModel receiver = visitExpr(node.receiver, String.valueOf(model.getBlockID()));
 			BlockElementModel fieldValue = new BlockSpecialExpressionModel(BlockSpecialExpressionModel.SPECIAL_IDENT_GENUS_NAME, node.fieldName, document, ID_COUNTER++, BlockElementModel.BLOCKKINDS.DATA.toString(), String.valueOf(model.getBlockID()));
-
+			
 			// socketノードの作成
 			List<Node> socketNodes = resolver.getSocketNodes(model.getGenusName());
 			BlockSocketsModel socketsInfo = calcSocketsInfo(socketNodes);
@@ -649,9 +649,10 @@ public class BlockGenerator extends UniModelVisitor {
 		if (node.init != null) {
 			forBlock.body.add(node.init);
 		}
+		
 		UniBlock block = (UniBlock) node.statement;
 
-		if (block != null) {
+		if (block == null || block.body==null) {
 			block = new UniBlock(new ArrayList<>(), null);
 		}
 

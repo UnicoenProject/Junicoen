@@ -30,6 +30,7 @@ import net.unicoen.node.UniDoWhile;
 import net.unicoen.node.UniDoubleLiteral;
 import net.unicoen.node.UniEmptyStatement;
 import net.unicoen.node.UniExpr;
+import net.unicoen.node.UniFieldAccess;
 import net.unicoen.node.UniFieldDec;
 import net.unicoen.node.UniIdent;
 import net.unicoen.node.UniIf;
@@ -430,7 +431,7 @@ public class BlockMapper {
 			return resolver.getForceConvertionMap().getUniFieldAccessModel(blockGenusName);
 		} else if (blockGenusName.endsWith(BlockSpecialExpressionModel.SPECIAL_IDENT_GENUS_NAME)) {
 			return new UniIdent(DOMUtil.getChildText(node, BlockElementModel.LABEL_NODE));
-		} else {
+		}else {
 			throw new RuntimeException("not supported data type:" + blockGenusName);
 		}
 	}
@@ -493,6 +494,11 @@ public class BlockMapper {
 			method = (UniMethodCall) functionArgs.get(1);
 			method.receiver = functionArgs.get(0);
 			return method;
+		} else if(blockGenusName.equals(BlockFieldAccessModel.GENUS_NAME)){ 
+			UniFieldAccess fieldAccess = new UniFieldAccess();
+			fieldAccess.receiver = functionArgs.get(0);
+			fieldAccess.fieldName = ((UniIdent)(functionArgs.get(1))).name;
+			return fieldAccess;
 		} else {
 			// MethodCallとする
 			UniMethodCall call = new UniMethodCall(null, DOMUtil.getChildText(resolver.getBlockNode(blockGenusName), BlockElementModel.NAME_NODE), functionArgs);
@@ -667,9 +673,8 @@ public class BlockMapper {
 					throw new RuntimeException("illegal setter");
 				}
 			} else if (blockGenusName.equals("callActionMethod2")) {
-				UniIdent ident = (UniIdent) args.get(0);
 				UniMethodCall caller = (UniMethodCall) args.get(1);
-				caller.receiver = ident;
+				caller.receiver = args.get(0);
 				return caller;
 			} else if (blockGenusName.equals("callerprocedure")) {
 				String methodName = DOMUtil.getChildTextFromBlockNode(node, BlockElementModel.NAME_NODE);

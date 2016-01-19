@@ -21,11 +21,13 @@ public class PageModel {
 	public static String IN_FULLVIEW_ATTR = "page-infullview";
 	public static String PAGE_NAME_ATTR = "page-name";
 	public static String PAGE_WITDH_ATTR = "page-width";
+	public static String PAGE_HEIGHT_ATTR = "page-height";
 
 	private static String PAGE_COLOR ="40 40 40";
 	private static String PAGE_DRAWER ="";
 	private static String IN_FULLVIEW_VALUE ="yew";
 	private static String PAGE_WIDTH ="1366";
+	private static String PAGE_HEIGHT ="3000";
 	
 	public static String PAGE_BLOCKS = "PageBlocks";
 	public static String NODE_NAME = "Page";
@@ -56,6 +58,7 @@ public class PageModel {
 		pageElement.setAttribute(IN_FULLVIEW_ATTR, IN_FULLVIEW_VALUE);
 		pageElement.setAttribute(PAGE_NAME_ATTR, pageName);
 		pageElement.setAttribute(PAGE_WITDH_ATTR, PAGE_WIDTH);
+		pageElement.setAttribute(PAGE_HEIGHT_ATTR, PAGE_HEIGHT);
 		
 		pageElement.appendChild(createPageInfoElement(document));
 		

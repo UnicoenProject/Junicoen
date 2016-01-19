@@ -100,6 +100,19 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 
 		model
 	}
+	override visitImportDeclaration(JavaParser.ImportDeclarationContext ctx) {
+//	importDeclaration
+//	:	singleTypeImportDeclaration
+//	|	typeImportOnDemandDeclaration
+//	|	singleStaticImportDeclaration
+//	|	staticImportOnDemandDeclaration
+//	;
+		return visitChildren(ctx);
+	}
+	
+	override visitSingleStaticImportDeclaration(JavaParser.SingleStaticImportDeclarationContext ctx) {
+		return visitChildren(ctx);
+	}
 
 	override visitSingleTypeImportDeclaration(JavaParser.SingleTypeImportDeclarationContext ctx) {
 //		singleTypeImportDeclaration
@@ -107,7 +120,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 //	;
 		val model = new UniImport
 		model.isStatic = false
-		model.targetName = ctx.children.get(2).text
+		model.targetName = ctx.children.get(1).text
 		model
 	}
 
@@ -121,12 +134,6 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		model
 	}
 
-//	importDeclaration
-//	:	singleTypeImportDeclaration
-//	|	typeImportOnDemandDeclaration
-//	|	singleStaticImportDeclaration
-//	|	staticImportOnDemandDeclaration
-//	;
 	protected override aggregateResult(UniNode aggregate, UniNode nextResult) {
 		if (aggregate == null) {
 			nextResult
