@@ -16,6 +16,7 @@ public abstract class Traverser {
 	public abstract void traverseUnaryOp(UniUnaryOp node);
 	public abstract void traverseBinOp(UniBinOp node);
 	public abstract void traverseTernaryOp(UniTernaryOp node);
+	public abstract void traverseCast(UniCast node);
 	public abstract void traverseReturn(UniReturn node);
 	public abstract void traverseBreak(UniBreak node);
 	public abstract void traverseContinue(UniContinue node);
@@ -34,7 +35,6 @@ public abstract class Traverser {
 	public abstract void traverseProgram(UniProgram node);
 	public abstract void traverseImport(UniImport node);
 	public abstract void traverseNamespace(UniNamespace node);
-	public abstract void traverseCast(UniCast node);
 
 	public final void traverseExpr(UniExpr node) {
 		if (node instanceof UniBoolLiteral) {
@@ -91,6 +91,10 @@ public abstract class Traverser {
 		}
 		if (node instanceof UniTernaryOp) {
 			traverseTernaryOp((UniTernaryOp)node);
+			return;
+		}
+		if (node instanceof UniCast) {
+			traverseCast((UniCast)node);
 			return;
 		}
 		if (node instanceof UniReturn) {
@@ -179,10 +183,6 @@ public abstract class Traverser {
 		}
 		if (node instanceof UniNamespace) {
 			traverseNamespace((UniNamespace)node);
-			return;
-		}
-		if (node instanceof UniCast) {
-			traverseCast((UniCast)node);
 			return;
 		}
 		throw new RuntimeException("Unknown node: " + node);

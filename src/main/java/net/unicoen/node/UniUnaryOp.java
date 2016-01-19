@@ -23,6 +23,7 @@ public class UniUnaryOp extends UniExpr {
 		int result = 17;
 		result = result * 31 + (operator == null ? 0 : operator.hashCode());
 		result = result * 31 + (expr == null ? 0 : expr.hashCode());
+		result = result * 31 + (comment == null ? 0 : comment.hashCode());
 		return result;
 	}
 
@@ -31,7 +32,8 @@ public class UniUnaryOp extends UniExpr {
 		if (obj == null || !(obj instanceof UniUnaryOp)) return false;
 		UniUnaryOp that = (UniUnaryOp)obj;
 		return (this.operator == null ? that.operator == null : this.operator.equals(that.operator))
-			&& (this.expr == null ? that.expr == null : this.expr.equals(that.expr));
+			&& (this.expr == null ? that.expr == null : this.expr.equals(that.expr))
+			&& (this.comment == null ? that.comment == null : this.comment.equals(that.comment));
 	}
 
 	@Override
@@ -45,6 +47,9 @@ public class UniUnaryOp extends UniExpr {
 		}
 		if (that.expr != null) {
 			this.expr = that.expr;
+		}
+		if (that.comment != null) {
+			this.comment = that.comment;
 		}
 	}
 }

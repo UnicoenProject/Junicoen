@@ -12,12 +12,14 @@ public class UniContinue extends UniExpr {
 
 	@Override
 	public int hashCode() {
-		return 0;
+		return (comment == null ? 0 : comment.hashCode());
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		return obj != null && obj instanceof UniContinue;
+		if (obj == null || !(obj instanceof UniContinue)) return false;
+		UniContinue that = (UniContinue)obj;
+		return (this.comment == null ? that.comment == null : this.comment.equals(that.comment));
 	}
 
 	@Override
@@ -26,5 +28,8 @@ public class UniContinue extends UniExpr {
 	}
 
 	public void merge(UniContinue that) {
+		if (that.comment != null) {
+			this.comment = that.comment;
+		}
 	}
 }

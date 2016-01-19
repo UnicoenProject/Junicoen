@@ -22,6 +22,7 @@ public class UniWhile extends UniExpr {
 		int result = 17;
 		result = result * 31 + (cond == null ? 0 : cond.hashCode());
 		result = result * 31 + (statement == null ? 0 : statement.hashCode());
+		result = result * 31 + (comment == null ? 0 : comment.hashCode());
 		return result;
 	}
 
@@ -30,7 +31,8 @@ public class UniWhile extends UniExpr {
 		if (obj == null || !(obj instanceof UniWhile)) return false;
 		UniWhile that = (UniWhile)obj;
 		return (this.cond == null ? that.cond == null : this.cond.equals(that.cond))
-			&& (this.statement == null ? that.statement == null : this.statement.equals(that.statement));
+			&& (this.statement == null ? that.statement == null : this.statement.equals(that.statement))
+			&& (this.comment == null ? that.comment == null : this.comment.equals(that.comment));
 	}
 
 	@Override
@@ -44,6 +46,9 @@ public class UniWhile extends UniExpr {
 		}
 		if (that.statement != null) {
 			this.statement = that.statement;
+		}
+		if (that.comment != null) {
+			this.comment = that.comment;
 		}
 	}
 }

@@ -26,6 +26,7 @@ public class UniTernaryOp extends UniExpr {
 		result = result * 31 + (cond == null ? 0 : cond.hashCode());
 		result = result * 31 + (trueExpr == null ? 0 : trueExpr.hashCode());
 		result = result * 31 + (falseExpr == null ? 0 : falseExpr.hashCode());
+		result = result * 31 + (comment == null ? 0 : comment.hashCode());
 		return result;
 	}
 
@@ -35,7 +36,8 @@ public class UniTernaryOp extends UniExpr {
 		UniTernaryOp that = (UniTernaryOp)obj;
 		return (this.cond == null ? that.cond == null : this.cond.equals(that.cond))
 			&& (this.trueExpr == null ? that.trueExpr == null : this.trueExpr.equals(that.trueExpr))
-			&& (this.falseExpr == null ? that.falseExpr == null : this.falseExpr.equals(that.falseExpr));
+			&& (this.falseExpr == null ? that.falseExpr == null : this.falseExpr.equals(that.falseExpr))
+			&& (this.comment == null ? that.comment == null : this.comment.equals(that.comment));
 	}
 
 	@Override
@@ -52,6 +54,9 @@ public class UniTernaryOp extends UniExpr {
 		}
 		if (that.falseExpr != null) {
 			this.falseExpr = that.falseExpr;
+		}
+		if (that.comment != null) {
+			this.comment = that.comment;
 		}
 	}
 }
