@@ -85,9 +85,10 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitCompilationUnit(JavaParser.CompilationUnitContext ctx) {
-//compilationUnit
-//	:	packageDeclaration? importDeclaration* typeDeclaration* EOF
-//	;
+
+		//compilationUnit
+		//	:	packageDeclaration? importDeclaration* typeDeclaration* EOF
+		//	;
 		var model = new UniProgram(new ArrayList<UniClassDec>(), new ArrayList<UniImport>(), new UniNamespace(""))
 		val nodes = createNodeMap(ctx)
 
@@ -102,9 +103,10 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitSingleTypeImportDeclaration(JavaParser.SingleTypeImportDeclarationContext ctx) {
-//		singleTypeImportDeclaration
-//	:	'import' typeName ';'
-//	;
+
+		//		singleTypeImportDeclaration
+		//	:	'import' typeName ';'
+		//	;
 		val model = new UniImport
 		model.isStatic = false
 		model.targetName = ctx.children.get(2).text
@@ -112,21 +114,22 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitTypeImportOnDemandDeclaration(JavaParser.TypeImportOnDemandDeclarationContext ctx) {
-//	typeImportOnDemandDeclaration
-//	:	'import' packageOrTypeName '.' '*' ';'
-//	;
+
+		//	typeImportOnDemandDeclaration
+		//	:	'import' packageOrTypeName '.' '*' ';'
+		//	;
 		val model = new UniImport
 		model.isStatic = false
 		model.targetName = ctx.children.get(1).text + ".*"
 		model
 	}
 
-//	importDeclaration
-//	:	singleTypeImportDeclaration
-//	|	typeImportOnDemandDeclaration
-//	|	singleStaticImportDeclaration
-//	|	staticImportOnDemandDeclaration
-//	;
+	//	importDeclaration
+	//	:	singleTypeImportDeclaration
+	//	|	typeImportOnDemandDeclaration
+	//	|	singleStaticImportDeclaration
+	//	|	staticImportOnDemandDeclaration
+	//	;
 	protected override aggregateResult(UniNode aggregate, UniNode nextResult) {
 		if (aggregate == null) {
 			nextResult
@@ -136,6 +139,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitNormalClassDeclaration(JavaParser.NormalClassDeclarationContext ctx) {
+
 		// normalClassDeclaration
 		// :	classModifier* 'class' className typeParameters? superclass? superinterfaces? classBody		
 		val nodes = createNodeMap(ctx)
@@ -149,6 +153,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitClassModifier(JavaParser.ClassModifierContext ctx) {
+
 		// classModifier
 		// :	annotation
 		// |	'public'
@@ -166,6 +171,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitClassName(JavaParser.ClassNameContext ctx) {
+
 		// className
 		// :	Identifier
 		new StringNode(ctx.children.head.text)
@@ -176,6 +182,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitClassBody(JavaParser.ClassBodyContext ctx) {
+
 		// classBody
 		// :	'{' classBodyDeclaration* '}' ;
 		val nodes = createNodeMap(ctx)
@@ -183,6 +190,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitClassBodyDeclaration(JavaParser.ClassBodyDeclarationContext ctx) {
+
 		// classBodyDeclaration
 		// :	classMemberDeclaration
 		// |	instanceInitializer
@@ -196,6 +204,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitClassMemberDeclaration(JavaParser.ClassMemberDeclarationContext ctx) {
+
 		// classMemberDeclaration
 		// :	fieldDeclaration
 		// |	methodDeclaration
@@ -215,14 +224,14 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitFieldDeclaration(JavaParser.FieldDeclarationContext ctx) {
-//fieldDeclaration
-//	:	fieldModifier* unannType variableDeclaratorList ';'
-//	;
+
+		//fieldDeclaration
+		//	:	fieldModifier* unannType variableDeclaratorList ';'
+		//	;
 		val nodes = createNodeMap(ctx)
 		val modifiers = nodes.getOrEmpty(JavaParser.RULE_variableModifier).map[it.toString]
 		val type = nodes.getOneNode(JavaParser.RULE_unannType).toString
-		val varDecList = (nodes.getOneNode(JavaParser.
-			RULE_variableDeclaratorList) as DummyNode<List<DummyNode<Pair<DummyNode<Pair<String, String>>, UniExpr>>>>).
+		val varDecList = (nodes.getOneNode(JavaParser.RULE_variableDeclaratorList) as DummyNode<List<DummyNode<Pair<DummyNode<Pair<String, String>>, UniExpr>>>>).
 			item.map [
 				val nameAndTypeSuffix = it.item.key.item
 				new UniFieldDec(modifiers, type + nameAndTypeSuffix.value, nameAndTypeSuffix.key, it.item.value)
@@ -231,6 +240,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitMethodModifier(JavaParser.MethodModifierContext ctx) {
+
 		// methodModifier
 		// :	annotation
 		// |	'public'
@@ -246,6 +256,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitMethodDeclaration(JavaParser.MethodDeclarationContext ctx) {
+
 		// methodDeclaration
 		// :	methodModifier* methodHeader methodBody ;
 		val nodes = createNodeMap(ctx)
@@ -268,6 +279,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitMethodHeader(JavaParser.MethodHeaderContext ctx) {
+
 		// methodHeader
 		// :	result methodDeclarator throws_?
 		// |	typeParameters annotation* result methodDeclarator throws_?
@@ -275,6 +287,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitResult(JavaParser.ResultContext ctx) {
+
 		// result
 		// :	unannType
 		// |	'void' ;
@@ -282,12 +295,14 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitMethodDeclarator(JavaParser.MethodDeclaratorContext ctx) {
+
 		// methodDeclarator
 		// :	Identifier '(' formalParameterList? ')' dims?
 		new MapNode(createMap(ctx))
 	}
 
 	override visitMethodBody(JavaParser.MethodBodyContext ctx) {
+
 		// methodBody
 		// :	block
 		// |	';'
@@ -298,6 +313,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitMethodInvocation(JavaParser.MethodInvocationContext ctx) {
+
 		// methodInvocation
 		// :	methodName '(' argumentList? ')'
 		// |	typeName '.' typeArguments? Identifier '(' argumentList? ')'
@@ -307,7 +323,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		// |	typeName '.' 'super' '.' typeArguments? Identifier '(' argumentList? ')'		
 		val nodes = createNodeMap(ctx)
 		val texts = createTextMap(ctx)
-		
+
 		val argumentList = if (nodes.containsKey(JavaParser.RULE_argumentList)) {
 				nodes.getOneNode(JavaParser.RULE_argumentList).flattenForBuilding
 			} else {
@@ -315,31 +331,33 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 			}
 		if (nodes.containsKey(JavaParser.RULE_methodName)) {
 			val methodName = nodes.getOneNode(JavaParser.RULE_methodName)
+
 			// TODO parse "argumentList"
 			return new UniMethodCall(null, methodName.toString, argumentList)
 		}
 		if (nodes.containsKey(JavaParser.RULE_typeName)) {
 			val typeName = nodes.getOneNode(JavaParser.RULE_typeName)
 			if (!texts.containsKey(-JavaParser.SUPER)) {
+
 				// TODO parse "argumentList"
 				return new UniMethodCall(typeName, texts.identifierStr, argumentList)
 			} else {
 			}
 		}
-		if(nodes.containsKey(JavaParser.RULE_primary)){
+		if (nodes.containsKey(JavaParser.RULE_primary)) {
 			val primary = nodes.getOneNode(JavaParser.RULE_primary)
 			return new UniMethodCall(primary, texts.identifierStr, argumentList)
 		}
-		
-		
+
 		throw new RuntimeException("Not implemented")
 	}
 
 	override visitFieldAccess(JavaParser.FieldAccessContext ctx) {
-//			:	primary '.' Identifier
-//	|	'super' '.' Identifier
-//	|	typeName '.' 'super' '.' Identifier
-//	;
+
+		//			:	primary '.' Identifier
+		//	|	'super' '.' Identifier
+		//	|	typeName '.' 'super' '.' Identifier
+		//	;
 		val model = new UniFieldAccess
 		model.receiver = ctx.children.head.accept(this) as UniExpr
 		model.fieldName = ctx.children.last.text
@@ -348,6 +366,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitTypeName(JavaParser.TypeNameContext ctx) {
+
 		// typeName
 		// :	Identifier
 		// |	packageOrTypeName '.' Identifier		
@@ -361,6 +380,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitPackageOrTypeName(JavaParser.PackageOrTypeNameContext ctx) {
+
 		// packageOrTypeName
 		// :	Identifier
 		// |	packageOrTypeName '.' Identifier
@@ -374,6 +394,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitArgumentList(JavaParser.ArgumentListContext ctx) {
+
 		// argumentList
 		// :	expression (',' expression)*		
 		val nodes = createNodeMap(ctx)
@@ -381,12 +402,14 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitMethodName(JavaParser.MethodNameContext ctx) {
+
 		// methodName
 		// :	Identifier
 		new StringNode(ctx.children.head.text)
 	}
 
 	override visitIfThenStatement(JavaParser.IfThenStatementContext ctx) {
+
 		// ifThenStatement
 		// :	'if' '(' expression ')' statement		
 		val nodes = createNodeMap(ctx)
@@ -396,6 +419,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitIfThenElseStatement(JavaParser.IfThenElseStatementContext ctx) {
+
 		// ifThenElseStatement
 		// :	'if' '(' expression ')' statementNoShortIf 'else' statement		
 		val nodes = createNodeMap(ctx)
@@ -406,6 +430,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitIfThenElseStatementNoShortIf(JavaParser.IfThenElseStatementNoShortIfContext ctx) {
+
 		// ifThenElseStatementNoShortIf
 		// :	'if' '(' expression ')' statementNoShortIf 'else' statementNoShortIf
 		val nodes = createNodeMap(ctx)
@@ -415,6 +440,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitStatement(JavaParser.StatementContext ctx) {
+
 		// statement
 		// :	statementWithoutTrailingSubstatement
 		// |	labeledStatement
@@ -426,6 +452,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitWhileStatement(JavaParser.WhileStatementContext ctx) {
+
 		// whileStatement
 		// :	'while' '(' expression ')' statement		
 		val nodes = createNodeMap(ctx)
@@ -433,6 +460,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitStatementWithoutTrailingSubstatement(JavaParser.StatementWithoutTrailingSubstatementContext ctx) {
+
 		// statementWithoutTrailingSubstatement
 		// :	block
 		// |	emptyStatement
@@ -450,6 +478,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitBlock(JavaParser.BlockContext ctx) {
+
 		// block
 		// :	'{' blockStatements? '}'		
 		val nodes = createNodeMap(ctx)
@@ -460,6 +489,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitBlockStatements(JavaParser.BlockStatementsContext ctx) {
+
 		// blockStatements
 		// :	blockStatement blockStatement*
 		val nodes = createNodeMap(ctx)
@@ -468,6 +498,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitBlockStatement(JavaParser.BlockStatementContext ctx) {
+
 		// blockStatement
 		// :	localVariableDeclarationStatement
 		// |	classDeclaration
@@ -476,19 +507,20 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitLocalVariableDeclarationStatement(JavaParser.LocalVariableDeclarationStatementContext ctx) {
+
 		// localVariableDeclarationStatement
 		// :	localVariableDeclaration ';'
 		ctx.children.head.accept(this)
 	}
 
 	override visitLocalVariableDeclaration(JavaParser.LocalVariableDeclarationContext ctx) {
+
 		// localVariableDeclaration
 		// :	variableModifier* unannType variableDeclaratorList
 		val nodes = createNodeMap(ctx)
 		val modifiers = nodes.getOrEmpty(JavaParser.RULE_variableModifier).map[it.toString]
 		val type = nodes.getOneNode(JavaParser.RULE_unannType).toString
-		val varDecList = (nodes.getOneNode(JavaParser.
-			RULE_variableDeclaratorList) as DummyNode<List<DummyNode<Pair<DummyNode<Pair<String, String>>, UniExpr>>>>).
+		val varDecList = (nodes.getOneNode(JavaParser.RULE_variableDeclaratorList) as DummyNode<List<DummyNode<Pair<DummyNode<Pair<String, String>>, UniExpr>>>>).
 			item.map [
 				val nameAndTypeSuffix = it.item.key.item
 				new UniVariableDec(modifiers, type + nameAndTypeSuffix.value, nameAndTypeSuffix.key, it.item.value)
@@ -497,6 +529,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitVariableModifier(JavaParser.VariableModifierContext ctx) {
+
 		// variableModifier
 		// :	annotation
 		// |	'final'
@@ -504,6 +537,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitUnannType(JavaParser.UnannTypeContext ctx) {
+
 		// unannType
 		// :	unannPrimitiveType
 		// |	unannReferenceType
@@ -511,14 +545,16 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitPrimitiveType(JavaParser.PrimitiveTypeContext ctx) {
-//		primitiveType
-//	:	annotation* numericType
-//	|	annotation* 'boolean'
-//	;
+
+		//		primitiveType
+		//	:	annotation* numericType
+		//	|	annotation* 'boolean'
+		//	;
 		return new StringNode(ctx.children.last.text)
 	}
 
 	override visitVariableDeclaratorList(JavaParser.VariableDeclaratorListContext ctx) {
+
 		// variableDeclaratorList
 		// :	variableDeclarator (',' variableDeclarator)*
 		val nodes = createNodeMap(ctx)
@@ -526,6 +562,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitVariableDeclarator(JavaParser.VariableDeclaratorContext ctx) {
+
 		// variableDeclarator
 		// :	variableDeclaratorId ('=' variableInitializer)?
 		val nodes = createNodeMap(ctx)
@@ -537,6 +574,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitVariableDeclaratorId(JavaParser.VariableDeclaratorIdContext ctx) {
+
 		// variableDeclaratorId
 		// :	Identifier dims?
 		if (ctx.children.size == 1) {
@@ -547,6 +585,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitVariableInitializer(JavaParser.VariableInitializerContext ctx) {
+
 		// variableInitializer
 		// :	expression
 		// |	arrayInitializer
@@ -558,6 +597,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitExpression(JavaParser.ExpressionContext ctx) {
+
 		// expression
 		// :	lambdaExpression
 		// |	assignmentExpression
@@ -565,6 +605,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitAssignmentExpression(JavaParser.AssignmentExpressionContext ctx) {
+
 		// assignmentExpression
 		// :	conditionalExpression
 		// |	assignment
@@ -572,6 +613,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitAssignment(JavaParser.AssignmentContext ctx) {
+
 		// assignment
 		// :	leftHandSide assignmentOperator expression
 		new UniBinOp(ctx.children.get(1).text, ctx.children.head.accept(this) as UniExpr,
@@ -579,6 +621,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitLeftHandSide(JavaParser.LeftHandSideContext ctx) {
+
 		// leftHandSide
 		// :	expressionName
 		// |	fieldAccess
@@ -587,6 +630,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitConditionalExpression(JavaParser.ConditionalExpressionContext ctx) {
+
 		// conditionalExpression
 		// :	conditionalOrExpression
 		// |	conditionalOrExpression '?' expression ':' conditionalExpression
@@ -600,6 +644,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitConditionalOrExpression(JavaParser.ConditionalOrExpressionContext ctx) {
+
 		// conditionalOrExpression
 		// :	conditionalAndExpression
 		// |	conditionalOrExpression '||' conditionalAndExpression
@@ -612,6 +657,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitConditionalAndExpression(JavaParser.ConditionalAndExpressionContext ctx) {
+
 		// conditionalAndExpression
 		// :	inclusiveOrExpression
 		// |	conditionalAndExpression '&&' inclusiveOrExpression
@@ -624,6 +670,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitInclusiveOrExpression(JavaParser.InclusiveOrExpressionContext ctx) {
+
 		// inclusiveOrExpression
 		// :	exclusiveOrExpression
 		// |	inclusiveOrExpression '|' exclusiveOrExpression
@@ -636,6 +683,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitExclusiveOrExpression(JavaParser.ExclusiveOrExpressionContext ctx) {
+
 		// exclusiveOrExpression
 		// :	andExpression
 		// |	exclusiveOrExpression '^' andExpression
@@ -648,6 +696,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitAndExpression(JavaParser.AndExpressionContext ctx) {
+
 		// andExpression
 		// :	equalityExpression
 		// |	andExpression '&' equalityExpression
@@ -660,6 +709,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitEqualityExpression(JavaParser.EqualityExpressionContext ctx) {
+
 		// equalityExpression
 		// :	relationalExpression
 		// |	equalityExpression '==' relationalExpression
@@ -673,6 +723,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitRelationalExpression(JavaParser.RelationalExpressionContext ctx) {
+
 		// relationalExpression
 		// :	shiftExpression
 		// |	relationalExpression '<' shiftExpression
@@ -689,6 +740,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitShiftExpression(JavaParser.ShiftExpressionContext ctx) {
+
 		// shiftExpression
 		// :	additiveExpression
 		// |	shiftExpression '<' '<' additiveExpression
@@ -703,6 +755,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitAdditiveExpression(JavaParser.AdditiveExpressionContext ctx) {
+
 		// additiveExpression
 		// :	multiplicativeExpression
 		// |	additiveExpression '+' multiplicativeExpression
@@ -716,6 +769,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitMultiplicativeExpression(JavaParser.MultiplicativeExpressionContext ctx) {
+
 		// multiplicativeExpression
 		// :	unaryExpression
 		// |	multiplicativeExpression '*' unaryExpression
@@ -730,6 +784,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitUnaryExpression(JavaParser.UnaryExpressionContext ctx) {
+
 		// unaryExpression
 		// :	preIncrementExpression
 		// |	preDecrementExpression
@@ -759,12 +814,14 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override public visitUnaryExpressionNotPlusMinus(JavaParser.UnaryExpressionNotPlusMinusContext ctx) {
-//			:	postfixExpression
-//	|	'~' unaryExpression
-//	|	'!' unaryExpression
-//	|	castExpression
-//	;
+
+		//			:	postfixExpression
+		//	|	'~' unaryExpression
+		//	|	'!' unaryExpression
+		//	|	castExpression
+		//	;
 		if (ctx.childCount == 1) {
+
 			// postfix?
 			return ctx.children.head.accept(this) as UniExpr
 		} else {
@@ -777,11 +834,12 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override public visitCastExpression(JavaParser.CastExpressionContext ctx) {
-//		castExpression
-//	:	'(' primitiveType ')' unaryExpression
-//	|	'(' referenceType additionalBound* ')' unaryExpressionNotPlusMinus
-//	|	'(' referenceType additionalBound* ')' lambdaExpression
-//	;
+
+		//		castExpression
+		//	:	'(' primitiveType ')' unaryExpression
+		//	|	'(' referenceType additionalBound* ')' unaryExpressionNotPlusMinus
+		//	|	'(' referenceType additionalBound* ')' lambdaExpression
+		//	;
 		val nodes = createMap(ctx)
 		val model = new UniCast
 		model.type = nodes.getOne(JavaParser.RULE_primitiveType).toString
@@ -791,6 +849,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitPostfixExpression(JavaParser.PostfixExpressionContext ctx) {
+
 		// postfixExpression
 		// :	(	primary
 		// |	expressionName
@@ -804,6 +863,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitExpressionName(JavaParser.ExpressionNameContext ctx) {
+
 		// expressionName
 		// :	Identifier
 		// |	ambiguousName '.' Identifier
@@ -819,10 +879,11 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitAmbiguousName(JavaParser.AmbiguousNameContext ctx) {
-//		ambiguousName
-//	:	Identifier
-//	|	ambiguousName '.' Identifier
-//	; 
+
+		//		ambiguousName
+		//	:	Identifier
+		//	|	ambiguousName '.' Identifier
+		//	; 
 		if (ctx.children.length == 1) {
 			new UniIdent(ctx.children.head.text)
 		} else {
@@ -834,6 +895,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitPrimary(JavaParser.PrimaryContext ctx) {
+
 		// primary
 		// :	(	primaryNoNewArray_lfno_primary
 		// |	arrayCreationExpression
@@ -853,16 +915,18 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitPrimaryNoNewArray_lf_primary(JavaParser.PrimaryNoNewArray_lf_primaryContext ctx) {
-//			:	classInstanceCreationExpression_lf_primary
-//	|	fieldAccess_lf_primary
-//	|	arrayAccess_lf_primary
-//	|	methodInvocation_lf_primary
-//	|	methodReference_lf_primary
-//	;
+
+		//			:	classInstanceCreationExpression_lf_primary
+		//	|	fieldAccess_lf_primary
+		//	|	arrayAccess_lf_primary
+		//	|	methodInvocation_lf_primary
+		//	|	methodReference_lf_primary
+		//	;
 		ctx.children.head.accept(this)
 	}
 
 	override visitMethodInvocation_lf_primary(JavaParser.MethodInvocation_lf_primaryContext ctx) {
+
 		// TODO should impl
 		val model = new UniMethodCall
 		model.args = new ArrayList
@@ -875,10 +939,11 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitFormalParameterList(JavaParser.FormalParameterListContext ctx) {
-//formalParameterList
-//			:	formalParameters ',' lastFormalParameter
-//	|	lastFormalParameter
-//
+
+		//formalParameterList
+		//			:	formalParameters ',' lastFormalParameter
+		//	|	lastFormalParameter
+		//
 		val nodes = createMap(ctx)
 		if (nodes.size == 1) {
 			val args = new ArrayList<UniArg>
@@ -895,17 +960,19 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitForStatement(JavaParser.ForStatementContext ctx) {
-//		forStatement
-//	:	basicForStatement
-//	|	enhancedForStatement
-//	;
+
+		//		forStatement
+		//	:	basicForStatement
+		//	|	enhancedForStatement
+		//	;
 		ctx.children.head.accept(this)
 	}
 
 	override visitBasicForStatement(JavaParser.BasicForStatementContext ctx) {
-//		basicForStatement
-//	:	'for' '(' forInit? ';' expression? ';' forUpdate? ')' statement
-//	;
+
+		//		basicForStatement
+		//	:	'for' '(' forInit? ';' expression? ';' forUpdate? ')' statement
+		//	;
 		val nodes = createNodeMap(ctx)
 		val model = new UniFor
 		val init = nodes.getOneNodeOrEmpty(JavaParser.RULE_forInit).flattenForBuilding
@@ -928,25 +995,26 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitForInit(JavaParser.ForInitContext ctx) {
+
 		// forInit
-//	:	statementExpressionList
-//	|	localVariableDeclaration
-//	;
+		//	:	statementExpressionList
+		//	|	localVariableDeclaration
+		//	;
 		return ctx.children.head.accept(this)
 	}
 
 	override visitFormalParameters(JavaParser.FormalParametersContext ctx) {
-//formalParameters
-//	:	formalParameter (',' formalParameter)*
-//	|	receiverParameter (',' formalParameter)*
-//	;
+
+		//formalParameters
+		//	:	formalParameter (',' formalParameter)*
+		//	|	receiverParameter (',' formalParameter)*
+		//	;
 		val list = new ArrayList<UniArg>
 
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				list.add(it.accept(this) as UniArg)
 			}
-
 		]
 		new ListNode(list)
 	}
@@ -954,8 +1022,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	override visitFormalParameter(JavaParser.FormalParameterContext ctx) {
 		val nodes = createMap(ctx)
 		val model = new UniArg
-		val name = nodes.getOne(
-			JavaParser.RULE_variableDeclaratorId) as net.unicoen.mapper.JavaMapper.DummyNode<Pair<String, String>>
+		val name = nodes.getOne(JavaParser.RULE_variableDeclaratorId) as net.unicoen.mapper.JavaMapper.DummyNode<Pair<String, String>>
 
 		model.name = name.item.key
 		model.type = nodes.getOne(JavaParser.RULE_unannType).toString
@@ -970,9 +1037,10 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitReturnStatement(JavaParser.ReturnStatementContext ctx) {
-//returnStatement
-//	:	'return' expression? ';'
-//	;
+
+		//returnStatement
+		//	:	'return' expression? ';'
+		//	;
 		if (ctx.childCount == 2) {
 			new UniReturn(null)
 		} else {
@@ -983,6 +1051,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitPrimaryNoNewArray_lfno_primary(JavaParser.PrimaryNoNewArray_lfno_primaryContext ctx) {
+
 		// primaryNoNewArray_lfno_primary
 		// :	literal
 		// |	typeName ('[' ']')* '.' 'class'
@@ -1010,6 +1079,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitMethodInvocation_lfno_primary(JavaParser.MethodInvocation_lfno_primaryContext ctx) {
+
 		// methodInvocation_lfno_primary
 		// :	methodName '(' argumentList? ')'
 		// |	typeName '.' typeArguments? Identifier '(' argumentList? ')'
@@ -1025,12 +1095,14 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 			}
 		if (nodes.containsKey(JavaParser.RULE_methodName)) {
 			val methodName = nodes.getOneNode(JavaParser.RULE_methodName)
+
 			// TODO parse "argumentList"
 			return new UniMethodCall(null, methodName.toString, argumentList)
 		}
 		if (nodes.containsKey(JavaParser.RULE_typeName)) {
 			val typeName = nodes.getOneNode(JavaParser.RULE_typeName)
 			if (!texts.containsKey(-JavaParser.SUPER)) {
+
 				// TODO parse "argumentList"
 				return new UniMethodCall(typeName, texts.identifierStr, argumentList)
 			} else {
@@ -1040,12 +1112,14 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitExpressionStatement(JavaParser.ExpressionStatementContext ctx) {
+
 		// expressionStatement
 		// :	statementExpression ';'
 		ctx.children.head.accept(this)
 	}
 
 	override visitStatementExpression(JavaParser.StatementExpressionContext ctx) {
+
 		// statementExpression
 		// :	assignment
 		// |	preIncrementExpression
@@ -1059,6 +1133,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 
 	override visitClassInstanceCreationExpression_lf_primary(
 		JavaParser.ClassInstanceCreationExpression_lf_primaryContext ctx) {
+
 		// classInstanceCreationExpression_lf_primary
 		// :	'.' 'new' typeArguments? annotation* Identifier typeArgumentsOrDiamond? '(' argumentList? ')' classBody?
 		val nodes = createNodeMap(ctx)
@@ -1078,6 +1153,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 
 	override visitClassInstanceCreationExpression_lfno_primary(
 		JavaParser.ClassInstanceCreationExpression_lfno_primaryContext ctx) {
+
 		// classInstanceCreationExpression_lfno_primary
 		// :	'new' typeArguments? annotation* Identifier ('.' annotation* Identifier)* typeArgumentsOrDiamond? '(' argumentList? ')' classBody?
 		// |	expressionName '.' 'new' typeArguments? annotation* Identifier typeArgumentsOrDiamond? '(' argumentList? ')' classBody?
@@ -1112,6 +1188,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitClassInstanceCreationExpression(JavaParser.ClassInstanceCreationExpressionContext ctx) {
+
 		// classInstanceCreationExpression
 		// :	'new' typeArguments? annotation* Identifier ('.' annotation* Identifier)* typeArgumentsOrDiamond? '(' argumentList? ')' classBody?
 		// |	expressionName '.' 'new' typeArguments? annotation* Identifier typeArgumentsOrDiamond? '(' argumentList? ')' classBody?
@@ -1131,6 +1208,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	}
 
 	override visitLiteral(JavaParser.LiteralContext ctx) {
+
 		// literal
 		// :	IntegerLiteral
 		// |	FloatingPointLiteral
@@ -1153,6 +1231,14 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 			}
 		}
 		throw new RuntimeException("Unknown literal type")
+	}
+
+	def <T extends UniNode> List<T> flattenForBuilding(UniNode node) {
+		if(node instanceof ListNode<?>){
+			node.flattenTo(new ArrayList<T>)
+		}else{
+		newArrayList(node) as List<T>
+		}
 	}
 
 	/**
@@ -1179,10 +1265,6 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 	static class ListNode<T extends UniNode> extends DummyNode<List<T>> {
 		new(List<T> item) {
 			super(item)
-		}
-
-		override <T2 extends UniNode> List<T2> flattenForBuilding() {
-			flattenTo(new ArrayList<T2>())
 		}
 
 		def <T2 extends UniNode> List<T2> flattenTo(List<T2> dst) {

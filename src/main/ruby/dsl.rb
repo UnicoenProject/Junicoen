@@ -1,6 +1,8 @@
 class Dsl
   Node = Struct.new(:name, :parents, :opt, :members) do
-
+    def full_members
+      @full_members ||= members + parents.flat_map(&:members)
+    end
   end
 
   class NodeDsl

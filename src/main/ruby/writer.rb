@@ -194,7 +194,7 @@ module Writer
     # hashCode()
     w << "@Override"
     pre_stmt = []
-    exprs = node.members.map do |name, type, opt|
+    exprs = node.full_members.map do |name, type, opt|
       case type.to_s
       when /^[A-Z][A-Za-z_]+/
         "(#{name} == null ? 0 : #{name}.hashCode())"
@@ -234,13 +234,13 @@ module Writer
     # equals()
     w << "@Override"
     w.block "public boolean equals(Object obj)" do
-      if node.members.size == 0
+      if node.full_members.size == 0
         w << "return obj != null && obj instanceof #{node.name};"
         break
       end
       w << "if (obj == null || !(obj instanceof #{node.name})) return false;"
       w << "#{node.name} that = (#{node.name})obj;"
-      exprs = node.members.map do |name, type, opt|
+      exprs = node.full_members.map do |name, type, opt|
         if /^[a-z]+/ =~ type.to_s
           "this.#{name} == that.#{name}"
         else
@@ -269,7 +269,7 @@ module Writer
   #
   def write_merge(dsl, node, w)
     w.block "public void merge(#{node.name} that)" do
-      node.members.each do |name, type, opt|
+      node.full_members.each do |name, type, opt|
         case type.to_s
         when /bool.*/
           w.block "if (that.#{name})" do
