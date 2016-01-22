@@ -22,6 +22,7 @@ public class UniImport extends UniNode {
 		int result = 17;
 		result = result * 31 + (targetName == null ? 0 : targetName.hashCode());
 		result = result * 31 + (isStatic ? 1 : 0);
+		result = result * 31 + (comment == null ? 0 : comment.hashCode());
 		return result;
 	}
 
@@ -30,7 +31,8 @@ public class UniImport extends UniNode {
 		if (obj == null || !(obj instanceof UniImport)) return false;
 		UniImport that = (UniImport)obj;
 		return (this.targetName == null ? that.targetName == null : this.targetName.equals(that.targetName))
-			&& this.isStatic == that.isStatic;
+			&& this.isStatic == that.isStatic
+			&& (this.comment == null ? that.comment == null : this.comment.equals(that.comment));
 	}
 
 	public void merge(UniImport that) {
@@ -39,6 +41,9 @@ public class UniImport extends UniNode {
 		}
 		if (that.isStatic) {
 			this.isStatic = true;
+		}
+		if (that.comment != null) {
+			this.comment = that.comment;
 		}
 	}
 }

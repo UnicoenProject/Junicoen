@@ -19,14 +19,18 @@ public class UniArray extends UniExpr {
 
 	@Override
 	public int hashCode() {
-		return (items == null ? 0 : items.hashCode());
+		int result = 17;
+		result = result * 31 + (items == null ? 0 : items.hashCode());
+		result = result * 31 + (comment == null ? 0 : comment.hashCode());
+		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null || !(obj instanceof UniArray)) return false;
 		UniArray that = (UniArray)obj;
-		return (this.items == null ? that.items == null : this.items.equals(that.items));
+		return (this.items == null ? that.items == null : this.items.equals(that.items))
+			&& (this.comment == null ? that.comment == null : this.comment.equals(that.comment));
 	}
 
 	@Override
@@ -41,6 +45,9 @@ public class UniArray extends UniExpr {
 			} else {
 				this.items.addAll(that.items);
 			}
+		}
+		if (that.comment != null) {
+			this.comment = that.comment;
 		}
 	}
 }

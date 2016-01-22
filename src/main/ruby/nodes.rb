@@ -5,7 +5,8 @@ Dsl.define_node do |x|
   x.package = "net.unicoen.node"
   x.prefix = "Uni"
 
-  x.node "Node", abstract: true do
+  x.node "Node", abstract: true do |n|
+    n.mem 'comment', String
 
     x.node "Expr", abstract: true, member: { statement: :boolean } do
       #
@@ -62,6 +63,10 @@ Dsl.define_node do |x|
         d.mem "cond", "Expr"
         d.mem "trueExpr", "Expr"
         d.mem "falseExpr", "Expr"
+      end
+      x.node "Cast" do |d|
+        d.mem "type", String
+        d.mem "value", "Expr"
       end
       #
       # Control flow
@@ -157,9 +162,6 @@ Dsl.define_node do |x|
     end
     x.node "Namespace" do |d|
       d.mem "name", String
-    end
-    x.node "Cast" do |d|
-      d.mem "type", String
     end
   end
 end
