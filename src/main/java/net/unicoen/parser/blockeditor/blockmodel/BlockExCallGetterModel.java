@@ -1,8 +1,5 @@
 package net.unicoen.parser.blockeditor.blockmodel;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -18,21 +15,7 @@ public class BlockExCallGetterModel extends BlockExprModel {
 
 	public void setCalleMethod(BlockElementModel callMethodModel){
 		this.methodBlock = callMethodModel;
-	}
-
-	// @override
-	@Override
-	public List<Element> getBlockElements() {
-		List<Element> elements = new ArrayList<Element>();
-		elements.add(getElement());
-
-		for(BlockElementModel element : getSocketBlocks()){
-			elements.addAll(element.getBlockElements());
-		}
-
-		elements.addAll(methodBlock.getBlockElements());
-
-		return elements;
+		addSocketBlock(callMethodModel);
 	}
 
 	@Override
@@ -44,13 +27,9 @@ public class BlockExCallGetterModel extends BlockExprModel {
 	/**
 	 * このブロックのノードにPlugノードを追加する
 	 */
-	public void setPlugElement(Document document, BlockPlugModel plugInfo) {
+	public void addPlugElement(Document document, BlockPlugModel plugInfo) {
 		String socketBlockType = getType();
-		if(socketBlockType != null){
-			plugInfo.connectorType = convertTypeToBlockConnectorType(getType());	
-		}else{
-			plugInfo.connectorType = convertTypeToBlockConnectorType("poly");
-		}
+		plugInfo.connectorType = socketBlockType != null ?convertTypeToBlockConnectorType(getType()) :  convertTypeToBlockConnectorType("poly");
 		this.element.appendChild(plugInfo.createElemnet(document));
 	}
 

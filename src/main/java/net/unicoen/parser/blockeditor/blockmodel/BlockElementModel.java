@@ -8,10 +8,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
-import net.unicoen.parser.blockeditor.AnnotationCommentGetter;
-import net.unicoen.parser.blockeditor.DOMUtil;
+import net.unicoen.parser.blockeditor.MyDOMUtil;
 
 public class BlockElementModel {
 
@@ -24,6 +24,7 @@ public class BlockElementModel {
 	public static String LABEL_NODE = "Label";// 任意（モデルによって必要）
 	public static String NAME_NODE = "Name";// 任意（モデルによって必要）
 	public static String LOCATION_NODE = "Location";// 任意
+	
 
 	public static String BLOCK_STUB_NODE = "BlockStub";
 	public static String STUBPARENTNAME_NODE = "StubParentName";
@@ -61,24 +62,26 @@ public class BlockElementModel {
 	}
 
 	public String getBlockID() {
-		return DOMUtil.getAttribute(this.element, ID_ATTR);
+		return MyDOMUtil.getAttribute(getBlockElement(), ID_ATTR);
 	}
 
 	public String getGenusName() {
-		return DOMUtil.getAttribute(this.element, GENUS_NAME_ATTR);
+		return MyDOMUtil.getAttribute(getBlockElement(), GENUS_NAME_ATTR);
 	}
 
 	public String getKind() {
-		return DOMUtil.getAttribute(this.element, KIND_ATTR);
+		return MyDOMUtil.getAttribute(getBlockElement(), KIND_ATTR);
 	}
 
 	public String getType() {
-		Node typeNode = DOMUtil.getChildNode(getBlockElement(), TYPE_NODE);
-		if (typeNode == null) {
-			return "Object";
-		} else {
-			return typeNode.getTextContent();
-		}
+		Node typeNode = MyDOMUtil.getChildNode(getBlockElement(), TYPE_NODE);
+		return typeNode == null ? "Object" :  typeNode.getTextContent();
+	}
+	
+	public Element createBlockStubNode(Document document, String parentName, String parentGenusName) {
+		Element blockStubElement = document.createElement(BlockElementModel.BLOCK_STUB_NODE);
+		MyDOMUtil.appendChilds(blockStubElement, MyDOMUtil.createElements(ImmutableMap.of(BlockElementModel.STUBPARENTNAME_NODE, parentName, BlockElementModel.STUBPARENTGENUS_NODE, parentGenusName), document));
+		return blockStubElement;
 	}
 
 	public List<Element> getBlockElements() {
@@ -98,17 +101,6 @@ public class BlockElementModel {
 		return this.socketBlocksElements;
 	}
 
-	public String getIdFromElement(Element element) {
-		if (element == null) {
-			return "-1";
-		}
-		if ("BlockStub".equals(element.getNodeName())) {
-			return DOMUtil.getAttribute(DOMUtil.getChildNode(element, BLOCK_NODE), ID_ATTR);
-		} else {
-			return DOMUtil.getAttribute(element, ID_ATTR);
-		}
-	}
-
 	public String getSocketConnectorType(String kind) {
 		if (kind == null) {
 			return "cmd";
@@ -117,28 +109,19 @@ public class BlockElementModel {
 		}
 	}
 
-	public String getLabel() {
-		Node label = DOMUtil.getChildNode(element, BlockElementModel.LABEL_NODE);
-		if (label == null) {
-			return "";
-		} else {
-			return label.getTextContent();
-		}
-	}
-
 	public Node getPlugNode() {
-		return DOMUtil.getChildNode(getBlockElement(), BlockPlugModel.NODE_NAME);
+		return MyDOMUtil.getChildNode(getBlockElement(), BlockPlugModel.NODE_NAME);
 	}
 
 	public String getPlugAttribute(String attribute) {
-		return DOMUtil.getAttribute(DOMUtil.getChildNode(getPlugNode(), BlockConnector.CONNECTOR_NODE), attribute);
+		return MyDOMUtil.getAttribute(MyDOMUtil.getChildNode(getPlugNode(), BlockConnector.CONNECTOR_NODE), attribute);
 	}
 
 	public Element getBlockElement() {
-		if (this.getElement().getNodeName().equals(BlockElementModel.BLOCK_NODE)) {
-			return this.getElement();
+		if (getElement().getNodeName().equals(BlockElementModel.BLOCK_NODE)) {
+			return getElement();
 		} else {
-			return (Element) DOMUtil.getChildNode(getElement(), BlockElementModel.BLOCK_NODE);
+			return (Element) MyDOMUtil.getChildNode(getElement(), BlockElementModel.BLOCK_NODE);
 		}
 	}
 
@@ -153,30 +136,16 @@ public class BlockElementModel {
 
 	public void addLocationElement(Document document, String x, String y, Element blockElement) {
 		Element locationElement = document.createElement(BlockElementModel.LOCATION_NODE);
-		Element xElement = document.createElement("X");
-		Element yElement = document.createElement("Y");
 
-		xElement.setTextContent(x);
-		yElement.setTextContent(y);
-
-		locationElement.appendChild(xElement);
-		locationElement.appendChild(yElement);
-
+		MyDOMUtil.appendChilds(locationElement, MyDOMUtil.createElements(ImmutableMap.of("X", x, "Y", y), document));
+		
 		blockElement.appendChild(locationElement);
 	}
 
-	public void addElement(String elementName, Document document, String text, Element blockElement) {
-		Element element = document.createElement(elementName);
-		element.setTextContent(text);
-		blockElement.appendChild(element);
-	}
 
 	public Element createBlockElement(Document document, String genusName, long id, String kind) {
 		Element element = document.createElement(BLOCK_NODE);
-		element.setAttribute(GENUS_NAME_ATTR, genusName);
-		element.setAttribute(ID_ATTR, String.valueOf(id));
-		element.setAttribute(KIND_ATTR, kind);
-
+		MyDOMUtil.setAttributes(element, ImmutableMap.of(BlockElementModel.GENUS_NAME_ATTR, genusName, BlockElementModel.ID_ATTR, String.valueOf(id), BlockElementModel.KIND_ATTR, kind));
 		return element;
 	}
 
@@ -210,8 +179,8 @@ public class BlockElementModel {
 	}
 
 	public void addSocketsNode(Document document, BlockSocketsModel sockets) {
-		if (getSocketBlocks().size() <= sockets.getSockets().size()) {
-			// 実引数<定義引数
+		if (getSocketBlocks().size() == sockets.getSockets().size()) {
+			// 言語定義ファイルのモデルと引数の数が一緒
 			Element socketsElement = document.createElement(BlockSocketsModel.NODE_NAME);
 			socketsElement.setAttribute(BlockSocketsModel.NUMSOCKETS_ATTR, String.valueOf(sockets.getSockets().size()));
 			for (int i = 0; i < sockets.getSockets().size(); i++) {
@@ -226,12 +195,12 @@ public class BlockElementModel {
 				addSocketNode(document, socketsElement, sockets.getSockets().get(i));
 			}
 			getBlockElement().appendChild(socketsElement);
-		} else {// 実引数>定義引数
+		} else {
 			Element socketsElement = document.createElement(BlockSocketsModel.NODE_NAME);
 			socketsElement.setAttribute(BlockSocketsModel.NUMSOCKETS_ATTR, String.valueOf(getSocketBlocks().size()));
 			for (int i = 0; i < getSocketBlocks().size(); i++) {
 				// ソケットノードの追加
-				addSocketNode(document, socketsElement, new BlockSocketModel((BlockExprModel)getSocketBlocks().get(i)));
+				addSocketNode(document, socketsElement, new BlockSocketModel(getSocketBlocks().get(i)));
 			}
 			getBlockElement().appendChild(socketsElement);
 		}
@@ -256,30 +225,22 @@ public class BlockElementModel {
 	public static String convertParamTypeName(String name) {
 		String s = new String(name);
 		s = convertTypeToBlockConnectorType(name);
-		if (s.equals("number") || s.equals("double-number")) {
-			return "int";
-		} else {
-			return s;
-		}
+		return s.equals("number") || s.equals("double-number") ? "int" : s; 
 	}
 
 	/**
 	 * このブロックのノードにPlugノードを追加する
 	 */
-	public void setPlugElement(Document document, BlockPlugModel plugInfo) {
+	public void addPlugElement(Document document, BlockPlugModel plugInfo) {
 		getBlockElement().appendChild(plugInfo.createElemnet(document));
 	}
 
 	public void addBeforeBlockNode(Document document, String id) {
-		Element element = document.createElement(BEFOREBLOCKID_NODE);
-		element.setTextContent(id);
-		getBlockElement().appendChild(element);
+		getBlockElement().appendChild(MyDOMUtil.createElement(BEFOREBLOCKID_NODE, id, document));
 	}
 
-	public void addAfterBlockNode(Document document, String id) {
-		Element element = document.createElement(AFTERBLOCKID_NODE);
-		element.setTextContent(id);
-		getBlockElement().appendChild(element);
+	public void addAfterBlockNode(Document document, String id) {		
+		getBlockElement().appendChild(MyDOMUtil.createElement(AFTERBLOCKID_NODE, id, document));
 	}
 
 	public List<String> transformToTypeStringList(List<BlockElementModel> args) {
@@ -292,9 +253,7 @@ public class BlockElementModel {
 	}
 
 	public void addCommentNode(String comment, Document document) {
-		Element commentElement = document.createElement(COMMENT_NODE);
-		commentElement.setTextContent(AnnotationCommentGetter.getCommentText(comment));
-		getBlockElement().appendChild(commentElement);
+		getBlockElement().appendChild(MyDOMUtil.createElement(COMMENT_NODE, comment, document));
 	}
 
 }

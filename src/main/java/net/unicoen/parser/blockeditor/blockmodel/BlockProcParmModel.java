@@ -3,7 +3,10 @@ package net.unicoen.parser.blockeditor.blockmodel;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.google.common.collect.ImmutableMap;
+
 import net.unicoen.parser.blockeditor.BlockResolver;
+import net.unicoen.parser.blockeditor.MyDOMUtil;
 
 public class BlockProcParmModel extends BlockExprModel {
 
@@ -15,10 +18,7 @@ public class BlockProcParmModel extends BlockExprModel {
 
 	public Element createLocalVaribleElement(String type, String name, Document document, BlockResolver resolver, Long ID_COUNTER){
 		Element blockElement = createBlockElement(document, resolver.getFunctionArgBlockName(type), ID_COUNTER++, KIND);
-
-		addElement(BlockElementModel.LABEL_NODE, document, name, blockElement);
-		addElement(BlockElementModel.NAME_NODE, document, name, blockElement);
-		addElement(BlockElementModel.TYPE_NODE, document, type, blockElement);
+		MyDOMUtil.appendChilds(blockElement, MyDOMUtil.createElements(ImmutableMap.of(BlockElementModel.LABEL_NODE, name, BlockElementModel.NAME_NODE, name, BlockElementModel.TYPE_NODE, type), document));
 
 		return blockElement;
 	}

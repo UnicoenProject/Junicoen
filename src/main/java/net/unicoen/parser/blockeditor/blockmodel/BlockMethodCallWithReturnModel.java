@@ -4,8 +4,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import com.google.common.collect.ImmutableMap;
+
 import net.unicoen.parser.blockeditor.BlockResolver;
-import net.unicoen.parser.blockeditor.DOMUtil;
+import net.unicoen.parser.blockeditor.MyDOMUtil;
 
 public class BlockMethodCallWithReturnModel extends BlockExprModel {
 
@@ -14,17 +16,13 @@ public class BlockMethodCallWithReturnModel extends BlockExprModel {
 	}
 
 	public Element createPrototypeElement(String genusName, Document document, BlockResolver resolver, Long ID_COUNTER, String parent) {
-		String kind = BlockElementModel.BLOCKKINDS.FUNCTION.toString();
 		Node originNode = resolver.getBlockNode(genusName);
-		Element element = createBlockElement(document, genusName, ID_COUNTER, kind);
+		Element element = createBlockElement(document, genusName, ID_COUNTER, BlockElementModel.BLOCKKINDS.FUNCTION.toString());
 		String type = resolver.getType(genusName);
-		addElement(BlockElementModel.NAME_NODE, document, DOMUtil.getChildText(originNode, BlockElementModel.NAME_NODE), element);
-		addElement(BlockElementModel.TYPE_NODE, document, resolver.getType(genusName), element);
+		MyDOMUtil.appendChilds(element, MyDOMUtil.createElements(ImmutableMap.of(BlockElementModel.NAME_NODE, MyDOMUtil.getChildText(originNode, BlockElementModel.NAME_NODE), BlockElementModel.TYPE_NODE, resolver.getType(genusName)), document));
 
 		addPlugElement(document, element, parent, convertTypeToBlockConnectorType(type), "single");
 		
 		return element;
 	}
-
-
 }

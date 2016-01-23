@@ -1,5 +1,7 @@
 package net.unicoen.generator;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 
 import net.unicoen.node.UniClassDec;
@@ -12,6 +14,19 @@ public class JavaGeneratorForTurtle extends JavaGenerator {
 		super(out);
 	}
 
+	public static String generate(UniClassDec dec) {
+		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); PrintStream printer = new PrintStream(out)) {
+			generate(dec, printer);
+			return out.toString();
+		} catch (IOException e) {
+			return null;
+		}
+	}
+
+	public static void generate(UniClassDec classDec, PrintStream out) {
+		JavaGeneratorForTurtle g = new JavaGeneratorForTurtle(out);
+		g.traverseClassDec(classDec);
+	}
 	
 	@Override
 	public void traverseClassDec(UniClassDec classDec) {

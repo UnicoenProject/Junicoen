@@ -85,8 +85,7 @@ public class BlockBinaryOperatorModel extends BlockExprModel {
 				genusName = "greaterthanorequalto";
 			}
 
-			if ("number".equals(type)) {
-			} else if ("double-number".equals(type)) {
+			if ("double-number".equals(type)) {
 				genusName += "-double";
 			}
 			return genusName;
@@ -96,8 +95,7 @@ public class BlockBinaryOperatorModel extends BlockExprModel {
 				genusName = "lessthanorequalto";
 			}
 
-			if ("number".equals(type)) {
-			} else if ("double-number".equals(type)) {
+			if ("double-number".equals(type)) {
 				genusName += "-double";
 			}
 			return genusName;

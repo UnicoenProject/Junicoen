@@ -14,7 +14,7 @@ import net.unicoen.node.UniFieldAccess;
 import net.unicoen.node.UniIdent;
 import net.unicoen.node.UniMethodCall;
 import net.unicoen.node.UniStringLiteral;
-import net.unicoen.parser.blockeditor.DOMUtil;
+import net.unicoen.parser.blockeditor.MyDOMUtil;
 import net.unicoen.parser.blockeditor.ForceConvertionMap;
 
 public class ForceConvertionMapTest {
@@ -25,7 +25,7 @@ public class ForceConvertionMapTest {
 		
 //		Map<String, String> map = resolver.getForceConvertionMap();
 		
-		Node node = DOMUtil.getNodeFromXMLFilePath("blockeditor/blocks/force_convertion_list.xml");
+		Node node = MyDOMUtil.getNodeFromXMLFilePath("blockeditor/blocks/force_convertion_list.xml");
 		
 		ForceConvertionMap map = new ForceConvertionMap(node);
 		assertEquals("cui-println[@string]", map.getBlockGenusName(new UniMethodCall(new UniFieldAccess(new UniIdent("System"), "out"),"println", Lists.newArrayList(new UniStringLiteral("hogehoge")))));

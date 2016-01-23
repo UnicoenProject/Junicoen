@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -12,13 +13,14 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.xerces.parsers.DOMParser;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import net.unicoen.parser.blockeditor.blockmodel.BlockElementModel;
 
-public class DOMUtil {
+public class MyDOMUtil {
 	public static String getAttribute(Node node, String attributeName) {
 		assert node != null;
 		assert attributeName != null;
@@ -31,6 +33,10 @@ public class DOMUtil {
 		if (attrNode == null)
 			return null;
 		return attrNode.getNodeValue();
+	}
+	
+	public static String getAttributeOrEmpty(Node node, String attributeName){
+		return getAttribute(node, attributeName)==null ? "": getAttribute(node, attributeName);
 	}
 	
 
@@ -145,7 +151,6 @@ public class DOMUtil {
 			parser.parse(path);
 			Document doc = parser.getDocument();
 			return doc.getDocumentElement();
-			
 		} catch (SAXException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -179,4 +184,31 @@ public class DOMUtil {
 		}
 		return contentList;
 	}
+	
+	public static void setAttributes(Element element, Map<String,String> attributes){
+		for(String key : attributes.keySet()){
+			element.setAttribute(key, attributes.get(key));
+		}
+	}
+	
+	public static Element createElement(String nodeName, String text, Document document){
+		Element element = document.createElement(nodeName);
+		element.setTextContent(text);
+		return element;
+	}
+	
+	public static void appendChilds(Element blockElement, List<Element> elements){
+		for(Element element : elements){
+			blockElement.appendChild(element);
+		}
+	}
+	
+	public static List<Element> createElements(Map<String, String> elementMap, Document document){
+		List<Element> elements = new ArrayList<>();
+		for(String key :elementMap.keySet()){
+			elements.add(createElement(key, elementMap.get(key), document));
+		}
+		return elements;
+	}
+	
 }

@@ -17,12 +17,6 @@ public class BlockAbstractBlockModel extends BlockCommandModel {
 	public BlockAbstractBlockModel(Document document, Long id) {
 		this.element = createBlockElement(document, GENUS_NAME, id, KIND);
 	}
-
-	public void setLabel(String label, Document document){
-		Element element = document.createElement(BlockElementModel.LABEL_NODE);
-		element.setTextContent(AnnotationCommentGetter.getCommentText(label));
-		getBlockElement().appendChild(element);
-	}
 	
 	public void setCollapsed(String comment, Document document){
 		String openClose = AnnotationCommentGetter.getOpenClose(comment);

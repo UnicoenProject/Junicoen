@@ -7,34 +7,25 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import net.unicoen.parser.blockeditor.BlockResolver;
-import net.unicoen.parser.blockeditor.DOMUtil;
+import net.unicoen.parser.blockeditor.MyDOMUtil;
 
-public class BlockMethodCallModel extends BlockCommandModel{
-	
-	public BlockMethodCallModel(String genusName,Document document, BlockResolver resolver, Long ID_COUNTER, String parentId){
+public class BlockMethodCallModel extends BlockCommandModel {
+
+	public BlockMethodCallModel(String genusName, Document document, BlockResolver resolver, Long ID_COUNTER, String parentId) {
 		this.element = createPrototypeElement(genusName, document, resolver, ID_COUNTER, parentId);
+		addBeforeBlockNode(document, parentId);
 	}
 
-	public Element createPrototypeElement(String genusName,Document document, BlockResolver resolver, Long ID_COUNTER, String parentId){
+	public Element createPrototypeElement(String genusName, Document document, BlockResolver resolver, Long ID_COUNTER, String parentId) {
 		Node originNode = resolver.getBlockNode(genusName);
-		String kind = DOMUtil.getAttribute(originNode, BlockElementModel.KIND_ATTR);
-		Element element = createBlockElement(document, genusName, ID_COUNTER, kind);
-		addElement(BlockElementModel.NAME_NODE, document, DOMUtil.getChildText(originNode, BlockElementModel.NAME_NODE), element);
-		this.element = element;
-
-		if (kind.equals(BlockElementModel.BLOCKKINDS.COMMAND) && parentId != null) {
-			addBeforeBlockNode(document, parentId);
-		}
-
-		if(!"void".equals(resolver.getType(genusName))){
-			addElement(BlockElementModel.TYPE_NODE, document, resolver.getType(genusName), element);
-		}
-
+		Element element = createBlockElement(document, genusName, ID_COUNTER, MyDOMUtil.getAttribute(originNode, BlockElementModel.KIND_ATTR));
+		element.appendChild(MyDOMUtil.createElement(BlockElementModel.NAME_NODE, MyDOMUtil.getChildText(originNode, BlockElementModel.NAME_NODE), document));
 		return element;
 	}
 
 	/**
 	 * メソッド名，引数型リストからメソッド名[@param]の文字列を返す．
+	 * 
 	 * @param methodName
 	 * @param argTypes
 	 * @return

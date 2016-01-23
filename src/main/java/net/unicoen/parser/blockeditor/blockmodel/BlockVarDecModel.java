@@ -5,69 +5,45 @@ import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.google.common.collect.Lists;
-
 import net.unicoen.parser.blockeditor.BlockResolver;
-import net.unicoen.parser.blockeditor.DOMUtil;
+import net.unicoen.parser.blockeditor.MyDOMUtil;
 
-public class BlockVarDecModel extends BlockCommandModel{
+public class BlockVarDecModel extends BlockCommandModel {
 	public static String SPECIAL_VARIABLE_GENUS_NAME = "special-variable";
+
 	public BlockVarDecModel(String type, String name, Document document, BlockResolver resolver, Long ID_COUNTER) {
 		this.element = createElement(type, name, document, resolver, ID_COUNTER);
 	}
-	
-	public Element createElement(String type, String name, Document document, BlockResolver resolver, Long ID_COUNTER){
+
+	public Element createElement(String type, String name, Document document, BlockResolver resolver, Long ID_COUNTER) {
 		String genusName = getGenusNameFromResolver(resolver, type);
 		Element blockElement;
-		if(genusName == null){
-			blockElement = createSpecialVariableDecModel(type, name, "local-variable", document, resolver, ID_COUNTER);
-			addElement(BlockElementModel.LABEL_NODE, document, type + "型の変数を作り、" + name + "と名付ける", blockElement);
-		}else{
-			blockElement = createBlockElement(document, genusName, ID_COUNTER++, DOMUtil.getAttribute(resolver.getBlockNode(genusName), BlockElementModel.KIND_ATTR));
-			addElement(BlockElementModel.LABEL_NODE, document, name, blockElement);
+		if (genusName == null) {
+			blockElement = createVariableBlockNode(document, SPECIAL_VARIABLE_GENUS_NAME, name, "local-variable",  ID_COUNTER++);
+		} else {
+			blockElement = createVariableBlockNode(document, genusName, name, MyDOMUtil.getAttribute(resolver.getBlockNode(genusName), BlockElementModel.KIND_ATTR), ID_COUNTER++);
 		}
-
-		addElement(BlockElementModel.NAME_NODE, document, name, blockElement);
-		addElement(BlockElementModel.TYPE_NODE, document, type, blockElement);
-
+		blockElement.appendChild(MyDOMUtil.createElement(BlockElementModel.TYPE_NODE, type, document));
 		return blockElement;
 	}
-	
-	public Element createSpecialVariableDecModel(String type, String name, String kind, Document document, BlockResolver resolver, Long ID_COUNTER){
-		Element blockElement = createBlockElement(document, SPECIAL_VARIABLE_GENUS_NAME, ID_COUNTER++, kind);
-		return blockElement;
-	}
-	
-	@Override
-	public List<Element> getBlockElements() {
-		List<Element> commandBlocks = Lists.newArrayList(getElement());
-		if (getSocketBlocks().size()>0) {
-			for(BlockElementModel model : getSocketBlocks()){
-				if(model != null){
-					commandBlocks.addAll(model.getBlockElements());
-				}
-			}
-		}
-		return commandBlocks;
-	}
-	
-	public String getGenusNameFromResolver(BlockResolver resolver, String type){
+
+
+	public String getGenusNameFromResolver(BlockResolver resolver, String type) {
 		return resolver.getFieldVarDecBlockName(type);
 	}
-	
+
 	@Override
-	public void addSocketsAndNodes(List<BlockElementModel> socketBlocks, Document document, BlockSocketsModel sockets){
-		for(BlockElementModel socket : socketBlocks){
+	public void addSocketsAndNodes(List<BlockElementModel> socketBlocks, Document document, BlockSocketsModel sockets) {
+		for (BlockElementModel socket : socketBlocks) {
 			addSocketBlock(socket);
 		}
 
-		//TODO should fix
-		if(getGenusName().equals(SPECIAL_VARIABLE_GENUS_NAME)){
-			for(BlockElementModel socket : socketBlocks){
+		if (getGenusName().equals(SPECIAL_VARIABLE_GENUS_NAME)) {
+			for (BlockElementModel socket : socketBlocks) {
 				sockets.addSocketInfo(new BlockSocketModel((BlockExprModel) socket));
-			}			
+			}
 		}
-		
+
 		addSocketsNode(document, sockets);
 	}
 
