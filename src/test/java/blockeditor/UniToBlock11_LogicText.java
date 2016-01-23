@@ -14,7 +14,8 @@ public class UniToBlock11_LogicText {
 	@Test
 	public void test() throws IOException, ParserConfigurationException, TransformerException {
 		UniProgram fileModel = UniToBlockTestUtil.createFileModel("blockeditor/testcases/BlockConvertTest/_11LogicTest.java");
-		UniToBlockTestUtil.parseTestToBG2(fileModel);
+//		UniToBlockTestUtil.parseTestToBG2(fileModel);
+		UniToBlockTestUtil.output(fileModel, "_11LogicTest");
 	}
 
 }

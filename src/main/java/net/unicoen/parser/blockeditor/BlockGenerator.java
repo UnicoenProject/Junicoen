@@ -1242,7 +1242,7 @@ public class BlockGenerator extends UniModelVisitor {
 
 	public static String generateBlockSource(UniProgram node){
 		try{
-		BlockGenerator gen = new BlockGenerator(null, "blockeditor/blocks/");
+		BlockGenerator gen = new BlockGenerator(null, "blockeditor/blocks/", true);
 		Element root = gen.createRootNode();
 		PagesModel pages = (PagesModel) gen.visitFile(node);
 		root.appendChild(pages.getPagesElement());

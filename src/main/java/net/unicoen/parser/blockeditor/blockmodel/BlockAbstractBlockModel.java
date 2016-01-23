@@ -15,7 +15,7 @@ public class BlockAbstractBlockModel extends BlockCommandModel {
 	public static String COLLAPSED_NODE = "Collapsed";
 	
 	public BlockAbstractBlockModel(Document document, Long id) {
-		this.element = createBlockElement(document, GENUS_NAME, id, KIND);
+		this.element = createBlockElement(document, GENUS_NAME, id, BlockElementModel.BLOCKKINDS.ABSTRACTION.toString());
 	}
 	
 	public void setCollapsed(String comment, Document document){
