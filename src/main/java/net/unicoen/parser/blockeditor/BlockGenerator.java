@@ -998,17 +998,17 @@ public class BlockGenerator extends UniModelVisitor {
 			}
 		});
 		String tmpGenusName = BlockMethodCallModel.calcMethodCallGenusName(methodName, socketTypes);
-		try {
+
 			if (resolver.getMehtodResolver().getFieldMethodInfo().isFieldMethod(tmpGenusName)) {// フィールドメソッドコール
 				return createDefinedMethodCallerModel(methodName, sockets, callerId, document, parent);
 			} else {// 継承メソッドorライブラリメソッド
 				String genusName = resolver.getMehtodResolver().getMethodGenusName(identifier, tmpGenusName);
-				return createMethodCallModel(genusName, callerId, sockets, document, parent);
+				if(genusName !=null){
+					return createMethodCallModel(genusName, callerId, sockets, document, parent);	
+				}else{
+					return createSpecialMethodCallModel(methodName, sockets, document, callerId, parent);
+				}
 			}
-		} catch (Exception e) {
-			// create special
-			return createSpecialMethodCallModel(methodName, sockets, document, callerId, parent);
-		}
 	}
 
 	public BlockElementModel createSpecialMethodCallModel(String methodName, List<BlockElementModel> sockets, Document document, Long callerId, String parentId) {
@@ -1110,7 +1110,7 @@ public class BlockGenerator extends UniModelVisitor {
 			}
 
 			BlockElementModel receiverModel = visitExpr(method.receiver, String.valueOf(caller.getBlockID()));
-			BlockElementModel callMethodModel = createMethodCallModel(receiverModel.getType(), method.methodName, sockets, document, callerId, caller.getBlockID());
+			BlockElementModel callMethodModel = createMethodCallModel(trimGenerics(receiverModel.getType()), method.methodName, sockets, document, callerId, caller.getBlockID());
 
 			// socketノードの作成
 			List<Node> socketNodes = resolver.getSocketNodes(caller.getGenusName());
@@ -1123,6 +1123,11 @@ public class BlockGenerator extends UniModelVisitor {
 			caller.addPlugElement(document, plug);
 			return caller;
 		}
+	}
+	
+	private String trimGenerics(String type){
+		String[] texts = type.split("<");
+		return texts[0];
 	}
 
 	/*
