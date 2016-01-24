@@ -43,15 +43,6 @@ public class UniToBlockTestUtil {
 		return (UniClassDec)dec;
 	}
 	
-	public static void parseTest(UniClassDec cDec) throws IOException{
-		BlockGenerator gen = UniModelMaker.createBlockGenerator(cDec.className);
-		gen.parse(cDec);
-	}
-	
-	public static void parseTestToBG2(UniClassDec cDec) throws IOException{
-		BlockGenerator gen = UniModelMaker.createBlockGenerator2(cDec.className);
-		gen.parse(cDec);
-	}
 	
 	public static void parseTestToBG2(UniProgram fileDec) throws IOException, ParserConfigurationException, TransformerException{
 		UniClassDec dec = fileDec.classes.get(0);
@@ -87,6 +78,7 @@ public class UniToBlockTestUtil {
 		String generatedCode;
 		try {
 			generatedCode = JavaGeneratorForTurtle.generate(BlockMapper.generate(blockSource));
+			System.out.println(generatedCode);
 			List<String> generateSource = Arrays.asList(generatedCode.split(System.lineSeparator()));
 			UniToBlockTestUtil.outputDiff(Files.readAllLines(Paths.get("blockeditor/testcases/BlockConvertTest/" + className + ".java")), generateSource, "blockeditor/test/Result" + className + ".txt");
 		} catch (IOException e) {
