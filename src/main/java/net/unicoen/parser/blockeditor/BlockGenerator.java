@@ -135,7 +135,6 @@ public class BlockGenerator extends Traverser {
 		resolver = new BlockResolver(langdefRootPath, isTest);
 	}
 
-
 	public void parseUniFile(UniProgram file) throws TransformerException, ParserConfigurationException {
 		out.print(createBlockXMLString(getSaveNode(file)));
 		out.close();
@@ -180,7 +179,6 @@ public class BlockGenerator extends Traverser {
 		return sockets;
 	}
 
-
 	public boolean isParamNode(Node node) {
 		return MyDOMUtil.getAttribute(node, BlockElementModel.GENUS_NAME_ATTR).startsWith("proc-param");
 	}
@@ -220,10 +218,6 @@ public class BlockGenerator extends Traverser {
 		}
 	}
 
-
-
-
-
 	public List<BlockCommandModel> parseBody(UniExpr statement) throws RuntimeException {
 		String parentId = getParentId();
 		if (statement == null) {
@@ -262,7 +256,6 @@ public class BlockGenerator extends Traverser {
 		return blocks;
 	}
 
-
 	public void addIfSocketInfo(Document document, BlockIfModel model, BlockElementModel socket, List<BlockCommandModel> trueBlock, List<BlockCommandModel> falseBlock) {
 
 		List<BlockElementModel> blockSockets = new ArrayList<>();
@@ -287,8 +280,6 @@ public class BlockGenerator extends Traverser {
 		// ソケットの出力
 		model.addSocketsAndNodes(blockSockets, document, socketsInfo);
 	}
-
-
 
 	public List<BlockCommandModel> parseBody(Document document, String parentId, UniExpr statement) throws RuntimeException {
 		if (statement == null) {
@@ -322,7 +313,6 @@ public class BlockGenerator extends Traverser {
 		return blocks;
 	}
 
-
 	public BlockLocalVarDecModel parseVarDec(String type, String name) {
 		BlockLocalVarDecModel model = new BlockLocalVarDecModel(type, name, document, resolver, ID_COUNTER++);
 		resolver.getVariableNameResolver().addLocalVariable(name, model.getElement());
@@ -335,7 +325,7 @@ public class BlockGenerator extends Traverser {
 			for (UniArg arg : args) {
 				idStack.push(parent);
 				traverseArg(arg);
-				argModels.add((BlockProcParmModel)createdBlock.pop());
+				argModels.add((BlockProcParmModel) createdBlock.pop());
 			}
 		}
 		return argModels;
@@ -446,17 +436,17 @@ public class BlockGenerator extends Traverser {
 			}
 		});
 		String tmpGenusName = BlockMethodCallModel.calcMethodCallGenusName(methodName, socketTypes);
-
+		try {
 			if (resolver.getMehtodResolver().getFieldMethodInfo().isFieldMethod(tmpGenusName)) {// フィールドメソッドコール
 				return createDefinedMethodCallerModel(methodName, sockets, callerId, document, parent);
 			} else {// 継承メソッドorライブラリメソッド
 				String genusName = resolver.getMehtodResolver().getMethodGenusName(identifier, tmpGenusName);
-				if(genusName !=null){
-					return createMethodCallModel(genusName, callerId, sockets, document, parent);	
-				}else{
-					return createSpecialMethodCallModel(methodName, sockets, document, callerId, parent);
-				}
+				return createMethodCallModel(genusName, callerId, sockets, document, parent);
 			}
+		} catch (Exception e) {
+			System.out.println("method creation err!");
+			return createSpecialMethodCallModel(methodName, sockets, document, callerId, parent);
+		}
 	}
 
 	public BlockElementModel createSpecialMethodCallModel(String methodName, List<BlockElementModel> sockets, Document document, Long callerId, String parentId) {
@@ -572,8 +562,8 @@ public class BlockGenerator extends Traverser {
 			return caller;
 		}
 	}
-	
-	private String trimGenerics(String type){
+
+	private String trimGenerics(String type) {
 		String[] texts = type.split("<");
 		return texts[0];
 	}
@@ -657,7 +647,6 @@ public class BlockGenerator extends Traverser {
 		return PARENT_ID_NULL;
 	}
 
-
 	public void parse(UniProgram node) throws ParserConfigurationException, TransformerException {
 		Element root = createRootNode();
 		traverseProgram(node);
@@ -669,21 +658,20 @@ public class BlockGenerator extends Traverser {
 		out.close();
 	}
 
-	public static String generateBlockSource(UniProgram node){
-		try{
-		BlockGenerator gen = new BlockGenerator(null, "blockeditor/blocks/", true);
-		Element root = gen.createRootNode();
-		gen.traverseProgram(node);
-		PagesModel pages = (PagesModel) gen.createdBlock.pop();
-		root.appendChild(pages.getPagesElement());
+	public static String generateBlockSource(UniProgram node) {
+		try {
+			BlockGenerator gen = new BlockGenerator(null, "blockeditor/blocks/", true);
+			Element root = gen.createRootNode();
+			gen.traverseProgram(node);
+			PagesModel pages = (PagesModel) gen.createdBlock.pop();
+			root.appendChild(pages.getPagesElement());
 
-		return gen.getSaveString(root);
-		}catch(Exception e){
+			return gen.getSaveString(root);
+		} catch (Exception e) {
 			e.printStackTrace();
 			return "ERR";
 		}
 	}
-
 
 	public Element createRootNode() throws ParserConfigurationException {
 		this.document = MyDOMUtil.createDocumentInstance();
@@ -692,10 +680,9 @@ public class BlockGenerator extends Traverser {
 
 		return documentElement;
 	}
-	
 
 	private Stack<Object> createdBlock = new Stack<>();
-	
+
 	@Override
 	public void traverseBoolLiteral(UniBoolLiteral node) {
 		createdBlock.push(new BlockBooleanLiteralModel(node, document, getParentId(), ID_COUNTER++, resolver));
@@ -720,7 +707,6 @@ public class BlockGenerator extends Traverser {
 	public void traverseStringLiteral(UniStringLiteral node) {
 		createdBlock.push(new BlockStringLiteralModel(node.value, document, getParentId(), ID_COUNTER++, resolver));
 	}
-	
 
 	@Override
 	public void traverseIdent(UniIdent node) {
@@ -1002,7 +988,7 @@ public class BlockGenerator extends Traverser {
 
 		BlockElementModel socket = traverseExprForBlock(node.cond, model.getBlockID());
 		List<BlockElementModel> blockSockets = Lists.newArrayList(socket);
-		
+
 		List<BlockCommandModel> trueBlocks = parseBody(document, model.getBlockID(), node.statement);
 		model.setTrueBlocks(trueBlocks);
 
@@ -1029,7 +1015,7 @@ public class BlockGenerator extends Traverser {
 		BlockDoWhileModel model = new BlockDoWhileModel(document, whileBlockId, trueBlocks);
 
 		List<BlockElementModel> blockSockets = new ArrayList<>();
-		
+
 		if (trueBlocks.size() > 0) {
 			blockSockets.add(trueBlocks.get(0));
 		} else {
@@ -1052,13 +1038,13 @@ public class BlockGenerator extends Traverser {
 		BlockLocalVarDecModel model = parseVarDec(node.type, node.name);
 		BlockElementModel initializer = node.value != null ? traverseExprForBlock(node.value, model.getBlockID()) : null;
 		List<BlockElementModel> args = initializer != null ? Lists.newArrayList(initializer) : Lists.newArrayList();
-		
+
 		List<Node> socketNodes = resolver.getSocketNodes(model.getBlockElement().getAttribute(BlockElementModel.GENUS_NAME_ATTR));
 		BlockSocketsModel sockets = calcSocketsInfo(socketNodes);
 
 		model.addSocketsAndNodes(args, document, sockets);
 
-		createdBlock.push(model);	
+		createdBlock.push(model);
 	}
 
 	@Override
@@ -1069,16 +1055,16 @@ public class BlockGenerator extends Traverser {
 	@Override
 	public void traverseFieldDec(UniFieldDec node) {
 		BlockFieldVarDecModel blockModel = new BlockFieldVarDecModel(node.type, node.name, document, resolver, ID_COUNTER++);
-		
+
 		BlockElementModel initializer = node.value != null ? traverseExprForBlock(node.value, blockModel.getBlockID()) : null;
 		List<BlockElementModel> args = initializer != null ? Lists.newArrayList(initializer) : Lists.newArrayList();
-		
+
 		List<Node> socketNodes = resolver.getSocketNodes(blockModel.getElement().getAttribute(BlockElementModel.GENUS_NAME_ATTR));
 		BlockSocketsModel sockets = calcSocketsInfo(socketNodes);
 		blockModel.addSocketsAndNodes(args, document, sockets);
 
 		resolver.getVariableNameResolver().addGlobalVariable(node.name, blockModel.getElement());
-		
+
 		createdBlock.push(blockModel);
 	}
 
@@ -1186,25 +1172,26 @@ public class BlockGenerator extends Traverser {
 	}
 
 	@Override
-	public void traverseImport(UniImport node) {	
+	public void traverseImport(UniImport node) {
 	}
 
 	@Override
 	public void traverseNamespace(UniNamespace node) {
 	}
-	
-	public BlockElementModel traverseExprForBlock(UniExpr node, String parentId){
+
+	public BlockElementModel traverseExprForBlock(UniExpr node, String parentId) {
 		traverseExpr(node, parentId);
-		return (BlockElementModel)createdBlock.pop();
-	}
-	public BlockElementModel traverseExprForBlock(UniExpr node){
-		traverseExpr(node);
-		return (BlockElementModel)createdBlock.pop();
+		return (BlockElementModel) createdBlock.pop();
 	}
 
-	public void traverseExpr(UniExpr expr, String parentId){
+	public BlockElementModel traverseExprForBlock(UniExpr node) {
+		traverseExpr(node);
+		return (BlockElementModel) createdBlock.pop();
+	}
+
+	public void traverseExpr(UniExpr expr, String parentId) {
 		idStack.push(parentId);
 		traverseExpr(expr);
 	}
-	
+
 }

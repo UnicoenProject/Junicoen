@@ -42,7 +42,7 @@ public class BlockAbstractBlockModel extends BlockCommandModel {
 	@Override
 	public void addSocketsAndNodes(List<BlockElementModel> socketBlocks, Document document, BlockSocketsModel sockets) {
 		this.commandBlocks = socketBlocks;
-		if(socketBlocks.size()>0){
+		if(!socketBlocks.isEmpty()){
 			addSocketBlock(socketBlocks.get(0));
 		}
 		addSocketsNode(document, sockets);
@@ -50,7 +50,7 @@ public class BlockAbstractBlockModel extends BlockCommandModel {
 
 	@Override
 	public void addSocketsNode(Document document, BlockSocketsModel sockets) {
-		if (sockets.getSockets().size() > 0) {
+		if (!sockets.getSockets().isEmpty()) {
 			Element socketsElement = document.createElement(BlockSocketsModel.NODE_NAME);
 			socketsElement.setAttribute(BlockSocketsModel.NUMSOCKETS_ATTR, String.valueOf(sockets.getSockets().size()));
 			for (int i = 0; i < getSocketBlocks().size(); i++) {

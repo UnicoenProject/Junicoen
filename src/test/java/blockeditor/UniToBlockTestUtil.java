@@ -2,8 +2,16 @@ package blockeditor;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -41,6 +49,32 @@ public class UniToBlockTestUtil {
 		assertEquals(true, dec instanceof UniClassDec);
 		
 		return (UniClassDec)dec;
+	}
+	
+	public static File createUTFDummyFile(File srcfile){
+		File tmpSrcFile = new File(srcfile.getParent() + "/" + ".tmp" + srcfile.getName());
+		try {
+			FileInputStream fs = new FileInputStream(srcfile);
+			BufferedReader reader = new BufferedReader(new InputStreamReader(fs, "SJIS"));
+
+			FileOutputStream fo = new FileOutputStream(tmpSrcFile);
+			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fo, "UTF-8"));
+			String convertedText = "";
+			String line = reader.readLine();
+			while(line != null){
+				convertedText += new String(line.getBytes("UTF-8")) + System.lineSeparator();
+				line = reader.readLine();
+			}
+			bw.write(convertedText);
+			reader.close();
+			bw.close();
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return tmpSrcFile;
 	}
 	
 	
@@ -81,6 +115,23 @@ public class UniToBlockTestUtil {
 			System.out.println(generatedCode);
 			List<String> generateSource = Arrays.asList(generatedCode.split(System.lineSeparator()));
 			UniToBlockTestUtil.outputDiff(Files.readAllLines(Paths.get("blockeditor/testcases/BlockConvertTest/" + className + ".java")), generateSource, "blockeditor/test/Result" + className + ".txt");
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (SAXException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void output(UniProgram model, String className, String root, String originSourceRoot){
+		//uni->block
+		String blockSource = BlockGenerator.generateBlockSource(model);
+		
+		//block->uni
+		String generatedCode;
+		try {
+			generatedCode = JavaGeneratorForTurtle.generate(BlockMapper.generate(blockSource));
+			List<String> generateSource = Arrays.asList(generatedCode.split(System.lineSeparator()));
+			UniToBlockTestUtil.outputDiff(Files.readAllLines(Paths.get(originSourceRoot + className + ".java")), generateSource, root + className + ".txt");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (SAXException e) {
