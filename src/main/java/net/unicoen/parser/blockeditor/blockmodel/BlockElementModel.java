@@ -52,6 +52,7 @@ public class BlockElementModel {
 			return this.text;
 		}
 	}
+	
 
 	public Element getElement() {
 		return this.element;

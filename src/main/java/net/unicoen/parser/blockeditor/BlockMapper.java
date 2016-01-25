@@ -169,8 +169,6 @@ public class BlockMapper {
 				body = parseBody(map.get(nextNodeId), map);
 			}
 			ret.add(new UniMethodDec(MyDOMUtil.getChildText(procNode, BlockElementModel.LABEL_NODE), getModifiers(procNode), methodsReturnTypes.get(MyDOMUtil.getAttribute(procNode, BlockElementModel.ID_ATTR)), createArgumentsModel(procNode), body));
-
-			resolver.getVariableNameResolver().resetLocalVariables();
 		}
 		return ret;
 	}
@@ -396,8 +394,6 @@ public class BlockMapper {
 
 		String type = MyDOMUtil.getChildText(node, BlockElementModel.TYPE_NODE);
 		String name = MyDOMUtil.getChildText(node, BlockElementModel.LABEL_NODE);
-
-		resolver.getVariableNameResolver().addLocalVariable(MyDOMUtil.getChildText(node, BlockElementModel.LABEL_NODE), node);
 
 		if (!initValues.isEmpty() && initValues.get(0) != null && initValues.size() > 0) {
 			// 初期値あり

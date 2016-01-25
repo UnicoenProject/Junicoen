@@ -122,6 +122,7 @@ public class BlockGenerator extends Traverser {
 
 	private Document document;
 	private Stack<String> idStack = new Stack<>();
+	private Stack<Object> createdBlock = new Stack<>();
 
 	public static String PARENT_ID_NULL = "-1";
 
@@ -681,8 +682,6 @@ public class BlockGenerator extends Traverser {
 		return documentElement;
 	}
 
-	private Stack<Object> createdBlock = new Stack<>();
-
 	@Override
 	public void traverseBoolLiteral(UniBoolLiteral node) {
 		createdBlock.push(new BlockBooleanLiteralModel(node, document, getParentId(), ID_COUNTER++, resolver));
@@ -915,12 +914,6 @@ public class BlockGenerator extends Traverser {
 		BlockAbstractBlockModel model = new BlockAbstractBlockModel(document, abstractionBlockId);
 
 		BlockSocketsModel socketsInfo = calcSocketsInfo(resolver.getSocketNodes(BlockAbstractBlockModel.GENUS_NAME));
-
-		// 抽象化コメントの追加
-		if (node.comment != null) {
-			model.getBlockElement().appendChild(MyDOMUtil.createElement(BlockElementModel.LABEL_NODE, node.blockLabel, document));
-			model.setCollapsed(node.blockLabel, document);
-		}
 
 		model.addSocketsAndNodes(Lists.transform(commands, new Function<BlockCommandModel, BlockElementModel>() {
 			@Override
@@ -1186,6 +1179,11 @@ public class BlockGenerator extends Traverser {
 
 	public BlockElementModel traverseExprForBlock(UniExpr node) {
 		traverseExpr(node);
+		if(node.comment != null){
+			BlockElementModel model = (BlockElementModel) createdBlock.pop();
+			model.addCommentNode(node.comment, document);
+			createdBlock.push(model);
+		}
 		return (BlockElementModel) createdBlock.pop();
 	}
 
@@ -1193,5 +1191,6 @@ public class BlockGenerator extends Traverser {
 		idStack.push(parentId);
 		traverseExpr(expr);
 	}
+
 
 }
