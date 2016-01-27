@@ -1,6 +1,14 @@
 package net.unicoen.node;
 
+import java.io.PrintStream;
+
 public abstract class Traverser {
+	
+	public final PrintStream out;
+	
+	public Traverser(PrintStream out) {
+		this.out = out;
+	}
 
 	public abstract void traverseBoolLiteral(UniBoolLiteral node);
 	public abstract void traverseIntLiteral(UniIntLiteral node);
@@ -35,6 +43,8 @@ public abstract class Traverser {
 	public abstract void traverseProgram(UniProgram node);
 	public abstract void traverseImport(UniImport node);
 	public abstract void traverseNamespace(UniNamespace node);
+	
+	public abstract void print(String str);
 
 	public final void traverseExpr(UniExpr node) {
 		if (node instanceof UniBoolLiteral) {

@@ -51,11 +51,10 @@ import net.unicoen.node.UniWhile;
  */
 public class DolittleGenerator extends Traverser {
 
-	PrintStream out;
 	Map<String, String> turtleMethodNameMap = new HashMap<String, String>();
 
 	public DolittleGenerator(PrintStream out) {
-		this.out = out;
+		super(out);
 		initMap();
 	}
 

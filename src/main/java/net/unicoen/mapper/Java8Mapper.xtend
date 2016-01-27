@@ -167,7 +167,9 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 	}
 
 	override public visitTerminal(TerminalNode node) {
-		println("visit TERMINAL : " + node.text)
+		if (_isDebugMode) {
+			println("visit TERMINAL : " + node.text)
+		}
 
 		val token = node.symbol
 		if (token.type > 0) {
@@ -322,7 +324,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				}
 			}
 			return false
-		].text
+		].visit as String
 		return new UniIntLiteral(Integer.parseInt(text))
 	}
 
@@ -334,7 +336,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				}
 			}
 			return false
-		].text
+		].visit as String
 		return new UniDoubleLiteral(Double.parseDouble(text))
 	}
 
@@ -346,7 +348,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				}
 			}
 			return false
-		].text
+		].visit as String
 		return new UniBoolLiteral(Boolean.parseBoolean(text))
 	}
 
@@ -358,7 +360,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				}
 			}
 			return false
-		].text
+		].visit as String
 		return new UniStringLiteral(text.substring(1, text.length - 1))
 	}
 

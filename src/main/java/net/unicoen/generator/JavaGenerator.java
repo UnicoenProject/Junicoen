@@ -46,14 +46,13 @@ import net.unicoen.node.UniWhile;
 public class JavaGenerator extends Traverser {
 	private final String NEW_LINE = System.getProperty("line.separator");
 
-	private final PrintStream out;
 	private int indent = 0;
 	private boolean indentAtThisLine = false;
 
 	private final IntStack exprPriority = new IntStack();
 
 	protected JavaGenerator(PrintStream out) {
-		this.out = out;
+		super(out);
 		exprPriority.push(0);
 	}
 
@@ -63,7 +62,8 @@ public class JavaGenerator extends Traverser {
 		indent--;
 	}
 
-	protected void print(String str) {
+	@Override
+	public void print(String str) {
 		if (indentAtThisLine == false) {
 			indentAtThisLine = true;
 			for (int i = 0; i < indent; i++) {
@@ -459,6 +459,9 @@ public class JavaGenerator extends Traverser {
 
 	@Override
 	public void traverseClassDec(UniClassDec classDec) {
+		if (classDec.comment != null) {
+			print(classDec.comment);
+		}
 		String mod = safeJoin(classDec.modifiers, " ");
 		String interfaces = safeJoin(classDec.interfaces, ", ");
 		String declare = String.join(" ", mod, "class", classDec.className);
