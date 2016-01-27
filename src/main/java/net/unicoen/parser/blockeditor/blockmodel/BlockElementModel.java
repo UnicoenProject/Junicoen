@@ -11,6 +11,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
+import net.unicoen.parser.blockeditor.AnnotationCommentGetter;
 import net.unicoen.parser.blockeditor.MyDOMUtil;
 
 public class BlockElementModel {
@@ -262,7 +263,9 @@ public class BlockElementModel {
 	}
 
 	public void addCommentNode(String comment, Document document) {
-		getBlockElement().appendChild(MyDOMUtil.createElement(COMMENT_NODE, comment, document));
+		Element commentNode = document.createElement(COMMENT_NODE);
+		commentNode.appendChild(MyDOMUtil.createElement("Text", AnnotationCommentGetter.getCommentText(comment), document));
+		getBlockElement().appendChild(commentNode);
 	}
 
 }
