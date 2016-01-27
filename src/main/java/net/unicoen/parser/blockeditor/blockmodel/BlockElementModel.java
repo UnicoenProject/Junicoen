@@ -75,7 +75,11 @@ public class BlockElementModel {
 
 	public String getType() {
 		Node typeNode = MyDOMUtil.getChildNode(getBlockElement(), TYPE_NODE);
-		return typeNode == null ? "Object" :  typeNode.getTextContent();
+		if(typeNode == null){
+			return "Object";
+		}else{
+			return typeNode.getTextContent();
+		}
 	}
 	
 	public Element createBlockStubNode(Document document, String parentName, String parentGenusName) {
@@ -225,7 +229,11 @@ public class BlockElementModel {
 	public static String convertParamTypeName(String name) {
 		String s = new String(name);
 		s = convertTypeToBlockConnectorType(name);
-		return s.equals("number") || s.equals("double-number") ? "int" : s; 
+		if(s.equals("number") || s.equals("double-number")){
+			return "int";
+		}else{
+			return s;
+		} 
 	}
 
 	/**

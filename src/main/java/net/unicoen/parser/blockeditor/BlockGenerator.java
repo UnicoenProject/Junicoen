@@ -118,12 +118,12 @@ public class BlockGenerator extends Traverser {
 	private PrintStream out;
 	public static String BLOCK_ENC = "UTF-8";
 
-	private String superClass = "";
-
 	private Document document;
 	private Stack<String> idStack = new Stack<>();
 
 	public static String PARENT_ID_NULL = "-1";
+	
+	private MethodResolver methodResolver = new MethodResolver();
 
 	public BlockGenerator(PrintStream out, String langdefRootPath) throws SAXException, IOException {
 		this.out = out;
@@ -218,44 +218,6 @@ public class BlockGenerator extends Traverser {
 		}
 	}
 
-	public List<BlockCommandModel> parseBody(UniExpr statement) throws RuntimeException {
-		String parentId = getParentId();
-		if (statement == null) {
-			return new ArrayList<>(); // can be Collections.emptyList();
-		}
-
-		if (!(statement instanceof UniBlock)) {
-			return Lists.newArrayList((BlockCommandModel) traverseExprForBlock(statement));
-		}
-
-		UniBlock statementBlock = (UniBlock) statement;
-
-		// bodyを辿ってモデル作成
-		List<BlockCommandModel> blocks = new ArrayList<>();
-		String beforeId = parentId;
-		if (statementBlock.body != null) {
-			for (int i = 0; i < statementBlock.body.size(); i++) {
-				UniExpr expr = statementBlock.body.get(i);
-				BlockElementModel command = traverseExprForBlock(expr);
-
-				// statement以外は弾く
-				if (!(command instanceof BlockCommandModel)) {
-					throw new RuntimeException("cant use the expression" + expr.toString());
-				}
-
-				command.addBeforeBlockNode(document, beforeId);
-
-				if (i + 1 < statementBlock.body.size()) {
-					command.addAfterBlockNode(document, String.valueOf(ID_COUNTER));
-					beforeId = command.getBlockElement().getAttribute(BlockElementModel.ID_ATTR);
-				}
-
-				blocks.add((BlockCommandModel) command);
-			}
-		}
-		return blocks;
-	}
-
 	public void addIfSocketInfo(Document document, BlockIfModel model, BlockElementModel socket, List<BlockCommandModel> trueBlock, List<BlockCommandModel> falseBlock) {
 
 		List<BlockElementModel> blockSockets = new ArrayList<>();
@@ -344,7 +306,7 @@ public class BlockGenerator extends Traverser {
 			// フィールドメソッドの解析
 			if (member instanceof UniMethodDec) {
 				UniMethodDec mDec = (UniMethodDec) member;
-				ID_COUNTER = resolver.getMehtodResolver().getFieldMethodInfo().getId(BlockMethodCallModel.calcMethodCallGenusName(mDec.methodName, transformArgToString(mDec.args)));
+				ID_COUNTER = methodResolver.getFieldMethodInfo().getId(BlockMethodCallModel.calcMethodCallGenusName(mDec.methodName, transformArgToString(mDec.args)));
 				traverseMethodDec(mDec);
 				BlockProcedureModel blockMethodCall = (BlockProcedureModel) createdBlock.pop();
 				addLocation(blockMethodCall, document, model.getMethods().size());
@@ -380,7 +342,7 @@ public class BlockGenerator extends Traverser {
 		for (UniMemberDec member : classDec.members) {
 			if (member instanceof UniMethodDec) {
 				UniMethodDec mDec = (UniMethodDec) member;
-				resolver.getMehtodResolver().addFieldMethodInfo(BlockMethodCallModel.calcMethodCallGenusName(mDec.methodName, transformArgToString(mDec.args)), new FieldMethodInfo(mDec.returnType, ID_COUNTER += MAX_AVAIABLE_ID));
+				methodResolver.addFieldMethodInfo(BlockMethodCallModel.calcMethodCallGenusName(mDec.methodName, transformArgToString(mDec.args)), new FieldMethodInfo(mDec.returnType, ID_COUNTER += MAX_AVAIABLE_ID));
 			}
 		}
 	}
@@ -427,7 +389,7 @@ public class BlockGenerator extends Traverser {
 	 * @param parent
 	 * @return
 	 */
-	public BlockElementModel createMethodCallModel(String identifier, String methodName, List<BlockElementModel> sockets, Document document, Long callerId, String parent) {
+	public BlockElementModel createMethodCallModel(String methodName, List<BlockElementModel> sockets, Document document, Long callerId, String parent) {
 		// メソッドコールモデルを作成する
 		List<String> socketTypes = Lists.transform(sockets, new Function<BlockElementModel, String>() {
 			@Override
@@ -437,14 +399,14 @@ public class BlockGenerator extends Traverser {
 		});
 		String tmpGenusName = BlockMethodCallModel.calcMethodCallGenusName(methodName, socketTypes);
 		try {
-			if (resolver.getMehtodResolver().getFieldMethodInfo().isFieldMethod(tmpGenusName)) {// フィールドメソッドコール
+			if (methodResolver.getFieldMethodInfo().isFieldMethod(tmpGenusName)) {// フィールドメソッドコール
 				return createDefinedMethodCallerModel(methodName, sockets, callerId, document, parent);
 			} else {// 継承メソッドorライブラリメソッド
-				String genusName = resolver.getMehtodResolver().getMethodGenusName(identifier, tmpGenusName);
-				return createMethodCallModel(genusName, callerId, sockets, document, parent);
+				return createMethodCallModel(tmpGenusName, callerId, sockets, document, parent);
 			}
 		} catch (Exception e) {
-			System.out.println("method creation err!");
+			System.out.println("method creation err!" + methodName);
+			e.printStackTrace();
 			return createSpecialMethodCallModel(methodName, sockets, document, callerId, parent);
 		}
 	}
@@ -477,15 +439,16 @@ public class BlockGenerator extends Traverser {
 
 	public BlockElementModel createDefinedMethodCallerModel(String methodName, List<BlockElementModel> sockets, Long id, Document document, String parent) {
 		String genusName = BlockMethodCallModel.calcMethodCallGenusName(methodName, transformToTypeList(sockets));
-		String returnType = resolver.getMehtodResolver().getFieldMethodInfo().getReturnType(genusName);
+		String returnType = methodResolver.getFieldMethodInfo().getReturnType(genusName);
+		String parentId = String.valueOf(methodResolver.getFieldMethodInfo().getId(genusName));
 		if ("void".equals(returnType)) {
 			// 返り値無しメソッド呼び出しモデルの作成
-			BlockUserMethodCallModel model = new BlockUserMethodCallModel(methodName, transformToTypeList(sockets), document, resolver, id);
+			BlockUserMethodCallModel model = new BlockUserMethodCallModel(methodName, transformToTypeList(sockets), document, parentId, id);
 
 			model.addSocketsAndNodes(sockets, document, null);
 			return model;
 		} else {
-			BlockUserMethodCallWithReturnModel model = new BlockUserMethodCallWithReturnModel(methodName, transformToTypeList(sockets), document, resolver, id);
+			BlockUserMethodCallWithReturnModel model = new BlockUserMethodCallWithReturnModel(methodName, transformToTypeList(sockets), document, parentId, methodResolver.getFieldMethodInfo().getReturnType(genusName), id);
 			model.addSocketsAndNodes(sockets, document, null);
 			BlockPlugModel plug = new BlockPlugModel("", BlockElementModel.convertTypeToBlockConnectorType(model.getType()), "single", parent);
 			model.addPlugElement(document, plug);
@@ -528,7 +491,7 @@ public class BlockGenerator extends Traverser {
 			}
 
 			// id, methodNameを使って，ライブラリメソッドor他のオブジェクトのフィールドメソッドモデルを生成
-			BlockElementModel callMethodModel = createMethodCallModel(receiverModel.getType(), method.methodName, sockets, document, callerId, PARENT_ID_NULL);
+			BlockElementModel callMethodModel = createMethodCallModel(method.methodName, sockets, document, callerId, PARENT_ID_NULL);
 			callMethodModel.addBeforeBlockNode(document, caller.getBlockID());
 
 			// ソケットノードの作成
@@ -548,7 +511,7 @@ public class BlockGenerator extends Traverser {
 			}
 
 			BlockElementModel receiverModel = traverseExprForBlock(method.receiver, String.valueOf(caller.getBlockID()));
-			BlockElementModel callMethodModel = createMethodCallModel(trimGenerics(receiverModel.getType()), method.methodName, sockets, document, callerId, caller.getBlockID());
+			BlockElementModel callMethodModel = createMethodCallModel(method.methodName, sockets, document, callerId, caller.getBlockID());
 
 			// socketノードの作成
 			List<Node> socketNodes = resolver.getSocketNodes(caller.getGenusName());
@@ -561,11 +524,6 @@ public class BlockGenerator extends Traverser {
 			caller.addPlugElement(document, plug);
 			return caller;
 		}
-	}
-
-	private String trimGenerics(String type) {
-		String[] texts = type.split("<");
-		return texts[0];
 	}
 
 	/*
@@ -758,7 +716,7 @@ public class BlockGenerator extends Traverser {
 			Long callerId = ID_COUNTER++;
 			List<BlockElementModel> sockets = parseArgs(node.args, String.valueOf(callerId));
 
-			createdBlock.push(createMethodCallModel(superClass, node.methodName, sockets, document, callerId, parentId));
+			createdBlock.push(createMethodCallModel(node.methodName, sockets, document, callerId, parentId));
 		} else {
 			String genusName = resolver.getForceConvertionMap().getBlockGenusName(node);
 			if (genusName != null) {
@@ -801,7 +759,7 @@ public class BlockGenerator extends Traverser {
 			BlockElementModel value = traverseExprForBlock(node.expr, String.valueOf(notOpID));
 
 			BlockNotOperatorModel model = new BlockNotOperatorModel(document, notOpID, (BlockExprModel) value);
-
+			
 			List<BlockElementModel> args = Lists.newArrayList(value);
 
 			List<Node> socketNodes = resolver.getSocketNodes(BlockNotOperatorModel.GENUS_NAME);
@@ -1133,10 +1091,6 @@ public class BlockGenerator extends Traverser {
 
 	@Override
 	public void traverseClassDec(UniClassDec node) {
-		if (node.superClass != null && node.superClass.size() > 0) {
-			superClass = node.superClass.get(node.superClass.size() - 1);
-		}
-
 		BlockClassModel model = new BlockClassModel();
 
 		parseFieldVariable(node, model, document);
@@ -1146,7 +1100,6 @@ public class BlockGenerator extends Traverser {
 
 		parseClassMethods(node, model, document);
 
-		superClass = "";
 		createdBlock.push(model);
 	}
 

@@ -15,6 +15,7 @@ import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -87,6 +88,8 @@ public class UniToBlockTestUtil {
 	public static void outputDiff( List<String> origin, List<String> generated, String outputFilePath) throws IOException{
         Patch patch = DiffUtils.diff(origin, generated);
         FileWriter writer = new FileWriter(outputFilePath);
+        Calendar calender = Calendar.getInstance();
+        writer.write(calender.get(Calendar.HOUR_OF_DAY) +"時"+ calender.get(Calendar.MINUTE) + "分"+  System.lineSeparator());
         for (Delta delta : patch.getDeltas()) {
             writer.write(String.format("[変更前(%d)行目]", delta.getOriginal().getPosition() + 1) + System.lineSeparator());
             for (Object line : delta.getOriginal().getLines()) {

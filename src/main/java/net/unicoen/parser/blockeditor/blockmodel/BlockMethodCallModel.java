@@ -13,7 +13,6 @@ public class BlockMethodCallModel extends BlockCommandModel {
 
 	public BlockMethodCallModel(String genusName, Document document, BlockResolver resolver, Long ID_COUNTER, String parentId) {
 		this.element = createPrototypeElement(genusName, document, resolver, ID_COUNTER, parentId);
-		addBeforeBlockNode(document, parentId);
 	}
 
 	public Element createPrototypeElement(String genusName, Document document, BlockResolver resolver, Long ID_COUNTER, String parentId) {
