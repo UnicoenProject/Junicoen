@@ -225,7 +225,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				}
 			}
 			return false
-		].text
+		].visit as String
 		return new UniIntLiteral(Integer.parseInt(text))
 	}
 	
@@ -237,7 +237,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				}
 			}
 			return false
-		].text
+		].visit as String
 		return new UniDoubleLiteral(Double.parseDouble(text))
 	}
 	
@@ -249,7 +249,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				}
 			}
 			return false
-		].text
+		].visit as String
 		return new UniBoolLiteral(Boolean.parseBoolean(text))
 	}
 	
@@ -261,7 +261,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				}
 			}
 			return false
-		].text
+		].visit as String
 		return new UniStringLiteral(text.substring(1, text.length - 1))
 	}
 	
@@ -269,11 +269,12 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val map = newHashMap
 		val none = newArrayList
 		map.put("none", none)
-		for (it : ctx.children) {
+		val ret = newArrayList
+		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 536: {
-						return it.visit
+						ret += it.visit
 					}
 					default: {
 						none += it.visit
@@ -282,13 +283,16 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			} else if (it instanceof TerminalNode) {
 				switch it.symbol.type {
 					case Java8Parser.BOOLEAN: {
-						return it.visit
+						ret += it.visit.flatten
 					}
 					default: {
 						none += it.visit
 					}
 				}
 			}
+		]
+		if (!ret.isEmpty) {
+			return ret
 		}
 		map
 	}
@@ -330,7 +334,8 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val map = newHashMap
 		val none = newArrayList
 		map.put("none", none)
-		for (it : ctx.children) {
+		val ret = newArrayList
+		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					default: {
@@ -340,13 +345,16 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			} else if (it instanceof TerminalNode) {
 				switch it.symbol.type {
 					case Java8Parser.Identifier: {
-						return it.visit
+						ret += it.visit.flatten
 					}
 					default: {
 						none += it.visit
 					}
 				}
 			}
+		]
+		if (!ret.isEmpty) {
+			return ret
 		}
 		map
 	}
@@ -387,13 +395,14 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		map.put("none", none)
 		val receiver = newArrayList
 		map.put("receiver", receiver)
+		val ret = newArrayList
 		val fieldName = newArrayList
 		map.put("fieldName", fieldName)
-		for (it : ctx.children) {
+		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 731: {
-						return it.visit
+						ret += it.visit
 					}
 					case 732: {
 						receiver += it.visit
@@ -412,6 +421,9 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					}
 				}
 			}
+		]
+		if (!ret.isEmpty) {
+			return ret
 		}
 		map.castTo(UniFieldAccess)
 	}
@@ -422,13 +434,14 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		map.put("none", none)
 		val receiver = newArrayList
 		map.put("receiver", receiver)
+		val ret = newArrayList
 		val fieldName = newArrayList
 		map.put("fieldName", fieldName)
-		for (it : ctx.children) {
+		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 739: {
-						return it.visit
+						ret += it.visit
 					}
 					case 68: {
 						receiver += it.visit
@@ -447,6 +460,9 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					}
 				}
 			}
+		]
+		if (!ret.isEmpty) {
+			return ret
 		}
 		map.castTo(UniFieldAccess)
 	}
@@ -457,13 +473,14 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		map.put("none", none)
 		val receiver = newArrayList
 		map.put("receiver", receiver)
+		val ret = newArrayList
 		val fieldName = newArrayList
 		map.put("fieldName", fieldName)
-		for (it : ctx.children) {
+		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 749: {
-						return it.visit
+						ret += it.visit
 					}
 					case 750: {
 						receiver += it.visit
@@ -482,6 +499,9 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					}
 				}
 			}
+		]
+		if (!ret.isEmpty) {
+			return ret
 		}
 		map.castTo(UniFieldAccess)
 	}
@@ -492,13 +512,14 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		map.put("none", none)
 		val receiver = newArrayList
 		map.put("receiver", receiver)
+		val ret = newArrayList
 		val fieldName = newArrayList
 		map.put("fieldName", fieldName)
-		for (it : ctx.children) {
+		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 757: {
-						return it.visit
+						ret += it.visit
 					}
 					case 72: {
 						receiver += it.visit
@@ -517,6 +538,9 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					}
 				}
 			}
+		]
+		if (!ret.isEmpty) {
+			return ret
 		}
 		map.castTo(UniFieldAccess)
 	}
@@ -552,14 +576,15 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val map = newHashMap
 		val none = newArrayList
 		map.put("none", none)
-		for (it : ctx.children) {
+		val ret = newArrayList
+		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 833: {
-						return it.visit
+						ret += it.visit
 					}
 					case 834: {
-						return it.visit
+						ret += it.visit
 					}
 					default: {
 						none += it.visit
@@ -572,6 +597,9 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					}
 				}
 			}
+		]
+		if (!ret.isEmpty) {
+			return ret
 		}
 		map
 	}
@@ -2121,12 +2149,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val map = newHashMap
 		val none = newArrayList
 		map.put("none", none)
+		val ret = newArrayList
 		if (ctx.children != null) {
-			for (it : ctx.children) {
+			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
 						case 1571: {
-							return it.visit
+							ret += it.visit
 						}
 						default: {
 							none += it.visit
@@ -2139,7 +2168,10 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 						}
 					}
 				}
-			}
+			]
+		}
+		if (!ret.isEmpty) {
+			return ret
 		}
 		map.castToList(UniVariableDec)
 	}
@@ -2192,11 +2224,12 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val map = newHashMap
 		val none = newArrayList
 		map.put("none", none)
-		for (it : ctx.children) {
+		val ret = newArrayList
+		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 1622: {
-						return it.visit
+						ret += it.visit
 					}
 					default: {
 						none += it.visit
@@ -2209,6 +2242,9 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					}
 				}
 			}
+		]
+		if (!ret.isEmpty) {
+			return ret
 		}
 		map
 	}
@@ -2450,17 +2486,18 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val map = newHashMap
 		val none = newArrayList
 		map.put("none", none)
-		for (it : ctx.children) {
+		val ret = newArrayList
+		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 2015: {
-						return it.visit
+						ret += it.visit
 					}
 					case 2051: {
-						return it.visit
+						ret += it.visit
 					}
 					case 2053: {
-						return it.visit
+						ret += it.visit
 					}
 					default: {
 						none += it.visit
@@ -2473,6 +2510,9 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					}
 				}
 			}
+		]
+		if (!ret.isEmpty) {
+			return ret
 		}
 		map
 	}
@@ -2873,17 +2913,18 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val map = newHashMap
 		val none = newArrayList
 		map.put("none", none)
+		val ret = newArrayList
 		val cond = newArrayList
 		map.put("cond", cond)
 		val falseExpr = newArrayList
 		map.put("falseExpr", falseExpr)
 		val trueExpr = newArrayList
 		map.put("trueExpr", trueExpr)
-		for (it : ctx.children) {
+		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 2696: {
-						return it.visit
+						ret += it.visit
 					}
 					case 2697: {
 						cond += it.visit
@@ -2905,6 +2946,9 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					}
 				}
 			}
+		]
+		if (!ret.isEmpty) {
+			return ret
 		}
 		map.castTo(UniTernaryOp)
 	}
@@ -2913,17 +2957,18 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val map = newHashMap
 		val none = newArrayList
 		map.put("none", none)
+		val ret = newArrayList
 		val right = newArrayList
 		map.put("right", right)
 		val left = newArrayList
 		map.put("left", left)
 		val operator = newArrayList
 		map.put("operator", operator)
-		for (it : ctx.children) {
+		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 2706: {
-						return it.visit
+						ret += it.visit
 					}
 					case 466: {
 						left += it.visit
@@ -2945,6 +2990,9 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					}
 				}
 			}
+		]
+		if (!ret.isEmpty) {
+			return ret
 		}
 		map.castTo(UniBinOp)
 	}
@@ -2953,17 +3001,18 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val map = newHashMap
 		val none = newArrayList
 		map.put("none", none)
+		val ret = newArrayList
 		val right = newArrayList
 		map.put("right", right)
 		val left = newArrayList
 		map.put("left", left)
 		val operator = newArrayList
 		map.put("operator", operator)
-		for (it : ctx.children) {
+		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 2717: {
-						return it.visit
+						ret += it.visit
 					}
 					case 468: {
 						left += it.visit
@@ -2985,6 +3034,9 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					}
 				}
 			}
+		]
+		if (!ret.isEmpty) {
+			return ret
 		}
 		map.castTo(UniBinOp)
 	}
@@ -2993,17 +3045,18 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val map = newHashMap
 		val none = newArrayList
 		map.put("none", none)
+		val ret = newArrayList
 		val right = newArrayList
 		map.put("right", right)
 		val left = newArrayList
 		map.put("left", left)
 		val operator = newArrayList
 		map.put("operator", operator)
-		for (it : ctx.children) {
+		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 2728: {
-						return it.visit
+						ret += it.visit
 					}
 					case 470: {
 						left += it.visit
@@ -3025,6 +3078,9 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					}
 				}
 			}
+		]
+		if (!ret.isEmpty) {
+			return ret
 		}
 		map.castTo(UniBinOp)
 	}
@@ -3033,17 +3089,18 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val map = newHashMap
 		val none = newArrayList
 		map.put("none", none)
+		val ret = newArrayList
 		val right = newArrayList
 		map.put("right", right)
 		val left = newArrayList
 		map.put("left", left)
 		val operator = newArrayList
 		map.put("operator", operator)
-		for (it : ctx.children) {
+		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 2739: {
-						return it.visit
+						ret += it.visit
 					}
 					case 472: {
 						left += it.visit
@@ -3065,6 +3122,9 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					}
 				}
 			}
+		]
+		if (!ret.isEmpty) {
+			return ret
 		}
 		map.castTo(UniBinOp)
 	}
@@ -3073,17 +3133,18 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val map = newHashMap
 		val none = newArrayList
 		map.put("none", none)
+		val ret = newArrayList
 		val right = newArrayList
 		map.put("right", right)
 		val left = newArrayList
 		map.put("left", left)
 		val operator = newArrayList
 		map.put("operator", operator)
-		for (it : ctx.children) {
+		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 2750: {
-						return it.visit
+						ret += it.visit
 					}
 					case 474: {
 						left += it.visit
@@ -3105,6 +3166,9 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					}
 				}
 			}
+		]
+		if (!ret.isEmpty) {
+			return ret
 		}
 		map.castTo(UniBinOp)
 	}
@@ -3113,17 +3177,18 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val map = newHashMap
 		val none = newArrayList
 		map.put("none", none)
+		val ret = newArrayList
 		val right = newArrayList
 		map.put("right", right)
 		val left = newArrayList
 		map.put("left", left)
 		val operator = newArrayList
 		map.put("operator", operator)
-		for (it : ctx.children) {
+		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 2761: {
-						return it.visit
+						ret += it.visit
 					}
 					case 476: {
 						left += it.visit
@@ -3151,6 +3216,9 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					}
 				}
 			}
+		]
+		if (!ret.isEmpty) {
+			return ret
 		}
 		map.castTo(UniBinOp)
 	}
@@ -3159,17 +3227,18 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val map = newHashMap
 		val none = newArrayList
 		map.put("none", none)
+		val ret = newArrayList
 		val right = newArrayList
 		map.put("right", right)
 		val left = newArrayList
 		map.put("left", left)
 		val operator = newArrayList
 		map.put("operator", operator)
-		for (it : ctx.children) {
+		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 2775: {
-						return it.visit
+						ret += it.visit
 					}
 					case 478: {
 						left += it.visit
@@ -3215,6 +3284,9 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					}
 				}
 			}
+		]
+		if (!ret.isEmpty) {
+			return ret
 		}
 		map.castTo(UniBinOp)
 	}
@@ -3223,17 +3295,18 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val map = newHashMap
 		val none = newArrayList
 		map.put("none", none)
+		val ret = newArrayList
 		val right = newArrayList
 		map.put("right", right)
 		val left = newArrayList
 		map.put("left", left)
 		val operator = newArrayList
 		map.put("operator", operator)
-		for (it : ctx.children) {
+		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 2798: {
-						return it.visit
+						ret += it.visit
 					}
 					case 480: {
 						left += it.visit
@@ -3264,6 +3337,9 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					}
 				}
 			}
+		]
+		if (!ret.isEmpty) {
+			return ret
 		}
 		map.castTo(UniBinOp)
 	}
@@ -3272,17 +3348,18 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val map = newHashMap
 		val none = newArrayList
 		map.put("none", none)
+		val ret = newArrayList
 		val right = newArrayList
 		map.put("right", right)
 		val left = newArrayList
 		map.put("left", left)
 		val operator = newArrayList
 		map.put("operator", operator)
-		for (it : ctx.children) {
+		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 2819: {
-						return it.visit
+						ret += it.visit
 					}
 					case 482: {
 						left += it.visit
@@ -3310,6 +3387,9 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					}
 				}
 			}
+		]
+		if (!ret.isEmpty) {
+			return ret
 		}
 		map.castTo(UniBinOp)
 	}
@@ -3318,17 +3398,18 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val map = newHashMap
 		val none = newArrayList
 		map.put("none", none)
+		val ret = newArrayList
 		val right = newArrayList
 		map.put("right", right)
 		val left = newArrayList
 		map.put("left", left)
 		val operator = newArrayList
 		map.put("operator", operator)
-		for (it : ctx.children) {
+		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 2833: {
-						return it.visit
+						ret += it.visit
 					}
 					case 484: {
 						left += it.visit
@@ -3362,6 +3443,9 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					}
 				}
 			}
+		]
+		if (!ret.isEmpty) {
+			return ret
 		}
 		map.castTo(UniBinOp)
 	}
@@ -3370,18 +3454,19 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val map = newHashMap
 		val none = newArrayList
 		map.put("none", none)
+		val ret = newArrayList
 		val operator = newArrayList
 		map.put("operator", operator)
 		val expr = newArrayList
 		map.put("expr", expr)
-		for (it : ctx.children) {
+		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 2849: {
-						return it.visit
+						ret += it.visit
 					}
 					case 2850: {
-						return it.visit
+						ret += it.visit
 					}
 					case 2852: {
 						expr += it.visit
@@ -3390,7 +3475,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 						expr += it.visit
 					}
 					case 2855: {
-						return it.visit
+						ret += it.visit
 					}
 					default: {
 						none += it.visit
@@ -3409,6 +3494,9 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					}
 				}
 			}
+		]
+		if (!ret.isEmpty) {
+			return ret
 		}
 		map.castTo(UniUnaryOp)
 	}
@@ -3481,15 +3569,16 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val map = newHashMap
 		val none = newArrayList
 		map.put("none", none)
+		val ret = newArrayList
 		val operator = newArrayList
 		map.put("operator", operator)
 		val expr = newArrayList
 		map.put("expr", expr)
-		for (it : ctx.children) {
+		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 2864: {
-						return it.visit
+						ret += it.visit
 					}
 					case 2866: {
 						expr += it.visit
@@ -3514,6 +3603,9 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					}
 				}
 			}
+		]
+		if (!ret.isEmpty) {
+			return ret
 		}
 		map.castTo(UniUnaryOp)
 	}
@@ -3522,14 +3614,15 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val map = newHashMap
 		val none = newArrayList
 		map.put("none", none)
-		for (it : ctx.children) {
+		val ret = newArrayList
+		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 2872: {
-						return it.visit
+						ret += it.visit
 					}
 					case 2873: {
-						return it.visit
+						ret += it.visit
 					}
 					default: {
 						none += it.visit
@@ -3542,6 +3635,9 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					}
 				}
 			}
+		]
+		if (!ret.isEmpty) {
+			return ret
 		}
 		map.castTo(UniUnaryOp)
 	}
