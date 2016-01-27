@@ -64,7 +64,8 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 	}
 
 	new(boolean isDebugMode) {
-		_isDebugMode = isDebugMode
+		// _isDebugMode = isDebugMode
+		_isDebugMode = false
 	}
 
 	def parse(String code) {
@@ -119,7 +120,6 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				_lastNode.comment += hiddenToken.text
 			}
 		}
-
 		ret
 	}
 
@@ -135,35 +135,33 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 	}
 
 	override public visit(ParseTree tree) {
-		if (_isDebugMode) {
-			if (!(tree instanceof ParserRuleContext)) {
-				return visitTerminal(tree as TerminalNode)
-			}
-			val ruleName = Java8Parser.ruleNames.get((tree as ParserRuleContext).ruleIndex)
-			println("enter " + ruleName + " : " + tree.text)
-			val ret = tree.accept(this)
-			println("exit " + ruleName + " : " + ret)
-
-			if (ret instanceof UniNode) {
-				var content = ""
-				for (var i = _comments.size - 1; i >= 0 && _comments.get(i).parent == tree; i--) {
-					content = _comments.get(i).content + content
-					_comments.remove(i)
-				}
-				if (content != "") {
-					ret.comment = content
-				}
-				_lastNode = ret
+		val node = if (_isDebugMode && tree instanceof ParserRuleContext) {
+				val ruleName = Java8Parser.ruleNames.get((tree as ParserRuleContext).ruleIndex)
+				println("enter " + ruleName + " : " + tree.text)
+				val ret = tree.accept(this)
+				println("exit " + ruleName + " : " + ret)
+				ret
 			} else {
-				for (var i = _comments.size - 1; i >= 0 && _comments.get(i).parent == tree; i--) {
-					_comments.get(i).parent = _comments.get(i).parent.parent
-				}
+				tree.accept(this)
 			}
 
-			ret
+		if (node instanceof UniNode) {
+			var content = ""
+			for (var i = _comments.size - 1; i >= 0 && _comments.get(i).parent == tree; i--) {
+				content = _comments.get(i).content + content
+				_comments.remove(i)
+			}
+			if (content != "") {
+				node.comment = content
+			}
+			_lastNode = node
 		} else {
-			tree.accept(this)
+			for (var i = _comments.size - 1; i >= 0 && _comments.get(i).parent == tree; i--) {
+				_comments.get(i).parent = _comments.get(i).parent.parent
+			}
 		}
+
+		node
 	}
 
 	override public visitTerminal(TerminalNode node) {
@@ -187,11 +185,14 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				}
 			}
 			if (content != "") {
-				_comments.add(new Comment(content, node.parent))
+				var parent = node.parent
+				while (parent.parent !== null && parent.parent.getChild(0) === parent) {
+					parent = parent.parent
+				}
+				_comments.add(new Comment(content, parent))
 			}
 			_nextTokenIndex = count + 1;
 		}
-
 		node.text
 	}
 
