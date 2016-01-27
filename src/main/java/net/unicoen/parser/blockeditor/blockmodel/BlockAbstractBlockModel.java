@@ -15,13 +15,7 @@ public class BlockAbstractBlockModel extends BlockCommandModel {
 	public static String COLLAPSED_NODE = "Collapsed";
 	
 	public BlockAbstractBlockModel(Document document, Long id) {
-		this.element = createBlockElement(document, GENUS_NAME, id, KIND);
-	}
-
-	public void setLabel(String label, Document document){
-		Element element = document.createElement(BlockElementModel.LABEL_NODE);
-		element.setTextContent(AnnotationCommentGetter.getCommentText(label));
-		getBlockElement().appendChild(element);
+		this.element = createBlockElement(document, GENUS_NAME, id, BlockElementModel.BLOCKKINDS.ABSTRACTION.toString());
 	}
 	
 	public void setCollapsed(String comment, Document document){
@@ -48,7 +42,7 @@ public class BlockAbstractBlockModel extends BlockCommandModel {
 	@Override
 	public void addSocketsAndNodes(List<BlockElementModel> socketBlocks, Document document, BlockSocketsModel sockets) {
 		this.commandBlocks = socketBlocks;
-		if(socketBlocks.size()>0){
+		if(!socketBlocks.isEmpty()){
 			addSocketBlock(socketBlocks.get(0));
 		}
 		addSocketsNode(document, sockets);
@@ -56,7 +50,7 @@ public class BlockAbstractBlockModel extends BlockCommandModel {
 
 	@Override
 	public void addSocketsNode(Document document, BlockSocketsModel sockets) {
-		if (sockets.getSockets().size() > 0) {
+		if (!sockets.getSockets().isEmpty()) {
 			Element socketsElement = document.createElement(BlockSocketsModel.NODE_NAME);
 			socketsElement.setAttribute(BlockSocketsModel.NUMSOCKETS_ATTR, String.valueOf(sockets.getSockets().size()));
 			for (int i = 0; i < getSocketBlocks().size(); i++) {

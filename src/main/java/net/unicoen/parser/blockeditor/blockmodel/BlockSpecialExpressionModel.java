@@ -1,20 +1,21 @@
 package net.unicoen.parser.blockeditor.blockmodel;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+
+import com.google.common.collect.ImmutableMap;
+
+import net.unicoen.parser.blockeditor.MyDOMUtil;
 
 public class BlockSpecialExpressionModel extends BlockExprModel {
 
 	public static String SPECIAL_IDENT_GENUS_NAME = "special-ident";
 
 	public BlockSpecialExpressionModel(String genusName, String methodName, Document document, Long id, String kind, String parentId){
-		Element element = createBlockElement(document, genusName, id, kind);
-		addElement(BlockElementModel.NAME_NODE, document, methodName, element);
-		addElement(BlockElementModel.LABEL_NODE, document, methodName, element);
-		this.element = element;
-
+		this.element = createBlockElement(document, genusName, id, kind);
+		MyDOMUtil.appendChilds(element, MyDOMUtil.createElements(ImmutableMap.of(BlockElementModel.NAME_NODE, methodName, BlockElementModel.LABEL_NODE, methodName), document));
+		
 		if(kind.equals(BlockElementModel.BLOCKKINDS.FUNCTION.toString())){
-			addElement(BlockElementModel.TYPE_NODE, document, "Object", element);
+			element.appendChild(MyDOMUtil.createElement(BlockElementModel.TYPE_NODE, "Object", document));
 		}
 		
 		addPlugElement(document, this.element, parentId, "object", "mirror");

@@ -7,8 +7,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import com.google.common.collect.ImmutableMap;
+
 import net.unicoen.node.UniMethodDec;
 import net.unicoen.parser.blockeditor.AnnotationCommentGetter;
+import net.unicoen.parser.blockeditor.MyDOMUtil;
 
 public class BlockProcedureModel extends BlockElementModel {
 
@@ -26,9 +29,8 @@ public class BlockProcedureModel extends BlockElementModel {
 	
 	public void initialize(UniMethodDec funcDec, Document document, Long ID_COUNTER){
 		Element procedureElement = createBlockElement(document, GENUS_NAME, ID_COUNTER, KIND);
-
-		addElement(BlockElementModel.LABEL_NODE, document, funcDec.methodName, procedureElement);
-		addElement(RETURN_TYPE_NODE, document, funcDec.returnType, procedureElement);
+		
+		MyDOMUtil.appendChilds(procedureElement, MyDOMUtil.createElements(ImmutableMap.of(BlockElementModel.LABEL_NODE, funcDec.methodName, RETURN_TYPE_NODE, funcDec.returnType), document));		
 		addLocationElement(document, "50", "50", procedureElement);
 		
 		this.element = procedureElement;

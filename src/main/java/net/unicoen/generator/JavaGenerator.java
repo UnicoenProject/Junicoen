@@ -313,7 +313,8 @@ public class JavaGenerator extends Traverser {
 	@Override
 	public void traverseReturn(UniReturn node) {
 		print("return ");
-		parseExpr(node.value);
+		if(node.value != null)
+			parseExpr(node.value);
 	}
 
 	@Override

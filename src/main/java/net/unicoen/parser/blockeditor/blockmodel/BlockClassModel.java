@@ -32,9 +32,6 @@ public class BlockClassModel {
 		return this.methods;
 	}
 	
-	public List<BlockFieldVarDecModel> getFieldVariables(){
-		return this.fieldVariables;
-	}
 
 	public void addMethod(BlockProcedureModel method) {
 		this.methods.add(method);

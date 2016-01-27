@@ -14,7 +14,8 @@ public class UniToBlock02_TurtleTest {
 	@Test
 	public void test() throws IOException, ParserConfigurationException, TransformerException {
 		UniProgram fileModel = UniToBlockTestUtil.createFileModel("blockeditor/testcases/BlockConvertTest/_02TurtleTest.java");
-		UniToBlockTestUtil.parseTestToBG2(fileModel);
+//		UniToBlockTestUtil.parseTestToBG2(fileModel);
+		UniToBlockTestUtil.output(fileModel, "_02TurtleTest");
 	}
 
 }

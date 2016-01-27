@@ -14,7 +14,8 @@ public class UniToBlock10_VariableTest {
 	@Test
 	public void test() throws IOException, ParserConfigurationException, TransformerException {
 		UniProgram fileModel = UniToBlockTestUtil.createFileModel("blockeditor/testcases/BlockConvertTest/_10VariableTest.java");
-		UniToBlockTestUtil.parseTestToBG2(fileModel);
+//		UniToBlockTestUtil.parseTestToBG2(fileModel);
+		UniToBlockTestUtil.output(fileModel, "_10VariableTest");
 	}
 
 }

@@ -14,7 +14,6 @@ public class _30MethodTest extends Turtle {
 	public void run() {
 		m0();
 		m1(100);
-//		m4();
 		int x = m3();
 		m5(1.0);
 	}
@@ -34,7 +33,6 @@ public class _30MethodTest extends Turtle {
 		} else {
 			print(c);
 			d = Math.sin(d);
-			// Math.sin(d);
 		}
 	}
 

@@ -33,9 +33,9 @@ public class ForceConvertionMap {
 		Consumer<Node> addItemToForceConvertionMap = new Consumer<Node>() {
 			@Override
 			public void accept(Node t) {
-				Node uniModelNode = DOMUtil.getChildNode(t, UNIMODEL_NODE);
+				Node uniModelNode = MyDOMUtil.getChildNode(t, UNIMODEL_NODE);
 				UniExpr uniModel = (UniExpr) getUniModel(uniModelNode);
-				String blockGenusName = DOMUtil.getChildNode(t, GENUSNAME_NODE).getTextContent();
+				String blockGenusName = MyDOMUtil.getChildNode(t, GENUSNAME_NODE).getTextContent();
 				u2bFCMap.put(uniModel, blockGenusName);
 				b2uFCMap.put(blockGenusName, uniModel);
 			}
@@ -48,7 +48,7 @@ public class ForceConvertionMap {
 			 * @return Uniモデル
 			 */
 			public Object getUniModel(Node node) {
-				List<Node> modelAttrNodes = DOMUtil.getChildNodes(node);
+				List<Node> modelAttrNodes = MyDOMUtil.getChildNodes(node);
 
 				UniModelData map = new UniModelData();
 				// 属性を取得する（mapを作成する）
@@ -58,7 +58,7 @@ public class ForceConvertionMap {
 				}
 
 				// 取得した属性を元に，Uniモデルを作成する
-				return UniModelFactory.createUniExprModel(DOMUtil.getAttribute(node, UNIMODEL_ATTR), map);
+				return UniModelFactory.createUniExprModel(MyDOMUtil.getAttribute(node, UNIMODEL_ATTR), map);
 			}
 
 			/**
@@ -70,14 +70,14 @@ public class ForceConvertionMap {
 			 * @return mapの値
 			 */
 			public Object getAttrObject(Node attrNode) {
-				if (DOMUtil.getAttribute(attrNode, UNIMODEL_ATTR) != null) {
+				if (MyDOMUtil.getAttribute(attrNode, UNIMODEL_ATTR) != null) {
 					return getUniModel(attrNode);
 				} else {
 					return attrNode.getTextContent();
 				}
 			}
 		};
-		DOMUtil.doAnythingToNodeList(node, ITEM_NODE, addItemToForceConvertionMap);
+		MyDOMUtil.doAnythingToNodeList(node, ITEM_NODE, addItemToForceConvertionMap);
 	}
 
 	/**
@@ -155,7 +155,5 @@ public class ForceConvertionMap {
 		model.receiver = origin.receiver;
 		return model;
 	}
-	
 
-	
 }

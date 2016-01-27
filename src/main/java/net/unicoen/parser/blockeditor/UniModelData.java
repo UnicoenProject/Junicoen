@@ -7,11 +7,7 @@ public class UniModelData {
 	private Map<String, Object> map = new HashMap<>();
 	
 	public static enum UniModelParameters{
-		RECEIVER("receiver"),
-		NAME("name"),
-		TYPE("type"),
-		VALUE("value"),
-		MODIFIERS("modifiers");
+		RECEIVER("receiver"),NAME("name"),TYPE("type"),VALUE("value"),MODIFIERS("modifiers");
 		
 		private final String text;
 		private UniModelParameters(String text){
