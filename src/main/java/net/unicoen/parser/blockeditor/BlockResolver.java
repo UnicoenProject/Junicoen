@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import org.apache.xerces.parsers.DOMParser;
 import org.w3c.dom.Document;
@@ -31,9 +30,9 @@ public class BlockResolver {
 	private Map<String, Node> allAvailableBlocks = new HashMap<String, Node>();// key:genusname, value:node
 
 	private VariableNameResolver vnResolver = new VariableNameResolver();
-	private MethodResolver methodResolver = new MethodResolver();
 	private VariableBlockNameResolver variableResolver = new VariableBlockNameResolver();
 	protected ForceConvertionMap forceConvertionMap;
+	
 
 	/**
 	 * ブロック変換の諸リゾルバクラス
@@ -46,22 +45,9 @@ public class BlockResolver {
 		initMethodResolver(isTest);
 	}
 
-	public void initMethodResolver(boolean isTest) throws SAXException, IOException {
-		createLibratyMethodsMap(isTest);
-		
+	public void initMethodResolver(boolean isTest) throws SAXException, IOException {		
 		//強制変換リストを作成（System.out.println -> cui-printという1個のブロックに変換）というリスト
 		createForceConvertionMap(isTest);
-	}
-	
-	public void createLibratyMethodsMap(boolean isTest) throws SAXException, IOException{
-		//ライブラリクラスとその利用可能メソッドのマップを初期化
-		DOMParser parser = new DOMParser();
-		if(isTest){
-			parser.parse(langdefRootPath + LIBRARYMETHODLIST_FILENAME);			
-		}else{
-			parser.parse(ORIGIN_LANG_DEF_ROOT_PATH + LIBRARYMETHODLIST_FILENAME);
-		}
-		createLibraryMethodsMap(parser.getDocument().getFirstChild());
 	}
 	
 	public void createForceConvertionMap(boolean isTest) throws SAXException, IOException{
@@ -75,50 +61,6 @@ public class BlockResolver {
 		forceConvertionMap = new ForceConvertionMap(parser.getDocument().getFirstChild());
 	}
 
-	public void createLibraryMethodsMap(Node node) {
-		// LibClassノードで行う処理の定義
-		Consumer<Node> parseLibNode = new Consumer<Node>() {
-			@Override
-			public void accept(Node node) {
-				String className = MyDOMUtil.getAttribute(node, "name");
-				methodResolver.add(className, new ClassMethodMap());
-				// CategoryNameタグの全ノードで行う処理の定義
-				Consumer<Node> parseCategory = new Consumer<Node>() {
-					@Override
-					public void accept(Node t) {
-						Consumer<Node> c = new Consumer<Node>() {
-							@Override
-							public void accept(Node t) {
-								if (methodResolver.getAvaiableClassMethods().get(className).getClassMethodList(className) == null) {
-									methodResolver.getAvaiableClassMethods().get(className).add(className, new ArrayList<String>());
-								}
-								methodResolver.getAvaiableClassMethods().get(className).getClassMethodList(className).add(t.getTextContent());
-							}
-						};
-
-						if ("add".equals(MyDOMUtil.getAttribute(t, "command"))) {
-							MyDOMUtil.doAnythingToNodeList(t, "MethodName", c);
-						} else if ("copy".equals(MyDOMUtil.getAttribute(t, "command"))) {
-							String copyClass = MyDOMUtil.getAttribute(t, "name");
-							List<String> methods = methodResolver.getAvaiableClassMethods().get(copyClass).getClassMethodList(copyClass);
-							if (methodResolver.getAvaiableClassMethods().get(className).getClassMethodList(copyClass) == null) {
-								methodResolver.getAvaiableClassMethods().get(className).add(copyClass, new ArrayList<>());
-							}
-
-							methodResolver.getAvaiableClassMethods().get(className).getClassMethodList(copyClass).addAll(methods);
-						}
-					}
-				};
-
-				MyDOMUtil.doAnythingToNodeList(node, "CategoryName", parseCategory);
-			}
-		};
-		MyDOMUtil.doAnythingToNodeList(node, "LibraryClass", parseLibNode);
-	}
-
-	public MethodResolver getMethodResolver() {
-		return this.methodResolver;
-	}
 
 	public VariableNameResolver getVariableNameResolver() {
 		return this.vnResolver;
@@ -158,50 +100,12 @@ public class BlockResolver {
 				// 全ブロック情報のマップに登録
 				allAvailableBlocks.put(MyDOMUtil.getAttribute(node, "name"), node);
 				addAvaiableVariableTypeToMap(node);
-				addAvaiableMethodToResolver(node);
 			}
 		} catch (SAXException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	private void addAvaiableMethodToResolver(Node node) {
-		String kind = MyDOMUtil.getAttribute(node, "kind");
-		if (BlockLocalVarDecModel.KIND.equals(kind)) {
-			Node methodsNode = MyDOMUtil.getChildNode(node, "ClassMethods");
-			if (methodsNode != null) {
-				addClassMethodsToResolver(MyDOMUtil.getChildTextFromBlockNode(node, "Type"), methodsNode);
-			}
-		}
-	}
-
-	private void addClassMethodsToResolver(String type, Node node) {
-		NodeList nodes = node.getChildNodes();
-		ClassMethodMap map = new ClassMethodMap();
-		for (int i = 0; i < nodes.getLength(); i++) {
-			Node child = nodes.item(i);
-			if ("CategoryName".equals(child.getNodeName())) {
-				String className = MyDOMUtil.getAttribute(child, "classname");
-				map.add(className, getMethodsFromCategoryNode(child));
-			}
-		}
-		methodResolver.add(type, map);
-	}
-
-	private List<String> getMethodsFromCategoryNode(Node node) {
-		List<String> methods = new ArrayList<>();
-		NodeList nodes = node.getChildNodes();
-
-		for (int i = 0; i < nodes.getLength(); i++) {
-			Node child = nodes.item(i);
-			if ("MethodName".equals(child.getNodeName())) {
-				methods.add(child.getTextContent());
-			}
-		}
-
-		return methods;
 	}
 
 	public void addAvaiableVariableTypeToMap(Node node) {
@@ -282,9 +186,6 @@ public class BlockResolver {
 		return paramNameSpace;
 	}
 
-	public MethodResolver getMehtodResolver() {
-		return this.methodResolver;
-	}
 
 	public ForceConvertionMap getForceConvertionMap(){
 		return this.forceConvertionMap;

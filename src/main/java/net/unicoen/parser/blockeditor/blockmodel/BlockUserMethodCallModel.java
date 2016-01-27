@@ -8,7 +8,6 @@ import org.w3c.dom.Element;
 
 import com.google.common.collect.ImmutableMap;
 
-import net.unicoen.parser.blockeditor.BlockResolver;
 import net.unicoen.parser.blockeditor.MyDOMUtil;
 
 
@@ -16,13 +15,12 @@ public class BlockUserMethodCallModel extends BlockCommandModel{
 	public static String GENUS_NAME = "callerprocedure";
 	private static String KIND = "command";
 
-	public BlockUserMethodCallModel(String methodName, List<String> socketsTypes, Document document, BlockResolver resolver, Long ID_COUNTER) {
-		this.element = createPrototypeElement(methodName, socketsTypes, document, resolver, ID_COUNTER);
+	public BlockUserMethodCallModel(String methodName, List<String> socketsTypes, Document document, String parentId, Long ID_COUNTER) {
+		this.element = createPrototypeElement(methodName, socketsTypes, document, parentId, ID_COUNTER);
 	}
 
-	public Element createPrototypeElement(String methodName, List<String> socketsTypes, Document document, BlockResolver resolver, Long ID_COUNTER){
-		String parentID =  resolver.getMehtodResolver().getFieldMethodInfo().getId(BlockMethodCallModel.calcMethodCallGenusName(methodName, socketsTypes)).toString();
-		Element root = createBlockStubNode(document, methodName, BlockProcedureModel.GENUS_NAME, parentID);
+	public Element createPrototypeElement(String methodName, List<String> socketsTypes, Document document, String parentId ,Long ID_COUNTER){
+		Element root = createBlockStubNode(document, methodName, BlockProcedureModel.GENUS_NAME, parentId);
 		Element element = createBlockElement(document, GENUS_NAME, ID_COUNTER, KIND);
 		MyDOMUtil.appendChilds(element, MyDOMUtil.createElements(ImmutableMap.of(BlockElementModel.NAME_NODE, methodName, BlockElementModel.LABEL_NODE, methodName), document));
 		

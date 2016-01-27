@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <BlockFamily>
-	<FamilyMember>Turtle-fd[@int]</FamilyMember>
-	<FamilyMember>Turtle-bk[@int]</FamilyMember>
+	<FamilyMember>fd[@int]</FamilyMember>
+	<FamilyMember>bk[@int]</FamilyMember>
 </BlockFamily>
 <BlockFamily>
-	<FamilyMember>Turtle-rt[@int]</FamilyMember>
-	<FamilyMember>Turtle-lt[@int]</FamilyMember>
+	<FamilyMember>rt[@int]</FamilyMember>
+	<FamilyMember>lt[@int]</FamilyMember>
 </BlockFamily>
 <BlockFamily>
-	<FamilyMember>Turtle-up[]</FamilyMember>
-	<FamilyMember>Turtle-down[]</FamilyMember>
+	<FamilyMember>up[]</FamilyMember>
+	<FamilyMember>down[]</FamilyMember>
 </BlockFamily>
 
 <BlockFamily>
@@ -99,24 +99,6 @@
     <BlockGenusMember>private-var-string-arrayobject</BlockGenusMember>
 </BlockFamily>
 
-<BlockFamily>
-    <BlockGenusMember>new-object-ListTurtle&lt;Turtle&gt;[]</BlockGenusMember>
-	<BlockGenusMember>new-object-ListTurtle&lt;ImageTurtle&gt;[]</BlockGenusMember>
-	<BlockGenusMember>new-object-ListTurtle&lt;CardTurtle&gt;[]</BlockGenusMember>
-	<BlockGenusMember>new-object-ListTurtle&lt;TextTurtle&gt;[]</BlockGenusMember>
-	<BlockGenusMember>new-object-ListTurtle&lt;SoundTurtle&gt;[]</BlockGenusMember>
-	<BlockGenusMember>new-object-ListTurtle&lt;ButtonTurtle&gt;[]</BlockGenusMember>
-	<BlockGenusMember>new-object-ListTurtle&lt;InputTurtle&gt;[]</BlockGenusMember>
-</BlockFamily>
 
-<BlockFamily>
-    <BlockGenusMember>new-object-ListTurtle&lt;Turtle&gt;[@boolean@string]</BlockGenusMember>
-	<BlockGenusMember>new-object-ListTurtle&lt;ImageTurtle&gt;[@boolean@string]</BlockGenusMember>
-	<BlockGenusMember>new-object-ListTurtle&lt;CardTurtle&gt;[@boolean@string]</BlockGenusMember>
-	<BlockGenusMember>new-object-ListTurtle&lt;TextTurtle&gt;[@boolean@string]</BlockGenusMember>
-	<BlockGenusMember>new-object-ListTurtle&lt;SoundTurtle&gt;[@boolean@string]</BlockGenusMember>
-	<BlockGenusMember>new-object-ListTurtle&lt;ButtonTurtle&gt;[@boolean@string]</BlockGenusMember>
-	<BlockGenusMember>new-object-ListTurtle&lt;InputTurtle&gt;[@boolean@string]</BlockGenusMember>
-</BlockFamily>
 
 

@@ -226,7 +226,8 @@ public class BlockMapper {
 				fieldVariables.add(node);
 			}
 			if (BlockReturnModel.GENUS_NAME.equals(genusName)) {
-				returnTypes.put(MyDOMUtil.getAttribute(getTopBlockNode(node), BlockElementModel.ID_ATTR), getSocketBlockType(MyDOMUtil.getChildNode(MyDOMUtil.getChildNode(node, BlockSocketsModel.NODE_NAME), BlockConnector.CONNECTOR_NODE)));
+				Node socketsNode = MyDOMUtil.getChildNode(node, BlockSocketsModel.NODE_NAME);
+				returnTypes.put(MyDOMUtil.getAttribute(getTopProcedure(node), BlockElementModel.ID_ATTR), getSocketBlockType(MyDOMUtil.getChildNode(socketsNode, BlockConnector.CONNECTOR_NODE)));
 			}
 		}
 	}
@@ -273,14 +274,10 @@ public class BlockMapper {
 		}
 	}
 
-	public Node getTopBlockNode(Node node) {
-		if (BlockProcedureModel.GENUS_NAME.equals(MyDOMUtil.getAttribute(node, BlockElementModel.GENUS_NAME_ATTR))) {
-			return node;
-		}
+	public Node getTopProcedure(Node node) {
 		Node tmpNode = node;
-
 		while (tmpNode != null) {
-			if (MyDOMUtil.getChildNode(tmpNode, BlockElementModel.BEFOREBLOCKID_NODE) == null) {
+			if (MyDOMUtil.getAttribute(tmpNode, BlockElementModel.GENUS_NAME_ATTR).equals(BlockProcedureModel.GENUS_NAME)) {
 				return tmpNode;
 			}
 			tmpNode = map.get(MyDOMUtil.getChildText(tmpNode, BlockElementModel.BEFOREBLOCKID_NODE));
