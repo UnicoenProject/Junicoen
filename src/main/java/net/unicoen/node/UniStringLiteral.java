@@ -19,7 +19,8 @@ public class UniStringLiteral extends UniExpr {
 	public int hashCode() {
 		int result = 17;
 		result = result * 31 + (value == null ? 0 : value.hashCode());
-		result = result * 31 + (comment == null ? 0 : comment.hashCode());
+		result = result * 31 + (beforeComment == null ? 0 : beforeComment.hashCode());
+		result = result * 31 + (afterComment == null ? 0 : afterComment.hashCode());
 		return result;
 	}
 
@@ -28,7 +29,8 @@ public class UniStringLiteral extends UniExpr {
 		if (obj == null || !(obj instanceof UniStringLiteral)) return false;
 		UniStringLiteral that = (UniStringLiteral)obj;
 		return (this.value == null ? that.value == null : this.value.equals(that.value))
-			&& (this.comment == null ? that.comment == null : this.comment.equals(that.comment));
+			&& (this.beforeComment == null ? that.beforeComment == null : this.beforeComment.equals(that.beforeComment))
+			&& (this.afterComment == null ? that.afterComment == null : this.afterComment.equals(that.afterComment));
 	}
 
 	@Override
@@ -40,8 +42,11 @@ public class UniStringLiteral extends UniExpr {
 		if (that.value != null) {
 			this.value = that.value;
 		}
-		if (that.comment != null) {
-			this.comment = that.comment;
+		if (that.beforeComment != null) {
+			this.beforeComment = that.beforeComment;
+		}
+		if (that.afterComment != null) {
+			this.afterComment = that.afterComment;
 		}
 	}
 }

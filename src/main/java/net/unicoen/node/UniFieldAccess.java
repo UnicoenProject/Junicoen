@@ -22,7 +22,8 @@ public class UniFieldAccess extends UniExpr {
 		int result = 17;
 		result = result * 31 + (receiver == null ? 0 : receiver.hashCode());
 		result = result * 31 + (fieldName == null ? 0 : fieldName.hashCode());
-		result = result * 31 + (comment == null ? 0 : comment.hashCode());
+		result = result * 31 + (beforeComment == null ? 0 : beforeComment.hashCode());
+		result = result * 31 + (afterComment == null ? 0 : afterComment.hashCode());
 		return result;
 	}
 
@@ -32,7 +33,8 @@ public class UniFieldAccess extends UniExpr {
 		UniFieldAccess that = (UniFieldAccess)obj;
 		return (this.receiver == null ? that.receiver == null : this.receiver.equals(that.receiver))
 			&& (this.fieldName == null ? that.fieldName == null : this.fieldName.equals(that.fieldName))
-			&& (this.comment == null ? that.comment == null : this.comment.equals(that.comment));
+			&& (this.beforeComment == null ? that.beforeComment == null : this.beforeComment.equals(that.beforeComment))
+			&& (this.afterComment == null ? that.afterComment == null : this.afterComment.equals(that.afterComment));
 	}
 
 	@Override
@@ -47,8 +49,11 @@ public class UniFieldAccess extends UniExpr {
 		if (that.fieldName != null) {
 			this.fieldName = that.fieldName;
 		}
-		if (that.comment != null) {
-			this.comment = that.comment;
+		if (that.beforeComment != null) {
+			this.beforeComment = that.beforeComment;
+		}
+		if (that.afterComment != null) {
+			this.afterComment = that.afterComment;
 		}
 	}
 }

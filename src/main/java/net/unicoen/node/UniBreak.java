@@ -12,14 +12,18 @@ public class UniBreak extends UniExpr {
 
 	@Override
 	public int hashCode() {
-		return (comment == null ? 0 : comment.hashCode());
+		int result = 17;
+		result = result * 31 + (beforeComment == null ? 0 : beforeComment.hashCode());
+		result = result * 31 + (afterComment == null ? 0 : afterComment.hashCode());
+		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null || !(obj instanceof UniBreak)) return false;
 		UniBreak that = (UniBreak)obj;
-		return (this.comment == null ? that.comment == null : this.comment.equals(that.comment));
+		return (this.beforeComment == null ? that.beforeComment == null : this.beforeComment.equals(that.beforeComment))
+			&& (this.afterComment == null ? that.afterComment == null : this.afterComment.equals(that.afterComment));
 	}
 
 	@Override
@@ -28,8 +32,11 @@ public class UniBreak extends UniExpr {
 	}
 
 	public void merge(UniBreak that) {
-		if (that.comment != null) {
-			this.comment = that.comment;
+		if (that.beforeComment != null) {
+			this.beforeComment = that.beforeComment;
+		}
+		if (that.afterComment != null) {
+			this.afterComment = that.afterComment;
 		}
 	}
 }

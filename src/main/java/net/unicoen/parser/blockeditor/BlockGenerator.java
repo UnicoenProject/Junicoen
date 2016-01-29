@@ -874,7 +874,7 @@ public class BlockGenerator extends Traverser {
 		BlockSocketsModel socketsInfo = calcSocketsInfo(resolver.getSocketNodes(BlockAbstractBlockModel.GENUS_NAME));
 
 		// 抽象化コメントの追加
-		if (node.comment != null) {
+		if (node.beforeComment != null) {
 			model.getBlockElement().appendChild(MyDOMUtil.createElement(BlockElementModel.LABEL_NODE, node.blockLabel, document));
 			model.setCollapsed(node.blockLabel, document);
 		}

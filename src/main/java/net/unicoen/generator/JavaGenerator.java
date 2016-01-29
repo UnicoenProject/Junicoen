@@ -464,8 +464,8 @@ public class JavaGenerator extends Traverser {
 
 	@Override
 	public void traverseClassDec(UniClassDec classDec) {
-		if (classDec.comment != null) {
-			print(classDec.comment);
+		if (classDec.beforeComment != null) {
+			print(classDec.beforeComment);
 		}
 		String mod = safeJoin(classDec.modifiers, " ");
 		String interfaces = safeJoin(classDec.interfaces, ", ");

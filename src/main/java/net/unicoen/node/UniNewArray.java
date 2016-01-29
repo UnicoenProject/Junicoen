@@ -27,7 +27,8 @@ public class UniNewArray extends UniExpr {
 		result = result * 31 + (type == null ? 0 : type.hashCode());
 		result = result * 31 + (elementsNum == null ? 0 : elementsNum.hashCode());
 		result = result * 31 + (value == null ? 0 : value.hashCode());
-		result = result * 31 + (comment == null ? 0 : comment.hashCode());
+		result = result * 31 + (beforeComment == null ? 0 : beforeComment.hashCode());
+		result = result * 31 + (afterComment == null ? 0 : afterComment.hashCode());
 		return result;
 	}
 
@@ -38,7 +39,8 @@ public class UniNewArray extends UniExpr {
 		return (this.type == null ? that.type == null : this.type.equals(that.type))
 			&& (this.elementsNum == null ? that.elementsNum == null : this.elementsNum.equals(that.elementsNum))
 			&& (this.value == null ? that.value == null : this.value.equals(that.value))
-			&& (this.comment == null ? that.comment == null : this.comment.equals(that.comment));
+			&& (this.beforeComment == null ? that.beforeComment == null : this.beforeComment.equals(that.beforeComment))
+			&& (this.afterComment == null ? that.afterComment == null : this.afterComment.equals(that.afterComment));
 	}
 
 	@Override
@@ -60,8 +62,11 @@ public class UniNewArray extends UniExpr {
 		if (that.value != null) {
 			this.value = that.value;
 		}
-		if (that.comment != null) {
-			this.comment = that.comment;
+		if (that.beforeComment != null) {
+			this.beforeComment = that.beforeComment;
+		}
+		if (that.afterComment != null) {
+			this.afterComment = that.afterComment;
 		}
 	}
 }
