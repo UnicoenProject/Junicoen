@@ -466,6 +466,7 @@ public class JavaGenerator extends Traverser {
 	public void traverseClassDec(UniClassDec classDec) {
 		if (classDec.beforeComment != null) {
 			print(classDec.beforeComment);
+			newline();
 		}
 		String mod = safeJoin(classDec.modifiers, " ");
 		String interfaces = safeJoin(classDec.interfaces, ", ");
@@ -488,6 +489,10 @@ public class JavaGenerator extends Traverser {
 		newline();
 		print("}");
 		newline();
+		if (classDec.afterComment != null) {
+			print(classDec.afterComment);
+			newline();
+		}
 	}
 
 	@Override
