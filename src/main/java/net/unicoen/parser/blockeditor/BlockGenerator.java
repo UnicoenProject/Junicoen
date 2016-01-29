@@ -115,7 +115,6 @@ public class BlockGenerator extends Traverser {
 
 	private BlockResolver resolver;
 
-	private PrintStream out;
 	public static String BLOCK_ENC = "UTF-8";
 
 	private Document document;
@@ -128,12 +127,12 @@ public class BlockGenerator extends Traverser {
 	private VariableNameResolver vnResolver = new VariableNameResolver();
 
 	public BlockGenerator(PrintStream out, String langdefRootPath) throws SAXException, IOException {
-		this.out = out;
+		super(out);
 		resolver = new BlockResolver(langdefRootPath, false);
 	}
 
 	public BlockGenerator(PrintStream out, String langdefRootPath, boolean isTest) throws SAXException, IOException {
-		this.out = out;
+		super(out);
 		resolver = new BlockResolver(langdefRootPath, isTest);
 	}
 
@@ -528,7 +527,7 @@ public class BlockGenerator extends Traverser {
 		}
 	}
 
-	/*
+	/**
 	 * ブロック定義ファイルのソケットノードから，ソケット情報を作成する
 	 */
 	public BlockSocketsModel calcSocketsInfo(List<Node> socketNodes) {
@@ -874,6 +873,12 @@ public class BlockGenerator extends Traverser {
 
 		BlockSocketsModel socketsInfo = calcSocketsInfo(resolver.getSocketNodes(BlockAbstractBlockModel.GENUS_NAME));
 
+		// 抽象化コメントの追加
+		if (node.beforeComment != null) {
+			model.getBlockElement().appendChild(MyDOMUtil.createElement(BlockElementModel.LABEL_NODE, node.blockLabel, document));
+			model.setCollapsed(node.blockLabel, document);
+		}
+		
 		model.addSocketsAndNodes(Lists.transform(commands, new Function<BlockCommandModel, BlockElementModel>() {
 			@Override
 			public BlockElementModel apply(BlockCommandModel input) {
@@ -1133,9 +1138,9 @@ public class BlockGenerator extends Traverser {
 
 	public BlockElementModel traverseExprForBlock(UniExpr node) {
 		traverseExpr(node);
-		if(node.comment != null){
+		if(node.afterComment != null){
 			BlockElementModel model = (BlockElementModel) createdBlock.pop();
-			model.addCommentNode(node.comment, document);
+			model.addCommentNode(node.afterComment, document);
 			createdBlock.push(model);
 		}
 		return (BlockElementModel) createdBlock.pop();

@@ -29,10 +29,10 @@ public class CommentTest {
 		UniClassDec classDec = new UniClassDec("CommentTest", Lists.newArrayList(), Lists.newArrayList(), Lists.newArrayList("Turtle"), Lists.newArrayList(), null);
 		UniMethodDec start = UniModelMaker.createEmptyMethodDec("start");
 		UniMethodCall fdCall  =new UniMethodCall(null, "fd", Lists.newArrayList(new UniIntLiteral(50)));
-		fdCall.comment="タートルを動かす";
+		fdCall.afterComment="タートルを動かす";
 		UniBlock block = new UniBlock();
 		block.body = Lists.newArrayList(fdCall);
-		block.comment = "カメを動かす[close]";
+		block.beforeComment = "カメを動かす[close]";
 			
 		start.block.body.add(block);
 		classDec.members.add(start);
@@ -43,7 +43,7 @@ public class CommentTest {
 		UniClassDec convertedClass = model.classes.get(0);
 		UniMethodDec convertedStart = (UniMethodDec) convertedClass.members.get(0);
 		UniBlock convertedBlock = (UniBlock) convertedStart.block.body.get(0);
-		assertEquals(fdCall.comment, convertedBlock.body.get(0).comment);
+		assertEquals(fdCall.afterComment, convertedBlock.body.get(0).afterComment);
 		
 	}
 

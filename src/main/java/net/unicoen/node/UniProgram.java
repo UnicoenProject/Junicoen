@@ -27,7 +27,8 @@ public class UniProgram extends UniNode {
 		result = result * 31 + (classes == null ? 0 : classes.hashCode());
 		result = result * 31 + (imports == null ? 0 : imports.hashCode());
 		result = result * 31 + (namespace == null ? 0 : namespace.hashCode());
-		result = result * 31 + (comment == null ? 0 : comment.hashCode());
+		result = result * 31 + (beforeComment == null ? 0 : beforeComment.hashCode());
+		result = result * 31 + (afterComment == null ? 0 : afterComment.hashCode());
 		return result;
 	}
 
@@ -38,7 +39,8 @@ public class UniProgram extends UniNode {
 		return (this.classes == null ? that.classes == null : this.classes.equals(that.classes))
 			&& (this.imports == null ? that.imports == null : this.imports.equals(that.imports))
 			&& (this.namespace == null ? that.namespace == null : this.namespace.equals(that.namespace))
-			&& (this.comment == null ? that.comment == null : this.comment.equals(that.comment));
+			&& (this.beforeComment == null ? that.beforeComment == null : this.beforeComment.equals(that.beforeComment))
+			&& (this.afterComment == null ? that.afterComment == null : this.afterComment.equals(that.afterComment));
 	}
 
 	public void merge(UniProgram that) {
@@ -59,8 +61,11 @@ public class UniProgram extends UniNode {
 		if (that.namespace != null) {
 			this.namespace = that.namespace;
 		}
-		if (that.comment != null) {
-			this.comment = that.comment;
+		if (that.beforeComment != null) {
+			this.beforeComment = that.beforeComment;
+		}
+		if (that.afterComment != null) {
+			this.afterComment = that.afterComment;
 		}
 	}
 }

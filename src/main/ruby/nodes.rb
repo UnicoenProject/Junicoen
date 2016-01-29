@@ -6,7 +6,8 @@ Dsl.define_node do |x|
   x.prefix = "Uni"
 
   x.node "Node", abstract: true do |n|
-    n.mem 'comment', String
+    n.mem 'beforeComment', String
+    n.mem 'afterComment', String
 
     x.node "Expr", abstract: true, member: { statement: :boolean } do
       #
