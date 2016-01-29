@@ -73,6 +73,7 @@ public class BlockMapper {
 
 	private HashMap<String, Node> map = new HashMap<>();// Blockのidをキー該当ノードをvalueとして全てのBlockNodeを保持する変数
 	private BlockResolver resolver;
+	
 
 	public BlockMapper(String langdefRootPath) throws SAXException, IOException {
 		resolver = new BlockResolver(langdefRootPath, false);

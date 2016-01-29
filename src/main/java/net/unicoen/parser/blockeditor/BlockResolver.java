@@ -29,7 +29,6 @@ public class BlockResolver {
 
 	private Map<String, Node> allAvailableBlocks = new HashMap<String, Node>();// key:genusname, value:node
 
-	private VariableNameResolver vnResolver = new VariableNameResolver();
 	private VariableBlockNameResolver variableResolver = new VariableBlockNameResolver();
 	protected ForceConvertionMap forceConvertionMap;
 	
@@ -59,11 +58,6 @@ public class BlockResolver {
 		}
 		
 		forceConvertionMap = new ForceConvertionMap(parser.getDocument().getFirstChild());
-	}
-
-
-	public VariableNameResolver getVariableNameResolver() {
-		return this.vnResolver;
 	}
 
 	public String getLocalVarDecBlockName(String type) {
@@ -185,7 +179,6 @@ public class BlockResolver {
 		paramNameSpace += "]";
 		return paramNameSpace;
 	}
-
 
 	public ForceConvertionMap getForceConvertionMap(){
 		return this.forceConvertionMap;

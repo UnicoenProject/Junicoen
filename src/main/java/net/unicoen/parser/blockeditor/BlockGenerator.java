@@ -125,6 +125,7 @@ public class BlockGenerator extends Traverser {
 	public static String PARENT_ID_NULL = "-1";
 	
 	private MethodResolver methodResolver = new MethodResolver();
+	private VariableNameResolver vnResolver = new VariableNameResolver();
 
 	public BlockGenerator(PrintStream out, String langdefRootPath) throws SAXException, IOException {
 		this.out = out;
@@ -187,7 +188,7 @@ public class BlockGenerator extends Traverser {
 	public BlockElementModel createEqualOperatorModel(UniBinOp binopExpr, Document document) {
 		if (binopExpr.left instanceof UniIdent) {
 			UniIdent ident = (UniIdent) binopExpr.left;
-			Node varDecNode = resolver.getVariableNameResolver().getVariableBlockNode(ident.name);
+			Node varDecNode = vnResolver.getVariableBlockNode(ident.name);
 			Long id = ID_COUNTER++;
 
 			// 右辺のモデルの生成
@@ -278,7 +279,7 @@ public class BlockGenerator extends Traverser {
 
 	public BlockLocalVarDecModel parseVarDec(String type, String name) {
 		BlockLocalVarDecModel model = new BlockLocalVarDecModel(type, name, document, resolver, ID_COUNTER++);
-		resolver.getVariableNameResolver().addLocalVariable(name, model.getElement());
+		vnResolver.addLocalVariable(name, model.getElement());
 		return model;
 	}
 
@@ -364,7 +365,7 @@ public class BlockGenerator extends Traverser {
 		List<BlockElementModel> args = Lists.newArrayList(initializer);
 		blockModel.addSocketsAndNodes(args, document, calcSocketsInfo(resolver.getSocketNodes(blockModel.getElement().getAttribute(BlockElementModel.GENUS_NAME_ATTR))));
 
-		resolver.getVariableNameResolver().addGlobalVariable(member.name, blockModel.getElement());
+		vnResolver.addGlobalVariable(member.name, blockModel.getElement());
 		return blockModel;
 	}
 
@@ -667,7 +668,7 @@ public class BlockGenerator extends Traverser {
 
 	@Override
 	public void traverseIdent(UniIdent node) {
-		Node varDecNode = resolver.getVariableNameResolver().getVariableBlockNode(node.name);
+		Node varDecNode = vnResolver.getVariableBlockNode(node.name);
 		if (varDecNode != null) {
 			BlockVariableGetterModel getterModel = new BlockVariableGetterModel(varDecNode, document, ID_COUNTER++);
 			getterModel.addPlugElement(document, new BlockPlugModel("", getterModel.getConnectorKind(), "mirror", getParentId()));
@@ -778,7 +779,7 @@ public class BlockGenerator extends Traverser {
 				operator = "-";
 			}
 
-			Node varDecNode = resolver.getVariableNameResolver().getVariableBlockNode(ident.name);
+			Node varDecNode = vnResolver.getVariableBlockNode(ident.name);
 
 			if (parentId.equals(PARENT_ID_NULL)) {
 				Long id = ID_COUNTER++;
@@ -1014,7 +1015,7 @@ public class BlockGenerator extends Traverser {
 		BlockSocketsModel sockets = calcSocketsInfo(socketNodes);
 		blockModel.addSocketsAndNodes(args, document, sockets);
 
-		resolver.getVariableNameResolver().addGlobalVariable(node.name, blockModel.getElement());
+		vnResolver.addGlobalVariable(node.name, blockModel.getElement());
 
 		createdBlock.push(blockModel);
 	}
@@ -1065,7 +1066,7 @@ public class BlockGenerator extends Traverser {
 			}
 		}
 
-		resolver.getVariableNameResolver().resetLocalVariables();
+		vnResolver.resetLocalVariables();
 
 		createdBlock.push(model);
 	}
@@ -1077,7 +1078,7 @@ public class BlockGenerator extends Traverser {
 		BlockPlugModel plugInfo = new BlockPlugModel(resolver.getPlugElement(model.getGenusName()), getParentId());
 		model.addPlugElement(document, plugInfo);
 
-		resolver.getVariableNameResolver().addLocalVariable(node.name, model.getElement());
+		vnResolver.addLocalVariable(node.name, model.getElement());
 
 		createdBlock.push(model);
 	}
