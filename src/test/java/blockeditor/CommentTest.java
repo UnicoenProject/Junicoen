@@ -1,11 +1,14 @@
 package blockeditor;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.junit.Test;
+import org.xml.sax.SAXException;
 
 import com.google.common.collect.Lists;
 
@@ -15,11 +18,13 @@ import net.unicoen.node.UniIntLiteral;
 import net.unicoen.node.UniMethodCall;
 import net.unicoen.node.UniMethodDec;
 import net.unicoen.node.UniProgram;
+import net.unicoen.parser.blockeditor.BlockGenerator;
+import net.unicoen.parser.blockeditor.BlockMapper;
 
 public class CommentTest {
 
 	@Test
-	public void test() throws IOException, ParserConfigurationException, TransformerException {
+	public void test() throws IOException, ParserConfigurationException, TransformerException, SAXException {
 		UniProgram programModel = new UniProgram(Lists.newArrayList(), Lists.newArrayList(), null);
 		UniClassDec classDec = new UniClassDec("CommentTest", Lists.newArrayList(), Lists.newArrayList(), Lists.newArrayList("Turtle"), Lists.newArrayList(), null);
 		UniMethodDec start = UniModelMaker.createEmptyMethodDec("start");
@@ -33,7 +38,12 @@ public class CommentTest {
 		classDec.members.add(start);
 		programModel.classes.add(classDec);
 		
-		UniToBlockTestUtil.parseTestToBG2(programModel);
+		UniProgram model = BlockMapper.generate(BlockGenerator.generateBlockSource(programModel));
+		
+		UniClassDec convertedClass = model.classes.get(0);
+		UniMethodDec convertedStart = (UniMethodDec) convertedClass.members.get(0);
+		UniBlock convertedBlock = (UniBlock) convertedStart.block.body.get(0);
+		assertEquals(fdCall.comment, convertedBlock.body.get(0).comment);
 		
 	}
 

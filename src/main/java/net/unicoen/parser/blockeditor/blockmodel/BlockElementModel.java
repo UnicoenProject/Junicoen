@@ -36,6 +36,7 @@ public class BlockElementModel {
 	public static String BEFOREBLOCKID_NODE = "BeforeBlockId";// 任意（モデルによって必要）
 	public static String COMMENT_NODE = "Comment";// 任意
 	public static String INITLABEL_ATTR = "initlabel";
+	public static String COMMENT_TEXT_NODE = "Text";
 
 	private List<BlockElementModel> socketBlocksElements = new ArrayList<>();
 
@@ -264,7 +265,7 @@ public class BlockElementModel {
 
 	public void addCommentNode(String comment, Document document) {
 		Element commentNode = document.createElement(COMMENT_NODE);
-		commentNode.appendChild(MyDOMUtil.createElement("Text", AnnotationCommentGetter.getCommentText(comment), document));
+		commentNode.appendChild(MyDOMUtil.createElement(COMMENT_TEXT_NODE, AnnotationCommentGetter.getCommentText(comment), document));
 		getBlockElement().appendChild(commentNode);
 	}
 

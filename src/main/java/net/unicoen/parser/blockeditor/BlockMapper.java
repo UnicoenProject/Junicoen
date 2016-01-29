@@ -39,6 +39,7 @@ import net.unicoen.node.UniMethodCall;
 import net.unicoen.node.UniMethodDec;
 import net.unicoen.node.UniNamespace;
 import net.unicoen.node.UniNew;
+import net.unicoen.node.UniNode;
 import net.unicoen.node.UniProgram;
 import net.unicoen.node.UniReturn;
 import net.unicoen.node.UniStringLiteral;
@@ -316,6 +317,7 @@ public class BlockMapper {
 	}
 
 	private UniExpr parseToExpr(Node node, HashMap<String, Node> map) {
+		UniExpr model;
 		if (BlockElementModel.BLOCK_STUB_NODE.equals(node.getNodeName())) {
 			node = MyDOMUtil.getChildNode(node, BlockElementModel.BLOCK_NODE);
 		}
@@ -323,20 +325,22 @@ public class BlockMapper {
 		String blockKind = MyDOMUtil.getAttribute(node, BlockElementModel.KIND_ATTR);
 		// ブロックモデルに応じてJUNICOENの式モデルを生成する
 		if (BlockElementModel.BLOCKKINDS.DATA.toString().equals(blockKind)) {
-			return parseLiteral(node);// リテラルを解析して式モデルを返す
+			model = parseLiteral(node);// リテラルを解析して式モデルを返す
 		} else if (BlockElementModel.BLOCKKINDS.COMMAND.toString().equals(blockKind)) {
-			return parseCommand(node, map);// if，while，メソッドなどを解析して式モデルを返す
+			model = parseCommand(node, map);// if，while，メソッドなどを解析して式モデルを返す
 		} else if (BlockElementModel.BLOCKKINDS.FUNCTION.toString().equals(blockKind)) {
-			return parseFunction(node, map);// 二項演算，または単項演算を解析して式モデルを返す
+			model = parseFunction(node, map);// 二項演算，または単項演算を解析して式モデルを返す
 		} else if (BlockElementModel.BLOCKKINDS.LOCAL_VARDEC.toString().equals(blockKind)) {
-			return parseLocalVariable(node, map);// ローカル変数を解析して，式モデルを返す
+			model = parseLocalVariable(node, map);// ローカル変数を解析して，式モデルを返す
 		} else if (BlockElementModel.BLOCKKINDS.ABSTRACTION.toString().equals(blockKind)) {
-			return parseAbstraction(node, map);
+			model = parseAbstraction(node, map);
 		} else if (BlockElementModel.BLOCKKINDS.CAST.toString().equals(blockKind)) {
-			return parseCast(node, map);
+			model = parseCast(node, map);
 		} else {
 			throw new RuntimeException("Unsupported node: " + blockKind);
 		}
+		addComment(node, model);
+		return model;
 	}
 
 	private UniExpr parseAbstraction(Node node, HashMap<String, Node> map) {
@@ -582,6 +586,14 @@ public class BlockMapper {
 			return new UniEmptyStatement();
 		} else {
 			return new UniMethodCall(null, MyDOMUtil.getChildTextFromBlockNode(resolver.getBlockNode(blockGenusName), BlockElementModel.NAME_NODE), args);
+		}
+	}
+	
+	public void addComment(Node node, UniNode model){
+		Node commentNode = MyDOMUtil.getChildNode(node, BlockElementModel.COMMENT_NODE);
+		if(commentNode != null){
+			Node commentText = MyDOMUtil.getChildNode(commentNode, "Text");
+			model.comment  = commentText.getTextContent() !=null ?  commentText.getTextContent():null;
 		}
 	}
 
