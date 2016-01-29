@@ -114,10 +114,10 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			val count = _stream.size - 1
 			for (var i = _nextTokenIndex; i < count; i++) {
 				var hiddenToken = _stream.get(i) // Includes skipped tokens (maybe)
-				if (_lastNode.beforeComment === null) {
-					_lastNode.beforeComment = ""
+				if (_lastNode.afterComment === null) {
+					_lastNode.afterComment = ""
 				}
-				_lastNode.beforeComment += hiddenToken.text
+				_lastNode.afterComment += hiddenToken.text
 			}
 		}
 		ret
@@ -176,10 +176,10 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			for (var i = _nextTokenIndex; i < count; i++) {
 				var hiddenToken = _stream.get(i) // Includes skipped tokens (maybe)
 				if (_lastNode !== null && _stream.get(_nextTokenIndex - 1).line == _stream.get(i).line) {
-					if (_lastNode.beforeComment === null) {
-						_lastNode.beforeComment = ""
+					if (_lastNode.afterComment === null) {
+						_lastNode.afterComment = ""
 					}
-					_lastNode.beforeComment += hiddenToken.text
+					_lastNode.afterComment += hiddenToken.text
 				} else {
 					content += hiddenToken.text
 				}
