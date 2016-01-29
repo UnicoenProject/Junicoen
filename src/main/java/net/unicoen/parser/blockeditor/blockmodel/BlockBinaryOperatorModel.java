@@ -7,6 +7,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import net.unicoen.parser.blockeditor.BlockResolver;
+import net.unicoen.parser.blockeditor.MyDOMUtil;
 
 public class BlockBinaryOperatorModel extends BlockExprModel {
 
@@ -31,6 +32,7 @@ public class BlockBinaryOperatorModel extends BlockExprModel {
 
 	public BlockBinaryOperatorModel(Document document, String operator, Long id, BlockElementModel left, BlockElementModel right, BlockResolver resolver) {
 		this.element = createBlockElement(document, calcGenusName(operator, left, right), id, BlockElementModel.BLOCKKINDS.FUNCTION.toString());
+		element.appendChild(MyDOMUtil.createElement(BlockElementModel.TYPE_NODE, MyDOMUtil.getChildText(resolver.getBlockNode(getGenusName()), BlockElementModel.TYPE_NODE), document));
 		this.left = left;
 		this.right = right;
 	}
@@ -85,8 +87,7 @@ public class BlockBinaryOperatorModel extends BlockExprModel {
 				genusName = "greaterthanorequalto";
 			}
 
-			if ("number".equals(type)) {
-			} else if ("double-number".equals(type)) {
+			if ("double-number".equals(type)) {
 				genusName += "-double";
 			}
 			return genusName;
@@ -96,8 +97,7 @@ public class BlockBinaryOperatorModel extends BlockExprModel {
 				genusName = "lessthanorequalto";
 			}
 
-			if ("number".equals(type)) {
-			} else if ("double-number".equals(type)) {
+			if ("double-number".equals(type)) {
 				genusName += "-double";
 			}
 			return genusName;

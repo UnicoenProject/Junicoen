@@ -6,6 +6,8 @@ import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import net.unicoen.parser.blockeditor.MyDOMUtil;
+
 public class PagesModel {
 
 	private Element pagesElement;
@@ -25,9 +27,7 @@ public class PagesModel {
 		//create imorts node
 		Element importStatementsNode = document.createElement(IMPORT_STATEMENTS_NODE); 
 		for(String importStatement : importStatements){
-			Element element = document.createElement(IMPORT_STATEMENT_NODE);
-			element.setTextContent(importStatement);
-			importStatementsNode.appendChild(element);
+			importStatementsNode.appendChild(MyDOMUtil.createElement(IMPORT_STATEMENT_NODE, importStatement, document));
 		}
 		pageElement.appendChild(importStatementsNode);
 

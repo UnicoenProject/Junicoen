@@ -40,11 +40,7 @@ public class VariableNameResolver {
 
 	public Node getVariableBlockNode(String name) {
 		Node node = localVariables.get(name);
-		if (node != null) {
-			return node;
-		} else {
-			return globalVariables.get(name);
-		}
+		return node != null ? node : globalVariables.get(name);  
 	}
 
 }

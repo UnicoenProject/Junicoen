@@ -14,7 +14,8 @@ public class UniToBlock20_CUITest {
 	@Test
 	public void test() throws IOException, ParserConfigurationException, TransformerException {
 		UniProgram fileModel = UniToBlockTestUtil.createFileModel("blockeditor/testcases/BlockConvertTest/_20CUITest.java");
-		UniToBlockTestUtil.parseTestToBG2(fileModel);
+//		UniToBlockTestUtil.parseTestToBG2(fileModel);
+		UniToBlockTestUtil.output(fileModel, "_20CUITest");
 	}
 
 }

@@ -4,7 +4,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import net.unicoen.parser.blockeditor.DOMUtil;
+import net.unicoen.parser.blockeditor.MyDOMUtil;
 
 public class BlockPlugModel extends BlockConnector{
 
@@ -15,9 +15,9 @@ public class BlockPlugModel extends BlockConnector{
 	 * @param connectorID Plugの結合先のID
 	 */
 	public BlockPlugModel(Node plugNode, String connectorID) {
-			this.label = DOMUtil.getAttribute(plugNode, CONNECTOR_LABEL_ATTR);
-			this.connectorType = DOMUtil.getAttribute(plugNode, CONNECTOR_TYPE_ATTR);
-			this.positionType = DOMUtil.getAttribute(plugNode, CONNECTOR_POSITION_TYPE_ATTR);
+			this.label = MyDOMUtil.getAttribute(plugNode, CONNECTOR_LABEL_ATTR);
+			this.connectorType = MyDOMUtil.getAttribute(plugNode, CONNECTOR_TYPE_ATTR);
+			this.positionType = MyDOMUtil.getAttribute(plugNode, CONNECTOR_POSITION_TYPE_ATTR);
 			this.connectorBlockID = connectorID;
 	}
 

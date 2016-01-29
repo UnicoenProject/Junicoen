@@ -21,11 +21,7 @@ public class BlockToUniForceConvertionMap {
 	
 	public UniExpr get(String genusName){
 		UniExpr expr = methodMap.get(genusName);
-		if(expr != null){
-			return expr;
-		}else{
-			return fieldAccessMap.get(expr);
-		}
+		return expr != null ? expr :fieldAccessMap.get(genusName); 
 	}
 	
 	public UniMethodCall getMethodCallModel(String genusName){

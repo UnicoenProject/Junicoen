@@ -19,6 +19,9 @@ public class _14ForTest extends Turtle{
 			
 			for(;i<5;i++){
 				fd(50);
+				rt(90);
+				fd(50);
+				rt(90);
 			}
 			
 			for(int k=0;k<5;k++){

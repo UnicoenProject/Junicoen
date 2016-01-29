@@ -9,3 +9,5 @@ src/test/generated-sources
 *.DS_Store
 .ruby-version
 blockeditor/test
+blockeditor/testcases/LectureSamples
+src/test/java/blockeditor/lecturesamples

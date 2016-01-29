@@ -7,8 +7,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import com.google.common.collect.ImmutableMap;
+
 import net.unicoen.node.UniNew;
 import net.unicoen.parser.blockeditor.BlockResolver;
+import net.unicoen.parser.blockeditor.MyDOMUtil;
 
 public class BlockNewModel extends BlockExprModel{
 
@@ -22,13 +25,10 @@ public class BlockNewModel extends BlockExprModel{
 	}
 
 	public Element createNewElement(UniNew newModel, List<BlockElementModel> sockets, Document document, String parentBlockID, Long ID_COUNTER, BlockResolver resolver){
-
 		String genusName = calcGesnuName(newModel, transformToTypeStringList(sockets), resolver);
 		
 		Element blockElement = createBlockElement(document, genusName, ID_COUNTER, KIND);
-
-		addElement(BlockElementModel.LABEL_NODE, document, newModel.type, blockElement);
-		addElement(BlockElementModel.TYPE_NODE, document, newModel.type, blockElement);
+		MyDOMUtil.appendChilds(blockElement, MyDOMUtil.createElements(ImmutableMap.of(BlockElementModel.LABEL_NODE, newModel.type,BlockElementModel.TYPE_NODE,newModel.type), document));
 
 		//Plug?
 		Node plugNode = resolver.getPlugElement(genusName);

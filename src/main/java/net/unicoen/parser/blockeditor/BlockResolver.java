@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import org.apache.xerces.parsers.DOMParser;
 import org.w3c.dom.Document;
@@ -31,9 +30,9 @@ public class BlockResolver {
 	private Map<String, Node> allAvailableBlocks = new HashMap<String, Node>();// key:genusname, value:node
 
 	private VariableNameResolver vnResolver = new VariableNameResolver();
-	private MethodResolver methodResolver = new MethodResolver();
 	private VariableBlockNameResolver variableResolver = new VariableBlockNameResolver();
 	protected ForceConvertionMap forceConvertionMap;
+	
 
 	/**
 	 * ブロック変換の諸リゾルバクラス
@@ -46,22 +45,9 @@ public class BlockResolver {
 		initMethodResolver(isTest);
 	}
 
-	public void initMethodResolver(boolean isTest) throws SAXException, IOException {
-		createLibratyMethodsMap(isTest);
-		
+	public void initMethodResolver(boolean isTest) throws SAXException, IOException {		
 		//強制変換リストを作成（System.out.println -> cui-printという1個のブロックに変換）というリスト
 		createForceConvertionMap(isTest);
-	}
-	
-	public void createLibratyMethodsMap(boolean isTest) throws SAXException, IOException{
-		//ライブラリクラスとその利用可能メソッドのマップを初期化
-		DOMParser parser = new DOMParser();
-		if(isTest){
-			parser.parse(langdefRootPath + LIBRARYMETHODLIST_FILENAME);			
-		}else{
-			parser.parse(ORIGIN_LANG_DEF_ROOT_PATH + LIBRARYMETHODLIST_FILENAME);
-		}
-		createLibraryMethodsMap(parser.getDocument().getFirstChild());
 	}
 	
 	public void createForceConvertionMap(boolean isTest) throws SAXException, IOException{
@@ -75,50 +61,6 @@ public class BlockResolver {
 		forceConvertionMap = new ForceConvertionMap(parser.getDocument().getFirstChild());
 	}
 
-	public void createLibraryMethodsMap(Node node) {
-		// LibClassノードで行う処理の定義
-		Consumer<Node> parseLibNode = new Consumer<Node>() {
-			@Override
-			public void accept(Node node) {
-				String className = DOMUtil.getAttribute(node, "name");
-				methodResolver.add(className, new ClassMethodMap());
-				// CategoryNameタグの全ノードで行う処理の定義
-				Consumer<Node> parseCategory = new Consumer<Node>() {
-					@Override
-					public void accept(Node t) {
-						Consumer<Node> c = new Consumer<Node>() {
-							@Override
-							public void accept(Node t) {
-								if (methodResolver.getAvaiableClassMethods().get(className).getClassMethodList(className) == null) {
-									methodResolver.getAvaiableClassMethods().get(className).add(className, new ArrayList<String>());
-								}
-								methodResolver.getAvaiableClassMethods().get(className).getClassMethodList(className).add(t.getTextContent());
-							}
-						};
-
-						if ("add".equals(DOMUtil.getAttribute(t, "command"))) {
-							DOMUtil.doAnythingToNodeList(t, "MethodName", c);
-						} else if ("copy".equals(DOMUtil.getAttribute(t, "command"))) {
-							String copyClass = DOMUtil.getAttribute(t, "name");
-							List<String> methods = methodResolver.getAvaiableClassMethods().get(copyClass).getClassMethodList(copyClass);
-							if (methodResolver.getAvaiableClassMethods().get(className).getClassMethodList(copyClass) == null) {
-								methodResolver.getAvaiableClassMethods().get(className).add(copyClass, new ArrayList<>());
-							}
-
-							methodResolver.getAvaiableClassMethods().get(className).getClassMethodList(copyClass).addAll(methods);
-						}
-					}
-				};
-
-				DOMUtil.doAnythingToNodeList(node, "CategoryName", parseCategory);
-			}
-		};
-		DOMUtil.doAnythingToNodeList(node, "LibraryClass", parseLibNode);
-	}
-
-	public MethodResolver getMethodResolver() {
-		return this.methodResolver;
-	}
 
 	public VariableNameResolver getVariableNameResolver() {
 		return this.vnResolver;
@@ -156,9 +98,8 @@ public class BlockResolver {
 			for (int i = 0; i < genusNodes.getLength(); i++) {
 				Node node = genusNodes.item(i);
 				// 全ブロック情報のマップに登録
-				allAvailableBlocks.put(DOMUtil.getAttribute(node, "name"), node);
+				allAvailableBlocks.put(MyDOMUtil.getAttribute(node, "name"), node);
 				addAvaiableVariableTypeToMap(node);
-				addAvaiableMethodToResolver(node);
 			}
 		} catch (SAXException e) {
 			e.printStackTrace();
@@ -167,62 +108,20 @@ public class BlockResolver {
 		}
 	}
 
-	private void addAvaiableMethodToResolver(Node node) {
-		String kind = DOMUtil.getAttribute(node, "kind");
-		if (BlockLocalVarDecModel.KIND.equals(kind)) {
-			Node methodsNode = DOMUtil.getChildNode(node, "ClassMethods");
-			if (methodsNode != null) {
-				addClassMethodsToResolver(DOMUtil.getChildTextFromBlockNode(node, "Type"), methodsNode);
-			}
-		}
-	}
-
-	private void addClassMethodsToResolver(String type, Node node) {
-		NodeList nodes = node.getChildNodes();
-		ClassMethodMap map = new ClassMethodMap();
-		for (int i = 0; i < nodes.getLength(); i++) {
-			Node child = nodes.item(i);
-			if ("CategoryName".equals(child.getNodeName())) {
-				String className = DOMUtil.getAttribute(child, "classname");
-				map.add(className, getMethodsFromCategoryNode(child));
-			}
-		}
-		methodResolver.add(type, map);
-	}
-
-	private List<String> getMethodsFromCategoryNode(Node node) {
-		List<String> methods = new ArrayList<>();
-		NodeList nodes = node.getChildNodes();
-
-		for (int i = 0; i < nodes.getLength(); i++) {
-			Node child = nodes.item(i);
-			if ("MethodName".equals(child.getNodeName())) {
-				methods.add(child.getTextContent());
-			}
-		}
-
-		return methods;
-	}
-
 	public void addAvaiableVariableTypeToMap(Node node) {
-		
 		// 利用可能な変数型リストに登録
-		if (BlockProcParmModel.KIND.equals(DOMUtil.getAttribute(node, BlockElementModel.KIND_ATTR))) {
-			this.variableResolver.addAvaiableFunctionVariable(DOMUtil.getChildNode(node, BlockElementModel.TYPE_NODE).getTextContent(), DOMUtil.getAttribute(node, "name"));
-		} else if (BlockLocalVarDecModel.KIND.equals(DOMUtil.getAttribute(node, BlockElementModel.KIND_ATTR))) {
-			this.variableResolver.addAvaiableLocalVariable(DOMUtil.getChildNode(node, BlockElementModel.TYPE_NODE).getTextContent(), DOMUtil.getAttribute(node, "name"));
-		} else if (BlockFieldVarDecModel.KIND.equals(DOMUtil.getAttribute(node, BlockElementModel.KIND_ATTR))) {
-			this.variableResolver.addAvaiableFieldVariable(DOMUtil.getChildNode(node, BlockElementModel.TYPE_NODE).getTextContent(), DOMUtil.getAttribute(node, "name"));
+		if (BlockProcParmModel.KIND.equals(MyDOMUtil.getAttribute(node, BlockElementModel.KIND_ATTR))) {
+			this.variableResolver.addAvaiableFunctionVariable(MyDOMUtil.getChildNode(node, BlockElementModel.TYPE_NODE).getTextContent(), MyDOMUtil.getAttribute(node, "name"));
+		} else if (BlockLocalVarDecModel.KIND.equals(MyDOMUtil.getAttribute(node, BlockElementModel.KIND_ATTR))) {
+			this.variableResolver.addAvaiableLocalVariable(MyDOMUtil.getChildNode(node, BlockElementModel.TYPE_NODE).getTextContent(), MyDOMUtil.getAttribute(node, "name"));
+		} else if (BlockFieldVarDecModel.KIND.equals(MyDOMUtil.getAttribute(node, BlockElementModel.KIND_ATTR))) {
+			this.variableResolver.addAvaiableFieldVariable(MyDOMUtil.getChildNode(node, BlockElementModel.TYPE_NODE).getTextContent(), MyDOMUtil.getAttribute(node, "name"));
 		}
 	}
 
 	public static String getNameSpaceString(Node node) {
-		String name = DOMUtil.getAttribute(node, "name");
-		try {
-			return name.substring(0, name.indexOf("-"));
-		} catch (Exception e) {
-			return null;
-		}
+		String name = MyDOMUtil.getAttribute(node, "name");
+		return name.contains("-") ? name.substring(0, name.indexOf("-")) : null;
 	}
 
 	public Node getPlugElement(String genusName) {
@@ -232,13 +131,13 @@ public class BlockResolver {
 		if (genusNode == null) {
 			return null;
 		} else {
-			Node socketConnectors = DOMUtil.getChildNode(genusNode, "BlockConnectors");
+			Node socketConnectors = MyDOMUtil.getChildNode(genusNode, "BlockConnectors");
 			if (socketConnectors == null) {
 				return null;
 			}
 			for (int i = 0; i < socketConnectors.getChildNodes().getLength(); i++) {
 				Node connector = socketConnectors.getChildNodes().item(i);
-				if (connector.getNodeName().equals("BlockConnector") && DOMUtil.getAttribute(connector, "connector-kind").equals("plug")) {
+				if (connector.getNodeName().equals("BlockConnector") && MyDOMUtil.getAttribute(connector, "connector-kind").equals("plug")) {
 					plugNode = connector;
 				}
 			}
@@ -254,10 +153,10 @@ public class BlockResolver {
 		if (genusNode == null) {
 			return null;
 		} else {
-			Node socketConnectors = DOMUtil.getChildNode(genusNode, "BlockConnectors");
+			Node socketConnectors = MyDOMUtil.getChildNode(genusNode, "BlockConnectors");
 			for (int i = 0; socketConnectors != null && i < socketConnectors.getChildNodes().getLength(); i++) {
 				Node connector = socketConnectors.getChildNodes().item(i);
-				if (connector.getNodeName().equals(BlockConnector.CONNECTOR_NODE) && DOMUtil.getAttribute(connector, BlockConnector.CONNECTOR_KIND_ATTR).equals("socket")) {
+				if (connector.getNodeName().equals(BlockConnector.CONNECTOR_NODE) && MyDOMUtil.getAttribute(connector, BlockConnector.CONNECTOR_KIND_ATTR).equals("socket")) {
 					socketsNode.add(connector);
 				}
 			}
@@ -267,8 +166,7 @@ public class BlockResolver {
 	}
 
 	public String getType(String genusName) {
-		System.out.println(genusName);
-		Node typeNode = DOMUtil.getChildNode(allAvailableBlocks.get(genusName), BlockElementModel.TYPE_NODE);
+		Node typeNode = MyDOMUtil.getChildNode(allAvailableBlocks.get(genusName), BlockElementModel.TYPE_NODE);
 		if (typeNode == null) {
 			return "void";
 		} else {
@@ -288,9 +186,6 @@ public class BlockResolver {
 		return paramNameSpace;
 	}
 
-	public MethodResolver getMehtodResolver() {
-		return this.methodResolver;
-	}
 
 	public ForceConvertionMap getForceConvertionMap(){
 		return this.forceConvertionMap;

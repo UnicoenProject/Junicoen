@@ -6,7 +6,11 @@ import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+
 import net.unicoen.node.UniClassDec;
+import net.unicoen.parser.blockeditor.MyDOMUtil;
 
 public class PageModel {
 	private String pageName;
@@ -21,11 +25,13 @@ public class PageModel {
 	public static String IN_FULLVIEW_ATTR = "page-infullview";
 	public static String PAGE_NAME_ATTR = "page-name";
 	public static String PAGE_WITDH_ATTR = "page-width";
+	public static String PAGE_HEIGHT_ATTR = "page-height";
 
 	private static String PAGE_COLOR ="40 40 40";
 	private static String PAGE_DRAWER ="";
 	private static String IN_FULLVIEW_VALUE ="yew";
 	private static String PAGE_WIDTH ="1366";
+	private static String PAGE_HEIGHT ="3000";
 	
 	public static String PAGE_BLOCKS = "PageBlocks";
 	public static String NODE_NAME = "Page";
@@ -38,7 +44,6 @@ public class PageModel {
 
 	public static String MODIFIERS_NODE = "Modifiers";
 	public static String MODIFIER_NODE = "Modifier";
-//	private String headerComment = "";
 
 	public PageModel(UniClassDec classDec, Element blockNode, Document document){
 		this.pageName = classDec.className;
@@ -51,15 +56,12 @@ public class PageModel {
 
 	public void initializePageNode(Element blockNode, Document document){
 		Element pageElement = document.createElement(NODE_NAME);
-		pageElement.setAttribute(PAGE_COLOR_ATTR, PAGE_COLOR);
-		pageElement.setAttribute(PAGE_DRAWER_ATTR, PAGE_DRAWER);
-		pageElement.setAttribute(IN_FULLVIEW_ATTR, IN_FULLVIEW_VALUE);
-		pageElement.setAttribute(PAGE_NAME_ATTR, pageName);
-		pageElement.setAttribute(PAGE_WITDH_ATTR, PAGE_WIDTH);
 		
-		pageElement.appendChild(createPageInfoElement(document));
+		pageElement.setAttribute(PAGE_HEIGHT_ATTR, PAGE_HEIGHT);
+		MyDOMUtil.setAttributes(pageElement, ImmutableMap.of(PAGE_COLOR_ATTR, PAGE_COLOR, PAGE_DRAWER_ATTR, PAGE_DRAWER, IN_FULLVIEW_ATTR, IN_FULLVIEW_VALUE, PAGE_NAME_ATTR, pageName, PAGE_WITDH_ATTR, PAGE_WIDTH));
 		
-		pageElement.appendChild(blockNode);
+		MyDOMUtil.appendChilds(pageElement, Lists.newArrayList(createPageInfoElement(document), blockNode));
+		
 		this.pageNode = pageElement;
 	}
 	
@@ -69,33 +71,25 @@ public class PageModel {
 
 		if(superClasses != null){
 			for(String superClass : superClasses){
-				Element element = document.createElement(SUPERCLASS_NAME_NODE);
-				element.setTextContent(superClass);
-				parentClasses.appendChild(element);
+				parentClasses.appendChild(MyDOMUtil.createElement(SUPERCLASS_NAME_NODE, superClass, document));
 			}			
 		}
 		
 		Element interfaces =  document.createElement(INTERFASES_NODE);
 		if(this.interfaces != null){
 			for(String interfaceName : this.interfaces){
-				Element element = document.createElement(INTERFASE_NAME_NODE);
-				element.setTextContent(interfaceName);
-				interfaces.appendChild(element);
+				interfaces.appendChild(MyDOMUtil.createElement(INTERFASE_NAME_NODE, interfaceName, document));
 			}			
 		}
 		
 		Element modifiers =  document.createElement(MODIFIERS_NODE);
 		if(this.modifiers != null){
 			for(String modifier : this.modifiers){
-				Element element = document.createElement(MODIFIER_NODE);
-				element.setTextContent(modifier);
-				modifiers.appendChild(element);
+				modifiers.appendChild(MyDOMUtil.createElement(MODIFIER_NODE, modifier, document));
 			}			
 		}
 		
-		pageInfo.appendChild(parentClasses);
-		pageInfo.appendChild(interfaces);
-		pageInfo.appendChild(modifiers);
+		MyDOMUtil.appendChilds(pageInfo, Lists.newArrayList(parentClasses, interfaces, modifiers));
 		
 		return pageInfo;
 	}

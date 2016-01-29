@@ -3,17 +3,26 @@ package net.unicoen.parser.blockeditor.blockmodel;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.google.common.collect.ImmutableMap;
+
+import net.unicoen.parser.blockeditor.MyDOMUtil;
+
 
 public class BlockSocketModel extends BlockConnector{
 
 	public static String CONNECTOR_TYPE = "socket";
 	
-	public BlockSocketModel(BlockExprModel param) {
+	public BlockSocketModel(BlockElementModel param) {
 		this.label = "";
 		this.positionType = "single";
-		this.connectorType = convertTypeToBlockConnectorType(param.getType());
-		this.initType = convertTypeToBlockConnectorType(param.getType());
 		this.connectorBlockID = param.getBlockID();
+		if(param instanceof BlockExprModel){
+			this.connectorType = convertTypeToBlockConnectorType(param.getType());
+			this.initType = convertTypeToBlockConnectorType(param.getType());			
+		}else{
+			this.connectorType = "cmd";
+			this.initType = "cmd";
+		}
 	}
 
 	public BlockSocketModel(String label, String positionType, String connectorType, String initType, String connectorBlockID) {
@@ -59,12 +68,8 @@ public class BlockSocketModel extends BlockConnector{
 	public Element createBlockConnectorElement(Document document){
 		Element connector = document.createElement(BlockConnector.CONNECTOR_NODE);
 
-		connector.setAttribute(BlockConnector.CONNECTOR_KIND_ATTR, CONNECTOR_TYPE);
-		connector.setAttribute(BlockConnector.CONNECTOR_POSITION_TYPE_ATTR, getPositionType());
-		connector.setAttribute(BlockConnector.CONNECTOR_LABEL_ATTR, getLabel());
+		MyDOMUtil.setAttributes(connector, ImmutableMap.of(BlockConnector.CONNECTOR_KIND_ATTR, CONNECTOR_TYPE, BlockConnector.CONNECTOR_POSITION_TYPE_ATTR, getPositionType(), BlockConnector.CONNECTOR_LABEL_ATTR, getLabel(), BlockConnector.CONNECTOR_TYPE_ATTR, getConnectorType(), BlockConnector.CONNECTOR_INIT_TYPE_ATTR, getInitType()));
 		
-		connector.setAttribute(BlockConnector.CONNECTOR_TYPE_ATTR, getConnectorType());
-		connector.setAttribute(BlockConnector.CONNECTOR_INIT_TYPE_ATTR, getInitType());
 		if (!"-1".equals(getConnectorBlockID())) {
 			connector.setAttribute(BlockConnector.CONNECTOR_BLOCK_ID_ATTR, getConnectorBlockID());
 		}

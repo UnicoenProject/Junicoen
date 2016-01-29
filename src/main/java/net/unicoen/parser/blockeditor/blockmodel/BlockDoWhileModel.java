@@ -23,19 +23,16 @@ public class BlockDoWhileModel extends BlockCommandModel {
 		commandBlocks.add(getElement());
 
 		for (BlockCommandModel model : trueBlocks) {
-			commandBlocks.addAll(model.getBlockElements());
+			if(model != null)
+				commandBlocks.addAll(model.getBlockElements());
 		}
 
 		for (BlockElementModel socket : getSocketBlocks()) {
-			commandBlocks.addAll(socket.getBlockElements());
+			if(socket != null)
+				commandBlocks.addAll(socket.getBlockElements());
 		}
 
 		return commandBlocks;
-	}
-
-	public void addSocketsAndNodes(List<BlockElementModel> socketBlocks, List<BlockCommandModel> commands, Document document, BlockSocketsModel sockets){
-		addSocketsAndNodes(socketBlocks, document, sockets);
-		this.trueBlocks = commands;
 	}
 
 }

@@ -15,6 +15,8 @@ public class UniToBlock04_SoundTest {
 	public void test() throws IOException, ParserConfigurationException, TransformerException {
 		UniProgram fileModel = UniToBlockTestUtil.createFileModel("blockeditor/testcases/BlockConvertTest/_04SoundTest.java");
 		UniToBlockTestUtil.parseTestToBG2(fileModel);
+		UniToBlockTestUtil.output(fileModel, "_04SoundTest");
+		
 	}
 
 }

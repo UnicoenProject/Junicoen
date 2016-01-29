@@ -14,7 +14,8 @@ public class UniToBlock01_AbstractionTest {
 	@Test
 	public void test() throws IOException, ParserConfigurationException, TransformerException {
 		UniProgram fileModel = UniToBlockTestUtil.createFileModel("blockeditor/testcases/BlockConvertTest/_01AbstractionTest.java");
-		UniToBlockTestUtil.parseTestToBG2(fileModel);
+//		UniToBlockTestUtil.parseTestToBG2(fileModel);
+		UniToBlockTestUtil.output(fileModel, "_01AbstractionTest");
 	}
 
 }

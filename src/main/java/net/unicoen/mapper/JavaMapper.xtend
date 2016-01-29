@@ -109,7 +109,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		//	;
 		val model = new UniImport
 		model.isStatic = false
-		model.targetName = ctx.children.get(2).text
+		model.targetName = ctx.children.get(1).text
 		model
 	}
 

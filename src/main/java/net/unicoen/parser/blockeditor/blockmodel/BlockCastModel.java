@@ -9,6 +9,7 @@ import org.w3c.dom.Node;
 
 import net.unicoen.node.UniCast;
 import net.unicoen.parser.blockeditor.BlockResolver;
+import net.unicoen.parser.blockeditor.MyDOMUtil;
 
 public class BlockCastModel extends BlockExprModel {
 	
@@ -23,14 +24,12 @@ public class BlockCastModel extends BlockExprModel {
 		String genusName = "to" + convertType(model.type);
 		Element blockElement;
 		if(resolver.getBlockNode(genusName) == null){
-			genusName = DEFAULT_GENUS_NAME;
-			blockElement = createBlockElement(document, genusName, ID_COUNTER, KIND);
-			addElement(BlockElementModel.LABEL_NODE, document, model.type, blockElement);
+			blockElement = createBlockElement(document, DEFAULT_GENUS_NAME, ID_COUNTER, KIND);
+			blockElement.appendChild(MyDOMUtil.createElement(BlockElementModel.LABEL_NODE, model.type, document));
 		}else{
 			blockElement = createBlockElement(document, genusName, ID_COUNTER, KIND);	
 		}
-		
-		addElement(BlockElementModel.TYPE_NODE, document, model.type, blockElement);
+		blockElement.appendChild(MyDOMUtil.createElement(BlockElementModel.TYPE_NODE, model.type, document));
 		
 		//Plug?
 		Node plugNode = resolver.getPlugElement(genusName);

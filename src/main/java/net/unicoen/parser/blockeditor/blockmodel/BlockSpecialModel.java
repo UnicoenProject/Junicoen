@@ -1,26 +1,18 @@
 package net.unicoen.parser.blockeditor.blockmodel;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+
+import com.google.common.collect.ImmutableMap;
+
+import net.unicoen.parser.blockeditor.MyDOMUtil;
 
 public class BlockSpecialModel extends BlockCommandModel{
 
 	public static String GENUS_NAME = "special";
 	
 	public BlockSpecialModel(String genusName, String methodName, Document document, Long id, String kind, String parentId){
-		Element element = createBlockElement(document, genusName, id, kind);
-		addElement(BlockElementModel.NAME_NODE, document, methodName, element);
-		addElement(BlockElementModel.LABEL_NODE, document, methodName, element);
-		this.element = element;
-
-		if (kind.equals(BlockElementModel.BLOCKKINDS.COMMAND.toString()) && parentId != null) {
-			addBeforeBlockNode(document, parentId);
-		}
-
-		if(kind.equals(BlockElementModel.BLOCKKINDS.FUNCTION.toString())){
-			//TODO should fix 返り値をどうにかして取得するように修正するように
-			addElement(BlockElementModel.TYPE_NODE, document, "Object", element);
-		}
+		this.element = createBlockElement(document, genusName, id, kind);
+		MyDOMUtil.appendChilds(element, MyDOMUtil.createElements(ImmutableMap.of(BlockElementModel.NAME_NODE, methodName, BlockElementModel.LABEL_NODE, methodName), document));
 	}
 		
 }
