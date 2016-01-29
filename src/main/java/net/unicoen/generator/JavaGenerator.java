@@ -63,7 +63,11 @@ public class JavaGenerator extends Traverser {
 	}
 
 	@Override
-	public void print(String str) {
+	public void writeComment(String comment) {
+		print(comment);
+	}
+	
+	protected void print(String str) {
 		if (indentAtThisLine == false) {
 			indentAtThisLine = true;
 			for (int i = 0; i < indent; i++) {

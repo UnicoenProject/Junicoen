@@ -16,14 +16,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
-
 import net.unicoen.node.Traverser;
 import net.unicoen.node.UniArg;
 import net.unicoen.node.UniArray;
@@ -101,6 +93,14 @@ import net.unicoen.parser.blockeditor.blockmodel.BlockWhileModel;
 import net.unicoen.parser.blockeditor.blockmodel.PageModel;
 import net.unicoen.parser.blockeditor.blockmodel.PagesModel;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+
 public class BlockGenerator extends Traverser {
 
 	/** Name space definition */
@@ -115,7 +115,6 @@ public class BlockGenerator extends Traverser {
 
 	private BlockResolver resolver;
 
-	private PrintStream out;
 	public static String BLOCK_ENC = "UTF-8";
 
 	private Document document;
@@ -126,12 +125,12 @@ public class BlockGenerator extends Traverser {
 	private MethodResolver methodResolver = new MethodResolver();
 
 	public BlockGenerator(PrintStream out, String langdefRootPath) throws SAXException, IOException {
-		this.out = out;
+		super(out);
 		resolver = new BlockResolver(langdefRootPath, false);
 	}
 
 	public BlockGenerator(PrintStream out, String langdefRootPath, boolean isTest) throws SAXException, IOException {
-		this.out = out;
+		super(out);
 		resolver = new BlockResolver(langdefRootPath, isTest);
 	}
 

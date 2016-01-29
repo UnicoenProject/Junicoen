@@ -53,6 +53,25 @@ class Java8MapperTest extends MapperTest {
 	}
 
 	@Test
+	def void parseSimpleProgramWithComment() {
+		val actual = mapper.parse("/* AA */ public class A { } // AA")
+
+		val expected = new UniClassDec
+		expected.className = "A"
+		expected.interfaces = #[]
+		expected.members = #[]
+		expected.modifiers = #["public"]
+		expected.superClass = #[]
+		expected.comment = "/* AA */// AA"
+
+		expected.evaluate(actual)
+
+		println(JavaGenerator.generate(actual as UniClassDec))
+
+		evaluate(expected, mapper.parse(JavaGenerator.generate(actual as UniClassDec)))
+	}
+
+	@Test
 	def void parseClassWithExtendsAndImplements() {
 		val expected = new UniClassDec
 		expected.className = "A"

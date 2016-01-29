@@ -44,7 +44,8 @@ public abstract class Traverser {
 	public abstract void traverseImport(UniImport node);
 	public abstract void traverseNamespace(UniNamespace node);
 	
-	public abstract void print(String str);
+	public void writeComment(String comment) {
+	}
 
 	public final void traverseExpr(UniExpr node) {
 		if (node instanceof UniBoolLiteral) {
