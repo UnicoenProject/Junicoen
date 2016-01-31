@@ -64,8 +64,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 	}
 
 	new(boolean isDebugMode) {
-		// _isDebugMode = isDebugMode
-		_isDebugMode = false
+		 _isDebugMode = false //isDebugMode
 	}
 
 	def parse(String code) {
@@ -114,10 +113,11 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			val count = _stream.size - 1
 			for (var i = _nextTokenIndex; i < count; i++) {
 				var hiddenToken = _stream.get(i) // Includes skipped tokens (maybe)
-				if (_lastNode.afterComment === null) {
-					_lastNode.afterComment = ""
+				if (_lastNode.beforeComment === null) {
+					_lastNode.beforeComment = ""
 				}
-				_lastNode.afterComment += hiddenToken.text
+				_lastNode.beforeComment += hiddenToken.text
+				println("_lastNode.beforeComment += " + hiddenToken.text + ", " + _lastNode)
 			}
 		}
 		ret
@@ -152,7 +152,12 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				_comments.remove(i)
 			}
 			if (content != "") {
-				node.beforeComment = content
+				if (node.beforeComment === null) {
+					node.beforeComment = content
+				} else {
+					node.beforeComment = content + node.beforeComment
+				}
+				println("node.beforeComment = " + content + ", " + node)
 			}
 			_lastNode = node
 		} else {
@@ -174,12 +179,17 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			val count = token.tokenIndex
 			var content = ""
 			for (var i = _nextTokenIndex; i < count; i++) {
-				var hiddenToken = _stream.get(i) // Includes skipped tokens (maybe)
-				if (_lastNode !== null && _stream.get(_nextTokenIndex - 1).line == _stream.get(i).line) {
-					if (_lastNode.afterComment === null) {
-						_lastNode.afterComment = ""
+				val hiddenToken = _stream.get(i) // Includes skipped tokens (maybe)
+				val lastToken = 
+				if (_lastNode !== null && _stream.get(_nextTokenIndex - 1).line == hiddenToken.line &&
+					_stream.get(_nextTokenIndex - 1).charPositionInLine <= hiddenToken.charPositionInLine) {
+					if (_lastNode.beforeComment === null) {
+						_lastNode.beforeComment = ""
 					}
-					_lastNode.afterComment += hiddenToken.text
+					_lastNode.beforeComment += hiddenToken.text
+					println("_lastNode.beforeComment += " + hiddenToken.text + ", " + _lastNode)
+					println(_stream.get(_nextTokenIndex - 1))
+					println(hiddenToken)
 				} else {
 					content += hiddenToken.text
 				}
@@ -188,6 +198,9 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				var parent = node.parent
 				while (parent.parent !== null && parent.parent.getChild(0) === parent) {
 					parent = parent.parent
+				}
+				while (parent.getChild(0) !== node && parent.childCount === 1) {
+					parent = parent.getChild(0)
 				}
 				_comments.add(new Comment(content, parent))
 			}

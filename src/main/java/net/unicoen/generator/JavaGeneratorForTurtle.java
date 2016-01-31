@@ -15,7 +15,7 @@ public class JavaGeneratorForTurtle extends JavaGenerator {
 	}
 
 	@Override
-	public void traverseClassDec(UniClassDec classDec) {
+	public void dontCallTraverseClassDec(UniClassDec classDec) {
 		String mod = safeJoin(classDec.modifiers, " ");
 		String extendsdecl = "";
 		if (classDec.superClass != null && classDec.superClass.size() > 0) {

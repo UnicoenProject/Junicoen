@@ -11,6 +11,9 @@ import org.junit.Test
 
 import static net.unicoen.node_helper.Builder.*
 import net.unicoen.generator.JavaGenerator
+import net.unicoen.node.UniMemberDec
+import net.unicoen.node.UniMethodDec
+import net.unicoen.node.UniBlock
 
 class Java8MapperTest extends MapperTest {
 	val mapper = new Java8Mapper(true)
@@ -35,26 +38,7 @@ class Java8MapperTest extends MapperTest {
 
 	@Test
 	def void parseClassWithComment() {
-		val actual = mapper.parse("/* AA */ public class A {}")
-
-		val expected = new UniClassDec
-		expected.className = "A"
-		expected.interfaces = #[]
-		expected.members = #[]
-		expected.modifiers = #["public"]
-		expected.superClass = #[]
-		expected.beforeComment = "/* AA */"
-
-		expected.evaluate(actual)
-
-		println(JavaGenerator.generate(actual as UniClassDec))
-
-		evaluate(expected, mapper.parse(JavaGenerator.generate(actual as UniClassDec)))
-	}
-
-	@Test
-	def void parseSimpleProgramWithComment() {
-		val actual = mapper.parse("/* AA */ public class A { } // AA")
+		val actual = mapper.parse("/* AA */ public class A {} // AA")
 
 		val expected = new UniClassDec
 		expected.className = "A"
@@ -67,6 +51,30 @@ class Java8MapperTest extends MapperTest {
 
 		expected.evaluate(actual)
 
+		println(JavaGenerator.generate(actual as UniClassDec))
+
+		evaluate(expected, mapper.parse(JavaGenerator.generate(actual as UniClassDec)))
+	}
+
+	@Test
+	def void parseMethodWithComment() {
+		val actual = mapper.parse("/*AA*/ public class A { /*BB*/ void m(/*CC*/) { /*DD*/ } } //DD")
+
+		val method = new UniMethodDec
+		method.methodName = "m"
+		method.block = new UniBlock
+		method.returnType = "void"
+		method.beforeComment = "/*BB*//*CC*//*DD*/"
+
+		val expected = new UniClassDec
+		expected.className = "A"
+		expected.members = #[method]
+		expected.modifiers = #["public"]
+		expected.beforeComment = "/*AA*///DD"
+
+		expected.evaluate(actual)
+
+		println(actual)
 		println(JavaGenerator.generate(actual as UniClassDec))
 
 		evaluate(expected, mapper.parse(JavaGenerator.generate(actual as UniClassDec)))
@@ -93,7 +101,7 @@ class Java8MapperTest extends MapperTest {
 	@Test
 	def void parseInterface() {
 
-		//Empty InterfaceDeclaration
+		// Empty InterfaceDeclaration
 		val expected = new UniClassDec
 		expected.className = "A"
 		expected.members = #[]
