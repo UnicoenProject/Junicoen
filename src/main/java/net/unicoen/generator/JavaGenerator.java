@@ -65,6 +65,7 @@ public class JavaGenerator extends CodeGenerator {
 	@Override
 	public void writeComment(String comment) {
 		print(comment);
+		newline();
 	}
 	
 	protected void print(String str) {
