@@ -24,6 +24,20 @@
 		<antlr.version>4.5.1</antlr.version>
 	</properties>
 
+	<repositories>
+		<repository>
+			<id>xtend-repos</id>
+			<url>https://oss.sonatype.org/content/repositories/releases/</url>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>xtend-repos</id>
+			<url>https://oss.sonatype.org/content/repositories/releases/</url>
+		</pluginRepository>
+	</pluginRepositories>
+
 	<dependencies>
 		<!-- Project specific dependencies -->
 		<dependency>

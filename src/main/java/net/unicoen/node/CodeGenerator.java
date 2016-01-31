@@ -1,6 +1,7 @@
 package net.unicoen.node;
 
 import java.io.PrintStream;
+import java.util.List;
 
 public abstract class CodeGenerator extends Traverser {
 
@@ -12,365 +13,299 @@ public abstract class CodeGenerator extends Traverser {
 
 	@Override
 	public final void traverseBoolLiteral(UniBoolLiteral node) {
-		if (node.beforeComment != null) {
-			writeComment(node.beforeComment);
+		if (node.comments != null) {
+			writeComments(node.comments);
 		}
 		dontCallTraverseBoolLiteral(node);
-		if (node.afterComment != null) {
-			writeComment(node.afterComment);
-		}
+
 	}
 
 	@Override
 	public final void traverseIntLiteral(UniIntLiteral node) {
-		if (node.beforeComment != null) {
-			writeComment(node.beforeComment);
+		if (node.comments != null) {
+			writeComments(node.comments);
 		}
 		dontCallTraverseIntLiteral(node);
-		if (node.afterComment != null) {
-			writeComment(node.afterComment);
-		}
+
 	}
 
 	@Override
 	public final void traverseLongLiteral(UniLongLiteral node) {
-		if (node.beforeComment != null) {
-			writeComment(node.beforeComment);
+		if (node.comments != null) {
+			writeComments(node.comments);
 		}
 		dontCallTraverseLongLiteral(node);
-		if (node.afterComment != null) {
-			writeComment(node.afterComment);
-		}
+
 	}
 
 	@Override
 	public final void traverseDoubleLiteral(UniDoubleLiteral node) {
-		if (node.beforeComment != null) {
-			writeComment(node.beforeComment);
+		if (node.comments != null) {
+			writeComments(node.comments);
 		}
 		dontCallTraverseDoubleLiteral(node);
-		if (node.afterComment != null) {
-			writeComment(node.afterComment);
-		}
+
 	}
 
 	@Override
 	public final void traverseStringLiteral(UniStringLiteral node) {
-		if (node.beforeComment != null) {
-			writeComment(node.beforeComment);
+		if (node.comments != null) {
+			writeComments(node.comments);
 		}
 		dontCallTraverseStringLiteral(node);
-		if (node.afterComment != null) {
-			writeComment(node.afterComment);
-		}
+
 	}
 
 	@Override
 	public final void traverseIdent(UniIdent node) {
-		if (node.beforeComment != null) {
-			writeComment(node.beforeComment);
+		if (node.comments != null) {
+			writeComments(node.comments);
 		}
 		dontCallTraverseIdent(node);
-		if (node.afterComment != null) {
-			writeComment(node.afterComment);
-		}
+
 	}
 
 	@Override
 	public final void traverseArray(UniArray node) {
-		if (node.beforeComment != null) {
-			writeComment(node.beforeComment);
+		if (node.comments != null) {
+			writeComments(node.comments);
 		}
 		dontCallTraverseArray(node);
-		if (node.afterComment != null) {
-			writeComment(node.afterComment);
-		}
+
 	}
 
 	@Override
 	public final void traverseFieldAccess(UniFieldAccess node) {
-		if (node.beforeComment != null) {
-			writeComment(node.beforeComment);
+		if (node.comments != null) {
+			writeComments(node.comments);
 		}
 		dontCallTraverseFieldAccess(node);
-		if (node.afterComment != null) {
-			writeComment(node.afterComment);
-		}
+
 	}
 
 	@Override
 	public final void traverseMethodCall(UniMethodCall node) {
-		if (node.beforeComment != null) {
-			writeComment(node.beforeComment);
+		if (node.comments != null) {
+			writeComments(node.comments);
 		}
 		dontCallTraverseMethodCall(node);
-		if (node.afterComment != null) {
-			writeComment(node.afterComment);
-		}
+
 	}
 
 	@Override
 	public final void traverseNew(UniNew node) {
-		if (node.beforeComment != null) {
-			writeComment(node.beforeComment);
+		if (node.comments != null) {
+			writeComments(node.comments);
 		}
 		dontCallTraverseNew(node);
-		if (node.afterComment != null) {
-			writeComment(node.afterComment);
-		}
+
 	}
 
 	@Override
 	public final void traverseNewArray(UniNewArray node) {
-		if (node.beforeComment != null) {
-			writeComment(node.beforeComment);
+		if (node.comments != null) {
+			writeComments(node.comments);
 		}
 		dontCallTraverseNewArray(node);
-		if (node.afterComment != null) {
-			writeComment(node.afterComment);
-		}
+
 	}
 
 	@Override
 	public final void traverseUnaryOp(UniUnaryOp node) {
-		if (node.beforeComment != null) {
-			writeComment(node.beforeComment);
+		if (node.comments != null) {
+			writeComments(node.comments);
 		}
 		dontCallTraverseUnaryOp(node);
-		if (node.afterComment != null) {
-			writeComment(node.afterComment);
-		}
+
 	}
 
 	@Override
 	public final void traverseBinOp(UniBinOp node) {
-		if (node.beforeComment != null) {
-			writeComment(node.beforeComment);
+		if (node.comments != null) {
+			writeComments(node.comments);
 		}
 		dontCallTraverseBinOp(node);
-		if (node.afterComment != null) {
-			writeComment(node.afterComment);
-		}
+
 	}
 
 	@Override
 	public final void traverseTernaryOp(UniTernaryOp node) {
-		if (node.beforeComment != null) {
-			writeComment(node.beforeComment);
+		if (node.comments != null) {
+			writeComments(node.comments);
 		}
 		dontCallTraverseTernaryOp(node);
-		if (node.afterComment != null) {
-			writeComment(node.afterComment);
-		}
+
 	}
 
 	@Override
 	public final void traverseCast(UniCast node) {
-		if (node.beforeComment != null) {
-			writeComment(node.beforeComment);
+		if (node.comments != null) {
+			writeComments(node.comments);
 		}
 		dontCallTraverseCast(node);
-		if (node.afterComment != null) {
-			writeComment(node.afterComment);
-		}
+
 	}
 
 	@Override
 	public final void traverseReturn(UniReturn node) {
-		if (node.beforeComment != null) {
-			writeComment(node.beforeComment);
+		if (node.comments != null) {
+			writeComments(node.comments);
 		}
 		dontCallTraverseReturn(node);
-		if (node.afterComment != null) {
-			writeComment(node.afterComment);
-		}
+
 	}
 
 	@Override
 	public final void traverseBreak(UniBreak node) {
-		if (node.beforeComment != null) {
-			writeComment(node.beforeComment);
+		if (node.comments != null) {
+			writeComments(node.comments);
 		}
 		dontCallTraverseBreak(node);
-		if (node.afterComment != null) {
-			writeComment(node.afterComment);
-		}
+
 	}
 
 	@Override
 	public final void traverseContinue(UniContinue node) {
-		if (node.beforeComment != null) {
-			writeComment(node.beforeComment);
+		if (node.comments != null) {
+			writeComments(node.comments);
 		}
 		dontCallTraverseContinue(node);
-		if (node.afterComment != null) {
-			writeComment(node.afterComment);
-		}
+
 	}
 
 	@Override
 	public final void traverseBlock(UniBlock node) {
-		if (node.beforeComment != null) {
-			writeComment(node.beforeComment);
+		if (node.comments != null) {
+			writeComments(node.comments);
 		}
 		dontCallTraverseBlock(node);
-		if (node.afterComment != null) {
-			writeComment(node.afterComment);
-		}
+
 	}
 
 	@Override
 	public final void traverseIf(UniIf node) {
-		if (node.beforeComment != null) {
-			writeComment(node.beforeComment);
+		if (node.comments != null) {
+			writeComments(node.comments);
 		}
 		dontCallTraverseIf(node);
-		if (node.afterComment != null) {
-			writeComment(node.afterComment);
-		}
+
 	}
 
 	@Override
 	public final void traverseFor(UniFor node) {
-		if (node.beforeComment != null) {
-			writeComment(node.beforeComment);
+		if (node.comments != null) {
+			writeComments(node.comments);
 		}
 		dontCallTraverseFor(node);
-		if (node.afterComment != null) {
-			writeComment(node.afterComment);
-		}
+
 	}
 
 	@Override
 	public final void traverseEnhancedFor(UniEnhancedFor node) {
-		if (node.beforeComment != null) {
-			writeComment(node.beforeComment);
+		if (node.comments != null) {
+			writeComments(node.comments);
 		}
 		dontCallTraverseEnhancedFor(node);
-		if (node.afterComment != null) {
-			writeComment(node.afterComment);
-		}
+
 	}
 
 	@Override
 	public final void traverseWhile(UniWhile node) {
-		if (node.beforeComment != null) {
-			writeComment(node.beforeComment);
+		if (node.comments != null) {
+			writeComments(node.comments);
 		}
 		dontCallTraverseWhile(node);
-		if (node.afterComment != null) {
-			writeComment(node.afterComment);
-		}
+
 	}
 
 	@Override
 	public final void traverseDoWhile(UniDoWhile node) {
-		if (node.beforeComment != null) {
-			writeComment(node.beforeComment);
+		if (node.comments != null) {
+			writeComments(node.comments);
 		}
 		dontCallTraverseDoWhile(node);
-		if (node.afterComment != null) {
-			writeComment(node.afterComment);
-		}
+
 	}
 
 	@Override
 	public final void traverseVariableDec(UniVariableDec node) {
-		if (node.beforeComment != null) {
-			writeComment(node.beforeComment);
+		if (node.comments != null) {
+			writeComments(node.comments);
 		}
 		dontCallTraverseVariableDec(node);
-		if (node.afterComment != null) {
-			writeComment(node.afterComment);
-		}
+
 	}
 
 	@Override
 	public final void traverseEmptyStatement(UniEmptyStatement node) {
-		if (node.beforeComment != null) {
-			writeComment(node.beforeComment);
+		if (node.comments != null) {
+			writeComments(node.comments);
 		}
 		dontCallTraverseEmptyStatement(node);
-		if (node.afterComment != null) {
-			writeComment(node.afterComment);
-		}
+
 	}
 
 	@Override
 	public final void traverseFieldDec(UniFieldDec node) {
-		if (node.beforeComment != null) {
-			writeComment(node.beforeComment);
+		if (node.comments != null) {
+			writeComments(node.comments);
 		}
 		dontCallTraverseFieldDec(node);
-		if (node.afterComment != null) {
-			writeComment(node.afterComment);
-		}
+
 	}
 
 	@Override
 	public final void traverseMethodDec(UniMethodDec node) {
-		if (node.beforeComment != null) {
-			writeComment(node.beforeComment);
+		if (node.comments != null) {
+			writeComments(node.comments);
 		}
 		dontCallTraverseMethodDec(node);
-		if (node.afterComment != null) {
-			writeComment(node.afterComment);
-		}
+
 	}
 
 	@Override
 	public final void traverseArg(UniArg node) {
-		if (node.beforeComment != null) {
-			writeComment(node.beforeComment);
+		if (node.comments != null) {
+			writeComments(node.comments);
 		}
 		dontCallTraverseArg(node);
-		if (node.afterComment != null) {
-			writeComment(node.afterComment);
-		}
+
 	}
 
 	@Override
 	public final void traverseClassDec(UniClassDec node) {
-		if (node.beforeComment != null) {
-			writeComment(node.beforeComment);
+		if (node.comments != null) {
+			writeComments(node.comments);
 		}
 		dontCallTraverseClassDec(node);
-		if (node.afterComment != null) {
-			writeComment(node.afterComment);
-		}
+
 	}
 
 	@Override
 	public final void traverseProgram(UniProgram node) {
-		if (node.beforeComment != null) {
-			writeComment(node.beforeComment);
+		if (node.comments != null) {
+			writeComments(node.comments);
 		}
 		dontCallTraverseProgram(node);
-		if (node.afterComment != null) {
-			writeComment(node.afterComment);
-		}
+
 	}
 
 	@Override
 	public final void traverseImport(UniImport node) {
-		if (node.beforeComment != null) {
-			writeComment(node.beforeComment);
+		if (node.comments != null) {
+			writeComments(node.comments);
 		}
 		dontCallTraverseImport(node);
-		if (node.afterComment != null) {
-			writeComment(node.afterComment);
-		}
+
 	}
 
 	@Override
 	public final void traverseNamespace(UniNamespace node) {
-		if (node.beforeComment != null) {
-			writeComment(node.beforeComment);
+		if (node.comments != null) {
+			writeComments(node.comments);
 		}
 		dontCallTraverseNamespace(node);
-		if (node.afterComment != null) {
-			writeComment(node.afterComment);
-		}
+
 	}
 
 	public abstract void dontCallTraverseBoolLiteral(UniBoolLiteral node);
@@ -439,6 +374,6 @@ public abstract class CodeGenerator extends Traverser {
 
 	public abstract void dontCallTraverseNamespace(UniNamespace node);
 
-	protected void writeComment(String comment) {
+	protected void writeComments(List<String> comments) {
 	}
 }

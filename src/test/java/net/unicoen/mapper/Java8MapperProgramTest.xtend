@@ -52,6 +52,7 @@ class Java8MapperProgramTest extends MapperTest {
 		node12.modifiers = node9
 		node12.type = node10
 		node12.name = node11
+		node12.comments = #["/* This comment may span multiple lines. */"]
 
 		val node13 = "private"
 
@@ -65,6 +66,7 @@ class Java8MapperProgramTest extends MapperTest {
 		node17.modifiers = node14
 		node17.type = node15
 		node17.name = node16
+		node17.comments = #["// This comment may span only this line"]
 
 		val node18 = "private"
 
@@ -180,6 +182,7 @@ class Java8MapperProgramTest extends MapperTest {
 		node59.methodName = node26
 		node59.args = node30
 		node59.block = node58
+		node59.comments = #["// TASK: refactor"]
 
 		val node60 = #[node12 as UniMemberDec, node17 as UniMemberDec, node22 as UniMemberDec, node59 as UniMemberDec]
 

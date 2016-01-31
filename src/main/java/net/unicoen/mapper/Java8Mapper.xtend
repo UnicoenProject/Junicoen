@@ -44,6 +44,8 @@ import org.antlr.v4.runtime.tree.RuleNode
 import org.antlr.v4.runtime.tree.TerminalNode
 import org.antlr.v4.runtime.tree.TerminalNodeImpl
 import org.eclipse.xtext.xbase.lib.Functions.Function1
+import com.google.common.collect.Lists
+import org.antlr.v4.runtime.Token
 
 class Java8Mapper extends Java8BaseVisitor<Object> {
 
@@ -54,17 +56,17 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 	var int _nextTokenIndex;
 
 	static class Comment {
-		val String content
+		val List<String> contents
 		var ParseTree parent
 
-		new(String content, ParseTree parent) {
-			this.content = content
+		new(List<String> contents, ParseTree parent) {
+			this.contents = contents
 			this.parent = parent
 		}
 	}
 
 	new(boolean isDebugMode) {
-		 _isDebugMode = false //isDebugMode
+		_isDebugMode = isDebugMode
 	}
 
 	def parse(String code) {
@@ -112,12 +114,11 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		if (_lastNode !== null) {
 			val count = _stream.size - 1
 			for (var i = _nextTokenIndex; i < count; i++) {
-				var hiddenToken = _stream.get(i) // Includes skipped tokens (maybe)
-				if (_lastNode.beforeComment === null) {
-					_lastNode.beforeComment = ""
+				val hiddenToken = _stream.get(i) // Includes skipped tokens (maybe)
+				if (_lastNode.comments === null) {
+					_lastNode.comments = Lists.newArrayList
 				}
-				_lastNode.beforeComment += hiddenToken.text
-				println("_lastNode.beforeComment += " + hiddenToken.text + ", " + _lastNode)
+				_lastNode.comments += hiddenToken.text
 			}
 		}
 		ret
@@ -135,8 +136,8 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 	}
 
 	override public visit(ParseTree tree) {
-		val node = if (_isDebugMode && tree instanceof ParserRuleContext) {
-				val ruleName = Java8Parser.ruleNames.get((tree as ParserRuleContext).ruleIndex)
+		val result = if (_isDebugMode && tree instanceof RuleContext) {
+				val ruleName = Java8Parser.ruleNames.get((tree as RuleContext).ruleIndex)
 				println("enter " + ruleName + " : " + tree.text)
 				val ret = tree.accept(this)
 				println("exit " + ruleName + " : " + ret)
@@ -145,28 +146,45 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				tree.accept(this)
 			}
 
+		val node = if (result instanceof List<?>) {
+				if(result.size == 1) result.get(0) else result
+			} else {
+				result
+			}
 		if (node instanceof UniNode) {
-			var content = ""
+			var List<String> contents = Lists.newArrayList
 			for (var i = _comments.size - 1; i >= 0 && _comments.get(i).parent == tree; i--) {
-				content = _comments.get(i).content + content
+				_comments.get(i).contents += contents
+				contents = _comments.get(i).contents
 				_comments.remove(i)
 			}
-			if (content != "") {
-				if (node.beforeComment === null) {
-					node.beforeComment = content
+			if (contents.size > 0) {
+				if (node.comments === null) {
+					node.comments = contents
 				} else {
-					node.beforeComment = content + node.beforeComment
+					node.comments += contents
 				}
-				println("node.beforeComment = " + content + ", " + node)
 			}
 			_lastNode = node
 		} else {
 			for (var i = _comments.size - 1; i >= 0 && _comments.get(i).parent == tree; i--) {
 				_comments.get(i).parent = _comments.get(i).parent.parent
 			}
+			_lastNode = null
 		}
 
-		node
+		result
+	}
+
+	def boolean isNonEmptyNode(ParseTree node) {
+		if (node instanceof ParserRuleContext) {
+			if (node.childCount > 1) {
+				return true
+			}
+			node.childCount == 1 && node.children.exists[isNonEmptyNode]
+		} else {
+			true
+		}
 	}
 
 	override public visitTerminal(TerminalNode node) {
@@ -177,34 +195,28 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val token = node.symbol
 		if (token.type > 0) {
 			val count = token.tokenIndex
-			var content = ""
-			for (var i = _nextTokenIndex; i < count; i++) {
+			val List<String> contents = Lists.newArrayList
+			var i = _nextTokenIndex
+			for (; i < count; i++) {
 				val hiddenToken = _stream.get(i) // Includes skipped tokens (maybe)
-				val lastToken = 
-				if (_lastNode !== null && _stream.get(_nextTokenIndex - 1).line == hiddenToken.line &&
-					_stream.get(_nextTokenIndex - 1).charPositionInLine <= hiddenToken.charPositionInLine) {
-					if (_lastNode.beforeComment === null) {
-						_lastNode.beforeComment = ""
+				if (_lastNode !== null && _stream.get(_nextTokenIndex - 1).line == hiddenToken.line) {
+					if (_lastNode.comments === null) {
+						_lastNode.comments = Lists.newArrayList
 					}
-					_lastNode.beforeComment += hiddenToken.text
-					println("_lastNode.beforeComment += " + hiddenToken.text + ", " + _lastNode)
-					println(_stream.get(_nextTokenIndex - 1))
-					println(hiddenToken)
+					_lastNode.comments += hiddenToken.text
 				} else {
-					content += hiddenToken.text
+					contents += hiddenToken.text
 				}
 			}
-			if (content != "") {
-				var parent = node.parent
-				while (parent.parent !== null && parent.parent.getChild(0) === parent) {
-					parent = parent.parent
-				}
-				while (parent.getChild(0) !== node && parent.childCount === 1) {
-					parent = parent.getChild(0)
-				}
-				_comments.add(new Comment(content, parent))
+			val count2 = _stream.size - 1
+			for (i = count + 1; i < count2 && _stream.get(i).channel == Token.HIDDEN_CHANNEL &&
+				_stream.get(count).line == _stream.get(i).line; i++) {
+				contents += _stream.get(i).text
 			}
-			_nextTokenIndex = count + 1;
+			if (contents.size > 0) {
+				_comments.add(new Comment(contents, node.parent))
+			}
+			_nextTokenIndex = i
 		}
 		node.text
 	}

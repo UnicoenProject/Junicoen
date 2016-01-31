@@ -874,7 +874,7 @@ public class BlockGenerator extends CodeGenerator {
 		BlockSocketsModel socketsInfo = calcSocketsInfo(resolver.getSocketNodes(BlockAbstractBlockModel.GENUS_NAME));
 
 		// 抽象化コメントの追加
-		if (node.beforeComment != null) {
+		if (node.comments != null) {
 			model.getBlockElement().appendChild(MyDOMUtil.createElement(BlockElementModel.LABEL_NODE, node.blockLabel, document));
 			model.setCollapsed(node.blockLabel, document);
 		}

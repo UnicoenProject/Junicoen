@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import net.unicoen.node.CodeGenerator;
 import net.unicoen.node.UniArg;
@@ -63,11 +64,16 @@ public class JavaGenerator extends CodeGenerator {
 	}
 
 	@Override
-	public void writeComment(String comment) {
-		print(comment);
-		newline();
+	public void writeComments(List<String> comments) {
+		if (comments.size() > 0) {
+			newline();
+			for (String comment : comments) {
+				print(comment);
+				newline();
+			}
+		}
 	}
-	
+
 	protected void print(String str) {
 		if (indentAtThisLine == false) {
 			indentAtThisLine = true;
@@ -151,14 +157,14 @@ public class JavaGenerator extends CodeGenerator {
 	}
 
 	public static String generate(UniClassDec dec) {
-		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); PrintStream printer = new PrintStream(out)) {
+		try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+				PrintStream printer = new PrintStream(out)) {
 			generate(dec, printer);
 			return out.toString();
 		} catch (IOException e) {
 			return null;
 		}
 	}
-	
 
 	public static void generate(UniClassDec classDec, PrintStream out) {
 		JavaGenerator g = new JavaGenerator(out);
@@ -167,27 +173,27 @@ public class JavaGenerator extends CodeGenerator {
 
 	public static String generate(UniProgram file) {
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream();
-			PrintStream printer = new PrintStream(out)) {
+				PrintStream printer = new PrintStream(out)) {
 			generate(file, printer);
 			return out.toString();
 		} catch (IOException e) {
 			return null;
 		}
 	}
-	
+
 	public static void generate(UniProgram fileDec, PrintStream out) {
 		JavaGenerator g = new JavaGenerator(out);
-		for(UniImport importStatement : fileDec.imports){
+		for (UniImport importStatement : fileDec.imports) {
 			g.traverseImport(importStatement);
 		}
-		
+
 		g.newline();
 		g.newline();
-		
-		for(UniClassDec classDec : fileDec.classes){
+
+		for (UniClassDec classDec : fileDec.classes) {
 			g.traverseClassDec(classDec);
 		}
-		
+
 	}
 
 	// ----- ----- ----- ----- HELPER ----- ----- ----- -----
@@ -245,7 +251,8 @@ public class JavaGenerator extends CodeGenerator {
 	@Override
 	public void dontCallTraverseMethodCall(UniMethodCall mCall) {
 		if (mCall.receiver != null) {
-			//("abc" + "def").hashcode();，のようにreceiverにbinopが入る場合もあるのでpriorityをセットする
+			// ("abc" +
+			// "def").hashcode();，のようにreceiverにbinopが入る場合もあるのでpriorityをセットする
 			parseExpr(mCall.receiver, priorityTable("*") * 10 + 1);
 			print(".");
 		}
@@ -318,7 +325,7 @@ public class JavaGenerator extends CodeGenerator {
 	@Override
 	public void dontCallTraverseReturn(UniReturn node) {
 		print("return ");
-		if(node.value != null)
+		if (node.value != null)
 			parseExpr(node.value);
 	}
 
@@ -452,7 +459,8 @@ public class JavaGenerator extends CodeGenerator {
 			args.add(arg.type + " " + arg.name);
 		}
 		String argWithParen = "(" + String.join(", ", args) + ")";
-		String declare = String.join(" ", mod, methDec.returnType, methDec.methodName, argWithParen);
+		String declare = String.join(" ", mod, methDec.returnType,
+				methDec.methodName, argWithParen);
 		print(declare + ' ');
 		traverseBlock(methDec.block);
 	}
@@ -469,7 +477,8 @@ public class JavaGenerator extends CodeGenerator {
 		String interfaces = safeJoin(classDec.interfaces, ", ");
 		String declare = String.join(" ", mod, "class", classDec.className);
 		if (classDec.superClass != null && classDec.superClass.size() > 0) {
-			declare = String.join(" ", declare, "extends", classDec.superClass.get(0));
+			declare = String.join(" ", declare, "extends",
+					classDec.superClass.get(0));
 		}
 		if (classDec.interfaces != null && classDec.interfaces.size() > 0) {
 			declare = String.join(" ", declare, "implements", interfaces);
@@ -499,6 +508,7 @@ public class JavaGenerator extends CodeGenerator {
 			parseExpr(node.value);
 		}
 		print(";");
+		newline();
 	}
 
 	@Override
@@ -547,7 +557,6 @@ public class JavaGenerator extends CodeGenerator {
 	public void dontCallTraverseImport(UniImport node) {
 		print("import " + node.targetName + ";");
 	}
-	
 
 	@Override
 	public void dontCallTraverseEmptyStatement(UniEmptyStatement node) {
@@ -580,15 +589,16 @@ public class JavaGenerator extends CodeGenerator {
 		parseExpr(node.value);
 		print(")");
 	}
+
 	@Override
 	public void dontCallTraverseProgram(UniProgram node) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void dontCallTraverseNamespace(UniNamespace node) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }
