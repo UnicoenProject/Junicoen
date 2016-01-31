@@ -141,10 +141,6 @@ public abstract class Traverser {
 			traverseEmptyStatement((UniEmptyStatement)node);
 			return;
 		}
-		if (node instanceof UniCast) {
-			traverseCast(((UniCast)node));
-			return;
-		}
 		throw new RuntimeException("Unknown node: " + node);
 	}
 

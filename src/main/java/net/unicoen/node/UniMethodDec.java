@@ -33,7 +33,7 @@ public class UniMethodDec extends UniMemberDec {
 		result = result * 31 + (returnType == null ? 0 : returnType.hashCode());
 		result = result * 31 + (args == null ? 0 : args.hashCode());
 		result = result * 31 + (block == null ? 0 : block.hashCode());
-		result = result * 31 + (comment == null ? 0 : comment.hashCode());
+		result = result * 31 + (comments == null ? 0 : comments.hashCode());
 		return result;
 	}
 
@@ -46,7 +46,7 @@ public class UniMethodDec extends UniMemberDec {
 			&& (this.returnType == null ? that.returnType == null : this.returnType.equals(that.returnType))
 			&& (this.args == null ? that.args == null : this.args.equals(that.args))
 			&& (this.block == null ? that.block == null : this.block.equals(that.block))
-			&& (this.comment == null ? that.comment == null : this.comment.equals(that.comment));
+			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments));
 	}
 
 	public void merge(UniMethodDec that) {
@@ -73,8 +73,12 @@ public class UniMethodDec extends UniMemberDec {
 		if (that.block != null) {
 			this.block = that.block;
 		}
-		if (that.comment != null) {
-			this.comment = that.comment;
+		if (that.comments != null) {
+			if (this.comments == null) {
+				this.comments = that.comments;
+			} else {
+				this.comments.addAll(that.comments);
+			}
 		}
 	}
 }

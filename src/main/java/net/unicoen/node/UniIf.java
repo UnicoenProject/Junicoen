@@ -25,7 +25,7 @@ public class UniIf extends UniExpr {
 		result = result * 31 + (cond == null ? 0 : cond.hashCode());
 		result = result * 31 + (trueStatement == null ? 0 : trueStatement.hashCode());
 		result = result * 31 + (falseStatement == null ? 0 : falseStatement.hashCode());
-		result = result * 31 + (comment == null ? 0 : comment.hashCode());
+		result = result * 31 + (comments == null ? 0 : comments.hashCode());
 		return result;
 	}
 
@@ -36,7 +36,7 @@ public class UniIf extends UniExpr {
 		return (this.cond == null ? that.cond == null : this.cond.equals(that.cond))
 			&& (this.trueStatement == null ? that.trueStatement == null : this.trueStatement.equals(that.trueStatement))
 			&& (this.falseStatement == null ? that.falseStatement == null : this.falseStatement.equals(that.falseStatement))
-			&& (this.comment == null ? that.comment == null : this.comment.equals(that.comment));
+			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments));
 	}
 
 	@Override
@@ -54,8 +54,12 @@ public class UniIf extends UniExpr {
 		if (that.falseStatement != null) {
 			this.falseStatement = that.falseStatement;
 		}
-		if (that.comment != null) {
-			this.comment = that.comment;
+		if (that.comments != null) {
+			if (this.comments == null) {
+				this.comments = that.comments;
+			} else {
+				this.comments.addAll(that.comments);
+			}
 		}
 	}
 }

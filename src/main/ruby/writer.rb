@@ -13,7 +13,7 @@ module Writer
       camelize.capitalize
     end
   end
-  String.include StringExt
+  String.class_eval { include StringExt }
 
   class IndentWriter
     def initialize(file)

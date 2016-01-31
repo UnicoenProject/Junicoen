@@ -24,7 +24,7 @@ public class UniBlock extends UniExpr {
 		int result = 17;
 		result = result * 31 + (body == null ? 0 : body.hashCode());
 		result = result * 31 + (blockLabel == null ? 0 : blockLabel.hashCode());
-		result = result * 31 + (comment == null ? 0 : comment.hashCode());
+		result = result * 31 + (comments == null ? 0 : comments.hashCode());
 		return result;
 	}
 
@@ -34,7 +34,7 @@ public class UniBlock extends UniExpr {
 		UniBlock that = (UniBlock)obj;
 		return (this.body == null ? that.body == null : this.body.equals(that.body))
 			&& (this.blockLabel == null ? that.blockLabel == null : this.blockLabel.equals(that.blockLabel))
-			&& (this.comment == null ? that.comment == null : this.comment.equals(that.comment));
+			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments));
 	}
 
 	@Override
@@ -53,8 +53,12 @@ public class UniBlock extends UniExpr {
 		if (that.blockLabel != null) {
 			this.blockLabel = that.blockLabel;
 		}
-		if (that.comment != null) {
-			this.comment = that.comment;
+		if (that.comments != null) {
+			if (this.comments == null) {
+				this.comments = that.comments;
+			} else {
+				this.comments.addAll(that.comments);
+			}
 		}
 	}
 }

@@ -36,7 +36,7 @@ public class UniClassDec extends UniNode {
 		result = result * 31 + (superClass == null ? 0 : superClass.hashCode());
 		result = result * 31 + (interfaces == null ? 0 : interfaces.hashCode());
 		result = result * 31 + (innerClasses == null ? 0 : innerClasses.hashCode());
-		result = result * 31 + (comment == null ? 0 : comment.hashCode());
+		result = result * 31 + (comments == null ? 0 : comments.hashCode());
 		return result;
 	}
 
@@ -50,7 +50,7 @@ public class UniClassDec extends UniNode {
 			&& (this.superClass == null ? that.superClass == null : this.superClass.equals(that.superClass))
 			&& (this.interfaces == null ? that.interfaces == null : this.interfaces.equals(that.interfaces))
 			&& (this.innerClasses == null ? that.innerClasses == null : this.innerClasses.equals(that.innerClasses))
-			&& (this.comment == null ? that.comment == null : this.comment.equals(that.comment));
+			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments));
 	}
 
 	public void merge(UniClassDec that) {
@@ -92,8 +92,12 @@ public class UniClassDec extends UniNode {
 				this.innerClasses.addAll(that.innerClasses);
 			}
 		}
-		if (that.comment != null) {
-			this.comment = that.comment;
+		if (that.comments != null) {
+			if (this.comments == null) {
+				this.comments = that.comments;
+			} else {
+				this.comments.addAll(that.comments);
+			}
 		}
 	}
 }

@@ -2,15 +2,19 @@ package net.unicoen.mapper
 
 import com.google.common.collect.Lists
 import java.util.HashMap
+import net.unicoen.generator.JavaGenerator
+import net.unicoen.node.UniBlock
 import net.unicoen.node.UniBoolLiteral
 import net.unicoen.node.UniClassDec
 import net.unicoen.node.UniDoubleLiteral
 import net.unicoen.node.UniIntLiteral
+import net.unicoen.node.UniMethodDec
 import net.unicoen.node.UniStringLiteral
 import org.junit.Test
 
 import static net.unicoen.node_helper.Builder.*
-import net.unicoen.generator.JavaGenerator
+import net.unicoen.node.UniMethodCall
+import net.unicoen.node.UniFieldDec
 
 class Java8MapperTest extends MapperTest {
 	val mapper = new Java8Mapper(true)
@@ -28,6 +32,102 @@ class Java8MapperTest extends MapperTest {
 
 		expected.evaluate(actual)
 
+		println(JavaGenerator.generate(actual as UniClassDec))
+
+		evaluate(expected, mapper.parse(JavaGenerator.generate(actual as UniClassDec)))
+	}
+
+	@Test
+	def void parseClassWithComment() {
+		val actual = mapper.parse("/*AA*/ public class A {} //BB")
+
+		val expected = new UniClassDec
+		expected.className = "A"
+		expected.interfaces = #[]
+		expected.members = #[]
+		expected.modifiers = #["public"]
+		expected.superClass = #[]
+		expected.comments = #["/*AA*/", "//BB"]
+
+		expected.evaluate(actual)
+
+		println(JavaGenerator.generate(actual as UniClassDec))
+
+		evaluate(expected, mapper.parse(JavaGenerator.generate(actual as UniClassDec)))
+	}
+
+	@Test
+	def void parseMethodWithComment() {
+		val actual = mapper.parse("public class A { /*AA*/ void m() {} //HH\n }")
+		
+		val block = new UniBlock
+		block.comments = #["//HH"]
+
+		val method = new UniMethodDec
+		method.methodName = "m"
+		method.returnType = "void"
+		method.block = block
+		method.comments = #["/*AA*/"]
+
+		val expected = new UniClassDec
+		expected.className = "A"
+		expected.members = #[method]
+		expected.modifiers = #["public"]
+		expected.evaluate(actual)
+
+		println(actual)
+		println(JavaGenerator.generate(actual as UniClassDec))
+
+		evaluate(expected, mapper.parse(JavaGenerator.generate(actual as UniClassDec)))
+	}
+
+	@Test
+	def void parseComplexComments() {
+		val actual = mapper.parse("/*AA*/ public class A {
+	/*BB*/
+	int a;
+	void m(/*CC*/) {
+		/*DD*/ b(); //EE
+		{ //FF
+			/*11*/ c(); /*22*/
+		} //GG
+	}
+} //HH")
+
+		val fieldDec = new UniFieldDec
+		fieldDec.type = "int";
+		fieldDec.name = "a";
+		fieldDec.comments = #["/*BB*/"]
+
+		val methodCall2 = new UniMethodCall
+		methodCall2.methodName = "c"
+		methodCall2.comments = #["/*11*/", "/*22*/"]
+
+		val block2 = new UniBlock
+		block2.body = #[methodCall2]
+		block2.comments = #["//FF", "//GG"]
+
+		val methodCall1 = new UniMethodCall
+		methodCall1.methodName = "b"
+		methodCall1.comments = #["/*DD*/", "//EE"]
+
+		val block1 = new UniBlock
+		block1.body = #[methodCall1, block2]
+
+		val method = new UniMethodDec
+		method.methodName = "m"
+		method.returnType = "void"
+		method.block = block1
+		method.comments = #["/*CC*/"]
+
+		val expected = new UniClassDec
+		expected.className = "A"
+		expected.members = #[fieldDec, method]
+		expected.modifiers = #["public"]
+		expected.comments = #["/*AA*/", "//HH"]
+		expected.evaluate(actual)
+
+		println(actual)
 		println(JavaGenerator.generate(actual as UniClassDec))
 
 		evaluate(expected, mapper.parse(JavaGenerator.generate(actual as UniClassDec)))
@@ -54,7 +154,7 @@ class Java8MapperTest extends MapperTest {
 	@Test
 	def void parseInterface() {
 
-		//Empty InterfaceDeclaration
+		// Empty InterfaceDeclaration
 		val expected = new UniClassDec
 		expected.className = "A"
 		expected.members = #[]

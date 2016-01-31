@@ -24,7 +24,7 @@ public class UniNew extends UniExpr {
 		int result = 17;
 		result = result * 31 + (type == null ? 0 : type.hashCode());
 		result = result * 31 + (args == null ? 0 : args.hashCode());
-		result = result * 31 + (comment == null ? 0 : comment.hashCode());
+		result = result * 31 + (comments == null ? 0 : comments.hashCode());
 		return result;
 	}
 
@@ -34,7 +34,7 @@ public class UniNew extends UniExpr {
 		UniNew that = (UniNew)obj;
 		return (this.type == null ? that.type == null : this.type.equals(that.type))
 			&& (this.args == null ? that.args == null : this.args.equals(that.args))
-			&& (this.comment == null ? that.comment == null : this.comment.equals(that.comment));
+			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments));
 	}
 
 	@Override
@@ -53,8 +53,12 @@ public class UniNew extends UniExpr {
 				this.args.addAll(that.args);
 			}
 		}
-		if (that.comment != null) {
-			this.comment = that.comment;
+		if (that.comments != null) {
+			if (this.comments == null) {
+				this.comments = that.comments;
+			} else {
+				this.comments.addAll(that.comments);
+			}
 		}
 	}
 }

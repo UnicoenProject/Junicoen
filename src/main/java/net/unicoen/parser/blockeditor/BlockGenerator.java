@@ -16,15 +16,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
-
-import net.unicoen.node.Traverser;
+import net.unicoen.node.CodeGenerator;
 import net.unicoen.node.UniArg;
 import net.unicoen.node.UniArray;
 import net.unicoen.node.UniBinOp;
@@ -101,7 +93,15 @@ import net.unicoen.parser.blockeditor.blockmodel.BlockWhileModel;
 import net.unicoen.parser.blockeditor.blockmodel.PageModel;
 import net.unicoen.parser.blockeditor.blockmodel.PagesModel;
 
-public class BlockGenerator extends Traverser {
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+
+public class BlockGenerator extends CodeGenerator {
 
 	/** Name space definition */
 	private static String XML_CODEBLOCKS_NS = "http://education.mit.edu/openblocks/ns";
@@ -115,7 +115,6 @@ public class BlockGenerator extends Traverser {
 
 	private BlockResolver resolver;
 
-	private PrintStream out;
 	public static String BLOCK_ENC = "UTF-8";
 
 	private Document document;
@@ -126,12 +125,12 @@ public class BlockGenerator extends Traverser {
 	private MethodResolver methodResolver = new MethodResolver();
 
 	public BlockGenerator(PrintStream out, String langdefRootPath) throws SAXException, IOException {
-		this.out = out;
+		super(out);
 		resolver = new BlockResolver(langdefRootPath, false);
 	}
 
 	public BlockGenerator(PrintStream out, String langdefRootPath, boolean isTest) throws SAXException, IOException {
-		this.out = out;
+		super(out);
 		resolver = new BlockResolver(langdefRootPath, isTest);
 	}
 
@@ -526,7 +525,7 @@ public class BlockGenerator extends Traverser {
 		}
 	}
 
-	/*
+	/**
 	 * ブロック定義ファイルのソケットノードから，ソケット情報を作成する
 	 */
 	public BlockSocketsModel calcSocketsInfo(List<Node> socketNodes) {
@@ -642,32 +641,32 @@ public class BlockGenerator extends Traverser {
 	private Stack<Object> createdBlock = new Stack<>();
 
 	@Override
-	public void traverseBoolLiteral(UniBoolLiteral node) {
+	public void dontCallTraverseBoolLiteral(UniBoolLiteral node) {
 		createdBlock.push(new BlockBooleanLiteralModel(node, document, getParentId(), ID_COUNTER++, resolver));
 	}
 
 	@Override
-	public void traverseIntLiteral(UniIntLiteral node) {
+	public void dontCallTraverseIntLiteral(UniIntLiteral node) {
 		createdBlock.push(new BlockIntLiteralModel(String.valueOf(node.value), document, getParentId(), ID_COUNTER++, resolver));
 	}
 
 	@Override
-	public void traverseLongLiteral(UniLongLiteral node) {
+	public void dontCallTraverseLongLiteral(UniLongLiteral node) {
 		createdBlock.push(null);
 	}
 
 	@Override
-	public void traverseDoubleLiteral(UniDoubleLiteral node) {
+	public void dontCallTraverseDoubleLiteral(UniDoubleLiteral node) {
 		createdBlock.push(new BlockDoubleLiteralModel(node, document, getParentId(), ID_COUNTER++, resolver));
 	}
 
 	@Override
-	public void traverseStringLiteral(UniStringLiteral node) {
+	public void dontCallTraverseStringLiteral(UniStringLiteral node) {
 		createdBlock.push(new BlockStringLiteralModel(node.value, document, getParentId(), ID_COUNTER++, resolver));
 	}
 
 	@Override
-	public void traverseIdent(UniIdent node) {
+	public void dontCallTraverseIdent(UniIdent node) {
 		Node varDecNode = resolver.getVariableNameResolver().getVariableBlockNode(node.name);
 		if (varDecNode != null) {
 			BlockVariableGetterModel getterModel = new BlockVariableGetterModel(varDecNode, document, ID_COUNTER++);
@@ -679,12 +678,12 @@ public class BlockGenerator extends Traverser {
 	}
 
 	@Override
-	public void traverseArray(UniArray node) {
+	public void dontCallTraverseArray(UniArray node) {
 		createdBlock.push(null);
 	}
 
 	@Override
-	public void traverseFieldAccess(UniFieldAccess node) {
+	public void dontCallTraverseFieldAccess(UniFieldAccess node) {
 		String genusName = resolver.getForceConvertionMap().getBlockGenusName(node);
 		if (genusName != null) {
 			BlockExprModel expr = new BlockExprModel();
@@ -709,7 +708,7 @@ public class BlockGenerator extends Traverser {
 	}
 
 	@Override
-	public void traverseMethodCall(UniMethodCall node) {
+	public void dontCallTraverseMethodCall(UniMethodCall node) {
 		String parentId = getParentId();
 		if (node.receiver == null) {
 			// フィールドメソッド呼び出し，または継承メソッド呼び出し
@@ -732,7 +731,7 @@ public class BlockGenerator extends Traverser {
 	}
 
 	@Override
-	public void traverseNew(UniNew node) {
+	public void dontCallTraverseNew(UniNew node) {
 		Long id = ID_COUNTER++;
 		List<BlockElementModel> socketModels = parseArgs(node.args, String.valueOf(id));
 
@@ -746,12 +745,12 @@ public class BlockGenerator extends Traverser {
 	}
 
 	@Override
-	public void traverseNewArray(UniNewArray node) {
+	public void dontCallTraverseNewArray(UniNewArray node) {
 		createdBlock.push(null);
 	}
 
 	@Override
-	public void traverseUnaryOp(UniUnaryOp node) {
+	public void dontCallTraverseUnaryOp(UniUnaryOp node) {
 		String parentId = getParentId();
 		// !,++,--,+,-
 		if ("!".equals(node.operator)) {
@@ -802,7 +801,7 @@ public class BlockGenerator extends Traverser {
 	}
 
 	@Override
-	public void traverseBinOp(UniBinOp node) {
+	public void dontCallTraverseBinOp(UniBinOp node) {
 		String parentId = getParentId();
 		if (node.operator.equals("=")) {// 他の二項演算と扱いが別（ソケットが一つのみ）
 			createdBlock.push(createEqualOperatorModel(node, document));
@@ -828,12 +827,12 @@ public class BlockGenerator extends Traverser {
 	}
 
 	@Override
-	public void traverseTernaryOp(UniTernaryOp node) {
+	public void dontCallTraverseTernaryOp(UniTernaryOp node) {
 		throw new RuntimeException("not supported");
 	}
 
 	@Override
-	public void traverseCast(UniCast node) {
+	public void dontCallTraverseCast(UniCast node) {
 		Long id = ID_COUNTER++;
 		List<BlockElementModel> socketModels = parseArgs(Lists.newArrayList(node.value), String.valueOf(id));
 
@@ -846,7 +845,7 @@ public class BlockGenerator extends Traverser {
 	}
 
 	@Override
-	public void traverseReturn(UniReturn node) {
+	public void dontCallTraverseReturn(UniReturn node) {
 		if (node.value != null) {
 			Long id = ID_COUNTER++;
 			BlockElementModel returnValue = traverseExprForBlock(node.value, String.valueOf(id));
@@ -857,17 +856,17 @@ public class BlockGenerator extends Traverser {
 	}
 
 	@Override
-	public void traverseBreak(UniBreak node) {
+	public void dontCallTraverseBreak(UniBreak node) {
 		createdBlock.push(new BlockBreakModel(document, ID_COUNTER++));
 	}
 
 	@Override
-	public void traverseContinue(UniContinue node) {
+	public void dontCallTraverseContinue(UniContinue node) {
 		createdBlock.push(new BlockContinueModel(document, ID_COUNTER++));
 	}
 
 	@Override
-	public void traverseBlock(UniBlock node) {
+	public void dontCallTraverseBlock(UniBlock node) {
 		Long abstractionBlockId = ID_COUNTER++;
 		List<BlockCommandModel> commands = parseBody(document, String.valueOf(abstractionBlockId), node);
 		BlockAbstractBlockModel model = new BlockAbstractBlockModel(document, abstractionBlockId);
@@ -875,7 +874,7 @@ public class BlockGenerator extends Traverser {
 		BlockSocketsModel socketsInfo = calcSocketsInfo(resolver.getSocketNodes(BlockAbstractBlockModel.GENUS_NAME));
 
 		// 抽象化コメントの追加
-		if (node.comment != null) {
+		if (node.comments != null) {
 			model.getBlockElement().appendChild(MyDOMUtil.createElement(BlockElementModel.LABEL_NODE, node.blockLabel, document));
 			model.setCollapsed(node.blockLabel, document);
 		}
@@ -891,7 +890,7 @@ public class BlockGenerator extends Traverser {
 	}
 
 	@Override
-	public void traverseIf(UniIf node) {
+	public void dontCallTraverseIf(UniIf node) {
 		// //BlockModelのifモデルを作成する．（Xml Element）
 		BlockIfModel ifBlockModel = new BlockIfModel(document, ID_COUNTER++);
 		ifBlockModel.setElement(ifBlockModel.getElement());
@@ -912,7 +911,7 @@ public class BlockGenerator extends Traverser {
 	}
 
 	@Override
-	public void traverseFor(UniFor node) {
+	public void dontCallTraverseFor(UniFor node) {
 		UniBlock forBlock = new UniBlock(new ArrayList<>(), "for");
 		if (node.init != null) {
 			forBlock.body.add(node.init);
@@ -936,12 +935,12 @@ public class BlockGenerator extends Traverser {
 	}
 
 	@Override
-	public void traverseEnhancedFor(UniEnhancedFor node) {
+	public void dontCallTraverseEnhancedFor(UniEnhancedFor node) {
 		throw new RuntimeException("not impled yet");
 	}
 
 	@Override
-	public void traverseWhile(UniWhile node) {
+	public void dontCallTraverseWhile(UniWhile node) {
 		BlockWhileModel model = new BlockWhileModel(document, ID_COUNTER++);
 
 		BlockElementModel socket = traverseExprForBlock(node.cond, model.getBlockID());
@@ -965,7 +964,7 @@ public class BlockGenerator extends Traverser {
 	}
 
 	@Override
-	public void traverseDoWhile(UniDoWhile node) {
+	public void dontCallTraverseDoWhile(UniDoWhile node) {
 		Long whileBlockId = ID_COUNTER++;
 		BlockElementModel socket = traverseExprForBlock(node.cond, String.valueOf(whileBlockId));
 		List<BlockCommandModel> trueBlocks = parseBody(document, String.valueOf(whileBlockId), node.statement);
@@ -992,7 +991,7 @@ public class BlockGenerator extends Traverser {
 	}
 
 	@Override
-	public void traverseVariableDec(UniVariableDec node) {
+	public void dontCallTraverseVariableDec(UniVariableDec node) {
 		BlockLocalVarDecModel model = parseVarDec(node.type, node.name);
 		BlockElementModel initializer = node.value != null ? traverseExprForBlock(node.value, model.getBlockID()) : null;
 		List<BlockElementModel> args = initializer != null ? Lists.newArrayList(initializer) : Lists.newArrayList();
@@ -1006,12 +1005,12 @@ public class BlockGenerator extends Traverser {
 	}
 
 	@Override
-	public void traverseEmptyStatement(UniEmptyStatement node) {
+	public void dontCallTraverseEmptyStatement(UniEmptyStatement node) {
 		createdBlock.push(new BlockEmptyModel(ID_COUNTER++, document));
 	}
 
 	@Override
-	public void traverseFieldDec(UniFieldDec node) {
+	public void dontCallTraverseFieldDec(UniFieldDec node) {
 		BlockFieldVarDecModel blockModel = new BlockFieldVarDecModel(node.type, node.name, document, resolver, ID_COUNTER++);
 
 		BlockElementModel initializer = node.value != null ? traverseExprForBlock(node.value, blockModel.getBlockID()) : null;
@@ -1027,7 +1026,7 @@ public class BlockGenerator extends Traverser {
 	}
 
 	@Override
-	public void traverseMethodDec(UniMethodDec node) {
+	public void dontCallTraverseMethodDec(UniMethodDec node) {
 		BlockProcedureModel model = new BlockProcedureModel(node, document, ID_COUNTER++);
 
 		// //引数を解析して引数モデルを生成
@@ -1078,7 +1077,7 @@ public class BlockGenerator extends Traverser {
 	}
 
 	@Override
-	public void traverseArg(UniArg node) {
+	public void dontCallTraverseArg(UniArg node) {
 		BlockProcParmModel model = new BlockProcParmModel(node.type, node.name, document, resolver, ID_COUNTER++);
 
 		BlockPlugModel plugInfo = new BlockPlugModel(resolver.getPlugElement(model.getGenusName()), getParentId());
@@ -1090,7 +1089,7 @@ public class BlockGenerator extends Traverser {
 	}
 
 	@Override
-	public void traverseClassDec(UniClassDec node) {
+	public void dontCallTraverseClassDec(UniClassDec node) {
 		BlockClassModel model = new BlockClassModel();
 
 		parseFieldVariable(node, model, document);
@@ -1104,7 +1103,7 @@ public class BlockGenerator extends Traverser {
 	}
 
 	@Override
-	public void traverseProgram(UniProgram node) {
+	public void dontCallTraverseProgram(UniProgram node) {
 		try {
 			List<PageModel> pages = new ArrayList<>();
 			List<String> importStatements = new ArrayList<>();
@@ -1125,11 +1124,11 @@ public class BlockGenerator extends Traverser {
 	}
 
 	@Override
-	public void traverseImport(UniImport node) {
+	public void dontCallTraverseImport(UniImport node) {
 	}
 
 	@Override
-	public void traverseNamespace(UniNamespace node) {
+	public void dontCallTraverseNamespace(UniNamespace node) {
 	}
 
 	public BlockElementModel traverseExprForBlock(UniExpr node, String parentId) {

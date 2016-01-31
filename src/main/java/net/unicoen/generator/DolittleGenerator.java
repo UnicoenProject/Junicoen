@@ -6,7 +6,7 @@ import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.unicoen.node.Traverser;
+import net.unicoen.node.CodeGenerator;
 import net.unicoen.node.UniArg;
 import net.unicoen.node.UniArray;
 import net.unicoen.node.UniBinOp;
@@ -49,13 +49,12 @@ import net.unicoen.node.UniWhile;
  * @author ymatsuzawa
  *
  */
-public class DolittleGenerator extends Traverser {
+public class DolittleGenerator extends CodeGenerator {
 
-	PrintStream out;
 	Map<String, String> turtleMethodNameMap = new HashMap<String, String>();
 
 	public DolittleGenerator(PrintStream out) {
-		this.out = out;
+		super(out);
 		initMap();
 	}
 
@@ -81,53 +80,53 @@ public class DolittleGenerator extends Traverser {
 	}
 
 	@Override
-	public void traverseBoolLiteral(UniBoolLiteral node) {
+	public void dontCallTraverseBoolLiteral(UniBoolLiteral node) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void traverseIntLiteral(UniIntLiteral node) {
+	public void dontCallTraverseIntLiteral(UniIntLiteral node) {
 		print(node.value + " ");
 	}
 
 	@Override
-	public void traverseLongLiteral(UniLongLiteral node) {
+	public void dontCallTraverseLongLiteral(UniLongLiteral node) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void traverseDoubleLiteral(UniDoubleLiteral node) {
+	public void dontCallTraverseDoubleLiteral(UniDoubleLiteral node) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void traverseStringLiteral(UniStringLiteral node) {
+	public void dontCallTraverseStringLiteral(UniStringLiteral node) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void traverseIdent(UniIdent node) {
+	public void dontCallTraverseIdent(UniIdent node) {
 		print(node.name);
 	}
 
 	@Override
-	public void traverseArray(UniArray node) {
+	public void dontCallTraverseArray(UniArray node) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void traverseFieldAccess(UniFieldAccess node) {
+	public void dontCallTraverseFieldAccess(UniFieldAccess node) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void traverseMethodCall(UniMethodCall node) {
+	public void dontCallTraverseMethodCall(UniMethodCall node) {
 		String name = turtleMethodNameMap.get(node.methodName);
 		if (node.receiver != null) {
 			traverseExpr(node.receiver);
@@ -145,7 +144,7 @@ public class DolittleGenerator extends Traverser {
 	}
 
 	@Override
-	public void traverseUnaryOp(UniUnaryOp node) {
+	public void dontCallTraverseUnaryOp(UniUnaryOp node) {
 		if (node.operator.equals("_++")) {
 			traverseExpr(node.expr);
 			print("=");
@@ -157,38 +156,38 @@ public class DolittleGenerator extends Traverser {
 	}
 
 	@Override
-	public void traverseBinOp(UniBinOp node) {
+	public void dontCallTraverseBinOp(UniBinOp node) {
 		traverseExpr(node.left);
 		print(node.operator);
 		traverseExpr(node.right);
 	}
 
 	@Override
-	public void traverseTernaryOp(UniTernaryOp node) {
+	public void dontCallTraverseTernaryOp(UniTernaryOp node) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void traverseReturn(UniReturn node) {
+	public void dontCallTraverseReturn(UniReturn node) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void traverseBreak(UniBreak node) {
+	public void dontCallTraverseBreak(UniBreak node) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void traverseContinue(UniContinue node) {
+	public void dontCallTraverseContinue(UniContinue node) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void traverseBlock(UniBlock node) {
+	public void dontCallTraverseBlock(UniBlock node) {
 		if (node.body != null && !node.body.isEmpty()) {
 			for (int i = 0; i < node.body.size(); i++) {
 				traverseExpr(node.body.get(i));
@@ -200,7 +199,7 @@ public class DolittleGenerator extends Traverser {
 	}
 
 	@Override
-	public void traverseIf(UniIf node) {
+	public void dontCallTraverseIf(UniIf node) {
 		// cond
 		print("「");
 		traverseExpr(node.cond);
@@ -232,13 +231,13 @@ public class DolittleGenerator extends Traverser {
 	// }
 
 	@Override
-	public void traverseFor(UniFor node) {
+	public void dontCallTraverseFor(UniFor node) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void traverseWhile(UniWhile node) {
+	public void dontCallTraverseWhile(UniWhile node) {
 		UniBlock block = (UniBlock) node.statement;
 		// cond
 		print("「");
@@ -256,13 +255,13 @@ public class DolittleGenerator extends Traverser {
 	}
 
 	@Override
-	public void traverseDoWhile(UniDoWhile node) {
+	public void dontCallTraverseDoWhile(UniDoWhile node) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void traverseVariableDec(UniVariableDec node) {
+	public void dontCallTraverseVariableDec(UniVariableDec node) {
 		print(node.name);
 
 		if (node.value != null) {
@@ -272,19 +271,19 @@ public class DolittleGenerator extends Traverser {
 	}
 
 	@Override
-	public void traverseNewArray(UniNewArray node) {
+	public void dontCallTraverseNewArray(UniNewArray node) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void traverseFieldDec(UniFieldDec node) {
+	public void dontCallTraverseFieldDec(UniFieldDec node) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void traverseMethodDec(UniMethodDec node) {
+	public void dontCallTraverseMethodDec(UniMethodDec node) {
 		for (UniExpr expr : node.block.body) {
 			traverseExpr(expr);
 			print("。");
@@ -293,13 +292,13 @@ public class DolittleGenerator extends Traverser {
 	}
 
 	@Override
-	public void traverseArg(UniArg node) {
+	public void dontCallTraverseArg(UniArg node) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void traverseClassDec(UniClassDec node) {
+	public void dontCallTraverseClassDec(UniClassDec node) {
 		for (UniMemberDec dec : node.members) {
 			traverseMemberDec(dec);
 		}
@@ -314,43 +313,43 @@ public class DolittleGenerator extends Traverser {
 	}
 
 	@Override
-	public void traverseNew(UniNew node) {
+	public void dontCallTraverseNew(UniNew node) {
 		// TODO Auto-generated method stub
 
 	}
 	
 	@Override
-	public void traverseImport(UniImport node) {
+	public void dontCallTraverseImport(UniImport node) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void traverseNamespace(UniNamespace node) {
+	public void dontCallTraverseNamespace(UniNamespace node) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void traverseEmptyStatement(UniEmptyStatement node) {
+	public void dontCallTraverseEmptyStatement(UniEmptyStatement node) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void traverseCast(UniCast node) {
+	public void dontCallTraverseCast(UniCast node) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void traverseEnhancedFor(UniEnhancedFor node) {
+	public void dontCallTraverseEnhancedFor(UniEnhancedFor node) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void traverseProgram(UniProgram node) {
+	public void dontCallTraverseProgram(UniProgram node) {
 		// TODO Auto-generated method stub
 		
 	}

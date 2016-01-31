@@ -18,7 +18,7 @@ public class JavaScriptGenerator extends JavaGenerator {
 	}
 
 	@Override
-	public void traverseVariableDec(UniVariableDec node) {
+	public void dontCallTraverseVariableDec(UniVariableDec node) {
 		print(String.join(" ", "var", node.name));
 
 		if (node.value != null) {
@@ -28,7 +28,7 @@ public class JavaScriptGenerator extends JavaGenerator {
 	}
 
 	@Override
-	public void traverseMethodDec(UniMethodDec node) {
+	public void dontCallTraverseMethodDec(UniMethodDec node) {
 		ArrayList<String> args = new ArrayList<>();
 		if (node.args != null) {
 			for (UniArg arg : node.args) {
@@ -42,7 +42,7 @@ public class JavaScriptGenerator extends JavaGenerator {
 	}
 
 	@Override
-	public void traverseClassDec(UniClassDec node) {
+	public void dontCallTraverseClassDec(UniClassDec node) {
 		for (UniMemberDec dec : JavaGenerator.iter(node.members)) {
 			traverseMemberDec(dec);
 		}

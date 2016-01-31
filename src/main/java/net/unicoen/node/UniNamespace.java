@@ -19,7 +19,7 @@ public class UniNamespace extends UniNode {
 	public int hashCode() {
 		int result = 17;
 		result = result * 31 + (name == null ? 0 : name.hashCode());
-		result = result * 31 + (comment == null ? 0 : comment.hashCode());
+		result = result * 31 + (comments == null ? 0 : comments.hashCode());
 		return result;
 	}
 
@@ -28,15 +28,19 @@ public class UniNamespace extends UniNode {
 		if (obj == null || !(obj instanceof UniNamespace)) return false;
 		UniNamespace that = (UniNamespace)obj;
 		return (this.name == null ? that.name == null : this.name.equals(that.name))
-			&& (this.comment == null ? that.comment == null : this.comment.equals(that.comment));
+			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments));
 	}
 
 	public void merge(UniNamespace that) {
 		if (that.name != null) {
 			this.name = that.name;
 		}
-		if (that.comment != null) {
-			this.comment = that.comment;
+		if (that.comments != null) {
+			if (this.comments == null) {
+				this.comments = that.comments;
+			} else {
+				this.comments.addAll(that.comments);
+			}
 		}
 	}
 }

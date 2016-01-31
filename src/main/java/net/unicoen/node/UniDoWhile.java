@@ -22,7 +22,7 @@ public class UniDoWhile extends UniExpr {
 		int result = 17;
 		result = result * 31 + (statement == null ? 0 : statement.hashCode());
 		result = result * 31 + (cond == null ? 0 : cond.hashCode());
-		result = result * 31 + (comment == null ? 0 : comment.hashCode());
+		result = result * 31 + (comments == null ? 0 : comments.hashCode());
 		return result;
 	}
 
@@ -32,7 +32,7 @@ public class UniDoWhile extends UniExpr {
 		UniDoWhile that = (UniDoWhile)obj;
 		return (this.statement == null ? that.statement == null : this.statement.equals(that.statement))
 			&& (this.cond == null ? that.cond == null : this.cond.equals(that.cond))
-			&& (this.comment == null ? that.comment == null : this.comment.equals(that.comment));
+			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments));
 	}
 
 	@Override
@@ -47,8 +47,12 @@ public class UniDoWhile extends UniExpr {
 		if (that.cond != null) {
 			this.cond = that.cond;
 		}
-		if (that.comment != null) {
-			this.comment = that.comment;
+		if (that.comments != null) {
+			if (this.comments == null) {
+				this.comments = that.comments;
+			} else {
+				this.comments.addAll(that.comments);
+			}
 		}
 	}
 }

@@ -1,5 +1,7 @@
 package net.unicoen.node;
 
+import java.util.List;
+
 public abstract class UniNode {
-	public String comment;
+	public List<String> comments;
 }

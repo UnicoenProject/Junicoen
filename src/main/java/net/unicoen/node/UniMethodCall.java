@@ -28,7 +28,7 @@ public class UniMethodCall extends UniExpr {
 		result = result * 31 + (receiver == null ? 0 : receiver.hashCode());
 		result = result * 31 + (methodName == null ? 0 : methodName.hashCode());
 		result = result * 31 + (args == null ? 0 : args.hashCode());
-		result = result * 31 + (comment == null ? 0 : comment.hashCode());
+		result = result * 31 + (comments == null ? 0 : comments.hashCode());
 		return result;
 	}
 
@@ -39,7 +39,7 @@ public class UniMethodCall extends UniExpr {
 		return (this.receiver == null ? that.receiver == null : this.receiver.equals(that.receiver))
 			&& (this.methodName == null ? that.methodName == null : this.methodName.equals(that.methodName))
 			&& (this.args == null ? that.args == null : this.args.equals(that.args))
-			&& (this.comment == null ? that.comment == null : this.comment.equals(that.comment));
+			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments));
 	}
 
 	@Override
@@ -61,8 +61,12 @@ public class UniMethodCall extends UniExpr {
 				this.args.addAll(that.args);
 			}
 		}
-		if (that.comment != null) {
-			this.comment = that.comment;
+		if (that.comments != null) {
+			if (this.comments == null) {
+				this.comments = that.comments;
+			} else {
+				this.comments.addAll(that.comments);
+			}
 		}
 	}
 }
