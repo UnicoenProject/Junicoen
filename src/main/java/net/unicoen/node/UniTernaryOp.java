@@ -26,8 +26,7 @@ public class UniTernaryOp extends UniExpr {
 		result = result * 31 + (cond == null ? 0 : cond.hashCode());
 		result = result * 31 + (trueExpr == null ? 0 : trueExpr.hashCode());
 		result = result * 31 + (falseExpr == null ? 0 : falseExpr.hashCode());
-		result = result * 31 + (beforeComment == null ? 0 : beforeComment.hashCode());
-		result = result * 31 + (afterComment == null ? 0 : afterComment.hashCode());
+		result = result * 31 + (comments == null ? 0 : comments.hashCode());
 		return result;
 	}
 
@@ -38,8 +37,7 @@ public class UniTernaryOp extends UniExpr {
 		return (this.cond == null ? that.cond == null : this.cond.equals(that.cond))
 			&& (this.trueExpr == null ? that.trueExpr == null : this.trueExpr.equals(that.trueExpr))
 			&& (this.falseExpr == null ? that.falseExpr == null : this.falseExpr.equals(that.falseExpr))
-			&& (this.beforeComment == null ? that.beforeComment == null : this.beforeComment.equals(that.beforeComment))
-			&& (this.afterComment == null ? that.afterComment == null : this.afterComment.equals(that.afterComment));
+			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments));
 	}
 
 	@Override
@@ -57,11 +55,12 @@ public class UniTernaryOp extends UniExpr {
 		if (that.falseExpr != null) {
 			this.falseExpr = that.falseExpr;
 		}
-		if (that.beforeComment != null) {
-			this.beforeComment = that.beforeComment;
-		}
-		if (that.afterComment != null) {
-			this.afterComment = that.afterComment;
+		if (that.comments != null) {
+			if (this.comments == null) {
+				this.comments = that.comments;
+			} else {
+				this.comments.addAll(that.comments);
+			}
 		}
 	}
 }

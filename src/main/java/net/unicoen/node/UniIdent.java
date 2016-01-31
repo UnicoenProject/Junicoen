@@ -19,8 +19,7 @@ public class UniIdent extends UniExpr {
 	public int hashCode() {
 		int result = 17;
 		result = result * 31 + (name == null ? 0 : name.hashCode());
-		result = result * 31 + (beforeComment == null ? 0 : beforeComment.hashCode());
-		result = result * 31 + (afterComment == null ? 0 : afterComment.hashCode());
+		result = result * 31 + (comments == null ? 0 : comments.hashCode());
 		return result;
 	}
 
@@ -29,8 +28,7 @@ public class UniIdent extends UniExpr {
 		if (obj == null || !(obj instanceof UniIdent)) return false;
 		UniIdent that = (UniIdent)obj;
 		return (this.name == null ? that.name == null : this.name.equals(that.name))
-			&& (this.beforeComment == null ? that.beforeComment == null : this.beforeComment.equals(that.beforeComment))
-			&& (this.afterComment == null ? that.afterComment == null : this.afterComment.equals(that.afterComment));
+			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments));
 	}
 
 	@Override
@@ -42,11 +40,12 @@ public class UniIdent extends UniExpr {
 		if (that.name != null) {
 			this.name = that.name;
 		}
-		if (that.beforeComment != null) {
-			this.beforeComment = that.beforeComment;
-		}
-		if (that.afterComment != null) {
-			this.afterComment = that.afterComment;
+		if (that.comments != null) {
+			if (this.comments == null) {
+				this.comments = that.comments;
+			} else {
+				this.comments.addAll(that.comments);
+			}
 		}
 	}
 }

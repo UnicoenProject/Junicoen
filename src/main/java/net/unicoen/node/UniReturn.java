@@ -19,8 +19,7 @@ public class UniReturn extends UniExpr {
 	public int hashCode() {
 		int result = 17;
 		result = result * 31 + (value == null ? 0 : value.hashCode());
-		result = result * 31 + (beforeComment == null ? 0 : beforeComment.hashCode());
-		result = result * 31 + (afterComment == null ? 0 : afterComment.hashCode());
+		result = result * 31 + (comments == null ? 0 : comments.hashCode());
 		return result;
 	}
 
@@ -29,8 +28,7 @@ public class UniReturn extends UniExpr {
 		if (obj == null || !(obj instanceof UniReturn)) return false;
 		UniReturn that = (UniReturn)obj;
 		return (this.value == null ? that.value == null : this.value.equals(that.value))
-			&& (this.beforeComment == null ? that.beforeComment == null : this.beforeComment.equals(that.beforeComment))
-			&& (this.afterComment == null ? that.afterComment == null : this.afterComment.equals(that.afterComment));
+			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments));
 	}
 
 	@Override
@@ -42,11 +40,12 @@ public class UniReturn extends UniExpr {
 		if (that.value != null) {
 			this.value = that.value;
 		}
-		if (that.beforeComment != null) {
-			this.beforeComment = that.beforeComment;
-		}
-		if (that.afterComment != null) {
-			this.afterComment = that.afterComment;
+		if (that.comments != null) {
+			if (this.comments == null) {
+				this.comments = that.comments;
+			} else {
+				this.comments.addAll(that.comments);
+			}
 		}
 	}
 }
