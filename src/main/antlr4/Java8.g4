@@ -1972,10 +1972,10 @@ WS
 	;
 
 COMMENT
-	:	'/*' .* ? '*/'  ->channel(HIDDEN)
+	:	'/*' .* ? '*/'  ->skip
 	;
 
 LINE_COMMENT
-	:	'//' ~[\r\n]*  ->channel(HIDDEN)
+	:	'//' ~[\r\n]*  ->skip
 	;
 

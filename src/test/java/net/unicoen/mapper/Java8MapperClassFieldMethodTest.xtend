@@ -253,7 +253,8 @@ class Java8MapperClassFieldMethodTest extends MapperTest {
 
 	@Test
 	def void parseMethodWithForStatement(){
-		val main = mapper.parse("public class Main{ public static void main(){for(int i=0;i<5;i++)j++;}}")
+		val actual = mapper.parse("public class Main{ public static void main(){for(int i=0;i<5;i++)j++;}}")
+		
 	}
 
 	@Test
