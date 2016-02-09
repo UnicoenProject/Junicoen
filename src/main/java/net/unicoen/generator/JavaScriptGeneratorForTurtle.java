@@ -16,8 +16,8 @@ public class JavaScriptGeneratorForTurtle extends JavaScriptGenerator {
 	}
 
 	@Override
-	public void traverseMethodDec(UniMethodDec node) {
-		super.traverseMethodDec(node);
+	public void dontCallTraverseMethodDec(UniMethodDec node) {
+		super.dontCallTraverseMethodDec(node);
 		newline();
 		print(node.methodName + "();");
 	}

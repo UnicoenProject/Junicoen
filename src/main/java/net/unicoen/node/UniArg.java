@@ -22,8 +22,7 @@ public class UniArg extends UniMemberDec {
 		int result = 17;
 		result = result * 31 + (type == null ? 0 : type.hashCode());
 		result = result * 31 + (name == null ? 0 : name.hashCode());
-		result = result * 31 + (beforeComment == null ? 0 : beforeComment.hashCode());
-		result = result * 31 + (afterComment == null ? 0 : afterComment.hashCode());
+		result = result * 31 + (comments == null ? 0 : comments.hashCode());
 		return result;
 	}
 
@@ -33,8 +32,7 @@ public class UniArg extends UniMemberDec {
 		UniArg that = (UniArg)obj;
 		return (this.type == null ? that.type == null : this.type.equals(that.type))
 			&& (this.name == null ? that.name == null : this.name.equals(that.name))
-			&& (this.beforeComment == null ? that.beforeComment == null : this.beforeComment.equals(that.beforeComment))
-			&& (this.afterComment == null ? that.afterComment == null : this.afterComment.equals(that.afterComment));
+			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments));
 	}
 
 	public void merge(UniArg that) {
@@ -44,11 +42,12 @@ public class UniArg extends UniMemberDec {
 		if (that.name != null) {
 			this.name = that.name;
 		}
-		if (that.beforeComment != null) {
-			this.beforeComment = that.beforeComment;
-		}
-		if (that.afterComment != null) {
-			this.afterComment = that.afterComment;
+		if (that.comments != null) {
+			if (this.comments == null) {
+				this.comments = that.comments;
+			} else {
+				this.comments.addAll(that.comments);
+			}
 		}
 	}
 }

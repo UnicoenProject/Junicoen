@@ -1,14 +1,6 @@
 package net.unicoen.node;
 
-import java.io.PrintStream;
-
 public abstract class Traverser {
-	
-	public final PrintStream out;
-	
-	public Traverser(PrintStream out) {
-		this.out = out;
-	}
 
 	public abstract void traverseBoolLiteral(UniBoolLiteral node);
 	public abstract void traverseIntLiteral(UniIntLiteral node);
@@ -43,9 +35,6 @@ public abstract class Traverser {
 	public abstract void traverseProgram(UniProgram node);
 	public abstract void traverseImport(UniImport node);
 	public abstract void traverseNamespace(UniNamespace node);
-	
-	public void writeComment(String comment) {
-	}
 
 	public final void traverseExpr(UniExpr node) {
 		if (node instanceof UniBoolLiteral) {
@@ -150,10 +139,6 @@ public abstract class Traverser {
 		}
 		if (node instanceof UniEmptyStatement) {
 			traverseEmptyStatement((UniEmptyStatement)node);
-			return;
-		}
-		if (node instanceof UniCast) {
-			traverseCast(((UniCast)node));
 			return;
 		}
 		throw new RuntimeException("Unknown node: " + node);

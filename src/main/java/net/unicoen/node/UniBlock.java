@@ -24,8 +24,7 @@ public class UniBlock extends UniExpr {
 		int result = 17;
 		result = result * 31 + (body == null ? 0 : body.hashCode());
 		result = result * 31 + (blockLabel == null ? 0 : blockLabel.hashCode());
-		result = result * 31 + (beforeComment == null ? 0 : beforeComment.hashCode());
-		result = result * 31 + (afterComment == null ? 0 : afterComment.hashCode());
+		result = result * 31 + (comments == null ? 0 : comments.hashCode());
 		return result;
 	}
 
@@ -35,8 +34,7 @@ public class UniBlock extends UniExpr {
 		UniBlock that = (UniBlock)obj;
 		return (this.body == null ? that.body == null : this.body.equals(that.body))
 			&& (this.blockLabel == null ? that.blockLabel == null : this.blockLabel.equals(that.blockLabel))
-			&& (this.beforeComment == null ? that.beforeComment == null : this.beforeComment.equals(that.beforeComment))
-			&& (this.afterComment == null ? that.afterComment == null : this.afterComment.equals(that.afterComment));
+			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments));
 	}
 
 	@Override
@@ -55,11 +53,12 @@ public class UniBlock extends UniExpr {
 		if (that.blockLabel != null) {
 			this.blockLabel = that.blockLabel;
 		}
-		if (that.beforeComment != null) {
-			this.beforeComment = that.beforeComment;
-		}
-		if (that.afterComment != null) {
-			this.afterComment = that.afterComment;
+		if (that.comments != null) {
+			if (this.comments == null) {
+				this.comments = that.comments;
+			} else {
+				this.comments.addAll(that.comments);
+			}
 		}
 	}
 }

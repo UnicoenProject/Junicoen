@@ -28,8 +28,7 @@ public class UniFor extends UniExpr {
 		result = result * 31 + (cond == null ? 0 : cond.hashCode());
 		result = result * 31 + (step == null ? 0 : step.hashCode());
 		result = result * 31 + (statement == null ? 0 : statement.hashCode());
-		result = result * 31 + (beforeComment == null ? 0 : beforeComment.hashCode());
-		result = result * 31 + (afterComment == null ? 0 : afterComment.hashCode());
+		result = result * 31 + (comments == null ? 0 : comments.hashCode());
 		return result;
 	}
 
@@ -41,8 +40,7 @@ public class UniFor extends UniExpr {
 			&& (this.cond == null ? that.cond == null : this.cond.equals(that.cond))
 			&& (this.step == null ? that.step == null : this.step.equals(that.step))
 			&& (this.statement == null ? that.statement == null : this.statement.equals(that.statement))
-			&& (this.beforeComment == null ? that.beforeComment == null : this.beforeComment.equals(that.beforeComment))
-			&& (this.afterComment == null ? that.afterComment == null : this.afterComment.equals(that.afterComment));
+			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments));
 	}
 
 	@Override
@@ -63,11 +61,12 @@ public class UniFor extends UniExpr {
 		if (that.statement != null) {
 			this.statement = that.statement;
 		}
-		if (that.beforeComment != null) {
-			this.beforeComment = that.beforeComment;
-		}
-		if (that.afterComment != null) {
-			this.afterComment = that.afterComment;
+		if (that.comments != null) {
+			if (this.comments == null) {
+				this.comments = that.comments;
+			} else {
+				this.comments.addAll(that.comments);
+			}
 		}
 	}
 }
