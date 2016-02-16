@@ -15,6 +15,8 @@ import org.junit.Test
 import static net.unicoen.node_helper.Builder.*
 import net.unicoen.node.UniMethodCall
 import net.unicoen.node.UniFieldDec
+import net.unicoen.node.UniMemberDec
+import net.unicoen.node.UniExpr
 
 class Java8MapperTest extends MapperTest {
 	val mapper = new Java8Mapper(true)
@@ -71,7 +73,7 @@ class Java8MapperTest extends MapperTest {
 
 		val expected = new UniClassDec
 		expected.className = "A"
-		expected.members = #[method]
+		expected.members = #[method as UniMemberDec]
 		expected.modifiers = #["public"]
 		expected.evaluate(actual)
 
@@ -104,7 +106,7 @@ class Java8MapperTest extends MapperTest {
 		methodCall2.comments = #["/*11*/", "/*22*/"]
 
 		val block2 = new UniBlock
-		block2.body = #[methodCall2]
+		block2.body = #[methodCall2 as UniExpr]
 		block2.comments = #["//FF", "//GG"]
 
 		val methodCall1 = new UniMethodCall
@@ -112,7 +114,7 @@ class Java8MapperTest extends MapperTest {
 		methodCall1.comments = #["/*DD*/", "//EE"]
 
 		val block1 = new UniBlock
-		block1.body = #[methodCall1, block2]
+		block1.body = #[methodCall1 as UniExpr, block2 as UniExpr]
 
 		val method = new UniMethodDec
 		method.methodName = "m"
@@ -122,7 +124,7 @@ class Java8MapperTest extends MapperTest {
 
 		val expected = new UniClassDec
 		expected.className = "A"
-		expected.members = #[fieldDec, method]
+		expected.members = #[fieldDec as UniMemberDec, method as UniMemberDec]
 		expected.modifiers = #["public"]
 		expected.comments = #["/*AA*/", "//HH"]
 		expected.evaluate(actual)

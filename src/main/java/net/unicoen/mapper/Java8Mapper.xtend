@@ -1,36 +1,10 @@
 package net.unicoen.mapper
 
 import java.io.FileInputStream
-import java.lang.reflect.ParameterizedType
-import java.util.ArrayList
 import java.util.List
+import java.util.ArrayList
 import java.util.Map
-import net.unicoen.node.UniArg
-import net.unicoen.node.UniArray
-import net.unicoen.node.UniBinOp
-import net.unicoen.node.UniBlock
-import net.unicoen.node.UniBoolLiteral
-import net.unicoen.node.UniClassDec
-import net.unicoen.node.UniDoubleLiteral
-import net.unicoen.node.UniEnhancedFor
-import net.unicoen.node.UniExpr
-import net.unicoen.node.UniFieldAccess
-import net.unicoen.node.UniFieldDec
-import net.unicoen.node.UniFor
-import net.unicoen.node.UniIdent
-import net.unicoen.node.UniIf
-import net.unicoen.node.UniIntLiteral
-import net.unicoen.node.UniMemberDec
-import net.unicoen.node.UniMethodCall
-import net.unicoen.node.UniMethodDec
-import net.unicoen.node.UniNew
-import net.unicoen.node.UniNewArray
-import net.unicoen.node.UniNode
-import net.unicoen.node.UniReturn
-import net.unicoen.node.UniStringLiteral
-import net.unicoen.node.UniTernaryOp
-import net.unicoen.node.UniUnaryOp
-import net.unicoen.node.UniVariableDec
+import net.unicoen.node.*
 import net.unicoen.parser.Java8BaseVisitor
 import net.unicoen.parser.Java8Lexer
 import net.unicoen.parser.Java8Parser
@@ -39,13 +13,13 @@ import org.antlr.v4.runtime.CharStream
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.RuleContext
+import org.antlr.v4.runtime.Token
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.RuleNode
 import org.antlr.v4.runtime.tree.TerminalNode
 import org.antlr.v4.runtime.tree.TerminalNodeImpl
 import org.eclipse.xtext.xbase.lib.Functions.Function1
-import com.google.common.collect.Lists
-import org.antlr.v4.runtime.Token
+import java.lang.reflect.ParameterizedType
 
 class Java8Mapper extends Java8BaseVisitor<Object> {
 
@@ -116,7 +90,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			for (var i = _nextTokenIndex; i < count; i++) {
 				val hiddenToken = _stream.get(i) // Includes skipped tokens (maybe)
 				if (_lastNode.comments === null) {
-					_lastNode.comments = Lists.newArrayList
+					_lastNode.comments = newArrayList
 				}
 				_lastNode.comments += hiddenToken.text
 			}
@@ -137,7 +111,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 
 	override public visit(ParseTree tree) {
 		val result = if (_isDebugMode && tree instanceof RuleContext) {
-				val ruleName = Java8Parser.ruleNames.get((tree as RuleContext).ruleIndex)
+				val ruleName = Java8Parser.ruleNames.get((tree as ParserRuleContext).ruleIndex)
 				println("enter " + ruleName + " : " + tree.text)
 				val ret = tree.accept(this)
 				println("exit " + ruleName + " : " + ret)
@@ -152,7 +126,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				result
 			}
 		if (node instanceof UniNode) {
-			var List<String> contents = Lists.newArrayList
+			var List<String> contents = newArrayList
 			for (var i = _comments.size - 1; i >= 0 && _comments.get(i).parent == tree; i--) {
 				_comments.get(i).contents += contents
 				contents = _comments.get(i).contents
@@ -195,13 +169,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val token = node.symbol
 		if (token.type > 0) {
 			val count = token.tokenIndex
-			val List<String> contents = Lists.newArrayList
+			val List<String> contents = newArrayList
 			var i = _nextTokenIndex
 			for (; i < count; i++) {
 				val hiddenToken = _stream.get(i) // Includes skipped tokens (maybe)
 				if (_lastNode !== null && _stream.get(_nextTokenIndex - 1).line == hiddenToken.line) {
 					if (_lastNode.comments === null) {
-						_lastNode.comments = Lists.newArrayList
+						_lastNode.comments = newArrayList
 					}
 					_lastNode.comments += hiddenToken.text
 				} else {
@@ -301,7 +275,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 						}
 					}
 				]
-				return if(builder.length > 0) clazz.getConstructor(StringBuilder).newInstance(builder) else null
+				return if (builder.length > 0) clazz.getConstructor(StringBuilder).newInstance(builder) else null
 			}
 			val instance = clazz.newInstance
 			val fields = clazz.fields
@@ -327,7 +301,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				temp.forEach [
 					builder.append(it.castTo(clazz))
 				]
-				return if(builder.length > 0) clazz.getConstructor(StringBuilder).newInstance(builder) else null
+				return if (builder.length > 0) clazz.getConstructor(StringBuilder).newInstance(builder) else null
 			}
 			val first = temp.findFirst[clazz.isAssignableFrom(it.class)]
 			return if (first === null) {
@@ -2642,8 +2616,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		map
 	}
 
-	override public visitClassInstanceCreationExpression_lfno_primary(
-		Java8Parser.ClassInstanceCreationExpression_lfno_primaryContext ctx) {
+	override public visitClassInstanceCreationExpression_lfno_primary(Java8Parser.ClassInstanceCreationExpression_lfno_primaryContext ctx) {
 		val map = newHashMap
 		val none = newArrayList
 		map.put("none", none)
