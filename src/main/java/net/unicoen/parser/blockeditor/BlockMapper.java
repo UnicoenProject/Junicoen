@@ -593,7 +593,7 @@ public class BlockMapper {
 		Node commentNode = MyDOMUtil.getChildNode(node, BlockElementModel.COMMENT_NODE);
 		if(commentNode != null){
 			Node commentText = MyDOMUtil.getChildNode(commentNode, "Text");
-			model.afterComment  = commentText.getTextContent() !=null ?  commentText.getTextContent():null;
+			model.comments.add(commentText.getTextContent());
 		}
 	}
 

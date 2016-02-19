@@ -1,11 +1,13 @@
 package net.unicoen.mapper
 
 import net.unicoen.generator.JavaScriptGenerator
-import net.unicoen.node.UniClassDec
-import org.junit.Test
+
 
 import static org.hamcrest.Matchers.*
 import static org.junit.Assert.*
+import net.unicoen.node.UniProgram
+import org.junit.Ignore
+import org.junit.Test
 
 class JavaScriptMapperTest {
 	val mapper = new JavaScriptMapper()
@@ -54,10 +56,10 @@ class JavaScriptMapperTest {
 
 	def regenerate(StringBuilder sb) {
 		val code = sb.toString()
-		val classDec = mapper.parse(code) as UniClassDec
+		val classDec = mapper.parse(code) as UniProgram
 		val generatedCode = JavaScriptGenerator.generate(classDec);
 		assertThat(MapperTestUtil.normalize(generatedCode), equalTo(MapperTestUtil.normalize(code)))
-		assertThat(MapperTestUtil.normalize(JavaScriptGenerator.generate(mapper.parse(generatedCode) as UniClassDec)),
+		assertThat(MapperTestUtil.normalize(JavaScriptGenerator.generate(mapper.parse(generatedCode) as UniProgram)),
 			equalTo(MapperTestUtil.normalize(code)))
 	}
 }

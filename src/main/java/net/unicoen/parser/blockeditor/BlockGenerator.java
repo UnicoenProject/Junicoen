@@ -1109,16 +1109,21 @@ public class BlockGenerator extends CodeGenerator {
 		try {
 			List<PageModel> pages = new ArrayList<>();
 			List<String> importStatements = new ArrayList<>();
-			for (UniImport importStatement : node.imports) {
-				importStatements.add(importStatement.targetName);
+			if(node.imports != null){
+				for (UniImport importStatement : node.imports) {
+					importStatements.add(importStatement.targetName);
+				}				
+			}
+			
+			if(node.classes != null){
+				for (UniClassDec dec : node.classes) {
+					traverseClassDec(dec);
+					BlockClassModel model = (BlockClassModel) createdBlock.pop();
+					PageModel page = new PageModel(dec, model.createBlockNodes(document), document);
+					pages.add(page);
+				}				
 			}
 
-			for (UniClassDec dec : node.classes) {
-				traverseClassDec(dec);
-				BlockClassModel model = (BlockClassModel) createdBlock.pop();
-				PageModel page = new PageModel(dec, model.createBlockNodes(document), document);
-				pages.add(page);
-			}
 			createdBlock.push(new PagesModel(pages, document, importStatements));
 		} catch (RuntimeException e) {
 			e.printStackTrace();
