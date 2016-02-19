@@ -183,10 +183,11 @@ public class JavaGenerator extends CodeGenerator {
 
 	public static void generate(UniProgram fileDec, PrintStream out) {
 		JavaGenerator g = new JavaGenerator(out);
-		for (UniImport importStatement : fileDec.imports) {
-			g.traverseImport(importStatement);
+		if(fileDec.imports!= null){
+			for (UniImport importStatement : fileDec.imports) {
+				g.traverseImport(importStatement);
+			}			
 		}
-
 		g.newline();
 		g.newline();
 

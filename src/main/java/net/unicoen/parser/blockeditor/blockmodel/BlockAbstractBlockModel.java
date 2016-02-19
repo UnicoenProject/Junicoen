@@ -7,6 +7,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import net.unicoen.parser.blockeditor.AnnotationCommentGetter;
+import net.unicoen.parser.blockeditor.MyDOMUtil;
 
 public class BlockAbstractBlockModel extends BlockCommandModel {
 	
@@ -20,10 +21,16 @@ public class BlockAbstractBlockModel extends BlockCommandModel {
 	
 	public void setCollapsed(String comment, Document document){
 		String openClose = AnnotationCommentGetter.getOpenClose(comment);
-		if(!openClose.equals(AnnotationCommentGetter.NOT_FOUND) && !AnnotationCommentGetter.containsOpen(openClose)){
+		if(!AnnotationCommentGetter.containsOpen(openClose)){
 			Element element = document.createElement(COLLAPSED_NODE);
 			getBlockElement().appendChild(element);			
 		}
+	}
+	
+	@Override
+	public void addCommentNode(String comment, Document document) {
+		setCollapsed(comment, document);
+		getBlockElement().appendChild(MyDOMUtil.createElement(BlockElementModel.LABEL_NODE, AnnotationCommentGetter.getCommentText(comment), document));
 	}
 	
 	@Override
