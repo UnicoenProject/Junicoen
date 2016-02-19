@@ -137,8 +137,13 @@ public class BlockGenerator extends CodeGenerator {
 		resolver = new BlockResolver(langdefRootPath, isTest);
 	}
 
-	public void parseUniFile(UniProgram file) throws TransformerException, ParserConfigurationException {
+	public void generate(UniProgram file) throws TransformerException, ParserConfigurationException {
 		out.print(createBlockXMLString(getSaveNode(file)));
+		out.close();
+	}
+	
+	public void generate(UniClassDec classDec) throws TransformerException, ParserConfigurationException {
+		out.print(createBlockXMLString(getSaveNode(classDec)));
 		out.close();
 	}
 
@@ -150,6 +155,25 @@ public class BlockGenerator extends CodeGenerator {
 		documentElement.appendChild(pagesModel.getPagesElement());
 		document.appendChild(documentElement);
 
+		return document;
+	}
+	
+	public Node getSaveNode(UniClassDec classDec) throws ParserConfigurationException {
+		Element documentElement = createRootNode();
+
+		List<PageModel> pages = new ArrayList<>();
+		List<String> importStatements = new ArrayList<>();
+		
+		traverseClassDec(classDec);
+		BlockClassModel model = (BlockClassModel) createdBlock.pop();
+		
+		PageModel page = new PageModel(classDec, model.createBlockNodes(document), document);
+		pages.add(page);
+		
+		PagesModel pagesModel = new PagesModel(pages, document, importStatements);
+		documentElement.appendChild(pagesModel.getPagesElement());
+		document.appendChild(documentElement);
+		
 		return document;
 	}
 

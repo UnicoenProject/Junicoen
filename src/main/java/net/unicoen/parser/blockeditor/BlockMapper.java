@@ -258,7 +258,13 @@ public class BlockMapper {
 		classDec.superClass = MyDOMUtil.getListFromNode(MyDOMUtil.getChildNode(pageInfoNode, PageModel.SUPER_CLASSES_NODE), PageModel.SUPERCLASS_NAME_NODE);
 		classDec.modifiers = MyDOMUtil.getListFromNode(MyDOMUtil.getChildNode(pageInfoNode, PageModel.MODIFIERS_NODE), PageModel.MODIFIER_NODE);
 		classDec.members = new ArrayList<>();
-
+		classDec.comments = new ArrayList<>();
+		
+		Node commentNode = MyDOMUtil.getChildNode(pageInfoNode, PageModel.COMMENT_NODE);
+		if(commentNode != null){
+			classDec.comments.add(commentNode.getTextContent());
+		}
+		
 		return classDec;
 	}
 

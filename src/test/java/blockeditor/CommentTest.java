@@ -1,6 +1,8 @@
 package blockeditor;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -10,12 +12,14 @@ import org.xml.sax.SAXException;
 
 import com.google.common.collect.Lists;
 
+import net.unicoen.mapper.Java8Mapper;
 import net.unicoen.node.UniBlock;
 import net.unicoen.node.UniClassDec;
 import net.unicoen.node.UniIntLiteral;
 import net.unicoen.node.UniMethodCall;
 import net.unicoen.node.UniMethodDec;
 import net.unicoen.node.UniProgram;
+import net.unicoen.parser.blockeditor.BlockGenerator;
 
 public class CommentTest {
 
@@ -25,6 +29,22 @@ public class CommentTest {
 		UniClassDec classDec = new UniClassDec("CommentTest", Lists.newArrayList(), Lists.newArrayList(), Lists.newArrayList("Turtle"), Lists.newArrayList(), null);
 		UniMethodDec start = UniModelMaker.createEmptyMethodDec("start");
 		UniMethodCall fdCall  =new UniMethodCall(null, "fd", Lists.newArrayList(new UniIntLiteral(50)));
+		Java8Mapper mapper = new Java8Mapper(true);
+		Object model = mapper.parse("/** * プログラム名：円を描くメソッドを作ろう*/ "
+				+ "public class Circle2 extends Turtle{	"
+				+ "public static void main(  String[] args){"
+				+ "Turtle.startTurtle(new Circle2(),args);"
+				+ "}"
+				+"// @(50, 50) [open]"
+				+System.lineSeparator()
+				+ "public void start() {"
+				+ "}"
+				+"// @(50, 50) [open]"
+				+ "}"
+				);
+		BlockGenerator gen = new BlockGenerator(new PrintStream(new File("blockeditor/test/CommentTest.xml")), "blockeditor/blocks/", true);
+		gen.generate((UniClassDec)model);
+		
 //		fdCall.afterComment="タートルを動かす";
 		UniBlock block = new UniBlock();
 		block.body = Lists.newArrayList(fdCall);

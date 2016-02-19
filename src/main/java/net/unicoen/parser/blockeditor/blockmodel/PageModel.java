@@ -1,6 +1,5 @@
 package net.unicoen.parser.blockeditor.blockmodel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.w3c.dom.Document;
@@ -10,13 +9,15 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 import net.unicoen.node.UniClassDec;
+import net.unicoen.parser.blockeditor.AnnotationCommentGetter;
 import net.unicoen.parser.blockeditor.MyDOMUtil;
 
 public class PageModel {
 	private String pageName;
-	private List<String> superClasses = new ArrayList<>();
-	private List<String> interfaces = new ArrayList<>();
-	private List<String> modifiers = new ArrayList<>();
+	private List<String> superClasses;
+	private List<String> interfaces;
+	private List<String> modifiers;
+	private List<String> comments;
 	
 	private Element pageNode;
 
@@ -38,6 +39,7 @@ public class PageModel {
 	public static String PAGE_INFO_NODE = "PageInfo";
 	public static String SUPER_CLASSES_NODE = "SuperCasses";
 	public static String SUPERCLASS_NAME_NODE = "ClassName";
+	public static String COMMENT_NODE = "Comment";
 	
 	public static String INTERFASES_NODE = "Interfaces";
 	public static String INTERFASE_NAME_NODE = "InterfaceName";
@@ -45,11 +47,13 @@ public class PageModel {
 	public static String MODIFIERS_NODE = "Modifiers";
 	public static String MODIFIER_NODE = "Modifier";
 
+
 	public PageModel(UniClassDec classDec, Element blockNode, Document document){
 		this.pageName = classDec.className;
 		this.superClasses = classDec.superClass;
 		this.interfaces = classDec.interfaces;
 		this.modifiers = classDec.modifiers;
+		this.comments = classDec.comments;
 		
 		initializePageNode(blockNode, document);
 	}
@@ -59,7 +63,6 @@ public class PageModel {
 		
 		pageElement.setAttribute(PAGE_HEIGHT_ATTR, PAGE_HEIGHT);
 		MyDOMUtil.setAttributes(pageElement, ImmutableMap.of(PAGE_COLOR_ATTR, PAGE_COLOR, PAGE_DRAWER_ATTR, PAGE_DRAWER, IN_FULLVIEW_ATTR, IN_FULLVIEW_VALUE, PAGE_NAME_ATTR, pageName, PAGE_WITDH_ATTR, PAGE_WIDTH));
-		
 		MyDOMUtil.appendChilds(pageElement, Lists.newArrayList(createPageInfoElement(document), blockNode));
 		
 		this.pageNode = pageElement;
@@ -87,6 +90,17 @@ public class PageModel {
 			for(String modifier : this.modifiers){
 				modifiers.appendChild(MyDOMUtil.createElement(MODIFIER_NODE, modifier, document));
 			}			
+		}
+		
+		
+		if(comments != null){
+			Element commentNode =  document.createElement(COMMENT_NODE);
+			String comments = "";
+			for(String comment : this.comments){
+				comments += AnnotationCommentGetter.addEscapeSeaquence(comment);
+			}
+			commentNode.setTextContent(comments);
+			pageInfo.appendChild(commentNode);
 		}
 		
 		MyDOMUtil.appendChilds(pageInfo, Lists.newArrayList(parentClasses, interfaces, modifiers));
