@@ -23,10 +23,24 @@ public class BlockFieldVarDecModel extends BlockVarDecModel{
 	}
 	
 	@Override
+	public Element createElement(String type, String name, Document document, BlockResolver resolver, Long ID_COUNTER) {
+		String genusName = getGenusNameFromResolver(resolver, type);
+		Element blockElement;
+		if (genusName == null) {
+			blockElement = createVariableBlockNode(document, "special-private-variable", name, KIND,  ID_COUNTER++);
+		} else {
+			blockElement = createVariableBlockNode(document, genusName, name, MyDOMUtil.getAttribute(resolver.getBlockNode(genusName), BlockElementModel.KIND_ATTR), ID_COUNTER++);
+		}
+		blockElement.appendChild(MyDOMUtil.createElement(BlockElementModel.TYPE_NODE, type, document));
+		return blockElement;
+	}
+	
+	@Override
 	public Element createVariableBlockNode(Document document, String genusName, String name, String kind,Long id) {
-		Element blockElement = createBlockElement(document, SPECIAL_GENUS_NAME, id, KIND);
+		Element blockElement = createBlockElement(document, genusName, id, KIND);
 		MyDOMUtil.appendChilds(blockElement, MyDOMUtil.createElements(ImmutableMap.of(BlockElementModel.LABEL_NODE, name, BlockElementModel.NAME_NODE, name), document));
 		return blockElement;
 	}
+	
 
 }

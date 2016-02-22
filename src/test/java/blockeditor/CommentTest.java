@@ -29,21 +29,21 @@ public class CommentTest {
 		UniClassDec classDec = new UniClassDec("CommentTest", Lists.newArrayList(), Lists.newArrayList(), Lists.newArrayList("Turtle"), Lists.newArrayList(), null);
 		UniMethodDec start = UniModelMaker.createEmptyMethodDec("start");
 		UniMethodCall fdCall  =new UniMethodCall(null, "fd", Lists.newArrayList(new UniIntLiteral(50)));
-		Java8Mapper mapper = new Java8Mapper(true);
-		Object model = mapper.parse("/** * プログラム名：円を描くメソッドを作ろう*/ "
-				+ "public class Circle2 extends Turtle{	"
-				+ "public static void main(  String[] args){"
-				+ "Turtle.startTurtle(new Circle2(),args);"
-				+ "}"
-				+"// @(50, 50) [open]"
-				+System.lineSeparator()
-				+ "public void start() {"
-				+ "}"
-				+"// @(50, 50) [open]"
-				+ "}"
-				);
+		Java8Mapper mapper = new Java8Mapper(false);
+//		Object model = mapper.parse("/** * プログラム名：円を描くメソッドを作ろう*/ "
+//				+ "public class Circle2 extends Turtle{	"
+//				+ "public static void main(  String[] args){"
+//				+ "Turtle.startTurtle(new Circle2(),args);"
+//				+ "}"
+//				+"// @(50, 50) [open]"
+//				+ "public void start() {"
+//				+ "}"
+//				+"// @(50, 50) [open]"
+//				+ "}"
+//				);
+		Object model = mapper.parseFile("blockeditor/testcases/BlockConvertTest/_91CommentTest.java");
 		BlockGenerator gen = new BlockGenerator(new PrintStream(new File("blockeditor/test/CommentTest.xml")), "blockeditor/blocks/", true);
-		gen.generate((UniClassDec)model);
+		gen.generate(model);
 		
 //		fdCall.afterComment="タートルを動かす";
 		UniBlock block = new UniBlock();

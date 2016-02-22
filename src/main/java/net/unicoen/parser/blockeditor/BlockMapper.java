@@ -39,7 +39,6 @@ import net.unicoen.node.UniMethodCall;
 import net.unicoen.node.UniMethodDec;
 import net.unicoen.node.UniNamespace;
 import net.unicoen.node.UniNew;
-import net.unicoen.node.UniNode;
 import net.unicoen.node.UniProgram;
 import net.unicoen.node.UniReturn;
 import net.unicoen.node.UniStringLiteral;
@@ -170,9 +169,30 @@ public class BlockMapper {
 			if (nextNodeId != null) {
 				body = parseBody(map.get(nextNodeId), map);
 			}
-			ret.add(new UniMethodDec(MyDOMUtil.getChildText(procNode, BlockElementModel.LABEL_NODE), getModifiers(procNode), methodsReturnTypes.get(MyDOMUtil.getAttribute(procNode, BlockElementModel.ID_ATTR)), createArgumentsModel(procNode), body));
+			
+			String comment = getLocationComment(procNode);
+			String commentText = getCommentText(procNode);
+			if(commentText != null){
+				comment = getCommentText(procNode) + comment;
+			}
+
+			UniMethodDec dec = new UniMethodDec(MyDOMUtil.getChildText(procNode, BlockElementModel.LABEL_NODE), getModifiers(procNode), methodsReturnTypes.get(MyDOMUtil.getAttribute(procNode, BlockElementModel.ID_ATTR)), createArgumentsModel(procNode), body);
+	
+			ret.add(dec);
 		}
 		return ret;
+	}
+	
+	public String getLocationComment(Node node){
+		String location = "";
+		Node locationNode = MyDOMUtil.getChildNode(node, BlockElementModel.LOCATION_NODE);
+		if(locationNode != null){
+			String x = MyDOMUtil.getChildText(locationNode, "X");
+			String y = MyDOMUtil.getChildText(locationNode, "Y");
+			location = "@(" + x + ", " + y +")";
+		}
+
+		return location;
 	}
 
 	public List<String> getModifiers(Node node) {
@@ -345,7 +365,11 @@ public class BlockMapper {
 		} else {
 			throw new RuntimeException("Unsupported node: " + blockKind);
 		}
-		addComment(node, model);
+		String comment = getCommentText(node);
+		if(comment != null){
+			model.comments.add(comment);	
+		}
+		
 		return model;
 	}
 
@@ -595,12 +619,13 @@ public class BlockMapper {
 		}
 	}
 	
-	public void addComment(Node node, UniNode model){
+	public String getCommentText(Node node){
 		Node commentNode = MyDOMUtil.getChildNode(node, BlockElementModel.COMMENT_NODE);
 		if(commentNode != null){
 			Node commentText = MyDOMUtil.getChildNode(commentNode, "Text");
-			model.comments.add(commentText.getTextContent());
+			return commentText.getTextContent();
 		}
+		return null;
 	}
 
 }

@@ -2,26 +2,28 @@ package blockeditor;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Ignore;
+import org.junit.Test;
 
 import net.unicoen.parser.blockeditor.AnnotationCommentGetter;
 
 public class CommentGetterTest {
 
-	@Ignore
+	@Test
 	public void test() {
 		
 		//location comment getter
-		assertEquals("@(100,200)", AnnotationCommentGetter.getLocationComment("hogehhho@(100,200)"));
-		assertEquals("@(100,        200)", AnnotationCommentGetter.getLocationComment("hogehhho@(100,        200)"));
-		assertEquals("@(100, 200      )", AnnotationCommentGetter.getLocationComment("hogehhho@(100, 200      )"));
-		assertEquals("@(     100, 200)", AnnotationCommentGetter.getLocationComment("hogehhho@(     100, 200)"));
-		assertEquals("@(100    , 200)", AnnotationCommentGetter.getLocationComment("hogehhho@(100    , 200)"));
-		assertEquals("@(100    , 200)", AnnotationCommentGetter.getLocationComment("hogehhho@(100    , 200) hodisafj"));
-		assertEquals(AnnotationCommentGetter.NOT_FOUND, AnnotationCommentGetter.getLocationComment("hogehhho(100    , 200) hodisafj"));
-
+		assertEquals("@(100,200)", AnnotationCommentGetter.getCommentLocationComment("hogehhho@(100,200)"));
+		assertEquals("@(100,        200)", AnnotationCommentGetter.getCommentLocationComment("hogehhho@(100,        200)"));
+		assertEquals("@(100, 200      )", AnnotationCommentGetter.getCommentLocationComment("hogehhho@(100, 200      )"));
+		assertEquals("@(     100, 200)", AnnotationCommentGetter.getCommentLocationComment("hogehhho@(     100, 200)"));
+		assertEquals("@(100    , 200)", AnnotationCommentGetter.getCommentLocationComment("hogehhho@(100    , 200)"));
+		assertEquals("@(100    , 200)", AnnotationCommentGetter.getCommentLocationComment("hogehhho@(100    , 200) hodisafj"));
+		assertEquals(AnnotationCommentGetter.NOT_FOUND, AnnotationCommentGetter.getCommentLocationComment("hogehhho(100    , 200) hodisafj"));
+		assertEquals("@b(100    , 200)", AnnotationCommentGetter.getBlockLocationComment("hogehhho@b(100    , 200)"));
+		
 		//location getter
 		assertEquals(100, AnnotationCommentGetter.getLocation("hogehhho@(100,        200)").x);
+		assertEquals(100, AnnotationCommentGetter.getLocation("hogehhho@b(100,        200)").x);
 		assertEquals(200, AnnotationCommentGetter.getLocation("hogehhho@(100,        200)").y);
 		assertEquals(100, AnnotationCommentGetter.getLocation("hogehhho@(100, 200      )").x);
 		assertEquals(200, AnnotationCommentGetter.getLocation("hogehhho@(100, 200      )").y);
@@ -41,7 +43,7 @@ public class CommentGetterTest {
 		//openclose annotation
 		assertEquals(AnnotationCommentGetter.NOT_FOUND, AnnotationCommentGetter.getOpenClose("hogehhho[open]"));
 		assertEquals("[close]", AnnotationCommentGetter.getOpenClose("hogehhho[close]"));
-		assertEquals(AnnotationCommentGetter.NOT_FOUND, AnnotationCommentGetter.getLocationComment("hogehhho[oen]"));
+		assertEquals(AnnotationCommentGetter.NOT_FOUND, AnnotationCommentGetter.getCommentLocationComment("hogehhho[oen]"));
 		
 		//visible annotation
 		assertEquals(AnnotationCommentGetter.NOT_FOUND, AnnotationCommentGetter.getVisible("hogehhho[open]@visible"));

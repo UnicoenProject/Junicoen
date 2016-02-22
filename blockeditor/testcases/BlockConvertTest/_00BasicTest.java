@@ -1,4 +1,3 @@
-import java.util.*;
 /**
 * プログラム名：
 * 作成者： 
@@ -21,6 +20,6 @@ public class _00BasicTest extends Turtle{
 			i++;
 			i = i + 1;
 		}
-	}
+	}//起動処理
 	
 }								

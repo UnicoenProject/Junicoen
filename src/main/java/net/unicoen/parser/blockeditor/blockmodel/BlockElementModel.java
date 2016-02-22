@@ -1,5 +1,6 @@
 package net.unicoen.parser.blockeditor.blockmodel;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -266,6 +267,14 @@ public class BlockElementModel {
 	public void addCommentNode(String comment, Document document) {
 		Element commentNode = document.createElement(COMMENT_NODE);
 		commentNode.appendChild(MyDOMUtil.createElement(COMMENT_TEXT_NODE, AnnotationCommentGetter.getCommentText(comment), document));
+		
+		//add location
+		Point methodLocation = AnnotationCommentGetter.getLocation(AnnotationCommentGetter.getCommentLocationComment(comment));
+		Element locationNode = document.createElement("Location");
+		locationNode.appendChild(MyDOMUtil.createElement("X", String.valueOf(methodLocation.x), document));
+		locationNode.appendChild(MyDOMUtil.createElement("Y", String.valueOf(methodLocation.y), document));
+		commentNode.appendChild(locationNode);
+		
 		getBlockElement().appendChild(commentNode);
 	}
 

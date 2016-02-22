@@ -1,5 +1,6 @@
 package net.unicoen.parser.blockeditor;
 
+import java.awt.Point;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.StringWriter;
@@ -135,6 +136,16 @@ public class BlockGenerator extends CodeGenerator {
 	public BlockGenerator(PrintStream out, String langdefRootPath, boolean isTest) throws SAXException, IOException {
 		super(out);
 		resolver = new BlockResolver(langdefRootPath, isTest);
+	}
+	
+	public void generate(Object model) throws TransformerException, ParserConfigurationException{
+		if(model instanceof UniProgram){
+			generate((UniProgram) model);
+		}else if(model instanceof UniClassDec){
+			generate((UniClassDec) model);
+		}else{
+			throw new RuntimeException("should input UniProgram or UniClassDec!");
+		}
 	}
 
 	public void generate(UniProgram file) throws TransformerException, ParserConfigurationException {
@@ -333,10 +344,44 @@ public class BlockGenerator extends CodeGenerator {
 			if (member instanceof UniMethodDec) {
 				UniMethodDec mDec = (UniMethodDec) member;
 				ID_COUNTER = methodResolver.getFieldMethodInfo().getId(BlockMethodCallModel.calcMethodCallGenusName(mDec.methodName, transformArgToString(mDec.args)));
+				
 				traverseMethodDec(mDec);
-				BlockProcedureModel blockMethodCall = (BlockProcedureModel) createdBlock.pop();
-				addLocation(blockMethodCall, document, model.getMethods().size());
-				model.addMethod(blockMethodCall);
+				BlockProcedureModel blockMethodDec = (BlockProcedureModel) createdBlock.pop();
+				
+				addCommentToMehtodDec(mDec, blockMethodDec, model.getMethods().size());
+
+				model.addMethod(blockMethodDec);
+			}
+		}
+	}
+	
+	public void addCommentToMehtodDec(UniMethodDec mDec, BlockProcedureModel blockMethodDec, int methodNum){
+		if(mDec.comments != null){
+			//locationの取得
+			String comment = mDec.comments.get(mDec.comments.size()-1);//直近のコメントをメソッドに対するコメントとする
+			
+			if(AnnotationCommentGetter.getBlockLocationComment(comment) != "no comment" ){
+				Point methodLocation = AnnotationCommentGetter.getLocation(AnnotationCommentGetter.getBlockLocationComment(comment));
+				blockMethodDec.addLocationElement(document, Integer.toString(methodLocation.x), Integer.toString(methodLocation.y), blockMethodDec.getBlockElement());
+			}else{
+				addLocation(blockMethodDec, document, methodNum);	
+			}
+			
+			//コメントの付与
+			blockMethodDec.addCommentNode(comment, document);
+			
+			//method visible?
+			String visible = AnnotationCommentGetter.getVisible(comment);
+			if(!visible.equals(AnnotationCommentGetter.NOT_FOUND)){
+				blockMethodDec.addInvisibleNode(document, visible);
+				if(MyDOMUtil.getChildNode(blockMethodDec.getBlockElement(), BlockElementModel.COMMENT_NODE) != null){
+					MyDOMUtil.getChildNode(blockMethodDec.getBlockElement(), BlockElementModel.COMMENT_NODE).appendChild(document.createElement("Collapsed"));	
+				}
+			}
+			
+			//collapsed?
+			if(!AnnotationCommentGetter.getOpenClose(comment).equals(AnnotationCommentGetter.NOT_FOUND)){
+				blockMethodDec.getBlockElement().appendChild(document.createElement("Collapsed"));	
 			}
 		}
 	}
@@ -353,6 +398,7 @@ public class BlockGenerator extends CodeGenerator {
 			});
 		}
 	}
+
 
 	public void addLocation(BlockElementModel mDec, Document document, int size) {
 		int x = 50 + 200 * size;
@@ -390,6 +436,17 @@ public class BlockGenerator extends CodeGenerator {
 		blockModel.addSocketsAndNodes(args, document, calcSocketsInfo(resolver.getSocketNodes(blockModel.getElement().getAttribute(BlockElementModel.GENUS_NAME_ATTR))));
 
 		vnResolver.addGlobalVariable(member.name, blockModel.getElement());
+
+		//comment
+		if(member.comments != null){
+			String comment = member.comments.get(member.comments.size()-1);	
+			blockModel.addCommentNode(AnnotationCommentGetter.getCommentText(comment), document);
+			
+			Point location = AnnotationCommentGetter.getLocation(AnnotationCommentGetter.getBlockLocationComment(comment));
+			blockModel.addLocationElement(document, String.valueOf(location.x), String.valueOf(location.y), blockModel.getBlockElement());
+		}
+		
+		
 		return blockModel;
 	}
 

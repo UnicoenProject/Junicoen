@@ -7,12 +7,34 @@ import java.util.regex.Pattern;
 public class AnnotationCommentGetter {
 
 	public static String NOT_FOUND = "no comment";
-	public static String LOCATION_REGEX = "@\\(\\s*[0-9]{1,4}\\s*,\\s*[0-9]{1,4}\\s*\\)";
-	public static String VISIVLE_REGEX = "@invisible";
-	public static String OPENCLOSE_REGEX = "\\[close\\]";
 	
-	public static String getLocationComment(String comment) {
-		return getPatternComment(comment, LOCATION_REGEX);
+	public enum REGEXES{
+		LOCATION_REGEX("@\\(\\s*[0-9]{1,4}\\s*,\\s*[0-9]{1,4}\\s*\\)"),
+		BLOCK_LOCATION_REGEX("@b\\(\\s*[0-9]{1,4}\\s*,\\s*[0-9]{1,4}\\s*\\)"),
+		VISIBLE_REGEX("@invisible"),
+		OPENCLOSE_REGEX("\\[close\\]"),
+		SINGLECOMMENT_REGEX("//"),
+		MULTILINE_COMMENT_START_REGEX("/\\*"),
+		MULTILINE_COMMENT_END_REGEX("\\*/"),
+		;
+		private final String text;
+		
+		private REGEXES(final String text){
+			this.text = text;
+		}
+		
+		public String getString(){
+			return this.text;
+		}
+		
+	}
+	
+	public static String getBlockLocationComment(String comment) {
+		return getPatternComment(comment, REGEXES.BLOCK_LOCATION_REGEX.text);
+	}
+	
+	public static String getCommentLocationComment(String comment) {
+		return getPatternComment(comment, REGEXES.LOCATION_REGEX.text);
 	}
 
 	public static String getPatternComment(String comment, String pattern) {
@@ -27,11 +49,11 @@ public class AnnotationCommentGetter {
 	}
 
 	public static String getOpenClose(String comment) {
-		return getPatternComment(comment, OPENCLOSE_REGEX);
+		return getPatternComment(comment, REGEXES.OPENCLOSE_REGEX.text);
 	}
 
 	public static String getVisible(String comment) {
-		return getPatternComment(comment, VISIVLE_REGEX);
+		return getPatternComment(comment, REGEXES.VISIBLE_REGEX.text);
 	}
 
 	public static Point getLocation(String locationComment) {
@@ -86,9 +108,9 @@ public class AnnotationCommentGetter {
 	 */
 	public static String getCommentText(String text) {
 		String result = text;
-		result = result.replaceAll(LOCATION_REGEX, "");
-		result = result.replaceAll(VISIVLE_REGEX, "");
-		result = result.replaceAll(OPENCLOSE_REGEX, "");
+		for(REGEXES regex: REGEXES.values()){
+			result = result.replaceAll(regex.text, "");
+		}
 		return addEscapeSeaquence(result);
 	}
 
