@@ -73,7 +73,6 @@ public class BlockMapper {
 
 	private HashMap<String, Node> map = new HashMap<>();// Blockのidをキー該当ノードをvalueとして全てのBlockNodeを保持する変数
 	private BlockResolver resolver;
-	
 
 	public BlockMapper(String langdefRootPath) throws SAXException, IOException {
 		resolver = new BlockResolver(langdefRootPath, false);
@@ -169,27 +168,43 @@ public class BlockMapper {
 			if (nextNodeId != null) {
 				body = parseBody(map.get(nextNodeId), map);
 			}
-			
-			String comment = getLocationComment(procNode);
-			String commentText = getCommentText(procNode);
-			if(commentText != null){
-				comment = getCommentText(procNode) + comment;
-			}
+
+			String comment = createMethodComment(procNode);
 
 			UniMethodDec dec = new UniMethodDec(MyDOMUtil.getChildText(procNode, BlockElementModel.LABEL_NODE), getModifiers(procNode), methodsReturnTypes.get(MyDOMUtil.getAttribute(procNode, BlockElementModel.ID_ATTR)), createArgumentsModel(procNode), body);
-	
+			dec.comments = Lists.newArrayList(comment);
+
 			ret.add(dec);
 		}
 		return ret;
 	}
-	
-	public String getLocationComment(Node node){
+
+	public String createMethodComment(Node procNode) {
+		String comment = "@block " + getLocationComment(procNode) + System.lineSeparator();
+		
+		String commentText = getCommentText(procNode) +  System.lineSeparator();
+		
+		if (commentText != null) {
+			comment = commentText + comment;
+		}
+		
+		if(MyDOMUtil.getChildNode(procNode, "Invisible") != null){
+			comment += "@invisible" + System.lineSeparator();
+		}
+		
+		if (MyDOMUtil.getChildNode(procNode, "Collapsed") != null) {
+			comment += "[close]"+ System.lineSeparator();
+		}
+		return comment;
+	}
+
+	public String getLocationComment(Node node) {
 		String location = "";
 		Node locationNode = MyDOMUtil.getChildNode(node, BlockElementModel.LOCATION_NODE);
-		if(locationNode != null){
+		if (locationNode != null) {
 			String x = MyDOMUtil.getChildText(locationNode, "X");
 			String y = MyDOMUtil.getChildText(locationNode, "Y");
-			location = "@(" + x + ", " + y +")";
+			location = "(" + x + ", " + y + ")";
 		}
 
 		return location;
@@ -279,12 +294,12 @@ public class BlockMapper {
 		classDec.modifiers = MyDOMUtil.getListFromNode(MyDOMUtil.getChildNode(pageInfoNode, PageModel.MODIFIERS_NODE), PageModel.MODIFIER_NODE);
 		classDec.members = new ArrayList<>();
 		classDec.comments = new ArrayList<>();
-		
+
 		Node commentNode = MyDOMUtil.getChildNode(pageInfoNode, PageModel.COMMENT_NODE);
-		if(commentNode != null){
+		if (commentNode != null) {
 			classDec.comments.add(commentNode.getTextContent());
 		}
-		
+
 		return classDec;
 	}
 
@@ -366,10 +381,10 @@ public class BlockMapper {
 			throw new RuntimeException("Unsupported node: " + blockKind);
 		}
 		String comment = getCommentText(node);
-		if(comment != null){
-			model.comments.add(comment);	
+		if (comment != null) {
+			model.comments = Lists.newArrayList(comment);
 		}
-		
+
 		return model;
 	}
 
@@ -479,7 +494,6 @@ public class BlockMapper {
 		return genusName.equals(BlockFieldAccessModel.GENUS_NAME);
 	}
 
-
 	public boolean isUnaryOp(String blockType) {
 		return "not".equals(blockType);
 	}
@@ -520,8 +534,8 @@ public class BlockMapper {
 
 		return new UniWhile(args.get(0), args.get(1));
 	}
-	
-	private List<UniExpr> parseControlBlockSockets(Node node){
+
+	private List<UniExpr> parseControlBlockSockets(Node node) {
 		List<UniExpr> args = new ArrayList<UniExpr>();
 		// ifブロックのソケットのノードからUniExprを作成
 		for (Node argNode : MyDOMUtil.eachChild(node)) {
@@ -537,7 +551,7 @@ public class BlockMapper {
 				args.add(null);
 			}
 		}
-		
+
 		return args;
 	}
 
@@ -572,7 +586,7 @@ public class BlockMapper {
 		String blockGenusName = MyDOMUtil.getAttribute(node, BlockElementModel.GENUS_NAME_ATTR);// ブロックの種類名を取得
 		Node argsNode = MyDOMUtil.getChildNode(node, BlockSocketsModel.NODE_NAME);
 		List<UniExpr> args = parseSocket(argsNode, map, MyDOMUtil.getAttribute(node, BlockElementModel.GENUS_NAME_ATTR));
-		
+
 		if ("ifelse".equals(blockGenusName)) {
 			return parseIfBlock(node, map);
 		} else if ("while".equals(blockGenusName)) {
@@ -618,12 +632,15 @@ public class BlockMapper {
 			return new UniMethodCall(null, MyDOMUtil.getChildTextFromBlockNode(resolver.getBlockNode(blockGenusName), BlockElementModel.NAME_NODE), args);
 		}
 	}
-	
-	public String getCommentText(Node node){
+
+	public String getCommentText(Node node) {
 		Node commentNode = MyDOMUtil.getChildNode(node, BlockElementModel.COMMENT_NODE);
-		if(commentNode != null){
+		if (commentNode != null) {
 			Node commentText = MyDOMUtil.getChildNode(commentNode, "Text");
-			return commentText.getTextContent();
+			
+			String locationText = "@comment " + getLocationComment(commentNode);
+			
+			return commentText.getTextContent() + locationText;
 		}
 		return null;
 	}

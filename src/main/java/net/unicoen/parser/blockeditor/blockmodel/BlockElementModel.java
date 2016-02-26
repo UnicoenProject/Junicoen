@@ -269,10 +269,10 @@ public class BlockElementModel {
 		commentNode.appendChild(MyDOMUtil.createElement(COMMENT_TEXT_NODE, AnnotationCommentGetter.getCommentText(comment), document));
 		
 		//add location
-		Point methodLocation = AnnotationCommentGetter.getLocation(AnnotationCommentGetter.getCommentLocationComment(comment));
+		Point commentLocation = AnnotationCommentGetter.getLocation(AnnotationCommentGetter.getCommentLocationComment(comment));
 		Element locationNode = document.createElement("Location");
-		locationNode.appendChild(MyDOMUtil.createElement("X", String.valueOf(methodLocation.x), document));
-		locationNode.appendChild(MyDOMUtil.createElement("Y", String.valueOf(methodLocation.y), document));
+		locationNode.appendChild(MyDOMUtil.createElement("X", String.valueOf(commentLocation.x), document));
+		locationNode.appendChild(MyDOMUtil.createElement("Y", String.valueOf(commentLocation.y), document));
 		commentNode.appendChild(locationNode);
 		
 		getBlockElement().appendChild(commentNode);

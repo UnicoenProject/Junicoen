@@ -7,10 +7,10 @@ import java.util.regex.Pattern;
 public class AnnotationCommentGetter {
 
 	public static String NOT_FOUND = "no comment";
-	
+	public static String locationRegex = "\\(\\s*[0-9]{1,4}\\s*,\\s*[0-9]{1,4}\\s*\\)";
 	public enum REGEXES{
-		LOCATION_REGEX("@\\(\\s*[0-9]{1,4}\\s*,\\s*[0-9]{1,4}\\s*\\)"),
-		BLOCK_LOCATION_REGEX("@b\\(\\s*[0-9]{1,4}\\s*,\\s*[0-9]{1,4}\\s*\\)"),
+		BLOCK_LOCATION_REGEX("@block\\s*"+ locationRegex),
+		COMMENT_LOCATION_REGEX("@comment\\s*" + locationRegex),
 		VISIBLE_REGEX("@invisible"),
 		OPENCLOSE_REGEX("\\[close\\]"),
 		SINGLECOMMENT_REGEX("//"),
@@ -34,7 +34,7 @@ public class AnnotationCommentGetter {
 	}
 	
 	public static String getCommentLocationComment(String comment) {
-		return getPatternComment(comment, REGEXES.LOCATION_REGEX.text);
+		return getPatternComment(comment, REGEXES.COMMENT_LOCATION_REGEX.text);
 	}
 
 	public static String getPatternComment(String comment, String pattern) {
@@ -111,6 +111,8 @@ public class AnnotationCommentGetter {
 		for(REGEXES regex: REGEXES.values()){
 			result = result.replaceAll(regex.text, "");
 		}
+		result = result.replaceAll(System.lineSeparator(), "");
+		result = result.replaceAll("\t", "");
 		return addEscapeSeaquence(result);
 	}
 

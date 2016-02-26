@@ -440,7 +440,7 @@ public class BlockGenerator extends CodeGenerator {
 		//comment
 		if(member.comments != null){
 			String comment = member.comments.get(member.comments.size()-1);	
-			blockModel.addCommentNode(AnnotationCommentGetter.getCommentText(comment), document);
+			blockModel.addCommentNode(comment, document);
 			
 			Point location = AnnotationCommentGetter.getLocation(AnnotationCommentGetter.getBlockLocationComment(comment));
 			blockModel.addLocationElement(document, String.valueOf(location.x), String.valueOf(location.y), blockModel.getBlockElement());
@@ -1226,11 +1226,11 @@ public class BlockGenerator extends CodeGenerator {
 
 	public BlockElementModel traverseExprForBlock(UniExpr node) {
 		traverseExpr(node);
-//		if(node.comments != null){
-//			BlockElementModel model = (BlockElementModel) createdBlock.pop();
-//			model.addCommentNode(node.afterComment, document);
-//			createdBlock.push(model);
-//		}
+		if(node.comments != null){
+			BlockElementModel model = (BlockElementModel) createdBlock.pop();
+			model.addCommentNode(node.comments.get(node.comments.size()-1), document);
+			createdBlock.push(model);
+		}
 		return (BlockElementModel) createdBlock.pop();
 	}
 
