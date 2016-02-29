@@ -30,7 +30,10 @@ public class BlockAbstractBlockModel extends BlockCommandModel {
 	@Override
 	public void addCommentNode(String comment, Document document) {
 		setCollapsed(comment, document);
-		getBlockElement().appendChild(MyDOMUtil.createElement(BlockElementModel.LABEL_NODE, AnnotationCommentGetter.getCommentText(comment), document));
+		String commentText = AnnotationCommentGetter.getCommentText(comment);
+		if(!AnnotationCommentGetter.isEmptyText(commentText)){
+			getBlockElement().appendChild(MyDOMUtil.createElement(BlockElementModel.LABEL_NODE, commentText, document));	
+		}
 	}
 	
 	@Override

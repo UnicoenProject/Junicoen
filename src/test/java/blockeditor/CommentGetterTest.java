@@ -50,6 +50,14 @@ public class CommentGetterTest {
 		assertEquals("hogehhho", AnnotationCommentGetter.getCommentText("hogehhho@block (100,   200)[close]@invisible@invisible@invisible"));
 		assertEquals("hogehhho", AnnotationCommentGetter.getCommentText("hogehhho@block (100,   200)[close]@invisible@invisible@invisible"));
 		assertEquals("hogehhho", AnnotationCommentGetter.getCommentText("@block (100,   200)hogehhho[close]@invisible@invisible@invisible"));
+		
+		assertEquals("", AnnotationCommentGetter.getCommentText("@comment (500,250)		@block (500,300)"));
+		assertEquals("", AnnotationCommentGetter.getCommentText("		"));
+		assertEquals("hogeho", AnnotationCommentGetter.getCommentText("hogeho	@comment (500,250)"));
+		assertEquals(true, AnnotationCommentGetter.isEmptyText("  　　"));
+		assertEquals(false, AnnotationCommentGetter.isEmptyText("あ  　　"));
+		assertEquals(false, AnnotationCommentGetter.isEmptyText("  　　あああ　　　"));
+		assertEquals(true, AnnotationCommentGetter.isEmptyText(AnnotationCommentGetter.getCommentText("@comment (500,250)		@block (500,300)")));
 	}
 
 }

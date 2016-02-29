@@ -111,9 +111,23 @@ public class AnnotationCommentGetter {
 		for(REGEXES regex: REGEXES.values()){
 			result = result.replaceAll(regex.text, "");
 		}
+		
 		result = result.replaceAll(System.lineSeparator(), "");
 		result = result.replaceAll("\t", "");
+		result = addEscapeSeaquence(result);
+
 		return addEscapeSeaquence(result);
 	}
+	
+	public static boolean isEmptyText(String text){
+		Pattern p = Pattern.compile("[^\\s　]+");
+		Matcher m = p.matcher(text);
+		
+		if(!m.find()){
+			return true;
+		}
+		return false;
+	}
+
 
 }

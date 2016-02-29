@@ -104,7 +104,6 @@ import net.unicoen.parser.blockeditor.blockmodel.PagesModel;
 
 public class BlockGenerator extends CodeGenerator {
 
-
 	/** Name space definition */
 	private static String XML_CODEBLOCKS_NS = "http://education.mit.edu/openblocks/ns";
 
@@ -124,7 +123,7 @@ public class BlockGenerator extends CodeGenerator {
 	private Stack<Object> createdBlock = new Stack<>();
 
 	public static String PARENT_ID_NULL = "-1";
-	
+
 	private MethodResolver methodResolver = new MethodResolver();
 	private VariableNameResolver vnResolver = new VariableNameResolver();
 
@@ -137,13 +136,13 @@ public class BlockGenerator extends CodeGenerator {
 		super(out);
 		resolver = new BlockResolver(langdefRootPath, isTest);
 	}
-	
-	public void generate(Object model) throws TransformerException, ParserConfigurationException{
-		if(model instanceof UniProgram){
+
+	public void generate(Object model) throws TransformerException, ParserConfigurationException {
+		if (model instanceof UniProgram) {
 			generate((UniProgram) model);
-		}else if(model instanceof UniClassDec){
+		} else if (model instanceof UniClassDec) {
 			generate((UniClassDec) model);
-		}else{
+		} else {
 			throw new RuntimeException("should input UniProgram or UniClassDec!");
 		}
 	}
@@ -152,7 +151,7 @@ public class BlockGenerator extends CodeGenerator {
 		out.print(createBlockXMLString(getSaveNode(file)));
 		out.close();
 	}
-	
+
 	public void generate(UniClassDec classDec) throws TransformerException, ParserConfigurationException {
 		out.print(createBlockXMLString(getSaveNode(classDec)));
 		out.close();
@@ -168,23 +167,23 @@ public class BlockGenerator extends CodeGenerator {
 
 		return document;
 	}
-	
+
 	public Node getSaveNode(UniClassDec classDec) throws ParserConfigurationException {
 		Element documentElement = createRootNode();
 
 		List<PageModel> pages = new ArrayList<>();
 		List<String> importStatements = new ArrayList<>();
-		
+
 		traverseClassDec(classDec);
 		BlockClassModel model = (BlockClassModel) createdBlock.pop();
-		
+
 		PageModel page = new PageModel(classDec, model.createBlockNodes(document), document);
 		pages.add(page);
-		
+
 		PagesModel pagesModel = new PagesModel(pages, document, importStatements);
 		documentElement.appendChild(pagesModel.getPagesElement());
 		document.appendChild(documentElement);
-		
+
 		return document;
 	}
 
@@ -344,45 +343,47 @@ public class BlockGenerator extends CodeGenerator {
 			if (member instanceof UniMethodDec) {
 				UniMethodDec mDec = (UniMethodDec) member;
 				ID_COUNTER = methodResolver.getFieldMethodInfo().getId(BlockMethodCallModel.calcMethodCallGenusName(mDec.methodName, transformArgToString(mDec.args)));
-				
+
 				traverseMethodDec(mDec);
 				BlockProcedureModel blockMethodDec = (BlockProcedureModel) createdBlock.pop();
-				
+
 				addCommentToMehtodDec(mDec, blockMethodDec, model.getMethods().size());
 
 				model.addMethod(blockMethodDec);
 			}
 		}
 	}
-	
-	public void addCommentToMehtodDec(UniMethodDec mDec, BlockProcedureModel blockMethodDec, int methodNum){
-		if(mDec.comments != null){
-			//locationの取得
-			String comment = mDec.comments.get(mDec.comments.size()-1);//直近のコメントをメソッドに対するコメントとする
-			
-			if(AnnotationCommentGetter.getBlockLocationComment(comment) != "no comment" ){
+
+	public void addCommentToMehtodDec(UniMethodDec mDec, BlockProcedureModel blockMethodDec, int methodNum) {
+		if (!isNullOrEmpty(mDec.comments)) {
+			// locationの取得
+			String comment = mDec.comments.get(mDec.comments.size() - 1);// 直近のコメントをメソッドに対するコメントとする
+
+			if (AnnotationCommentGetter.getBlockLocationComment(comment) != "no comment") {
 				Point methodLocation = AnnotationCommentGetter.getLocation(AnnotationCommentGetter.getBlockLocationComment(comment));
 				blockMethodDec.addLocationElement(document, Integer.toString(methodLocation.x), Integer.toString(methodLocation.y), blockMethodDec.getBlockElement());
-			}else{
-				addLocation(blockMethodDec, document, methodNum);	
+			} else {
+				addLocation(blockMethodDec, document, methodNum);
 			}
-			
-			//コメントの付与
+
+			// コメントの付与
 			blockMethodDec.addCommentNode(comment, document);
-			
-			//method visible?
+
+			// method visible?
 			String visible = AnnotationCommentGetter.getVisible(comment);
-			if(!visible.equals(AnnotationCommentGetter.NOT_FOUND)){
+			if (!visible.equals(AnnotationCommentGetter.NOT_FOUND)) {
 				blockMethodDec.addInvisibleNode(document, visible);
-				if(MyDOMUtil.getChildNode(blockMethodDec.getBlockElement(), BlockElementModel.COMMENT_NODE) != null){
-					MyDOMUtil.getChildNode(blockMethodDec.getBlockElement(), BlockElementModel.COMMENT_NODE).appendChild(document.createElement("Collapsed"));	
+				if (MyDOMUtil.getChildNode(blockMethodDec.getBlockElement(), BlockElementModel.COMMENT_NODE) != null) {
+					MyDOMUtil.getChildNode(blockMethodDec.getBlockElement(), BlockElementModel.COMMENT_NODE).appendChild(document.createElement("Collapsed"));
 				}
 			}
-			
-			//collapsed?
-			if(!AnnotationCommentGetter.getOpenClose(comment).equals(AnnotationCommentGetter.NOT_FOUND)){
-				blockMethodDec.getBlockElement().appendChild(document.createElement("Collapsed"));	
+
+			// collapsed?
+			if (!AnnotationCommentGetter.getOpenClose(comment).equals(AnnotationCommentGetter.NOT_FOUND)) {
+				blockMethodDec.getBlockElement().appendChild(document.createElement("Collapsed"));
 			}
+		}else{
+			addLocation(blockMethodDec, document, methodNum);
 		}
 	}
 
@@ -398,7 +399,6 @@ public class BlockGenerator extends CodeGenerator {
 			});
 		}
 	}
-
 
 	public void addLocation(BlockElementModel mDec, Document document, int size) {
 		int x = 50 + 200 * size;
@@ -437,16 +437,15 @@ public class BlockGenerator extends CodeGenerator {
 
 		vnResolver.addGlobalVariable(member.name, blockModel.getElement());
 
-		//comment
-		if(member.comments != null){
-			String comment = member.comments.get(member.comments.size()-1);	
+		// comment
+		if (!isNullOrEmpty(member.comments)) {
+			String comment = member.comments.get(member.comments.size() - 1);
 			blockModel.addCommentNode(comment, document);
-			
+
 			Point location = AnnotationCommentGetter.getLocation(AnnotationCommentGetter.getBlockLocationComment(comment));
 			blockModel.addLocationElement(document, String.valueOf(location.x), String.valueOf(location.y), blockModel.getBlockElement());
 		}
-		
-		
+
 		return blockModel;
 	}
 
@@ -747,7 +746,6 @@ public class BlockGenerator extends CodeGenerator {
 		createdBlock.push(new BlockStringLiteralModel(node.value, document, getParentId(), ID_COUNTER++, resolver));
 	}
 
-
 	@Override
 	public void dontCallTraverseIdent(UniIdent node) {
 		Node varDecNode = vnResolver.getVariableBlockNode(node.name);
@@ -841,7 +839,7 @@ public class BlockGenerator extends CodeGenerator {
 			BlockElementModel value = traverseExprForBlock(node.expr, String.valueOf(notOpID));
 
 			BlockNotOperatorModel model = new BlockNotOperatorModel(document, notOpID, (BlockExprModel) value);
-			
+
 			List<BlockElementModel> args = Lists.newArrayList(value);
 
 			List<Node> socketNodes = resolver.getSocketNodes(BlockNotOperatorModel.GENUS_NAME);
@@ -956,12 +954,6 @@ public class BlockGenerator extends CodeGenerator {
 
 		BlockSocketsModel socketsInfo = calcSocketsInfo(resolver.getSocketNodes(BlockAbstractBlockModel.GENUS_NAME));
 
-		// 抽象化コメントの追加
-		if (node.comments != null) {
-			model.getBlockElement().appendChild(MyDOMUtil.createElement(BlockElementModel.LABEL_NODE, node.blockLabel, document));
-			model.setCollapsed(node.blockLabel, document);
-		}
-		
 		model.addSocketsAndNodes(Lists.transform(commands, new Function<BlockCommandModel, BlockElementModel>() {
 			@Override
 			public BlockElementModel apply(BlockCommandModel input) {
@@ -970,6 +962,10 @@ public class BlockGenerator extends CodeGenerator {
 		}), document, socketsInfo);
 
 		createdBlock.push(model);
+	}
+
+	public static boolean isNullOrEmpty(List<?> lists) {
+		return (lists == null || lists.isEmpty());
 	}
 
 	@Override
@@ -1190,19 +1186,19 @@ public class BlockGenerator extends CodeGenerator {
 		try {
 			List<PageModel> pages = new ArrayList<>();
 			List<String> importStatements = new ArrayList<>();
-			if(node.imports != null){
+			if (node.imports != null) {
 				for (UniImport importStatement : node.imports) {
 					importStatements.add(importStatement.targetName);
-				}				
+				}
 			}
-			
-			if(node.classes != null){
+
+			if (node.classes != null) {
 				for (UniClassDec dec : node.classes) {
 					traverseClassDec(dec);
 					BlockClassModel model = (BlockClassModel) createdBlock.pop();
 					PageModel page = new PageModel(dec, model.createBlockNodes(document), document);
 					pages.add(page);
-				}				
+				}
 			}
 
 			createdBlock.push(new PagesModel(pages, document, importStatements));
@@ -1226,9 +1222,9 @@ public class BlockGenerator extends CodeGenerator {
 
 	public BlockElementModel traverseExprForBlock(UniExpr node) {
 		traverseExpr(node);
-		if(node.comments != null){
+		if (!isNullOrEmpty(node.comments)) {
 			BlockElementModel model = (BlockElementModel) createdBlock.pop();
-			model.addCommentNode(node.comments.get(node.comments.size()-1), document);
+			model.addCommentNode(node.comments.get(node.comments.size() - 1), document);
 			createdBlock.push(model);
 		}
 		return (BlockElementModel) createdBlock.pop();
@@ -1238,6 +1234,5 @@ public class BlockGenerator extends CodeGenerator {
 		idStack.push(parentId);
 		traverseExpr(expr);
 	}
-
 
 }

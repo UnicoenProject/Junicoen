@@ -266,16 +266,18 @@ public class BlockElementModel {
 
 	public void addCommentNode(String comment, Document document) {
 		Element commentNode = document.createElement(COMMENT_NODE);
-		commentNode.appendChild(MyDOMUtil.createElement(COMMENT_TEXT_NODE, AnnotationCommentGetter.getCommentText(comment), document));
-		
-		//add location
-		Point commentLocation = AnnotationCommentGetter.getLocation(AnnotationCommentGetter.getCommentLocationComment(comment));
-		Element locationNode = document.createElement("Location");
-		locationNode.appendChild(MyDOMUtil.createElement("X", String.valueOf(commentLocation.x), document));
-		locationNode.appendChild(MyDOMUtil.createElement("Y", String.valueOf(commentLocation.y), document));
-		commentNode.appendChild(locationNode);
-		
-		getBlockElement().appendChild(commentNode);
+		String commentText = AnnotationCommentGetter.getCommentText(comment);
+		if(!AnnotationCommentGetter.isEmptyText(commentText)){
+			commentNode.appendChild(MyDOMUtil.createElement(COMMENT_TEXT_NODE, AnnotationCommentGetter.getCommentText(comment), document));
+			//add location
+			Point commentLocation = AnnotationCommentGetter.getLocation(AnnotationCommentGetter.getCommentLocationComment(comment));
+			Element locationNode = document.createElement("Location");
+			locationNode.appendChild(MyDOMUtil.createElement("X", String.valueOf(commentLocation.x), document));
+			locationNode.appendChild(MyDOMUtil.createElement("Y", String.valueOf(commentLocation.y), document));
+			commentNode.appendChild(locationNode);
+			
+			getBlockElement().appendChild(commentNode);
+		}
 	}
 
 }
