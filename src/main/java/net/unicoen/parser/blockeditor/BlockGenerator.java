@@ -24,7 +24,7 @@ import org.xml.sax.SAXException;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
-import net.unicoen.node.CodeGenerator;
+import net.unicoen.generator.CodeGenerator;
 import net.unicoen.node.UniArg;
 import net.unicoen.node.UniArray;
 import net.unicoen.node.UniBinOp;
