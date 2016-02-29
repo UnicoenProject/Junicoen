@@ -1,5 +1,5 @@
-require_relative 'dsl.rb'
-require_relative 'writer.rb'
+require_relative 'lib/dsl.rb'
+require_relative 'lib/writer.rb'
 
 Dsl.define_node do |x|
   x.package = "net.unicoen.node"
