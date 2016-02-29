@@ -149,7 +149,10 @@ public class BlockMapper {
 		List<UniMemberDec> fieldVariables = new ArrayList<>();
 		for (Node node : procs) {
 			UniFieldDec dec = new UniFieldDec(Lists.newArrayList("private"), MyDOMUtil.getChildText(node, BlockElementModel.TYPE_NODE), MyDOMUtil.getChildText(node, BlockElementModel.NAME_NODE), null);
-
+			String comment = createFieldVariableDeclComment(node);
+			
+			dec.comments = Lists.newArrayList(comment);
+			
 			List<UniExpr> initValues = parseSocket(MyDOMUtil.getChildNode(node, BlockSocketsModel.NODE_NAME), map, MyDOMUtil.getAttribute(node, BlockElementModel.GENUS_NAME_ATTR));
 			if (!initValues.isEmpty()) {
 				dec.value = initValues.get(0);
@@ -182,10 +185,10 @@ public class BlockMapper {
 	public String createMethodComment(Node procNode) {
 		String comment = "@block " + getLocationComment(procNode) + System.lineSeparator();
 		
-		String commentText = getCommentText(procNode) +  System.lineSeparator();
+		String commentText = getCommentText(procNode);
 		
 		if (commentText != null) {
-			comment = commentText + comment;
+			comment = commentText + System.lineSeparator() + comment;
 		}
 		
 		if(MyDOMUtil.getChildNode(procNode, "Invisible") != null){
@@ -195,7 +198,19 @@ public class BlockMapper {
 		if (MyDOMUtil.getChildNode(procNode, "Collapsed") != null) {
 			comment += "[close]"+ System.lineSeparator();
 		}
-		return comment;
+
+		return "/*" + System.lineSeparator() +  comment + "*/";
+	}
+	
+	public String createFieldVariableDeclComment(Node procNode){
+		String comment = "@block " + getLocationComment(procNode) + System.lineSeparator();
+		
+		String commentText = getCommentText(procNode);
+		if (commentText != null) {
+			comment = commentText + comment;
+		}
+		
+		return "//" + comment;
 	}
 
 	public String getLocationComment(Node node) {
@@ -640,7 +655,7 @@ public class BlockMapper {
 			
 			String locationText = "@comment " + getLocationComment(commentNode);
 			
-			return commentText.getTextContent() + locationText;
+			return "//" + commentText.getTextContent() + locationText;
 		}
 		return null;
 	}
