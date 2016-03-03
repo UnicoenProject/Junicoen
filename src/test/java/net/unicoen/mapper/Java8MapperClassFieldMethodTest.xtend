@@ -452,7 +452,27 @@ class Java8MapperClassFieldMethodTest extends MapperTest {
 
 		expected.evaluate(actual)
 	}
-
+	@Test
+	def void parseMethodWithEnhancedFor() {
+		//NOT IMPLEMENTED
+	}
+	@Test
+	def void parseMethodWithFieldAccess() {
+		//NOT IMPLEMENTED
+	}
+	@Test
+	def void parseMethodWithMemberCall() {
+		//NOT IMPLEMENTED
+	}
+	@Test
+	def void parseMethodWithTernaryOp() {
+		//NOT IMPLEMENTED
+	}
+	@Test
+	def void parseMethodWithCastStatement() {
+		//NOT IMPLEMENTED & FAIL TO ANNOTATE
+	}
+	
 	@Test
 	def void parseMethodWithThrowStatement() {
 	}
