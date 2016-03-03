@@ -41,7 +41,7 @@ public class SwiftGeneratorClassFieldMethodTest{
 	def void parseMethodWithSingleLocalVar() {
 		val tree = mapper.parse("public class Main{ public static void main(){int a;}}")
 		val target = SwiftGenerator.generate(tree);
-		assertEquals("public class Main { } var a : Int ", format(target))
+		assertEquals("public class Main { } var a : Int; ", format(target))
 	}
 	@Test
 	def void parseMethodWithMultipleLocalVar() {
@@ -49,5 +49,43 @@ public class SwiftGeneratorClassFieldMethodTest{
 		val target = SwiftGenerator.generate(tree);
 		assertEquals("public class Main { } var a : Int; var b : Int; var c : Int; ", format(target))
 	}
+	@Test
+	def void parseMethodWithSingleLocalVarWithValue(){
+		val tree = mapper.parse("public class Main{ public static void main(){int a=1;}}")
+		val target = SwiftGenerator.generate(tree)
+		//assertEquals("", format(target))
+		//public class Main { } var a : Int; = 1 
+	}
+	
+	@Test
+	def void parseMethodWithMultipleLocalVarWithValue(){
+		val tree =  mapper.parse("public class Main{ public static void main(){int a,b,c=1}}");
+		val target = SwiftGenerator.generate(tree);
+		//assertEquals("", format(target))
+		//public class Main { } var a : Int; var b : Int; var c : Int; = 1 
+	}
+	
+	@Test
+	def void parseMethodWithIfStatement(){
+		val tree = mapper.parse("public class Main{ public static void main(){if(true){a=1;}}}")
+		val target = SwiftGenerator.generate(tree)
+		//assertEquals("", format(target))
+		//public class Main { } if (true) { a = 1 } 
+	}
+	@Test
+	def void parseMethodWithIfElseStatement() {
+		val tree = mapper.parse("public class Main{ public static void main(){if(true){a=1;}else{b=1;}}}");
+		val target = SwiftGenerator.generate(tree)
+		//assertEquals("", format(target))
+		//public class Main { } if (true) { a = 1 } else { b = 1 } 
+	}
+	@Test
+	def void temptest(){
+		val tree = mapper.parse("public class Main{ public temp(){ if(true){a=1;} } }")
+		//PRIORITY!!!!!
+		//val target = SwiftGenerator.generate(tree)
+		//println(format(target))
+	}
+  
 	
 }

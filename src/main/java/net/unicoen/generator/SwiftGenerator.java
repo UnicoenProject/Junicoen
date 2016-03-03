@@ -46,16 +46,16 @@ import net.unicoen.node.UniWhile;
 public class SwiftGenerator extends Traverser {
 	private final String NEW_LINE = System.getProperty("line.separator");
 
-	private final PrintStream out;
+	private final PrintStream printOut;
 	private int indent = 0;
 	private boolean indentAtThisLine = false;
 	private String className;
-	private UniMethodDec mainDec = null;
+	private UniMethodDec mainDec = null;//store main() method
 
 	private final IntStack exprPriority = new IntStack();
 
-	protected SwiftGenerator(PrintStream out) {
-		this.out = out;
+	protected SwiftGenerator(PrintStream printOut) {
+		this.printOut = printOut;
 		exprPriority.push(0);
 	}
 
@@ -69,14 +69,14 @@ public class SwiftGenerator extends Traverser {
 		if (indentAtThisLine == false) {
 			indentAtThisLine = true;
 			for (int i = 0; i < indent; i++) {
-				out.print("\t");
+				printOut.print("\t");
 			}
 		}
-		out.print(str);
+		printOut.print(str);
 	}
 
-	protected void newline() {
-		out.print(NEW_LINE);
+	protected void newLine() {
+		printOut.print(NEW_LINE);
 		indentAtThisLine = false;
 	}
 	private String dataTypeTable(String type){
@@ -148,15 +148,18 @@ public class SwiftGenerator extends Traverser {
 //		if (expr.isStatement() == false) {
 //			print(";");
 //		}
-		newline();
+		newLine();
 	}
 
 	/** インデントし、複数のステートメントを出力します */
 	private void parseBlockInner(UniBlock block) {
-		withIndent(() -> {
-			for (UniExpr expr : block.body)
-				parseStatement(expr);
-		});
+		if(block.body!=null){
+			withIndent(() -> {
+				for (UniExpr expr : block.body)
+					parseStatement(expr);
+			});
+		}
+		else	return;
 	}
 
 	public static String generate(Object dec) {
@@ -316,16 +319,17 @@ public class SwiftGenerator extends Traverser {
 
 	@Override
 	public void traverseBlock(UniBlock node) {
-		if(this.mainDec.block!=node)
+		if(((this.mainDec == null)&&(node != null))||(this.mainDec.block!=node))//have main method & current node is not the main method
 			print("{");
 		withIndent(() -> {
 			if (node.blockLabel != null) {
 				print("//" + node.blockLabel);
 			}
 		});
-		newline();
+		newLine();
 		parseBlockInner(node);
-		if(this.mainDec.block!=node)
+		
+		if(((this.mainDec == null)&&(node != null))||(this.mainDec.block!=node))
 			print("}");
 	}
 
@@ -341,7 +345,7 @@ public class SwiftGenerator extends Traverser {
 			print(" ");
 			traverseBlock((UniBlock) node.trueStatement);
 		} else {
-			newline(); // ifの後ろの改行
+			newLine(); // ifの後ろの改行
 			withIndent(() -> {
 				parseStatement(node.trueStatement);
 			});
@@ -355,7 +359,7 @@ public class SwiftGenerator extends Traverser {
 				print(" ");
 				traverseBlock((UniBlock) node.falseStatement);
 			} else {
-				newline(); // elseの後ろの改行
+				newLine(); // elseの後ろの改行
 				withIndent(() -> {
 					parseStatement(node.falseStatement);
 				});
@@ -389,7 +393,7 @@ public class SwiftGenerator extends Traverser {
 			print(" ");
 			traverseBlock((UniBlock) node.statement);
 		} else {
-			newline(); // whileの後ろの改行
+			newLine(); // whileの後ろの改行
 			withIndent(() -> {
 				parseStatement(node.statement);
 			});
@@ -414,6 +418,7 @@ public class SwiftGenerator extends Traverser {
 	}
 
 	@Override
+	//variale with value-----need to edit
 	public void traverseVariableDec(UniVariableDec node) {
 		if (node.modifiers != null) {
 			for (String modifiers : node.modifiers) {
@@ -475,20 +480,20 @@ public class SwiftGenerator extends Traverser {
 			print(superclass);
 		}
 		print("{");
-		newline();
+		newLine();
 
 		withIndent(() -> {
 			for (UniMemberDec dec : iter(node.members)) {
 				traverseMemberDec(dec);
 			}
 		});
-		newline();
+		newLine();
 		print("}");
 		if(this.mainDec!=null){
 			//get the inside of main method and append after class declaration
 			traverseBlock(this.mainDec.block);
 		}
-		newline();
+		newLine();
 	}
 
 	@Override

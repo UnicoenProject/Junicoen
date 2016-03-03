@@ -3,11 +3,12 @@ package net.unicoen.mapper
 import net.unicoen.node.*
 import org.junit.Test
 import net.unicoen.generator.JavaGenerator
+import org.junit.Ignore
 
 class Java8MapperProgramTest extends MapperTest {
 	val mapper = new Java8Mapper(true)
 
-	@Test
+	@Test @Ignore
 	def void parseSampleProgram() {
 		val actual = mapper.parse(
 			"public class ClassName<E> extends AnyClass implements InterfaceName<String> {
