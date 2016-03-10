@@ -3968,4 +3968,36 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		map.castTo(UniUnaryOp)
 	}
 	
+	override public visitCastExpression(Java8Parser.CastExpressionContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val type = newArrayList
+		map.put("type", type)
+		val value = newArrayList
+		map.put("value", value)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 2894: {
+						type += it.visit
+					}
+					case 2896: {
+						value += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(UniCast)
+	}
+	
 }
