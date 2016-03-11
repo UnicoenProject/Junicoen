@@ -13,6 +13,14 @@ import net.unicoen.node.UniMemberDec
 import net.unicoen.node.UniMethodDec
 import net.unicoen.node.UniVariableDec
 import org.junit.Test
+import net.unicoen.node.UniUnaryOp
+import net.unicoen.node.UniStringLiteral
+import net.unicoen.node.UniFor
+import net.unicoen.node.UniContinue
+import net.unicoen.node.UniBreak
+import net.unicoen.node.UniWhile
+import net.unicoen.node.UniReturn
+import net.unicoen.node.UniDoWhile
 
 class Java8MapperClassFieldMethodTest extends MapperTest {
 	val mapper = new Java8Mapper(true)
@@ -253,69 +261,149 @@ class Java8MapperClassFieldMethodTest extends MapperTest {
 
 	@Test
 	def void parseMethodWithForStatement(){
-		val main = mapper.parse("public class Main{ public static void main(){for(int i=0;i<5;i++)j++;}}")
+		val actual = mapper.parse("public class Main{ public static void main(){for(int i=0;i<5;i++){j++;}}}")
+		
+		val content = new UniUnaryOp
+		content.expr = new UniIdent("j")
+		content.operator = "++"
+		
+		val statement = new UniBlock
+		statement.body = #[content as UniExpr]
+		
+		val init = new UniVariableDec
+		init.type = "int"
+		init.name = "i"
+		init.value = new UniIntLiteral(0)
+		
+		val cond = new UniBinOp
+		cond.left = new UniIdent("i")
+		cond.right = new UniIntLiteral(5)
+		cond.operator = "<"
+		
+		val step = new UniUnaryOp
+		step.expr = new UniIdent("i")
+		step.operator = "++"
+		
+		val forloop = new UniFor
+		forloop.init = init
+		forloop.cond = cond
+		forloop.step = step
+		forloop.statement = statement
+		
+		val block = new UniBlock
+		block.body = #[forloop as UniExpr]
+
+		val method = new UniMethodDec
+		method.block = block
+		method.methodName = "main"
+		method.modifiers = #["public", "static"]
+		method.returnType = "void"
+
+		val expected = new UniClassDec
+		expected.className = "Main"
+		expected.members = #[method as UniMemberDec]
+		expected.modifiers = #["public"]
+
+		expected.evaluate(actual)
 	}
 
 	@Test
 	def void parseMethodWithForStatement2(){
-/* 		val main = mapper.parse("public class Main{ public static void main(){for(i=0;i<5;i++)j++;}}")
-		assertThat(main, instanceOf(UniClassDec))
-		val cls = main as UniClassDec
-		cls.evaluateClass("Main", null, null,1)
-		//Method
-		val method = cls.members.get(0) as UniMethodDec
-		val String[] modifiers = #["public","static"]
-		val UniArg[] args = #[]
-		method.evaluateMethodDec("main","void",modifiers,1,args)
-		//MethodBody
-		val block = method.block as UniBlock
-		//init->Binop
-		val UniIdent variable = new UniIdent
-		variable.name = "i"
+		val actual = mapper.parse("public class Main{ public static void main(){for(int i=0;i<5;i++){if(a==1) continue;}}}")
+		val continue = new UniContinue
 		
-		val UniIntLiteral literal = new UniIntLiteral
-		literal.value = 0
-		val UniUnaryOp value = new UniUnaryOp
-		value.expr = literal
-		val UniBinOp init = new UniBinOp
-		init.left = variable
-		init.right = value
-		init.operator = "="
-		//expression->Binop
-		val UniIdent invariable2 = new UniIdent
-		invariable2.name = "i"
-		val UniUnaryOp variable2 = new UniUnaryOp
-		variable2.expr = invariable2
+		val ifcond = new UniBinOp
+		ifcond.left = new UniIdent("a")
+		ifcond.right = new UniIntLiteral(1)
+		ifcond.operator = "=="
 		
-		val UniIntLiteral literal2 = new UniIntLiteral
-		literal2.value = 5
-		val UniUnaryOp value2 = new UniUnaryOp
-		value2.expr = literal2
-		val UniBinOp cond = new UniBinOp
-		cond.left = variable2
-		cond.right = value2
-		cond.operator = "<"
-		//Update->UnaryOp
-		val UniIdent variable3 = new UniIdent
-		variable3.name = "i"
-		val UniUnaryOp step = new UniUnaryOp
-		step.expr = variable3
-		step.operator = "++"
-		//j++->UnaryOp
-		val UniBlock body = new UniBlock
-		val UniUnaryOp inbody = new UniUnaryOp
-		val UniIdent variable4 = new UniIdent
-		variable4.name = "j"
-		inbody.expr = variable4
-		inbody.operator = "++"
-		val UniUnaryOp[] statements = #[inbody]
-		body.body = statements
-		evaluateFor(block.body.get(0),init,cond,step,body)
-		*/
+		val ifstat = new UniIf
+		ifstat.cond = ifcond
+		ifstat.trueStatement = continue
+		ifstat.falseStatement = null
+		
+		val forinit = new UniVariableDec
+		forinit.type = "int"
+		forinit.name = "i"
+		forinit.value = new UniIntLiteral(0)
+		
+		val forcond = new UniBinOp
+		forcond.left = new UniIdent("i")
+		forcond.right = new UniIntLiteral(5)
+		forcond.operator = "<"
+		
+		val forstep = new UniUnaryOp
+		forstep.expr = new UniIdent("i")
+		forstep.operator = "++"
+		
+		val statement = new UniBlock
+		statement.body = #[ifstat as UniExpr]
+		
+		val forloop = new UniFor
+		forloop.init = forinit
+		forloop.cond = forcond
+		forloop.step = forstep
+		forloop.statement = statement
+		
+		val block = new UniBlock
+		block.body = #[forloop as UniExpr]
+
+		val method = new UniMethodDec
+		method.block = block
+		method.methodName = "main"
+		method.modifiers = #["public", "static"]
+		method.returnType = "void"
+
+		val expected = new UniClassDec
+		expected.className = "Main"
+		expected.members = #[method as UniMemberDec]
+		expected.modifiers = #["public"]
+
+		expected.evaluate(actual)
 	}
 
 	@Test
 	def void parseMethodWithWhileStatement() {
+		val actual = mapper.parse("public class Main{ public static void main(){while(1){++j;if(j==1) break;}}")
+		val break = new UniBreak
+		
+		val ifcond = new UniBinOp
+		ifcond.left = new UniIdent("j")
+		ifcond.right = new UniIntLiteral(1)
+		ifcond.operator = "=="
+		
+		val ifstat = new UniIf
+		ifstat.cond = ifcond
+		ifstat.trueStatement = break
+		ifstat.falseStatement = null
+		
+		val unary = new UniUnaryOp
+		unary.expr = new UniIdent("j")
+		unary.operator = "++"
+		
+		val statement = new UniBlock
+		statement.body = #[unary as UniExpr, ifstat as UniExpr]
+		
+		val whileloop = new UniWhile
+		whileloop.cond = new UniIntLiteral(1)
+		whileloop.statement = statement
+		
+		val block = new UniBlock
+		block.body = #[whileloop as UniExpr]
+
+		val method = new UniMethodDec
+		method.block = block
+		method.methodName = "main"
+		method.modifiers = #["public", "static"]
+		method.returnType = "void"
+
+		val expected = new UniClassDec
+		expected.className = "Main"
+		expected.members = #[method as UniMemberDec]
+		expected.modifiers = #["public"]
+
+		expected.evaluate(actual)
+		
 	}
 
 	@Test
@@ -324,20 +412,72 @@ class Java8MapperClassFieldMethodTest extends MapperTest {
 
 	@Test
 	def void parseMethodWithDoWhileStatement() {
-	}
+		val actual = mapper.parse("public class Main{ public static void main(){do{++j;if(a==1) return;}while(1)}}")
+		val ret = new UniReturn
+		
+		val ifcond = new UniBinOp
+		ifcond.left = new UniIdent("a")
+		ifcond.right = new UniIntLiteral(1)
+		ifcond.operator = "=="
+		
+		val ifstat = new UniIf
+		ifstat.cond = ifcond
+		ifstat.trueStatement = ret
+		ifstat.falseStatement = null
+		
+		val unary = new UniUnaryOp
+		unary.expr = new UniIdent("j")
+		unary.operator = "++"
+		
+		val statement = new UniBlock
+		statement.body = #[unary as UniExpr, ifstat as UniExpr]
+		
+		val dowhile = new UniDoWhile
+		dowhile.cond = new UniIntLiteral(1)
+		dowhile.statement = statement
+		
+		val block = new UniBlock
+		block.body = #[dowhile as UniExpr]
 
+		val method = new UniMethodDec
+		method.block = block
+		method.methodName = "main"
+		method.modifiers = #["public", "static"]
+		method.returnType = "void"
+
+		val expected = new UniClassDec
+		expected.className = "Main"
+		expected.members = #[method as UniMemberDec]
+		expected.modifiers = #["public"]
+
+		expected.evaluate(actual)
+	}
+	
 	@Test
-	def void parseMethodWithBreakStatement() {
+	def void parseMethodWithEnhancedFor() {
+		//NOT IMPLEMENTED
 	}
-
+	
 	@Test
-	def void parseMethodWithContinueStatement() {
+	def void parseMethodWithFieldAccess() {
+		//NOT IMPLEMENTED
 	}
-
+	
 	@Test
-	def void parseMethodWithReturnStatement() {
+	def void parseMethodWithMemberCall() {
+		//NOT IMPLEMENTED
 	}
-
+	
+	@Test
+	def void parseMethodWithTernaryOp() {
+		//NOT IMPLEMENTED
+	}
+	
+	@Test
+	def void parseMethodWithCastStatement() {
+		//NOT IMPLEMENTED
+	}
+	
 	@Test
 	def void parseMethodWithThrowStatement() {
 	}
