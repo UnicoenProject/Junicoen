@@ -2,9 +2,9 @@ package net.unicoen.node;
 
 /** 二項式 */
 public class UniBinOp extends UniExpr {
-	public String operator;
-	public UniExpr left;
-	public UniExpr right;
+	@Order(value = 2)public String operator;
+	@Order(value = 1)public UniExpr left;
+	@Order(value = 3)public UniExpr right;
 
 	public UniBinOp() {
 	}

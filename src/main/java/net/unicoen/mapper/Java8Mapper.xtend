@@ -375,17 +375,17 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 	override public visitTypeName(Java8Parser.TypeNameContext ctx) {
 		val map = newHashMap
 		map.put("none", newArrayList)
-		val ret = newArrayList
 		map.put("receiver", newArrayList)
+		val ret = newArrayList
 		map.put("fieldName", newArrayList)
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 731: {
-						ret += it.visit
+						map.get("receiver") += it.visit
 					}
 					case 732: {
-						map.get("receiver") += it.visit
+						ret += it.visit
 					}
 					default: {
 						map.get("none") += it.visit
@@ -611,19 +611,19 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 842: {
-						map.get("modifiers") += it.visit
-					}
-					case 844: {
-						map.get("superClass") += it.visit
-					}
-					case 848: {
 						map.get("members") += it.visit
 					}
-					case 851: {
+					case 844: {
+						map.get("modifiers") += it.visit
+					}
+					case 848: {
 						map.get("interfaces") += it.visit
 					}
-					case 854: {
+					case 851: {
 						map.get("className") += it.visit
+					}
+					case 854: {
+						map.get("superClass") += it.visit
 					}
 					default: {
 						map.get("none") += it.visit
@@ -831,7 +831,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 						case 909: {
 							map.get("add") += it.visit
 						}
-						case 910: {
+						case 912: {
 							map.get("add") += it.visit
 						}
 						default: {
@@ -894,10 +894,10 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 							map.get("modifiers") += it.visit
 						}
 						case 923: {
-							map.get("type") += it.visit
+							merge += it.visit
 						}
 						case 924: {
-							merge += it.visit
+							map.get("type") += it.visit
 						}
 						default: {
 							map.get("none") += it.visit
@@ -1097,13 +1097,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 1040: {
-						map.get("block") += it.visit
+						map.get("modifiers") += it.visit
 					}
 					case 1046: {
 						merge += it.visit
 					}
 					case 1047: {
-						map.get("modifiers") += it.visit
+						map.get("block") += it.visit
 					}
 					default: {
 						map.get("none") += it.visit
@@ -1190,13 +1190,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 1084: {
-						map.get("args") += it.visit
+						map.get("returnType") += it.visit
 					}
 					case 1086: {
 						map.get("methodName") += it.visit
 					}
 					case 1090: {
-						map.get("returnType") += it.visit
+						map.get("args") += it.visit
 					}
 					default: {
 						map.get("none") += it.visit
@@ -1306,10 +1306,10 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 1126: {
-						merge += it.visit
+						map.get("type") += it.visit
 					}
 					case 1127: {
-						map.get("type") += it.visit
+						merge += it.visit
 					}
 					default: {
 						map.get("none") += it.visit
@@ -1415,13 +1415,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 1195: {
-						map.get("modifiers") += it.visit
-					}
-					case 1201: {
 						merge += it.visit
 					}
-					case 1205: {
+					case 1201: {
 						map.get("block") += it.visit
+					}
+					case 1205: {
+						map.get("modifiers") += it.visit
 					}
 					default: {
 						map.get("none") += it.visit
@@ -1852,13 +1852,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 1409: {
-						map.get("modifiers") += it.visit
-					}
-					case 1410: {
 						merge += it.visit
 					}
-					case 1411: {
+					case 1410: {
 						map.get("block") += it.visit
+					}
+					case 1411: {
+						map.get("modifiers") += it.visit
 					}
 					default: {
 						map.get("none") += it.visit
@@ -2068,18 +2068,18 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 	override public visitLocalVariableDeclaration(Java8Parser.LocalVariableDeclarationContext ctx) {
 		val map = newHashMap
 		map.put("none", newArrayList)
-		map.put("modifiers", newArrayList)
 		map.put("type", newArrayList)
+		map.put("modifiers", newArrayList)
 		val merge = newArrayList
 		if (ctx.children != null) {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
 						case 1574: {
-							map.get("modifiers") += it.visit
+							map.get("type") += it.visit
 						}
 						case 1580: {
-							map.get("type") += it.visit
+							map.get("modifiers") += it.visit
 						}
 						case 1581: {
 							merge += it.visit
@@ -2210,13 +2210,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 						map.get("init") += it.visit
 					}
 					case 1747: {
-						map.get("cond") += it.visit
+						map.get("statement") += it.visit
 					}
 					case 1751: {
-						map.get("step") += it.visit
+						map.get("cond") += it.visit
 					}
 					case 1755: {
-						map.get("statement") += it.visit
+						map.get("step") += it.visit
 					}
 					default: {
 						map.get("none") += it.visit
@@ -2236,28 +2236,28 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 	override public visitEnhancedForStatement(Java8Parser.EnhancedForStatementContext ctx) {
 		val map = newHashMap
 		map.put("none", newArrayList)
-		map.put("container", newArrayList)
 		map.put("statement", newArrayList)
-		map.put("type", newArrayList)
+		map.put("container", newArrayList)
 		map.put("modifiers", newArrayList)
+		map.put("type", newArrayList)
 		val merge = newArrayList
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 1789: {
-						map.get("container") += it.visit
+						map.get("modifiers") += it.visit
 					}
 					case 1795: {
-						map.get("type") += it.visit
+						map.get("statement") += it.visit
 					}
 					case 1796: {
-						map.get("modifiers") += it.visit
+						map.get("type") += it.visit
 					}
 					case 1798: {
 						merge += it.visit
 					}
 					case 1800: {
-						map.get("statement") += it.visit
+						map.get("container") += it.visit
 					}
 					default: {
 						map.get("none") += it.visit
@@ -2356,10 +2356,10 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					case 2015: {
 						ret += it.visit
 					}
-					case 2016: {
+					case 2051: {
 						ret += it.visit
 					}
-					case 2027: {
+					case 2053: {
 						ret += it.visit
 					}
 					default: {
@@ -2428,19 +2428,19 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 						map.get("args") += it.visit
 					}
 					case 2364: {
-						map.get("methodName") += it.visit
+						map.get("args") += it.visit
 					}
 					case 2369: {
 						map.get("receiver") += it.visit
 					}
 					case 2376: {
-						map.get("args") += it.visit
+						map.get("receiver") += it.visit
 					}
 					case 2381: {
 						map.get("args") += it.visit
 					}
 					case 2388: {
-						map.get("args") += it.visit
+						map.get("methodName") += it.visit
 					}
 					case 2393: {
 						map.get("args") += it.visit
@@ -2449,7 +2449,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 						map.get("args") += it.visit
 					}
 					case 2412: {
-						map.get("receiver") += it.visit
+						map.get("args") += it.visit
 					}
 					case 2425: {
 						map.get("receiver") += it.visit
@@ -2514,19 +2514,19 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 						map.get("args") += it.visit
 					}
 					case 2445: {
-						map.get("receiver") += it.visit
-					}
-					case 2450: {
-						map.get("args") += it.visit
-					}
-					case 2457: {
-						map.get("receiver") += it.visit
-					}
-					case 2462: {
 						map.get("methodName") += it.visit
 					}
-					case 2469: {
+					case 2450: {
+						map.get("receiver") += it.visit
+					}
+					case 2457: {
 						map.get("args") += it.visit
+					}
+					case 2462: {
+						map.get("args") += it.visit
+					}
+					case 2469: {
+						map.get("receiver") += it.visit
 					}
 					default: {
 						map.get("none") += it.visit
@@ -2587,16 +2587,16 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 						map.get("type") += it.visit
 					}
 					case 2608: {
-						map.get("type") += it.visit
-					}
-					case 2609: {
 						map.get("value") += it.visit
 					}
-					case 2613: {
+					case 2609: {
 						merge += it.visit
 					}
+					case 2613: {
+						map.get("type") += it.visit
+					}
 					case 2614: {
-						merge += it.visit
+						map.get("type") += it.visit
 					}
 					case 2615: {
 						map.get("type") += it.visit
@@ -2605,7 +2605,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 						map.get("type") += it.visit
 					}
 					case 2620: {
-						map.get("type") += it.visit
+						merge += it.visit
 					}
 					case 2621: {
 						map.get("type") += it.visit
@@ -2704,10 +2704,10 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 						map.get("operator") += it.visit
 					}
 					case 2686: {
-						map.get("right") += it.visit
+						map.get("left") += it.visit
 					}
 					case 2687: {
-						map.get("left") += it.visit
+						map.get("right") += it.visit
 					}
 					default: {
 						map.get("none") += it.visit
@@ -2759,10 +2759,10 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 						map.get("falseExpr") += it.visit
 					}
 					case 2697: {
-						map.get("trueExpr") += it.visit
+						ret += it.visit
 					}
 					case 2699: {
-						ret += it.visit
+						map.get("trueExpr") += it.visit
 					}
 					case 2701: {
 						map.get("cond") += it.visit
@@ -2796,13 +2796,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 2706: {
-						map.get("right") += it.visit
-					}
-					case 466: {
 						ret += it.visit
 					}
-					case 2710: {
+					case 466: {
 						map.get("left") += it.visit
+					}
+					case 2710: {
+						map.get("right") += it.visit
 					}
 					default: {
 						map.get("none") += it.visit
@@ -2876,13 +2876,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 2728: {
-						map.get("left") += it.visit
-					}
-					case 470: {
 						map.get("right") += it.visit
 					}
-					case 2732: {
+					case 470: {
 						ret += it.visit
+					}
+					case 2732: {
+						map.get("left") += it.visit
 					}
 					default: {
 						map.get("none") += it.visit
@@ -2916,13 +2916,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 2739: {
-						ret += it.visit
+						map.get("right") += it.visit
 					}
 					case 472: {
-						map.get("left") += it.visit
+						ret += it.visit
 					}
 					case 2743: {
-						map.get("right") += it.visit
+						map.get("left") += it.visit
 					}
 					default: {
 						map.get("none") += it.visit
@@ -2956,10 +2956,10 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 2750: {
-						map.get("right") += it.visit
+						ret += it.visit
 					}
 					case 474: {
-						ret += it.visit
+						map.get("right") += it.visit
 					}
 					case 2754: {
 						map.get("left") += it.visit
@@ -2996,13 +2996,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 2761: {
-						map.get("right") += it.visit
+						map.get("left") += it.visit
 					}
 					case 476: {
-						map.get("right") += it.visit
+						map.get("left") += it.visit
 					}
 					case 2765: {
-						map.get("left") += it.visit
+						map.get("right") += it.visit
 					}
 					case 2768: {
 						ret += it.visit
@@ -3042,22 +3042,22 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 2775: {
-						map.get("right") += it.visit
-					}
-					case 478: {
 						map.get("left") += it.visit
 					}
-					case 2779: {
+					case 478: {
 						map.get("right") += it.visit
+					}
+					case 2779: {
+						map.get("left") += it.visit
 					}
 					case 2782: {
 						map.get("right") += it.visit
 					}
 					case 2785: {
-						map.get("left") += it.visit
+						map.get("right") += it.visit
 					}
 					case 2788: {
-						map.get("right") += it.visit
+						map.get("left") += it.visit
 					}
 					case 2791: {
 						map.get("right") += it.visit
@@ -3071,13 +3071,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					case Java8Parser.LT: {
 						map.get("operator") += it.visit.flatten
 					}
-					case Java8Parser.INSTANCEOF: {
+					case Java8Parser.GT: {
 						map.get("operator") += it.visit.flatten
 					}
 					case Java8Parser.LE: {
 						map.get("operator") += it.visit.flatten
 					}
-					case Java8Parser.GT: {
+					case Java8Parser.INSTANCEOF: {
 						map.get("operator") += it.visit.flatten
 					}
 					case Java8Parser.GE: {
@@ -3106,19 +3106,19 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 2798: {
-						map.get("right") += it.visit
+						map.get("left") += it.visit
 					}
 					case 480: {
 						map.get("right") += it.visit
 					}
 					case 2803: {
-						map.get("left") += it.visit
+						map.get("right") += it.visit
 					}
 					case 2807: {
 						map.get("left") += it.visit
 					}
 					case 2812: {
-						ret += it.visit
+						map.get("right") += it.visit
 					}
 					default: {
 						map.get("none") += it.visit
@@ -3155,16 +3155,16 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 2819: {
-						map.get("left") += it.visit
+						ret += it.visit
 					}
 					case 482: {
-						ret += it.visit
+						map.get("right") += it.visit
 					}
 					case 2823: {
 						map.get("left") += it.visit
 					}
 					case 2826: {
-						map.get("right") += it.visit
+						map.get("left") += it.visit
 					}
 					default: {
 						map.get("none") += it.visit
@@ -3201,7 +3201,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 2833: {
-						map.get("right") += it.visit
+						ret += it.visit
 					}
 					case 484: {
 						map.get("right") += it.visit
@@ -3210,7 +3210,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 						map.get("left") += it.visit
 					}
 					case 2840: {
-						ret += it.visit
+						map.get("right") += it.visit
 					}
 					case 2843: {
 						map.get("left") += it.visit
@@ -3221,13 +3221,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				}
 			} else if (it instanceof TerminalNode) {
 				switch it.symbol.type {
-					case Java8Parser.DIV: {
-						map.get("operator") += it.visit.flatten
-					}
 					case Java8Parser.MOD: {
 						map.get("operator") += it.visit.flatten
 					}
 					case Java8Parser.MUL: {
+						map.get("operator") += it.visit.flatten
+					}
+					case Java8Parser.DIV: {
 						map.get("operator") += it.visit.flatten
 					}
 					default: {
@@ -3246,25 +3246,25 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val map = newHashMap
 		map.put("none", newArrayList)
 		val ret = newArrayList
-		map.put("expr", newArrayList)
 		map.put("operator", newArrayList)
+		map.put("expr", newArrayList)
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 2849: {
-						map.get("expr") += it.visit
+						ret += it.visit
 					}
 					case 2850: {
-						map.get("expr") += it.visit
+						ret += it.visit
 					}
 					case 2852: {
 						ret += it.visit
 					}
 					case 2854: {
-						ret += it.visit
+						map.get("expr") += it.visit
 					}
 					case 2855: {
-						ret += it.visit
+						map.get("expr") += it.visit
 					}
 					default: {
 						map.get("none") += it.visit
@@ -3322,8 +3322,8 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 	override public visitPreDecrementExpression(Java8Parser.PreDecrementExpressionContext ctx) {
 		val map = newHashMap
 		map.put("none", newArrayList)
-		map.put("expr", newArrayList)
 		map.put("operator", newArrayList)
+		map.put("expr", newArrayList)
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
@@ -3361,10 +3361,10 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 						map.get("expr") += it.visit
 					}
 					case 2866: {
-						ret += it.visit
+						map.get("expr") += it.visit
 					}
 					case 2868: {
-						map.get("expr") += it.visit
+						ret += it.visit
 					}
 					default: {
 						map.get("none") += it.visit
@@ -3372,10 +3372,10 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				}
 			} else if (it instanceof TerminalNode) {
 				switch it.symbol.type {
-					case Java8Parser.BANG: {
+					case Java8Parser.TILDE: {
 						map.get("operator") += it.visit.flatten
 					}
-					case Java8Parser.TILDE: {
+					case Java8Parser.BANG: {
 						map.get("operator") += it.visit.flatten
 					}
 					default: {
@@ -3424,8 +3424,8 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 	override public visitPostIncrementExpression(Java8Parser.PostIncrementExpressionContext ctx) {
 		val map = newHashMap
 		map.put("none", newArrayList)
-		map.put("expr", newArrayList)
 		map.put("operator", newArrayList)
+		map.put("expr", newArrayList)
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
