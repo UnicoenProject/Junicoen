@@ -605,6 +605,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 14, RULE_type);
 		try {
 			setState(528);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,1,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -661,6 +662,7 @@ public class Java8Parser extends Parser {
 		int _la;
 		try {
 			setState(544);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,4,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -879,6 +881,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 24, RULE_referenceType);
 		try {
 			setState(557);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,6,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -952,6 +955,7 @@ public class Java8Parser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(561);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,7,_ctx) ) {
 			case 1:
 				{
@@ -973,6 +977,7 @@ public class Java8Parser extends Parser {
 				if ( _alt==1 ) {
 					{
 					setState(565);
+					_errHandler.sync(this);
 					switch ( getInterpreter().adaptivePredict(_input,8,_ctx) ) {
 					case 1:
 						{
@@ -1038,6 +1043,7 @@ public class Java8Parser extends Parser {
 		int _la;
 		try {
 			setState(592);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,14,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -1164,6 +1170,7 @@ public class Java8Parser extends Parser {
 			setState(601);
 			match(Identifier);
 			setState(603);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,16,_ctx) ) {
 			case 1:
 				{
@@ -1231,6 +1238,7 @@ public class Java8Parser extends Parser {
 			setState(611);
 			match(Identifier);
 			setState(613);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,18,_ctx) ) {
 			case 1:
 				{
@@ -1444,6 +1452,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 42, RULE_arrayType);
 		try {
 			setState(638);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,20,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -1715,6 +1724,7 @@ public class Java8Parser extends Parser {
 		int _la;
 		try {
 			setState(683);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,27,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -1918,6 +1928,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 58, RULE_typeArgument);
 		try {
 			setState(702);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,29,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -2163,6 +2174,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 66, RULE_typeName);
 		try {
 			setState(736);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,34,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -2295,6 +2307,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 70, RULE_expressionName);
 		try {
 			setState(754);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,36,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -2472,6 +2485,7 @@ public class Java8Parser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(770);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,38,_ctx) ) {
 			case 1:
 				{
@@ -2664,6 +2678,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 82, RULE_importDeclaration);
 		try {
 			setState(807);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,43,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -2906,6 +2921,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 92, RULE_typeDeclaration);
 		try {
 			setState(836);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,44,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -2964,6 +2980,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 94, RULE_classDeclaration);
 		try {
 			setState(840);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,45,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -3568,6 +3585,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 116, RULE_classBodyDeclaration);
 		try {
 			setState(913);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,54,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -3639,6 +3657,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 118, RULE_classMemberDeclaration);
 		try {
 			setState(920);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,55,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -4136,6 +4155,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 134, RULE_unannType);
 		try {
 			setState(966);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,62,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -4246,6 +4266,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 138, RULE_unannReferenceType);
 		try {
 			setState(975);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,64,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -4319,6 +4340,7 @@ public class Java8Parser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(979);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,65,_ctx) ) {
 			case 1:
 				{
@@ -4340,6 +4362,7 @@ public class Java8Parser extends Parser {
 				if ( _alt==1 ) {
 					{
 					setState(983);
+					_errHandler.sync(this);
 					switch ( getInterpreter().adaptivePredict(_input,66,_ctx) ) {
 					case 1:
 						{
@@ -4404,6 +4427,7 @@ public class Java8Parser extends Parser {
 		int _la;
 		try {
 			setState(1004);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,71,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -4755,6 +4779,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 156, RULE_unannArrayType);
 		try {
 			setState(1038);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,75,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -5257,6 +5282,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 170, RULE_formalParameterList);
 		try {
 			setState(1100);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,85,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -5316,6 +5342,7 @@ public class Java8Parser extends Parser {
 		try {
 			int _alt;
 			setState(1118);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,88,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -5614,6 +5641,7 @@ public class Java8Parser extends Parser {
 		int _la;
 		try {
 			setState(1156);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,94,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -5862,6 +5890,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 190, RULE_exceptionType);
 		try {
 			setState(1184);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,98,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -6279,6 +6308,7 @@ public class Java8Parser extends Parser {
 			setState(1225);
 			match(LBRACE);
 			setState(1227);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,105,_ctx) ) {
 			case 1:
 				{
@@ -6341,6 +6371,7 @@ public class Java8Parser extends Parser {
 		int _la;
 		try {
 			setState(1280);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,115,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -6891,6 +6922,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 222, RULE_interfaceDeclaration);
 		try {
 			setState(1343);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,127,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -7286,6 +7318,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 236, RULE_interfaceMemberDeclaration);
 		try {
 			setState(1390);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,133,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -7826,6 +7859,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 254, RULE_annotationTypeMemberDeclaration);
 		try {
 			setState(1452);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,140,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -8086,6 +8120,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 262, RULE_annotation);
 		try {
 			setState(1483);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,145,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -8299,6 +8334,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 270, RULE_elementValue);
 		try {
 			setState(1508);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,148,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -8777,6 +8813,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 288, RULE_blockStatement);
 		try {
 			setState(1569);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,157,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -8947,6 +8984,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 294, RULE_statement);
 		try {
 			setState(1589);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,159,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -9035,6 +9073,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 296, RULE_statementNoShortIf);
 		try {
 			setState(1596);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,160,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -9450,6 +9489,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 308, RULE_statementExpression);
 		try {
 			setState(1632);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,162,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -9691,6 +9731,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 316, RULE_assertStatement);
 		try {
 			setState(1666);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,163,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -9975,6 +10016,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 326, RULE_switchLabel);
 		try {
 			setState(1709);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,167,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -10222,6 +10264,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 336, RULE_forStatement);
 		try {
 			setState(1735);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,168,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -10273,6 +10316,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 338, RULE_forStatementNoShortIf);
 		try {
 			setState(1739);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,169,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -10490,6 +10534,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 344, RULE_forInit);
 		try {
 			setState(1775);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,176,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -11027,6 +11072,7 @@ public class Java8Parser extends Parser {
 		int _la;
 		try {
 			setState(1857);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,184,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -11616,6 +11662,7 @@ public class Java8Parser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(1929);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,193,_ctx) ) {
 			case 1:
 				{
@@ -11701,6 +11748,7 @@ public class Java8Parser extends Parser {
 		int _la;
 		try {
 			setState(1966);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,196,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -11894,6 +11942,7 @@ public class Java8Parser extends Parser {
 		int _la;
 		try {
 			setState(1998);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,198,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -12042,6 +12091,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 392, RULE_primaryNoNewArray_lf_primary);
 		try {
 			setState(2005);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,199,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -12151,6 +12201,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 396, RULE_primaryNoNewArray_lf_primary_lfno_arrayAccess_lf_primary);
 		try {
 			setState(2013);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,200,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -12238,6 +12289,7 @@ public class Java8Parser extends Parser {
 		int _la;
 		try {
 			setState(2055);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,203,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -12461,6 +12513,7 @@ public class Java8Parser extends Parser {
 		int _la;
 		try {
 			setState(2098);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,206,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -12650,6 +12703,7 @@ public class Java8Parser extends Parser {
 		int _la;
 		try {
 			setState(2183);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,224,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -12981,6 +13035,7 @@ public class Java8Parser extends Parser {
 			setState(2204);
 			match(RPAREN);
 			setState(2206);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,229,_ctx) ) {
 			case 1:
 				{
@@ -13133,6 +13188,7 @@ public class Java8Parser extends Parser {
 				setState(2239);
 				match(RPAREN);
 				setState(2241);
+				_errHandler.sync(this);
 				switch ( getInterpreter().adaptivePredict(_input,236,_ctx) ) {
 				case 1:
 					{
@@ -13200,6 +13256,7 @@ public class Java8Parser extends Parser {
 				setState(2263);
 				match(RPAREN);
 				setState(2265);
+				_errHandler.sync(this);
 				switch ( getInterpreter().adaptivePredict(_input,241,_ctx) ) {
 				case 1:
 					{
@@ -13245,6 +13302,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 410, RULE_typeArgumentsOrDiamond);
 		try {
 			setState(2272);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,243,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -13299,6 +13357,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 412, RULE_fieldAccess);
 		try {
 			setState(2287);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,244,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -13487,6 +13546,7 @@ public class Java8Parser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(2313);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,246,_ctx) ) {
 			case 1:
 				{
@@ -13663,6 +13723,7 @@ public class Java8Parser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(2350);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,249,_ctx) ) {
 			case 1:
 				{
@@ -13761,6 +13822,7 @@ public class Java8Parser extends Parser {
 		int _la;
 		try {
 			setState(2430);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,262,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -14063,6 +14125,7 @@ public class Java8Parser extends Parser {
 		int _la;
 		try {
 			setState(2499);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,274,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -14329,6 +14392,7 @@ public class Java8Parser extends Parser {
 		int _la;
 		try {
 			setState(2556);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,282,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -14564,6 +14628,7 @@ public class Java8Parser extends Parser {
 		int _la;
 		try {
 			setState(2604);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,289,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -14725,6 +14790,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 438, RULE_arrayCreationExpression);
 		try {
 			setState(2628);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,292,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -14736,6 +14802,7 @@ public class Java8Parser extends Parser {
 				setState(2608);
 				dimExprs();
 				setState(2610);
+				_errHandler.sync(this);
 				switch ( getInterpreter().adaptivePredict(_input,290,_ctx) ) {
 				case 1:
 					{
@@ -14756,6 +14823,7 @@ public class Java8Parser extends Parser {
 				setState(2614);
 				dimExprs();
 				setState(2616);
+				_errHandler.sync(this);
 				switch ( getInterpreter().adaptivePredict(_input,291,_ctx) ) {
 				case 1:
 					{
@@ -14981,6 +15049,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 446, RULE_expression);
 		try {
 			setState(2651);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,295,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -15077,6 +15146,7 @@ public class Java8Parser extends Parser {
 		int _la;
 		try {
 			setState(2667);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,297,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -15283,6 +15353,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 456, RULE_assignmentExpression);
 		try {
 			setState(2683);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,300,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -15383,6 +15454,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 460, RULE_leftHandSide);
 		try {
 			setState(2692);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,301,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -15483,6 +15555,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 464, RULE_conditionalExpression);
 		try {
 			setState(2703);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,302,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -15948,6 +16021,7 @@ public class Java8Parser extends Parser {
 					_prevctx = _localctx;
 					{
 					setState(2769);
+					_errHandler.sync(this);
 					switch ( getInterpreter().adaptivePredict(_input,308,_ctx) ) {
 					case 1:
 						{
@@ -16048,6 +16122,7 @@ public class Java8Parser extends Parser {
 					_prevctx = _localctx;
 					{
 					setState(2792);
+					_errHandler.sync(this);
 					switch ( getInterpreter().adaptivePredict(_input,310,_ctx) ) {
 					case 1:
 						{
@@ -16184,6 +16259,7 @@ public class Java8Parser extends Parser {
 					_prevctx = _localctx;
 					{
 					setState(2813);
+					_errHandler.sync(this);
 					switch ( getInterpreter().adaptivePredict(_input,312,_ctx) ) {
 					case 1:
 						{
@@ -16298,6 +16374,7 @@ public class Java8Parser extends Parser {
 					_prevctx = _localctx;
 					{
 					setState(2827);
+					_errHandler.sync(this);
 					switch ( getInterpreter().adaptivePredict(_input,314,_ctx) ) {
 					case 1:
 						{
@@ -16393,6 +16470,7 @@ public class Java8Parser extends Parser {
 					_prevctx = _localctx;
 					{
 					setState(2844);
+					_errHandler.sync(this);
 					switch ( getInterpreter().adaptivePredict(_input,316,_ctx) ) {
 					case 1:
 						{
@@ -16664,6 +16742,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 492, RULE_unaryExpressionNotPlusMinus);
 		try {
 			setState(2870);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,319,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -16748,6 +16827,7 @@ public class Java8Parser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(2874);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,320,_ctx) ) {
 			case 1:
 				{
@@ -16986,6 +17066,7 @@ public class Java8Parser extends Parser {
 		int _la;
 		try {
 			setState(2920);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,325,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
