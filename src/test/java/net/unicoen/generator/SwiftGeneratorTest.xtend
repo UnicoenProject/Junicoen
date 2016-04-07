@@ -28,7 +28,7 @@ public class SwiftGeneratorTest{
 	def void parseClassWithExtendsAndImplements(){
 		val tree = mapper.parse("public static class A extends SuperClass implements Interface,Interface1 {}")
 		val target = SwiftGenerator.generate(tree)
-		assertEquals("public static class A : SuperClass{ } ",format(target))
+		assertEquals("public static class A : SuperClass { } ",format(target))
 	}
 	
 }

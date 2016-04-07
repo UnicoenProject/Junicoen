@@ -41,51 +41,83 @@ public class SwiftGeneratorClassFieldMethodTest{
 	def void parseMethodWithSingleLocalVar() {
 		val tree = mapper.parse("public class Main{ public static void main(){int a;}}")
 		val target = SwiftGenerator.generate(tree);
-		assertEquals("public class Main { } var a : Int; ", format(target))
+		assertEquals("public class Main { } var a : Int ", format(target))
 	}
-	@Test
-	def void parseMethodWithMultipleLocalVar() {
-		val tree = mapper.parse("public class Main{ public static void main(){int a,b,c;}}")
-		val target = SwiftGenerator.generate(tree);
-		assertEquals("public class Main { } var a : Int; var b : Int; var c : Int; ", format(target))
-	}
-	@Test
-	def void parseMethodWithSingleLocalVarWithValue(){
-		val tree = mapper.parse("public class Main{ public static void main(){int a=1;}}")
-		val target = SwiftGenerator.generate(tree)
-		//assertEquals("", format(target))
-		//public class Main { } var a : Int; = 1 
-	}
-	
-	@Test
-	def void parseMethodWithMultipleLocalVarWithValue(){
-		val tree =  mapper.parse("public class Main{ public static void main(){int a,b,c=1}}");
-		val target = SwiftGenerator.generate(tree);
-		//assertEquals("", format(target))
-		//public class Main { } var a : Int; var b : Int; var c : Int; = 1 
-	}
-	
+
 	@Test
 	def void parseMethodWithIfStatement(){
 		val tree = mapper.parse("public class Main{ public static void main(){if(true){a=1;}}}")
 		val target = SwiftGenerator.generate(tree)
-		//assertEquals("", format(target))
-		//public class Main { } if (true) { a = 1 } 
+		val expected = "public class Main { } if true { a = 1 } "
+		assertEquals(expected, format(target))
+//		assertEquals(expected, target)
 	}
 	@Test
 	def void parseMethodWithIfElseStatement() {
 		val tree = mapper.parse("public class Main{ public static void main(){if(true){a=1;}else{b=1;}}}");
 		val target = SwiftGenerator.generate(tree)
-		//assertEquals("", format(target))
-		//public class Main { } if (true) { a = 1 } else { b = 1 } 
+		val expected = "public class Main { } if true { a = 1 } else { b = 1 } "
+		assertEquals(expected, format(target))
 	}
 	@Test
-	def void temptest(){
-		val tree = mapper.parse("public class Main{ public temp(){ if(true){a=1;} } }")
-		//PRIORITY!!!!!
-		//val target = SwiftGenerator.generate(tree)
-		//println(format(target))
+	def void parseMethodWithIfStatement1(){
+		val tree = mapper.parse("public class Main{ public static void test(){if(true){a=1;}}}")
+		val target = SwiftGenerator.generate(tree)
+		val expected = "public class Main { public func test () -> void { if true { a = 1 } } } "
+		assertEquals(expected, format(target))
 	}
-  
+	@Test
+	def void parseMethodWithIfElseStatement1(){
+		val tree = mapper.parse("public class Main{ public static void test(){if(true){a=1;}else{b=1;}}}")
+		val target = SwiftGenerator.generate(tree)
+		val expected = "public class Main { public func test () -> void { if true { a = 1 } else { b = 1 } } } "
+		assertEquals(expected, format(target))
+	}
+	@Test
+	def void parseMethodWithWhileStatement(){
+		val tree = mapper.parse("public class Main{ public static void main(){while(1){++j;if(j==1) break;}}")
+		val target = SwiftGenerator.generate(tree)
+		val expected = "public class Main { } while 1 { ++j if j == 1 { break } } "
+		assertEquals(expected, format(target))
+	}
+	@Test
+	def void parseMethodWithWhileStatement1(){
+		val tree = mapper.parse("public class Main{ public static void test(){while(1){++j;if(j==1) break;}}")
+		val target = SwiftGenerator.generate(tree)
+		val expected = "public class Main { public func test () -> { while 1 { ++j if j == 1 { break } } } } "
+		//public class Main { ---------------------
+		println(format(target))
+	}
+	@Test
+	def void parseMethodWithDoWhileStatement(){
+		val tree = mapper.parse("public class Main{ public static void main(){do{++j;if(a==1) return;}while(1)}}")
+		val target = SwiftGenerator.generate(tree)
+		val expected = "public class Main { } repeat { ++j if a == 1 { return } } while 1 "
+		assertEquals(expected, format(target))
+	}
+	@Test
+	def void parseMethodWithDoWhileStatement1(){
+		val tree = mapper.parse("public class Main{ public static void test(){do{++j;if(a==1) return;}while(1)}}")
+		val target = SwiftGenerator.generate(tree)
+		val expected = "public class Main { public func test () -> void { repeat { ++ j if a == 1 { return } } while 1 } } "
+		assertEquals(expected, format(target))
+	}
+	//EMERGENCY
+//	@Test
+//	def void parseMethodWithForStatement(){
+//		val tree = mapper.parse("public class Main{ public static void main(){for(int i=0;i<5;i++){if(a==1) continue;}}}")
+//		val target = SwiftGenerator.generate(tree)
+//		val expected = "";
+//		//i++ & ++i => data less
+//		assertEquals(expected, format(target)) 
+//	}
+//	@Test
+//	def void parseMethodWithForStatement1(){
+//		val tree = mapper.parse("public class Main{ public static void test(){for(int i=0;i<5;i++){if(a==1) continue;}}}")
+//		val target = SwiftGenerator.generate(tree)
+//		val expected = "";
+//		assertEquals(expected, format(target))
+//	}
+	
 	
 }
