@@ -16,7 +16,15 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import net.unicoen.node.CodeGenerator;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+
+import net.unicoen.generator.CodeGenerator;
 import net.unicoen.node.UniArg;
 import net.unicoen.node.UniArray;
 import net.unicoen.node.UniBinOp;
@@ -93,15 +101,8 @@ import net.unicoen.parser.blockeditor.blockmodel.BlockWhileModel;
 import net.unicoen.parser.blockeditor.blockmodel.PageModel;
 import net.unicoen.parser.blockeditor.blockmodel.PagesModel;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
-
 public class BlockGenerator extends CodeGenerator {
+
 
 	/** Name space definition */
 	private static String XML_CODEBLOCKS_NS = "http://education.mit.edu/openblocks/ns";
@@ -119,10 +120,12 @@ public class BlockGenerator extends CodeGenerator {
 
 	private Document document;
 	private Stack<String> idStack = new Stack<>();
+	private Stack<Object> createdBlock = new Stack<>();
 
 	public static String PARENT_ID_NULL = "-1";
 	
 	private MethodResolver methodResolver = new MethodResolver();
+	private VariableNameResolver vnResolver = new VariableNameResolver();
 
 	public BlockGenerator(PrintStream out, String langdefRootPath) throws SAXException, IOException {
 		super(out);
@@ -185,7 +188,7 @@ public class BlockGenerator extends CodeGenerator {
 	public BlockElementModel createEqualOperatorModel(UniBinOp binopExpr, Document document) {
 		if (binopExpr.left instanceof UniIdent) {
 			UniIdent ident = (UniIdent) binopExpr.left;
-			Node varDecNode = resolver.getVariableNameResolver().getVariableBlockNode(ident.name);
+			Node varDecNode = vnResolver.getVariableBlockNode(ident.name);
 			Long id = ID_COUNTER++;
 
 			// 右辺のモデルの生成
@@ -276,7 +279,7 @@ public class BlockGenerator extends CodeGenerator {
 
 	public BlockLocalVarDecModel parseVarDec(String type, String name) {
 		BlockLocalVarDecModel model = new BlockLocalVarDecModel(type, name, document, resolver, ID_COUNTER++);
-		resolver.getVariableNameResolver().addLocalVariable(name, model.getElement());
+		vnResolver.addLocalVariable(name, model.getElement());
 		return model;
 	}
 
@@ -362,7 +365,7 @@ public class BlockGenerator extends CodeGenerator {
 		List<BlockElementModel> args = Lists.newArrayList(initializer);
 		blockModel.addSocketsAndNodes(args, document, calcSocketsInfo(resolver.getSocketNodes(blockModel.getElement().getAttribute(BlockElementModel.GENUS_NAME_ATTR))));
 
-		resolver.getVariableNameResolver().addGlobalVariable(member.name, blockModel.getElement());
+		vnResolver.addGlobalVariable(member.name, blockModel.getElement());
 		return blockModel;
 	}
 
@@ -638,8 +641,6 @@ public class BlockGenerator extends CodeGenerator {
 		return documentElement;
 	}
 
-	private Stack<Object> createdBlock = new Stack<>();
-
 	@Override
 	public void dontCallTraverseBoolLiteral(UniBoolLiteral node) {
 		createdBlock.push(new BlockBooleanLiteralModel(node, document, getParentId(), ID_COUNTER++, resolver));
@@ -665,9 +666,10 @@ public class BlockGenerator extends CodeGenerator {
 		createdBlock.push(new BlockStringLiteralModel(node.value, document, getParentId(), ID_COUNTER++, resolver));
 	}
 
+
 	@Override
 	public void dontCallTraverseIdent(UniIdent node) {
-		Node varDecNode = resolver.getVariableNameResolver().getVariableBlockNode(node.name);
+		Node varDecNode = vnResolver.getVariableBlockNode(node.name);
 		if (varDecNode != null) {
 			BlockVariableGetterModel getterModel = new BlockVariableGetterModel(varDecNode, document, ID_COUNTER++);
 			getterModel.addPlugElement(document, new BlockPlugModel("", getterModel.getConnectorKind(), "mirror", getParentId()));
@@ -778,7 +780,7 @@ public class BlockGenerator extends CodeGenerator {
 				operator = "-";
 			}
 
-			Node varDecNode = resolver.getVariableNameResolver().getVariableBlockNode(ident.name);
+			Node varDecNode = vnResolver.getVariableBlockNode(ident.name);
 
 			if (parentId.equals(PARENT_ID_NULL)) {
 				Long id = ID_COUNTER++;
@@ -878,7 +880,7 @@ public class BlockGenerator extends CodeGenerator {
 			model.getBlockElement().appendChild(MyDOMUtil.createElement(BlockElementModel.LABEL_NODE, node.blockLabel, document));
 			model.setCollapsed(node.blockLabel, document);
 		}
-
+		
 		model.addSocketsAndNodes(Lists.transform(commands, new Function<BlockCommandModel, BlockElementModel>() {
 			@Override
 			public BlockElementModel apply(BlockCommandModel input) {
@@ -1020,7 +1022,7 @@ public class BlockGenerator extends CodeGenerator {
 		BlockSocketsModel sockets = calcSocketsInfo(socketNodes);
 		blockModel.addSocketsAndNodes(args, document, sockets);
 
-		resolver.getVariableNameResolver().addGlobalVariable(node.name, blockModel.getElement());
+		vnResolver.addGlobalVariable(node.name, blockModel.getElement());
 
 		createdBlock.push(blockModel);
 	}
@@ -1071,7 +1073,7 @@ public class BlockGenerator extends CodeGenerator {
 			}
 		}
 
-		resolver.getVariableNameResolver().resetLocalVariables();
+		vnResolver.resetLocalVariables();
 
 		createdBlock.push(model);
 	}
@@ -1083,7 +1085,7 @@ public class BlockGenerator extends CodeGenerator {
 		BlockPlugModel plugInfo = new BlockPlugModel(resolver.getPlugElement(model.getGenusName()), getParentId());
 		model.addPlugElement(document, plugInfo);
 
-		resolver.getVariableNameResolver().addLocalVariable(node.name, model.getElement());
+		vnResolver.addLocalVariable(node.name, model.getElement());
 
 		createdBlock.push(model);
 	}
@@ -1107,16 +1109,21 @@ public class BlockGenerator extends CodeGenerator {
 		try {
 			List<PageModel> pages = new ArrayList<>();
 			List<String> importStatements = new ArrayList<>();
-			for (UniImport importStatement : node.imports) {
-				importStatements.add(importStatement.targetName);
+			if(node.imports != null){
+				for (UniImport importStatement : node.imports) {
+					importStatements.add(importStatement.targetName);
+				}				
+			}
+			
+			if(node.classes != null){
+				for (UniClassDec dec : node.classes) {
+					traverseClassDec(dec);
+					BlockClassModel model = (BlockClassModel) createdBlock.pop();
+					PageModel page = new PageModel(dec, model.createBlockNodes(document), document);
+					pages.add(page);
+				}				
 			}
 
-			for (UniClassDec dec : node.classes) {
-				traverseClassDec(dec);
-				BlockClassModel model = (BlockClassModel) createdBlock.pop();
-				PageModel page = new PageModel(dec, model.createBlockNodes(document), document);
-				pages.add(page);
-			}
 			createdBlock.push(new PagesModel(pages, document, importStatements));
 		} catch (RuntimeException e) {
 			e.printStackTrace();
@@ -1138,6 +1145,11 @@ public class BlockGenerator extends CodeGenerator {
 
 	public BlockElementModel traverseExprForBlock(UniExpr node) {
 		traverseExpr(node);
+//		if(node.comments != null){
+//			BlockElementModel model = (BlockElementModel) createdBlock.pop();
+//			model.addCommentNode(node.afterComment, document);
+//			createdBlock.push(model);
+//		}
 		return (BlockElementModel) createdBlock.pop();
 	}
 
@@ -1145,5 +1157,6 @@ public class BlockGenerator extends CodeGenerator {
 		idStack.push(parentId);
 		traverseExpr(expr);
 	}
+
 
 }

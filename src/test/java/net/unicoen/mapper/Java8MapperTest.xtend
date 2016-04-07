@@ -18,6 +18,7 @@ import net.unicoen.node.UniFieldDec
 import net.unicoen.node.UniMemberDec
 import net.unicoen.node.UniExpr
 import org.junit.Ignore
+import net.unicoen.node.UniExpr
 
 class Java8MapperTest extends MapperTest {
 	val mapper = new Java8Mapper(true)

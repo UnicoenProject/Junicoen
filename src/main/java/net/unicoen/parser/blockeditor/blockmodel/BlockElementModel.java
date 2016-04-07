@@ -11,6 +11,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
+import net.unicoen.parser.blockeditor.AnnotationCommentGetter;
 import net.unicoen.parser.blockeditor.MyDOMUtil;
 
 public class BlockElementModel {
@@ -35,6 +36,7 @@ public class BlockElementModel {
 	public static String BEFOREBLOCKID_NODE = "BeforeBlockId";// 任意（モデルによって必要）
 	public static String COMMENT_NODE = "Comment";// 任意
 	public static String INITLABEL_ATTR = "initlabel";
+	public static String COMMENT_TEXT_NODE = "Text";
 
 	private List<BlockElementModel> socketBlocksElements = new ArrayList<>();
 
@@ -52,6 +54,7 @@ public class BlockElementModel {
 			return this.text;
 		}
 	}
+	
 
 	public Element getElement() {
 		return this.element;
@@ -261,7 +264,9 @@ public class BlockElementModel {
 	}
 
 	public void addCommentNode(String comment, Document document) {
-		getBlockElement().appendChild(MyDOMUtil.createElement(COMMENT_NODE, comment, document));
+		Element commentNode = document.createElement(COMMENT_NODE);
+		commentNode.appendChild(MyDOMUtil.createElement(COMMENT_TEXT_NODE, AnnotationCommentGetter.getCommentText(comment), document));
+		getBlockElement().appendChild(commentNode);
 	}
 
 }

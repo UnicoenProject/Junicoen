@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import net.unicoen.node.CodeGenerator;
 import net.unicoen.node.UniArg;
 import net.unicoen.node.UniArray;
 import net.unicoen.node.UniBinOp;
@@ -183,10 +182,11 @@ public class JavaGenerator extends CodeGenerator {
 
 	public static void generate(UniProgram fileDec, PrintStream out) {
 		JavaGenerator g = new JavaGenerator(out);
-		for (UniImport importStatement : fileDec.imports) {
-			g.traverseImport(importStatement);
+		if(fileDec.imports!= null){
+			for (UniImport importStatement : fileDec.imports) {
+				g.traverseImport(importStatement);
+			}			
 		}
-
 		g.newline();
 		g.newline();
 

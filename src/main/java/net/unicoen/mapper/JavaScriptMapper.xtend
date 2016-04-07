@@ -60,6 +60,9 @@ import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.TerminalNode
 import org.antlr.v4.runtime.tree.TerminalNodeImpl
+import net.unicoen.node.UniProgram
+import net.unicoen.node.UniArg
+import net.unicoen.node.UniNew
 
 class JavaScriptMapper extends ECMAScriptBaseVisitor<Object> {
 
@@ -73,11 +76,25 @@ class JavaScriptMapper extends ECMAScriptBaseVisitor<Object> {
 
 	def parseFile(String path) {
 		var file = new File(path)
-		className = file.name.substring(0, file.name.indexOf("."))
+		var fileName = file.name
+		var tmp  = fileName.split("\\.tmp") as String[]
+		fileName = tmp.get(1)
+		tmp = fileName.split("\\.")
+		className = tmp.get(0)
+		
 
 		val inputStream = new FileInputStream(path);
 		try {
-			parseCore(new ANTLRInputStream(inputStream));
+			var program = parseCore(new ANTLRInputStream(inputStream)) as UniProgram;
+			
+			var main = new UniMethodDec("main",Lists.newArrayList("public", "static"), "void", Lists.newArrayList(new UniArg("String[]", "args")),new UniBlock);
+			var startTurtle = new UniMethodCall(new UniIdent("Turtle"), "startTurtle", Lists.newArrayList(new UniNew(className, Lists.newArrayList), new UniIdent("args")));
+			main.block = new UniBlock(Lists.newArrayList(startTurtle), null);
+			
+			program.classes.get(0).className = className;
+			program.classes.get(0).members.add(0,main);
+			
+			program	
 		} finally {
 			inputStream.close();
 		}
@@ -110,11 +127,13 @@ class JavaScriptMapper extends ECMAScriptBaseVisitor<Object> {
 	}
 
 	override public visitProgram(ECMAScriptParser.ProgramContext ctx) {
+		var programModel = new UniProgram
 		var dec = new UniClassDec
 		dec.className = className
 		dec.members = Lists.newArrayList
 		dec.modifiers = Lists.newArrayList
-
+		dec.superClass = Lists.newArrayList("Turtle")
+			
 		for (ParseTree node : ctx.children) {
 			var nodeModel = node.visit as UniNode
 			if (nodeModel instanceof UniMethodDec) {
@@ -123,7 +142,10 @@ class JavaScriptMapper extends ECMAScriptBaseVisitor<Object> {
 				// メソッドブロック外に書いた処理 未実装
 			}
 		}
-		dec
+		
+		programModel.classes = Lists.newArrayList(dec)
+		
+		programModel
 	}
 
 	// should return List or MethodDec

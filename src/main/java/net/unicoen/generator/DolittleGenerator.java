@@ -6,7 +6,8 @@ import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.unicoen.node.CodeGenerator;
+import com.google.common.collect.Lists;
+
 import net.unicoen.node.UniArg;
 import net.unicoen.node.UniArray;
 import net.unicoen.node.UniBinOp;
@@ -69,6 +70,15 @@ public class DolittleGenerator extends CodeGenerator {
 
 	public static void generate(UniClassDec classDec, PrintStream out) {
 		DolittleGenerator g = new DolittleGenerator(out);
+		for(int i = 0 ; i < classDec.members.size();i++){
+			if(classDec.members.get(i)instanceof UniMethodDec){
+				UniMethodDec dec = (UniMethodDec)classDec.members.get(i);
+				if(dec.methodName.equals("start")){
+					UniVariableDec kameta = new UniVariableDec(Lists.newArrayList(), "Type", "かめた", new UniMethodCall(null, "createTurtle", Lists.newArrayList()));
+					dec.block.body.add(0,kameta);
+				}
+			}
+		}
 		g.traverseClassDec(classDec);
 	}
 
@@ -128,6 +138,9 @@ public class DolittleGenerator extends CodeGenerator {
 	@Override
 	public void dontCallTraverseMethodCall(UniMethodCall node) {
 		String name = turtleMethodNameMap.get(node.methodName);
+		if(!node.methodName.equals("createTurtle")){
+			node.receiver=new UniIdent("かめた");
+		}
 		if (node.receiver != null) {
 			traverseExpr(node.receiver);
 			print("！ ");
@@ -284,10 +297,12 @@ public class DolittleGenerator extends CodeGenerator {
 
 	@Override
 	public void dontCallTraverseMethodDec(UniMethodDec node) {
-		for (UniExpr expr : node.block.body) {
-			traverseExpr(expr);
-			print("。");
-			newLine();
+		if(!node.methodName.equals("main")){
+			for (UniExpr expr : node.block.body) {
+				traverseExpr(expr);
+				print("。");
+				newLine();
+			}			
 		}
 	}
 
