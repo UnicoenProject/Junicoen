@@ -1157,6 +1157,4 @@ public class BlockGenerator extends CodeGenerator {
 		idStack.push(parentId);
 		traverseExpr(expr);
 	}
-
-
 }
