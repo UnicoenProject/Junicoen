@@ -13,7 +13,6 @@ import org.antlr.v4.runtime.CharStream
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.RuleContext
-import org.antlr.v4.runtime.Token
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.RuleNode
 import org.antlr.v4.runtime.tree.TerminalNode
@@ -2811,6 +2810,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		}
 		map
 	}
+	
 	override public visitClassInstanceCreationExpression_lfno_primary(Java8Parser.ClassInstanceCreationExpression_lfno_primaryContext ctx) {
 		val map = newHashMap
 		val none = newArrayList

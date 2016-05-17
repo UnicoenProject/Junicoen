@@ -21,6 +21,7 @@ import net.unicoen.node.UniBreak
 import net.unicoen.node.UniWhile
 import net.unicoen.node.UniReturn
 import net.unicoen.node.UniDoWhile
+import net.unicoen.node.UniFieldAccess
 
 class Java8MapperClassFieldMethodTest extends MapperTest {
 	val mapper = new Java8Mapper(true)
@@ -51,7 +52,7 @@ class Java8MapperClassFieldMethodTest extends MapperTest {
 	@Test
 	def void parseEmptyConstructor() {
 		val actual = mapper.parse("public class Main{ private Main(){} }")
-
+		
 		val constructor = new UniMethodDec
 		constructor.methodName = "Main"
 		constructor.block = new UniBlock
