@@ -31,6 +31,12 @@ public interface CPP14Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitIdexpression(CPP14Parser.IdexpressionContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#identexpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIdentexpression(CPP14Parser.IdentexpressionContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link CPP14Parser#unqualifiedid}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

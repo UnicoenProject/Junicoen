@@ -12,11 +12,16 @@ primaryexpression
 	:	literal 
 	|	This 
 	|	'(' expression ')' 
-	|	idexpression 
+	|	identexpression 
 	|	lambdaexpression 
 	;
 
 idexpression
+	:	unqualifiedid 
+	|	qualifiedid 
+	;
+
+identexpression
 	:	unqualifiedid 
 	|	qualifiedid 
 	;
@@ -403,7 +408,7 @@ variabledeclarationstatement
 	;
 
 variabledeclaration
-	:	attributespecifierseq? declspecifierseqwithouttype? typespecifier variableDeclaratorList? 
+	:	attributespecifierseq? declspecifierseqwithouttype? typespecifier ptroperator* variableDeclaratorList? 
 	;
 
 variableDeclaratorList
