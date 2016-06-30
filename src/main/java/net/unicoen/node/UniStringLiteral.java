@@ -1,4 +1,5 @@
 package net.unicoen.node;
+import net.unicoen.node_helper.*;
 
 public class UniStringLiteral extends UniExpr {
 	public String value;
@@ -20,6 +21,7 @@ public class UniStringLiteral extends UniExpr {
 		int result = 17;
 		result = result * 31 + (value == null ? 0 : value.hashCode());
 		result = result * 31 + (comments == null ? 0 : comments.hashCode());
+		result = result * 31 + (codeRange == null ? 0 : codeRange.hashCode());
 		return result;
 	}
 
@@ -28,7 +30,8 @@ public class UniStringLiteral extends UniExpr {
 		if (obj == null || !(obj instanceof UniStringLiteral)) return false;
 		UniStringLiteral that = (UniStringLiteral)obj;
 		return (this.value == null ? that.value == null : this.value.equals(that.value))
-			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments));
+			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments))
+			&& (this.codeRange == null ? that.codeRange == null : this.codeRange.equals(that.codeRange));
 	}
 
 	@Override
@@ -46,6 +49,9 @@ public class UniStringLiteral extends UniExpr {
 			} else {
 				this.comments.addAll(that.comments);
 			}
+		}
+		if (that.codeRange != null) {
+			this.codeRange = that.codeRange;
 		}
 	}
 }

@@ -1,4 +1,5 @@
 package net.unicoen.node;
+import net.unicoen.node_helper.*;
 
 /** 単項式 */
 public class UniUnaryOp extends UniExpr {
@@ -24,6 +25,7 @@ public class UniUnaryOp extends UniExpr {
 		result = result * 31 + (operator == null ? 0 : operator.hashCode());
 		result = result * 31 + (expr == null ? 0 : expr.hashCode());
 		result = result * 31 + (comments == null ? 0 : comments.hashCode());
+		result = result * 31 + (codeRange == null ? 0 : codeRange.hashCode());
 		return result;
 	}
 
@@ -33,7 +35,8 @@ public class UniUnaryOp extends UniExpr {
 		UniUnaryOp that = (UniUnaryOp)obj;
 		return (this.operator == null ? that.operator == null : this.operator.equals(that.operator))
 			&& (this.expr == null ? that.expr == null : this.expr.equals(that.expr))
-			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments));
+			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments))
+			&& (this.codeRange == null ? that.codeRange == null : this.codeRange.equals(that.codeRange));
 	}
 
 	@Override
@@ -54,6 +57,9 @@ public class UniUnaryOp extends UniExpr {
 			} else {
 				this.comments.addAll(that.comments);
 			}
+		}
+		if (that.codeRange != null) {
+			this.codeRange = that.codeRange;
 		}
 	}
 }

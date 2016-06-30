@@ -11,15 +11,18 @@ class CppMapperTest  extends MapperTest {
 	val mapper = new CPP14Mapper(true)
 
 	@Test
-	def CTest() {
+	def CppTest() {
 		val node = mapper.parse("
+		#include <iostream>
 		int main()
 		{
-			int a = 0;
-			int b = 1+1;
-			
+			int b = 3;
+			int c = b;
+			b = 5;
+			int* p = &a;
 		}
 		")
+		val dd = node;
 		//assertThat(node, instanceOf(typeof(UniMethodDec)))
 /*		
 		public class UniMethodDec extends UniMemberDec {

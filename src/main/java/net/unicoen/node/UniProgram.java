@@ -1,6 +1,7 @@
 package net.unicoen.node;
 
 import java.util.List;
+import net.unicoen.node_helper.*;
 
 public class UniProgram extends UniNode {
 	public List<UniClassDec> classes;
@@ -28,6 +29,7 @@ public class UniProgram extends UniNode {
 		result = result * 31 + (imports == null ? 0 : imports.hashCode());
 		result = result * 31 + (namespace == null ? 0 : namespace.hashCode());
 		result = result * 31 + (comments == null ? 0 : comments.hashCode());
+		result = result * 31 + (codeRange == null ? 0 : codeRange.hashCode());
 		return result;
 	}
 
@@ -38,7 +40,8 @@ public class UniProgram extends UniNode {
 		return (this.classes == null ? that.classes == null : this.classes.equals(that.classes))
 			&& (this.imports == null ? that.imports == null : this.imports.equals(that.imports))
 			&& (this.namespace == null ? that.namespace == null : this.namespace.equals(that.namespace))
-			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments));
+			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments))
+			&& (this.codeRange == null ? that.codeRange == null : this.codeRange.equals(that.codeRange));
 	}
 
 	public void merge(UniProgram that) {
@@ -65,6 +68,9 @@ public class UniProgram extends UniNode {
 			} else {
 				this.comments.addAll(that.comments);
 			}
+		}
+		if (that.codeRange != null) {
+			this.codeRange = that.codeRange;
 		}
 	}
 }
