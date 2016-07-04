@@ -26,6 +26,7 @@ import net.unicoen.node.UniIdent;
 import net.unicoen.node.UniIf;
 import net.unicoen.node.UniImport;
 import net.unicoen.node.UniIntLiteral;
+import net.unicoen.node.UniInterfaceDec;
 import net.unicoen.node.UniLongLiteral;
 import net.unicoen.node.UniMemberDec;
 import net.unicoen.node.UniMethodCall;
@@ -130,8 +131,23 @@ public class JavaToSwiftTreeConverter extends Traverser {
 	public static Object convert(Object node) {
 		
 		JavaToSwiftTreeConverter g = new JavaToSwiftTreeConverter();
-		className = ((UniClassDec) node).className;
-		g.traverseClassDec((UniClassDec) node);
+		UniProgram program = ((UniProgram) node);
+		if(program.imports!= null){
+			for (UniImport importStatement : program.imports) {
+				g.traverseImport(importStatement);
+			}			
+		}
+		if(program.classes!=null){
+			for (UniClassDec classDec : program.classes) {
+				className = classDec.className;
+				g.traverseClassDec(classDec);
+			}
+		}
+		if(program.interfaces!=null){
+			for(UniInterfaceDec interfaceDec : program.interfaces){
+				g.traverseInterfaceDec(interfaceDec);
+			}
+		}
 		return node;
 	}
 	public static int search(Object node, UniNode toSearch) {
@@ -360,6 +376,21 @@ public class JavaToSwiftTreeConverter extends Traverser {
 	@Override
 	public void traverseVariableDec(UniVariableDec node) {
 		// TODO Auto-generated method stub
+		String keyword = "var";
+		List<String> modifiers = new ArrayList<String>();
+		for (String modifier : iter(node.modifiers)){
+			if(modifier.equals("final")){
+				if(node.value!=null){
+					//value is instance of UniNewArray and without value -> var
+					keyword = "let";
+				}
+			}
+			else{
+				modifiers.add(modifier);
+			}
+		}
+		modifiers.add(keyword);
+		node.modifiers = modifiers;
 		if (node.value != null) {
 			parseExpr(node.value);
 		}
@@ -372,11 +403,30 @@ public class JavaToSwiftTreeConverter extends Traverser {
 	public void traverseFieldDec(UniFieldDec node) {
 		// TODO Auto-generated method stub
 		//Java- Change modifiers
-		
-		
+		String keyword = "var";
+		List<String> modifiers = new ArrayList<String>();
+		for (String modifier : iter(node.modifiers)){
+			if(modifier.equals("final")){
+				if(node.value!=null){
+					//value is instance of UniNewArray and without value -> var
+					keyword = "let";
+				}
+			}
+			else{
+				modifiers.add(modifier);
+			}
+		}
+		modifiers.add(keyword);
+		node.modifiers = modifiers;
 		if (node.value != null) {
 			parseExpr(node.value);
 		}
+	}
+	private boolean isEmptyArray(UniNewArray node) {
+		// TODO Auto-generated method stub
+		if(node.value.items!=null)
+			return false;
+		return true;
 	}
 	@Override
 	public void traverseMethodDec(UniMethodDec node) {
@@ -434,5 +484,12 @@ public class JavaToSwiftTreeConverter extends Traverser {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void traverseInterfaceDec(UniInterfaceDec node) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }

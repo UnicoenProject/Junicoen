@@ -44,6 +44,7 @@ import net.unicoen.node.UniProgram
 import net.unicoen.node.UniImport
 import net.unicoen.node.UniNamespace
 import net.unicoen.node.UniFieldDec
+import net.unicoen.node.UniInterfaceDec
 
 class JavaMapper extends JavaBaseVisitor<UniNode> {
 	def parse(String code) {
@@ -89,7 +90,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		//compilationUnit
 		//	:	packageDeclaration? importDeclaration* typeDeclaration* EOF
 		//	;
-		var model = new UniProgram(new ArrayList<UniClassDec>(), new ArrayList<UniImport>(), new UniNamespace(""))
+		var model = new UniProgram(new ArrayList<UniClassDec>(), new ArrayList<UniImport>(), new UniNamespace(""), new ArrayList<UniInterfaceDec>())
 		val nodes = createNodeMap(ctx)
 
 		model.classes.add(nodes.getOneNode(JavaParser.RULE_typeDeclaration))

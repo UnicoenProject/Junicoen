@@ -151,10 +151,18 @@ Dsl.define_node do |x|
       d.mem "interfaces", String, list: true
       d.mem "innerClasses", "ClassDec", list: true
     end
+    x.node "InterfaceDec" do |d|
+        d.mem "interfaceName", String
+        d.mem "modifiers", String, list: true
+        d.mem "members", "MemberDec", list: true
+        d.mem "superInterface", String, list: true
+    end
+   
     x.node "Program" do |d|
       d.mem "classes", "ClassDec", list: true
       d.mem "imports", "Import", list: true
       d.mem "namespace", "Namespace"
+      d.mem "interfaces", "InterfaceDec", list: true
     end
     x.node "Import" do |d|
       d.mem "targetName", String

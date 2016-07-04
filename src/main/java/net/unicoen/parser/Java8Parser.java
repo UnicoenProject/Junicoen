@@ -12254,6 +12254,7 @@ public class Java8Parser extends Parser {
 		public UnannPrimitiveTypeContext unannPrimitiveType() {
 			return getRuleContext(UnannPrimitiveTypeContext.class,0);
 		}
+		public TerminalNode THIS() { return getToken(Java8Parser.THIS, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}

@@ -29,6 +29,7 @@ import net.unicoen.node.UniIdent;
 import net.unicoen.node.UniIf;
 import net.unicoen.node.UniImport;
 import net.unicoen.node.UniIntLiteral;
+import net.unicoen.node.UniInterfaceDec;
 import net.unicoen.node.UniLongLiteral;
 import net.unicoen.node.UniMemberDec;
 import net.unicoen.node.UniMethodCall;
@@ -368,4 +369,11 @@ public class DolittleGenerator extends CodeGenerator {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void traverseInterfaceDec(UniInterfaceDec node) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

@@ -21,7 +21,7 @@ public class CommentTest {
 
 	@Test
 	public void test() throws IOException, ParserConfigurationException, TransformerException, SAXException {
-		UniProgram programModel = new UniProgram(Lists.newArrayList(), Lists.newArrayList(), null);
+		UniProgram programModel = new UniProgram(Lists.newArrayList(), Lists.newArrayList(), null, Lists.newArrayList());
 		UniClassDec classDec = new UniClassDec("CommentTest", Lists.newArrayList(), Lists.newArrayList(), Lists.newArrayList("Turtle"), Lists.newArrayList(), null);
 		UniMethodDec start = UniModelMaker.createEmptyMethodDec("start");
 		UniMethodCall fdCall  =new UniMethodCall(null, "fd", Lists.newArrayList(new UniIntLiteral(50)));

@@ -29,6 +29,7 @@ import net.unicoen.node.UniIdent;
 import net.unicoen.node.UniIf;
 import net.unicoen.node.UniImport;
 import net.unicoen.node.UniIntLiteral;
+import net.unicoen.node.UniInterfaceDec;
 import net.unicoen.node.UniLongLiteral;
 import net.unicoen.node.UniMemberDec;
 import net.unicoen.node.UniMethodCall;
@@ -44,7 +45,7 @@ import net.unicoen.node.UniUnaryOp;
 import net.unicoen.node.UniVariableDec;
 import net.unicoen.node.UniWhile;
 
-public class SwiftGenerator extends Traverser {
+public class SwiftCodeGenerator extends Traverser {
 	private final String NEW_LINE = System.getProperty("line.separator");
 
 	//variable declaration
@@ -61,7 +62,7 @@ public class SwiftGenerator extends Traverser {
 
 	private final IntStack exprPriority = new IntStack();
 
-	protected SwiftGenerator(PrintStream printOut) {
+	protected SwiftCodeGenerator(PrintStream printOut) {
 		this.printOut = printOut;
 		exprPriority.push(0);
 	}
@@ -186,9 +187,6 @@ public class SwiftGenerator extends Traverser {
 		parseExpr(node, 0);
 	}
 
-	/**
-	 * ステートメントを出力し、改行します。 関数呼び出し等の場合は、セミコロンも出力します。
-	 */
 	private void parseStatement(UniExpr expr) {
 		parseExpr(expr);
 //		if (expr.isStatement() == false) {
@@ -197,7 +195,6 @@ public class SwiftGenerator extends Traverser {
 		printNewLine();
 	}
 
-	/** インデントし、複数のステートメントを出力します */
 	private void parseBlockInner(UniBlock block) {
 		if(block.body!=null){
 //			withIndent(() -> {
@@ -211,16 +208,30 @@ public class SwiftGenerator extends Traverser {
 	public static String generate(Object dec) {
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream();
 				PrintStream printer = new PrintStream(out)) {
-			generate((UniClassDec) dec, printer);
+			generate((UniProgram) dec, printer);
 			return out.toString();
 		} catch (IOException e) {
 			return null;
 		}
 	}
 
-	public static void generate(UniClassDec classDec, PrintStream out) {
-		SwiftGenerator g = new SwiftGenerator(out);
-		g.traverseClassDec(classDec);
+	public static void generate(UniProgram program, PrintStream out) {
+		SwiftCodeGenerator g = new SwiftCodeGenerator(out);
+		if(program.imports!= null){
+			for (UniImport importStatement : program.imports) {
+				g.traverseImport(importStatement);
+			}			
+		}
+		if(program.classes!=null){
+			for (UniClassDec classDec : program.classes) {
+				g.traverseClassDec(classDec);
+			}
+		}
+		if(program.interfaces!=null){
+			for(UniInterfaceDec interfaceDec : program.interfaces){
+				g.traverseInterfaceDec(interfaceDec);
+			}
+		}
 	}
 
 	// ----- ----- ----- ----- HELPER ----- ----- ----- -----
@@ -395,27 +406,28 @@ public class SwiftGenerator extends Traverser {
 
 	@Override
 	public void traverseIf(UniIf node) {
+		printNewLine();
 		print("if");
 		print(" ");
 		parseExpr(node.cond);
 
 		if(node.trueStatement!=null){
 			print(" ");
+			print("{");
+			printNewLine();
 			if (node.trueStatement instanceof UniBlock) {
-				print("{");
+				
 				withIndent(()-> {
 					traverseBlock((UniBlock) node.trueStatement);
 				});
-				print("}");
+				
 			} else {
-				print("{");
-				printNewLine();
 				withIndent(() -> {
 					parseStatement(node.trueStatement);
 				});
-				print("}");
-				printNewLine();
 			}
+			print("}");
+			printNewLine();
 			
 		}
 		
@@ -514,39 +526,28 @@ public class SwiftGenerator extends Traverser {
 	@Override
 	//variale with value-----need to edit
 	public void traverseVariableDec(UniVariableDec node) {
-		boolean flag = true;
-		for (String modifier : iter(node.modifiers)){
-			if(modifier.equals("final")){
-				if(node.value!=null){
-					//value is instance of UniNewArray and without value -> var
-					if(node.value instanceof UniNewArray){
-						if(!isEmptyArray((UniNewArray)node.value)){
-							traverseLet(node);
-							flag = false;
-						}
-					}else{
-						traverseLet(node);
-						flag = false;
-					}
-					
-				}
+		if (node.modifiers != null) {
+			for (String modifier : node.modifiers) {
+				print(modifier);
+				print(" ");
 			}
 		}
-		if(flag){
-			traverseVar(node);
+		print(node.name);
+		print(" : ");
+		print(toSwiftDataType(node.type));
+		if((node.value!=null)&&(!(node.value instanceof UniNewArray))){
+			print(" = ");
+			parseExpr(node.value);
 		}
-//		if (node.modifiers != null) {
-//			for (String modifiers : node.modifiers) {
-//				print(modifiers);
-//				print(" ");
-//			}
+		
+//		declaration = String.join(" ", , node2.name, ":", toSwiftDataType(node2.type));
+//		if((node2.value!=null)&&(!(node2.value instanceof UniNewArray))){
+//			declaration = declaration + "=";
 //		}
-//		
-//		String type = toSwiftDataType(node.type);
-//		print("var "+node.name+" : "+type);
-//		if (node.value != null) {
-//			print(" = ");
-//			parseExpr(node.value);
+//		print(declaration);
+//		if((node2.value!=null)&&(!(node2.value instanceof UniNewArray))){
+//			varType = toSwiftDataType(node2.type);//for Cast
+//			parseExpr(node2.value);
 //		}
 	}
 
@@ -632,27 +633,38 @@ public class SwiftGenerator extends Traverser {
 
 	@Override
 	public void traverseFieldDec(UniFieldDec node) {
-		boolean flag = true;
-		for (String modifier : iter(node.modifiers)){
-			if(modifier.equals("final")){
-				if(node.value!=null){
-					//value is instance of UniNewArray and without value -> var
-					if(node.value instanceof UniNewArray){
-						if(!isEmptyArray((UniNewArray)node.value)){
-							traverseLet(node);
-							flag = false;
-						}
-					}else{
-						traverseLet(node);
-						flag = false;
-					}
-					
-				}
+		if (node.modifiers != null) {
+			for (String modifier : node.modifiers) {
+				print(modifier);
+				print(" ");
 			}
 		}
-		if(flag){
-			traverseVar(node);
+		print(node.name);
+		print(" : ");
+		print(toSwiftDataType(node.type));
+		if((node.value!=null)&&(!(node.value instanceof UniNewArray))){
+			print(" = ");
+			parseExpr(node.value);
 		}
+//		boolean flag = true;
+//		UniFieldDec node2 = (UniFieldDec) node;
+//		String modifier = "";
+//		for (String temp : iter(node2.modifiers)){
+//			if(temp.equals("public")){
+//				modifier = "public";
+//			}
+//		}
+//		String declaration = "";
+//		declaration = String.join(" ", modifier, "var", node2.name, ":", toSwiftDataType(node2.type));
+//		if((node2.value!=null)&&(!(node2.value instanceof UniNewArray))){
+//			declaration = declaration + "=";
+//		}
+//		print(declaration);
+//		if((node2.value!=null)&&(!(node2.value instanceof UniNewArray))){
+//			varType = toSwiftDataType(node2.type);//for Cast
+//			parseExpr(node2.value);
+//		}
+			
 	}
 
 	private boolean isEmptyArray(UniNewArray node) {
@@ -660,70 +672,6 @@ public class SwiftGenerator extends Traverser {
 		if(node.value.items!=null)
 			return false;
 		return true;
-	}
-
-	private void traverseVar(Object node) {
-		// TODO Auto-generated method stub
-		
-		if(node instanceof UniFieldDec){
-			UniFieldDec node2 = (UniFieldDec) node;
-			String modifier = "";
-			for (String temp : iter(node2.modifiers)){
-				if(temp.equals("public")){
-					modifier = "public";
-				}
-			}
-			String declaration = "";
-			declaration = String.join(" ", modifier, "var", node2.name, ":", toSwiftDataType(node2.type));
-			if((node2.value!=null)&&(!(node2.value instanceof UniNewArray))){
-				declaration = declaration + "=";
-			}
-			print(declaration);
-			if((node2.value!=null)&&(!(node2.value instanceof UniNewArray))){
-				varType = toSwiftDataType(node2.type);//for Cast
-				parseExpr(node2.value);
-			}
-			
-		}else if(node instanceof UniVariableDec){
-			UniVariableDec node2 = (UniVariableDec) node;
-			String declaration = "";
-			declaration = String.join(" ", "var", node2.name, ":", toSwiftDataType(node2.type));
-			if((node2.value!=null)&&(!(node2.value instanceof UniNewArray))){
-				declaration = declaration + "=";
-			}
-			print(declaration);
-			if((node2.value!=null)&&(!(node2.value instanceof UniNewArray))){
-				varType = toSwiftDataType(node2.type);//for Cast
-				parseExpr(node2.value);
-			}
-		}
-			
-		
-	}
-
-	private void traverseLet(Object node) {
-		// TODO Auto-generated method stub
-		if(node instanceof UniFieldDec){
-			UniFieldDec node2 = (UniFieldDec) node;
-			String modifier = "";
-			for(String temp : iter(node2.modifiers)){
-				if(temp.equals("public")){
-					modifier = "public";
-				}
-			}
-			String declaration = "";
-			declaration = String.join(" ", modifier, "let", node2.name, ":", toSwiftDataType(node2.type), "=");
-			print(declaration);
-			parseExpr(node2.value);
-		}
-		else if(node instanceof UniVariableDec){
-			UniVariableDec node2 = (UniVariableDec) node;
-			String declaration = "";
-			declaration = String.join(" ", "let", node2.name, ":", toSwiftDataType(node2.type), "=");
-			print(declaration);
-			parseExpr(node2.value);
-		}
-		
 	}
 
 	@Override
@@ -780,7 +728,7 @@ public class SwiftGenerator extends Traverser {
 
 	@Override
 	public void traverseCast(UniCast node) {
-		// TODO Auto-generated method stub
+		// 
 		
 	}
 
@@ -813,4 +761,40 @@ public class SwiftGenerator extends Traverser {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void traverseInterfaceDec(UniInterfaceDec node) {
+		// TODO Auto-generated method stub
+		String modifiers = "";
+		String declaration = "ssss"+node.interfaceName;
+		if(node.modifiers!=null){
+			modifiers = safeJoin(node.modifiers, " ");
+			declaration = String.join(" ", modifiers, "interface", node.interfaceName);
+		}else{
+			declaration = String.join(" ", "interface", node.interfaceName);
+		}
+		
+		print(declaration);
+		if(node.superInterface!=null&&node.superInterface.size()!=0){
+			String superclass = " : "+node.superInterface.get(0);
+			print(superclass);
+		}
+		print("{");
+		printNewLine();
+
+		withIndent(() -> {
+			for (UniMemberDec dec : iter(node.members)) {
+				traverseMemberDec(dec);
+				printNewLine();
+			}
+		});
+		printNewLine();
+		print("}");
+		if(this.mainDec!=null){
+			//get the inside of main method and append after class declaration
+			traverseBlock(this.mainDec.block);
+		}
+		printNewLine();
+	}
+
 }

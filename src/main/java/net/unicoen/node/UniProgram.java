@@ -6,14 +6,16 @@ public class UniProgram extends UniNode {
 	public List<UniClassDec> classes;
 	public List<UniImport> imports;
 	public UniNamespace namespace;
+	public List<UniInterfaceDec> interfaces;
 
 	public UniProgram() {
 	}
 
-	public UniProgram(List<UniClassDec> classes, List<UniImport> imports, UniNamespace namespace) {
+	public UniProgram(List<UniClassDec> classes, List<UniImport> imports, UniNamespace namespace, List<UniInterfaceDec> interfaces) {
 		this.classes = classes;
 		this.imports = imports;
 		this.namespace = namespace;
+		this.interfaces = interfaces;
 	}
 
 	@Override
@@ -27,6 +29,7 @@ public class UniProgram extends UniNode {
 		result = result * 31 + (classes == null ? 0 : classes.hashCode());
 		result = result * 31 + (imports == null ? 0 : imports.hashCode());
 		result = result * 31 + (namespace == null ? 0 : namespace.hashCode());
+		result = result * 31 + (interfaces == null ? 0 : interfaces.hashCode());
 		result = result * 31 + (comments == null ? 0 : comments.hashCode());
 		return result;
 	}
@@ -38,6 +41,7 @@ public class UniProgram extends UniNode {
 		return (this.classes == null ? that.classes == null : this.classes.equals(that.classes))
 			&& (this.imports == null ? that.imports == null : this.imports.equals(that.imports))
 			&& (this.namespace == null ? that.namespace == null : this.namespace.equals(that.namespace))
+			&& (this.interfaces == null ? that.interfaces == null : this.interfaces.equals(that.interfaces))
 			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments));
 	}
 
@@ -58,6 +62,13 @@ public class UniProgram extends UniNode {
 		}
 		if (that.namespace != null) {
 			this.namespace = that.namespace;
+		}
+		if (that.interfaces != null) {
+			if (this.interfaces == null) {
+				this.interfaces = that.interfaces;
+			} else {
+				this.interfaces.addAll(that.interfaces);
+			}
 		}
 		if (that.comments != null) {
 			if (this.comments == null) {

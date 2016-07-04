@@ -201,7 +201,7 @@ class Java8MapperProgramTest extends MapperTest {
 		evaluate(node61, mapper.parse(JavaGenerator.generate(actual as UniClassDec)))
 	}
 
-	@Test
+	@Test @Ignore
 	def void parseCPProgram() {
 		val actual = mapper.parse(
 			"

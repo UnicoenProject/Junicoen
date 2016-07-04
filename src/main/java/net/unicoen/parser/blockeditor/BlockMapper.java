@@ -129,7 +129,7 @@ public class BlockMapper {
 
 	private UniProgram parsePagesNode(Node pagesNode) {
 		List<Node> pagesChildNodes = MyDOMUtil.getChildNodes(pagesNode);
-		UniProgram fileModel = new UniProgram(new ArrayList<>(), new ArrayList<>(), new UniNamespace(""));
+		UniProgram fileModel = new UniProgram(new ArrayList<>(), new ArrayList<>(), new UniNamespace(""), new ArrayList<>());
 		for (Node node : pagesChildNodes) {
 			if (node.getNodeName().equals(PagesModel.IMPORT_STATEMENTS_NODE)) {
 				// import statements の追加

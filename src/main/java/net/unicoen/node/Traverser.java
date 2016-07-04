@@ -32,6 +32,7 @@ public abstract class Traverser {
 	public abstract void traverseMethodDec(UniMethodDec node);
 	public abstract void traverseArg(UniArg node);
 	public abstract void traverseClassDec(UniClassDec node);
+	public abstract void traverseInterfaceDec(UniInterfaceDec node);
 	public abstract void traverseProgram(UniProgram node);
 	public abstract void traverseImport(UniImport node);
 	public abstract void traverseNamespace(UniNamespace node);
@@ -171,6 +172,10 @@ public abstract class Traverser {
 		}
 		if (node instanceof UniClassDec) {
 			traverseClassDec((UniClassDec)node);
+			return;
+		}
+		if (node instanceof UniInterfaceDec) {
+			traverseInterfaceDec((UniInterfaceDec)node);
 			return;
 		}
 		if (node instanceof UniProgram) {

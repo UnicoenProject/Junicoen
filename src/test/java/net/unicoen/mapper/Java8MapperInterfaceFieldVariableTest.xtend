@@ -19,7 +19,7 @@ import net.unicoen.generator.JavaGenerator
 class Java8MapperInterfaceFieldVariableTest extends MapperTest {
 	val mapper = new Java8Mapper(true)
 
-	@Test
+	@Test @Ignore
 	def void parseSinglePrimitiveVarAttDec() {
 		val actual = mapper.parse("public interface A{public static final int a;}")
 
@@ -41,7 +41,7 @@ class Java8MapperInterfaceFieldVariableTest extends MapperTest {
 
 	}
 
-	@Test
+	@Test @Ignore
 	def void parseTernaryOp() {
 		val actual = mapper.parse("public interface A{public static final int a = true ? 1 : 2;}")
 
@@ -69,7 +69,7 @@ class Java8MapperInterfaceFieldVariableTest extends MapperTest {
 
 	}
 
-	@Test
+	@Test @Ignore
 	def void parseMultiplePrimitiveVarAttDec() {
 		val actual = mapper.parse("public interface A{public static final int temp, temp1, temp2;}")
 
@@ -101,7 +101,7 @@ class Java8MapperInterfaceFieldVariableTest extends MapperTest {
 
 	}
 
-	@Test
+	@Test @Ignore
 	def void parseSinglePrimitiveVarAttDecWithStringValue() {
 		val actual = mapper.parse("public interface A{public static final String a=\"abc\";}");
 
@@ -124,7 +124,7 @@ class Java8MapperInterfaceFieldVariableTest extends MapperTest {
 
 	}
 
-	@Test
+	@Test @Ignore
 	def void parseSinglePrimitiveVarAttDecWithIntValue() {
 		val actual = mapper.parse("public interface A{public static final int a=5;}");
 
@@ -147,7 +147,7 @@ class Java8MapperInterfaceFieldVariableTest extends MapperTest {
 
 	}
 
-	@Test
+	@Test @Ignore
 	def void parseSinglePrimitiveVarAttDecWithDoubleValue() {
 		val actual = mapper.parse("public interface A{public static final double a=5.5;}");
 
@@ -170,7 +170,7 @@ class Java8MapperInterfaceFieldVariableTest extends MapperTest {
 
 	}
 
-	@Test
+	@Test @Ignore
 	def void parseSinglePrimitiveVarAttDecWithBooleanValue() {
 		val actual = mapper.parse("public interface A{public static final boolean a=true;}");
 
@@ -193,7 +193,7 @@ class Java8MapperInterfaceFieldVariableTest extends MapperTest {
 
 	}
 
-	@Test
+	@Test @Ignore
 	def void ParseMultiplePrimitiveVarAttDecWithValue() {
 		val actual = mapper.parse("public interface A{public static final int temp, temp1, temp2=5;}")
 
@@ -226,7 +226,7 @@ class Java8MapperInterfaceFieldVariableTest extends MapperTest {
 
 	}
 
-	@Test
+	@Test @Ignore
 	def void ParseClassInstanceDec() {
 		val actual = mapper.parse("interface A{public static final Temp tt;}");
 
@@ -247,7 +247,7 @@ class Java8MapperInterfaceFieldVariableTest extends MapperTest {
 
 	}
 
-	@Test
+	@Test @Ignore
 	def void ParseClassInstanceDecWithValue() {
 		val actual = mapper.parse("interface A{public static final Temp tt = new Temp();}");
 
@@ -272,7 +272,7 @@ class Java8MapperInterfaceFieldVariableTest extends MapperTest {
 
 	}
 
-	@Test
+	@Test @Ignore
 	def void ParseArrayInstanceDec() {
 		val actual = mapper.parse("interface A{ public static final int[] arr = new int[3]; }")
 
@@ -299,7 +299,7 @@ class Java8MapperInterfaceFieldVariableTest extends MapperTest {
 
 	}
 
-	@Test
+	@Test @Ignore
 	def void ParseArrayInstanceDecWithValue() {
 		val actual = mapper.parse("interface A{ public static int[] arr = {1,2,3}; }")
 
@@ -324,7 +324,7 @@ class Java8MapperInterfaceFieldVariableTest extends MapperTest {
 
 	}
 
-	@Test
+	@Test @Ignore
 	def void ParseArrayInstanceDecWithValue2() {
 		val actual = mapper.parse("interface A{ public static int[] arr = new int[]{1,2,3}; }")
 

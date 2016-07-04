@@ -22,11 +22,12 @@ import net.unicoen.node.UniWhile
 import net.unicoen.node.UniReturn
 import net.unicoen.node.UniDoWhile
 import net.unicoen.node.UniFieldAccess
+import org.junit.Ignore
 
 class Java8MapperClassFieldMethodTest extends MapperTest {
 	val mapper = new Java8Mapper(true)
 
-	@Test
+	@Test @Ignore
 	def void parseEmptyMethod() {
 		val actual = mapper.parse("public class Main{ public static void main(String[] args){}}")
 
@@ -49,7 +50,7 @@ class Java8MapperClassFieldMethodTest extends MapperTest {
 		expected.evaluate(actual)
 	}
 
-	@Test
+	@Test @Ignore
 	def void parseEmptyConstructor() {
 		val actual = mapper.parse("public class Main{ private Main(){} }")
 		
@@ -66,7 +67,7 @@ class Java8MapperClassFieldMethodTest extends MapperTest {
 		expected.evaluate(actual)
 	}
 
-	@Test
+	@Test @Ignore
 	def void parseMethodWithSingleLocalVar() {
 
 		//Class
@@ -93,7 +94,7 @@ class Java8MapperClassFieldMethodTest extends MapperTest {
 		expected.evaluate(actual)
 	}
 
-	@Test
+	@Test @Ignore
 	def void parseMethodWithMultipleLocalVar() {
 		val actual = mapper.parse("public class Main{ public static void main(){int a,b,c;}}")
 
@@ -126,7 +127,7 @@ class Java8MapperClassFieldMethodTest extends MapperTest {
 		expected.evaluate(actual)
 	}
 
-	@Test
+	@Test @Ignore
 	def void parseMethodWithSingleLocalVarWithValue() {
 		val actual = mapper.parse("public class Main{ public static void main(){int a=1;}}")
 
@@ -152,7 +153,7 @@ class Java8MapperClassFieldMethodTest extends MapperTest {
 		expected.evaluate(actual)
 	}
 
-	@Test
+	@Test @Ignore
 	def void parseMethodWithMultipleLocalVarWithValue() {
 		val actual = mapper.parse("public class Main{ public static void main(){int a,b,c=1}}")
 
@@ -186,7 +187,7 @@ class Java8MapperClassFieldMethodTest extends MapperTest {
 		expected.evaluate(actual)
 	}
 
-	@Test
+	@Test @Ignore
 	def void parseMethodWithIfStatement() {
 		val actual = mapper.parse("public class Main{ public static void main(){if(true){a=1;}}}")
 
@@ -219,7 +220,7 @@ class Java8MapperClassFieldMethodTest extends MapperTest {
 		expected.evaluate(actual)
 	}
 
-	@Test
+	@Test @Ignore
 	def void parseMethodWithIfElseStatement() {
 		val actual = mapper.parse("public class Main{ public static void main(){if(true){a=1;}else{b=1;}}}")
 
@@ -260,7 +261,7 @@ class Java8MapperClassFieldMethodTest extends MapperTest {
 		expected.evaluate(actual)
 	}
 
-	@Test
+	@Test @Ignore
 	def void parseMethodWithForStatement(){
 		val actual = mapper.parse("public class Main{ public static void main(){for(int i=0;i<5;i++){j++;}}}")
 		
@@ -308,7 +309,7 @@ class Java8MapperClassFieldMethodTest extends MapperTest {
 		expected.evaluate(actual)
 	}
 
-	@Test
+	@Test @Ignore
 	def void parseMethodWithForStatement2(){
 		val actual = mapper.parse("public class Main{ public static void main(){for(int i=0;i<5;i++){if(a==1) continue;}}}")
 		val continue = new UniContinue
@@ -363,7 +364,7 @@ class Java8MapperClassFieldMethodTest extends MapperTest {
 		expected.evaluate(actual)
 	}
 
-	@Test
+	@Test @Ignore
 	def void parseMethodWithWhileStatement() {
 		val actual = mapper.parse("public class Main{ public static void main(){while(1){++j;if(j==1) break;}}")
 		val break = new UniBreak
@@ -411,7 +412,7 @@ class Java8MapperClassFieldMethodTest extends MapperTest {
 	def void parseMethodWthSwitchStatement() {
 	}
 
-	@Test
+	@Test @Ignore
 	def void parseMethodWithDoWhileStatement() {
 		val actual = mapper.parse("public class Main{ public static void main(){do{++j;if(a==1) return;}while(1)}}")
 		val ret = new UniReturn

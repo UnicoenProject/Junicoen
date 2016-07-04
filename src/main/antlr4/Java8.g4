@@ -980,7 +980,7 @@ primaryNoNewArray_lfno_primary
 	|	typeName ('[' ']' )* '.' 'class' 
 	|	unannPrimitiveType ('[' ']' )* '.' 'class' 
 	|	'void' '.' 'class' 
-	|	'this' 
+	|	THIS 
 	|	typeName '.' 'this' 
 	|	'(' expression ')' 
 	|	classInstanceCreationExpression_lfno_primary 
