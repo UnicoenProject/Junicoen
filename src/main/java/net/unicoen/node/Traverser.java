@@ -26,6 +26,8 @@ public abstract class Traverser {
 	public abstract void traverseEnhancedFor(UniEnhancedFor node);
 	public abstract void traverseWhile(UniWhile node);
 	public abstract void traverseDoWhile(UniDoWhile node);
+	public abstract void traverseSwitch(UniSwitch node);
+	public abstract void traverseSwitchUnit(UniSwitchUnit node);
 	public abstract void traverseVariableDec(UniVariableDec node);
 	public abstract void traverseEmptyStatement(UniEmptyStatement node);
 	public abstract void traverseFieldDec(UniFieldDec node);
@@ -132,6 +134,14 @@ public abstract class Traverser {
 		}
 		if (node instanceof UniDoWhile) {
 			traverseDoWhile((UniDoWhile)node);
+			return;
+		}
+		if (node instanceof UniSwitch) {
+			traverseSwitch((UniSwitch)node);
+			return;
+		}
+		if (node instanceof UniSwitchUnit) {
+			traverseSwitchUnit((UniSwitchUnit)node);
 			return;
 		}
 		if (node instanceof UniVariableDec) {

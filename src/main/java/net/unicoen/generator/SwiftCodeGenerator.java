@@ -40,6 +40,8 @@ import net.unicoen.node.UniNewArray;
 import net.unicoen.node.UniProgram;
 import net.unicoen.node.UniReturn;
 import net.unicoen.node.UniStringLiteral;
+import net.unicoen.node.UniSwitch;
+import net.unicoen.node.UniSwitchUnit;
 import net.unicoen.node.UniTernaryOp;
 import net.unicoen.node.UniUnaryOp;
 import net.unicoen.node.UniVariableDec;
@@ -795,6 +797,41 @@ public class SwiftCodeGenerator extends Traverser {
 			traverseBlock(this.mainDec.block);
 		}
 		printNewLine();
+	}
+
+	@Override
+	public void traverseSwitch(UniSwitch node) {
+		// TODO Auto-generated method stub
+		print("switch");
+		print(" ");
+		parseExpr(node.cond);
+		print(" ");
+		print("{");
+		if(node.cases!=null){
+			for (UniSwitchUnit unit: node.cases)
+				parseExpr(unit);
+		}
+		printNewLine();
+		print("}");
+	}
+
+	@Override
+	public void traverseSwitchUnit(UniSwitchUnit node) {
+		// TODO Auto-generated method stub
+		printNewLine();
+		print(node.label);
+		print(" ");
+		if(node.cond!=null){//default: 
+			parseExpr(node.cond);
+		}
+		print(":");
+		printNewLine();
+		withIndent(() -> {
+			if(node.statement!=null){
+				for (UniExpr expr : node.statement)
+					parseExpr(expr);
+			}
+		});
 	}
 
 }

@@ -2445,6 +2445,163 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		map.castTo(UniIf)
 	}
 
+	override public visitSwitchStatement(Java8Parser.SwitchStatementContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val cond = newArrayList
+		map.put("cond", cond)
+		val cases = newArrayList
+		map.put("cases", cases)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 1670: {
+						cond += it.visit
+					}
+					case 1672: {
+						cases += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(UniSwitch)
+	}
+
+	override public visitSwitchBlock(Java8Parser.SwitchBlockContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val add = newArrayList
+		map.put("add", add)
+		if (ctx.children != null) {
+			ctx.children.forEach [
+				if (it instanceof RuleContext) {
+					switch it.invokingState {
+						case 1675: {
+							add += it.visit
+						}
+						default: {
+							none += it.visit
+						}
+					}
+				} else if (it instanceof TerminalNode) {
+					switch it.symbol.type {
+						default: {
+							none += it.visit
+						}
+					}
+				}
+			]
+		}
+		map.castToList(UniSwitchUnit)
+	}
+
+	override public visitSwitchBlockStatementGroup(Java8Parser.SwitchBlockStatementGroupContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val statement = newArrayList
+		map.put("statement", statement)
+		val merge = newArrayList
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 1689: {
+						merge += it.visit
+					}
+					case 1690: {
+						statement += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		val node = map.castTo(UniSwitchUnit)
+		merge.forEach[node.merge(it.castTo(UniSwitchUnit))]
+		node
+	}
+
+	override public visitSwitchLabels(Java8Parser.SwitchLabelsContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val merge = newArrayList
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 1692: {
+						merge += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		val node = map.castTo(UniSwitchUnit)
+		merge.forEach[node.merge(it.castTo(UniSwitchUnit))]
+		node
+	}
+
+	override public visitSwitchLabel(Java8Parser.SwitchLabelContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val cond = newArrayList
+		map.put("cond", cond)
+		val label = newArrayList
+		map.put("label", label)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 1700: {
+						cond += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					case Java8Parser.CASE: {
+						label += it.visit.flatten
+					}
+					case Java8Parser.DEFAULT: {
+						label += it.visit.flatten
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(UniSwitchUnit)
+	}
+
 	override public visitBasicForStatement(Java8Parser.BasicForStatementContext ctx) {
 		val map = newHashMap
 		val none = newArrayList

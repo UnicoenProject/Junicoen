@@ -39,6 +39,8 @@ import net.unicoen.node.UniNewArray;
 import net.unicoen.node.UniProgram;
 import net.unicoen.node.UniReturn;
 import net.unicoen.node.UniStringLiteral;
+import net.unicoen.node.UniSwitch;
+import net.unicoen.node.UniSwitchUnit;
 import net.unicoen.node.UniTernaryOp;
 import net.unicoen.node.UniUnaryOp;
 import net.unicoen.node.UniVariableDec;
@@ -605,6 +607,18 @@ public class JavaGenerator extends CodeGenerator {
 
 	@Override
 	public void traverseInterfaceDec(UniInterfaceDec node) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void traverseSwitch(UniSwitch node) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void traverseSwitchUnit(UniSwitchUnit node) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -115,12 +115,22 @@ Dsl.define_node do |x|
         d.mem "catchBlock", "Block"
         d.mem "finallyBlock", "Block"
       end
+      x.node "Switch" do |d|
+          d.mem "cond", "Expr"
+          d.mem "cases", "SwitchUnit", list:true
+      end
+      x.node "SwitchUnit" do |d|
+          d.mem "label", String
+          d.mem "cond", "Expr"
+          d.mem "statement", "Expr", list: true
+      end
       x.node "VariableDec", doc: '変数宣言＋代入' do |d|
         d.mem "modifiers", String, list: true
         d.mem "type", String
         d.mem "name", String
         d.mem "value", "Expr"
       end
+      
       x.node "EmptyStatement"
     end
 

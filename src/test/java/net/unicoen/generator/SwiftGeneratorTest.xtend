@@ -38,7 +38,7 @@ public class SwiftGeneratorTest{
 		//val tree = mapper.parse("public class A {}")
 		//val target = SwiftGenerator.generate(tree)
 		//assertEquals("public class A { } ",format(target))
-		val tree = mapper.parse("public interface temp{ "
+		val tree = mapper.parse("public class temp{ "
 //			+"public final int temp = 5;"
 //			+"temp(){int a = 0;int b = a; int c; c = b;}"
 //			+"int ret(int a){ final int max = 10;"
@@ -49,16 +49,17 @@ public class SwiftGeneratorTest{
 //			+"do{++i;}while(a>b);}"
 //			+"private static int sum(int num1, int num2){return num1 + num2;}"
 //			//+"double a = (int) max;}"
-//			+"public static void main(){System.out.println(\"Hello World\"+hello);"
+			+"public static void main(){System.out.println(\"Hello World\"+hello);"
+			+"switch (a) { case 1: int a=1; default: a =b;}"
 //			+"int sum = sum(1,2);"
 //			+"final Year west = new Year(1992,02,22);"
 //			+"west.printYear();"
 //			+"if(rainP>50){System.out.println(\"Bring the umbrella\");}else if(rainP<70){System.out.println(\"No need\");"
 //			+"int[] arr = new int[3];"
 //			+"hm.put(\"potato\", 1);}"
-//			+"}}")
+			+"}}")
 //		
-			+"}")
+//			+"}")
 //		val tree = mapper.parse("class Year{"
 //			+"int year; int month; int day;"
 //			+"Year(int year, int month, int day){"
