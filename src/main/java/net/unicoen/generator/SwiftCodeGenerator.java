@@ -320,14 +320,15 @@ public class SwiftCodeGenerator extends Traverser {
 
 	@Override
 	public void traverseUnaryOp(UniUnaryOp node) {
-		if (node.operator.startsWith("_")) {
-			parseExpr(node.expr);
+		if (node.operator.startsWith("_")) {//++i
 			print(node.operator.substring(1));
-		} else if (node.operator.endsWith("_")) {
-			print(node.operator.substring(0, node.operator.length() - 1));
 			parseExpr(node.expr);
+			
+		} else if (node.operator.endsWith("_")) {//i++
+			parseExpr(node.expr);
+			print(node.operator.substring(0, node.operator.length() - 1));
+			
 		} else {
-			//i++, ++iの順番のデータがない、ただプリントしているだけ
 			print(node.operator);
 			parseExpr(node.expr);
 		}
@@ -833,5 +834,6 @@ public class SwiftCodeGenerator extends Traverser {
 			}
 		});
 	}
+
 
 }

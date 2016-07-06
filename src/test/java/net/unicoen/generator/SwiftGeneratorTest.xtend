@@ -1,18 +1,30 @@
 package net.unicoen.generator;
 
 
+import com.google.common.collect.Lists
+import java.util.HashMap
+import net.unicoen.generator.JavaGenerator
+import net.unicoen.node.UniBlock
+import net.unicoen.node.UniBoolLiteral
+import net.unicoen.node.UniClassDec
+import net.unicoen.node.UniDoubleLiteral
+import net.unicoen.node.UniIntLiteral
+import net.unicoen.node.UniMethodDec
+import net.unicoen.node.UniStringLiteral
 import org.junit.Test
 
-import net.unicoen.mapper.Java8Mapper
-
-import static org.junit.Assert.*
-import java.util.regex.Pattern
-import net.unicoen.node.UniIdent
-import net.unicoen.node.UniFieldAccess
-import net.unicoen.node.UniStringLiteral
-import net.unicoen.node.UniExpr
+import static net.unicoen.node_helper.Builder.*
 import net.unicoen.node.UniMethodCall
+import net.unicoen.node.UniFieldDec
+import net.unicoen.node.UniMemberDec
+import net.unicoen.node.UniExpr
 import org.junit.Ignore
+import net.unicoen.node.UniExpr
+import static org.hamcrest.Matchers.*
+import static org.junit.Assert.*
+import net.unicoen.mapper.Java8Mapper
+import java.util.regex.Pattern
+import net.unicoen.node.UniProgram
 
 public class SwiftGeneratorTest{
 	
@@ -39,18 +51,22 @@ public class SwiftGeneratorTest{
 		//val target = SwiftGenerator.generate(tree)
 		//assertEquals("public class A { } ",format(target))
 		val tree = mapper.parse("public class temp{ "
-//			+"public final int temp = 5;"
-//			+"temp(){int a = 0;int b = a; int c; c = b;}"
-//			+"int ret(int a){ final int max = 10;"
-//			+"String[] groceries = new Stirng[3];groceries[0] = \"Potato\";"
+			+"public final int temp = 5;"
+			+"temp(){int a = 0;int b = a; int c; c = b;}"
+			+"int ret(int a){ final int max = 10;"
+			+"String[] groceries = new Stirng[3];"
+			+"a.age=1;"
+			+"i--;"
+			+"++j;"
+//			+"groceries[0] = \"Potato\";"
 //			+"String[] friends = {\"Bob\",\"Paul\",\"John\"};"
 //			+"for(int i=0;i<5;i++){j++;}"
 //			+"while(1){}"
 //			+"do{++i;}while(a>b);}"
 //			+"private static int sum(int num1, int num2){return num1 + num2;}"
 //			//+"double a = (int) max;}"
-			+"public static void main(){System.out.println(\"Hello World\"+hello);"
-			+"switch (a) { case 1: int a=1; default: a =b;}"
+//			+"public static void main(){System.out.println(\"Hello World\"+hello);"
+//			+"switch (a) { case 1: int a=1; default: a =b;}"
 //			+"int sum = sum(1,2);"
 //			+"final Year west = new Year(1992,02,22);"
 //			+"west.printYear();"
@@ -60,6 +76,12 @@ public class SwiftGeneratorTest{
 			+"}}")
 //		
 //			+"}")
+			assertThat(tree, instanceOf(UniProgram))
+			val cl = (tree as UniProgram).classes.get(0)
+			assertThat(cl, instanceOf(UniClassDec))
+//			val mem = (cl as UniClassDec).members.get(0)
+//			assertThat(mem, instanceOf(UniFieldDec))
+			
 //		val tree = mapper.parse("class Year{"
 //			+"int year; int month; int day;"
 //			+"Year(int year, int month, int day){"
@@ -121,24 +143,24 @@ public class SwiftGeneratorTest{
 //		)
 //		val tree = mapper.parse("public interface A{public static final int a;}")
 
-		val system = new UniIdent
-		system.name = "System"
-		
-		val fieldAccess = new UniFieldAccess
-		fieldAccess.receiver = system
-		fieldAccess.fieldName = "out"
-		
-		val string = new UniStringLiteral
-		string.value = "Hello World"
-		
-		val receiver = fieldAccess
-		val methodName = "println"
-		val args = #[string as UniExpr]
-		
-		val methodCall = new UniMethodCall
-		methodCall.receiver = receiver
-		methodCall.methodName = methodName
-		methodCall.args = args
+//		val system = new UniIdent
+//		system.name = "System"
+//		
+//		val fieldAccess = new UniFieldAccess
+//		fieldAccess.receiver = system
+//		fieldAccess.fieldName = "out"
+//		
+//		val string = new UniStringLiteral
+//		string.value = "Hello World"
+//		
+//		val receiver = fieldAccess
+//		val methodName = "println"
+//		val args = #[string as UniExpr]
+//		
+//		val methodCall = new UniMethodCall
+//		methodCall.receiver = receiver
+//		methodCall.methodName = methodName
+//		methodCall.args = args
 		
 //		val tree = mapper.parse("public class a{"
 //			+"int temp(){"
