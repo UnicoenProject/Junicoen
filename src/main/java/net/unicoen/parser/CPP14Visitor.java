@@ -31,6 +31,12 @@ public interface CPP14Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitIdexpression(CPP14Parser.IdexpressionContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#identexpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIdentexpression(CPP14Parser.IdentexpressionContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link CPP14Parser#unqualifiedid}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -373,6 +379,12 @@ public interface CPP14Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDeclaration(CPP14Parser.DeclarationContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#blockdeclarationwithoutsimpledeclaration}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBlockdeclarationwithoutsimpledeclaration(CPP14Parser.BlockdeclarationwithoutsimpledeclarationContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link CPP14Parser#blockdeclaration}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -384,6 +396,30 @@ public interface CPP14Visitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitAliasdeclaration(CPP14Parser.AliasdeclarationContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#variabledeclarationstatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVariabledeclarationstatement(CPP14Parser.VariabledeclarationstatementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#variabledeclaration}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVariabledeclaration(CPP14Parser.VariabledeclarationContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#variableDeclaratorList}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVariableDeclaratorList(CPP14Parser.VariableDeclaratorListContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#variableDeclarator}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVariableDeclarator(CPP14Parser.VariableDeclaratorContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link CPP14Parser#simpledeclaration}.
 	 * @param ctx the parse tree
@@ -420,6 +456,18 @@ public interface CPP14Visitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitDeclspecifierseq(CPP14Parser.DeclspecifierseqContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#declspecifierwithouttype}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDeclspecifierwithouttype(CPP14Parser.DeclspecifierwithouttypeContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#declspecifierseqwithouttype}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDeclspecifierseqwithouttype(CPP14Parser.DeclspecifierseqwithouttypeContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link CPP14Parser#storageclassspecifier}.
 	 * @param ctx the parse tree
@@ -829,6 +877,18 @@ public interface CPP14Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFunctiondefinition(CPP14Parser.FunctiondefinitionContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#functionheader}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFunctionheader(CPP14Parser.FunctionheaderContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#functiondeclarator}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFunctiondeclarator(CPP14Parser.FunctiondeclaratorContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link CPP14Parser#functionbody}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -1194,6 +1254,24 @@ public interface CPP14Visitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitLiteral(CPP14Parser.LiteralContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#integerliteral}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIntegerliteral(CPP14Parser.IntegerliteralContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#floatingliteral}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFloatingliteral(CPP14Parser.FloatingliteralContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#stringliteral}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStringliteral(CPP14Parser.StringliteralContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link CPP14Parser#booleanliteral}.
 	 * @param ctx the parse tree

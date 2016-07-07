@@ -1,4 +1,5 @@
 package net.unicoen.node;
+import net.unicoen.node_helper.*;
 
 public class UniCast extends UniExpr {
 	public String type;
@@ -23,6 +24,7 @@ public class UniCast extends UniExpr {
 		result = result * 31 + (type == null ? 0 : type.hashCode());
 		result = result * 31 + (value == null ? 0 : value.hashCode());
 		result = result * 31 + (comments == null ? 0 : comments.hashCode());
+		result = result * 31 + (codeRange == null ? 0 : codeRange.hashCode());
 		return result;
 	}
 
@@ -32,7 +34,8 @@ public class UniCast extends UniExpr {
 		UniCast that = (UniCast)obj;
 		return (this.type == null ? that.type == null : this.type.equals(that.type))
 			&& (this.value == null ? that.value == null : this.value.equals(that.value))
-			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments));
+			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments))
+			&& (this.codeRange == null ? that.codeRange == null : this.codeRange.equals(that.codeRange));
 	}
 
 	@Override
@@ -53,6 +56,9 @@ public class UniCast extends UniExpr {
 			} else {
 				this.comments.addAll(that.comments);
 			}
+		}
+		if (that.codeRange != null) {
+			this.codeRange = that.codeRange;
 		}
 	}
 }

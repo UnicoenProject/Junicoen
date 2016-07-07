@@ -13,16 +13,33 @@ import org.antlr.v4.runtime.CharStream
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.RuleContext
+import org.antlr.v4.runtime.Token
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.RuleNode
 import org.antlr.v4.runtime.tree.TerminalNode
 import org.antlr.v4.runtime.tree.TerminalNodeImpl
 import org.eclipse.xtext.xbase.lib.Functions.Function1
 import java.lang.reflect.ParameterizedType
-import net.unicoen.parser.Java8Parser
+import net.unicoen.node_helper.CodeLocation
+import net.unicoen.node_helper.CodeRange
 
 class CPP14Mapper extends CPP14BaseVisitor<Object> {
+
 	val boolean _isDebugMode
+	val List<Comment> _comments = new ArrayList<Comment>;
+	var CommonTokenStream _stream;
+	var UniNode _lastNode;
+	var int _nextTokenIndex;
+
+	static class Comment {
+		val List<String> contents
+		var ParseTree parent
+
+		new(List<String> contents, ParseTree parent) {
+			this.contents = contents
+			this.parent = parent
+		}
+	}
 
 	new(boolean isDebugMode) {
 		_isDebugMode = isDebugMode
@@ -63,7 +80,24 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		val tokens = new CommonTokenStream(lexer)
 		val parser = new CPP14Parser(tokens)
 		val tree = parseAction.apply(parser) // parse
-		tree.visit.flatten
+		_comments.clear()
+		_stream = tokens
+		_lastNode = null
+		_nextTokenIndex = 0
+
+		val ret = tree.visit.flatten
+
+		if (_lastNode !== null) {
+			val count = _stream.size - 1
+			for (var i = _nextTokenIndex; i < count; i++) {
+				val hiddenToken = _stream.get(i) // Includes skipped tokens (maybe)
+				if (_lastNode.comments === null) {
+					_lastNode.comments = newArrayList
+				}
+				_lastNode.comments += hiddenToken.text
+			}
+		}
+		ret
 	}
 
 	override public visitChildren(RuleNode node) {
@@ -78,22 +112,98 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 	}
 
 	override public visit(ParseTree tree) {
-		if (_isDebugMode) {
-			if (!(tree instanceof ParserRuleContext)) {
-				return visitTerminal(tree as TerminalNode)
+		val result = if (_isDebugMode && tree instanceof RuleContext) {
+				val ruleName = CPP14Parser.ruleNames.get((tree as ParserRuleContext).ruleIndex)
+				println("enter " + ruleName + " : " + tree.text)
+				val ret = tree.accept(this)
+				println("exit " + ruleName + " : " + ret)
+				ret
+			} else {
+				tree.accept(this)
 			}
-			val ruleName = Java8Parser.ruleNames.get((tree as ParserRuleContext).ruleIndex)
-			println("enter " + ruleName + " : " + tree.text)
-			val ret = tree.accept(this)
-			println("exit " + ruleName + " : " + ret)
-			ret
+
+		val node = if (result instanceof List<?>) {
+				if(result.size == 1) result.get(0) else result
+			} else {
+				result
+			}
+		if (node instanceof UniNode) {
+			if (tree instanceof RuleContext)
+			{
+				val start = (tree as ParserRuleContext).start
+				val stop = (tree as ParserRuleContext).stop
+				val begin = new CodeLocation(start.charPositionInLine,start.line)
+				val endPos = stop.charPositionInLine
+				val length = stop.stopIndex - stop.startIndex
+				val end = new CodeLocation(endPos + length, stop.line)
+				node.codeRange = new CodeRange(begin,end)
+			}
+			var List<String> contents = newArrayList
+			for (var i = _comments.size - 1; i >= 0 && _comments.get(i).parent == tree; i--) {
+				_comments.get(i).contents += contents
+				contents = _comments.get(i).contents
+				_comments.remove(i)
+			}
+			if (contents.size > 0) {
+				if (node.comments === null) {
+					node.comments = contents
+				} else {
+					node.comments += contents
+				}
+			}
+			_lastNode = node
 		} else {
-			tree.accept(this)
+			for (var i = _comments.size - 1; i >= 0 && _comments.get(i).parent == tree; i--) {
+				_comments.get(i).parent = _comments.get(i).parent.parent
+			}
+			_lastNode = null
+		}
+
+		result
+	}
+
+	def boolean isNonEmptyNode(ParseTree node) {
+		if (node instanceof ParserRuleContext) {
+			if (node.childCount > 1) {
+				return true
+			}
+			node.childCount == 1 && node.children.exists[isNonEmptyNode]
+		} else {
+			true
 		}
 	}
 
 	override public visitTerminal(TerminalNode node) {
-		println("visit TERMINAL : " + node.text)
+		if (_isDebugMode) {
+			println("visit TERMINAL : " + node.text)
+		}
+
+		val token = node.symbol
+		if (token.type > 0) {
+			val count = token.tokenIndex
+			val List<String> contents = newArrayList
+			var i = _nextTokenIndex
+			for (; i < count; i++) {
+				val hiddenToken = _stream.get(i) // Includes skipped tokens (maybe)
+				if (_lastNode !== null && _stream.get(_nextTokenIndex - 1).line == hiddenToken.line) {
+					if (_lastNode.comments === null) {
+						_lastNode.comments = newArrayList
+					}
+					_lastNode.comments += hiddenToken.text
+				} else {
+					contents += hiddenToken.text
+				}
+			}
+			val count2 = _stream.size - 1
+			for (i = count + 1; i < count2 && _stream.get(i).channel == Token.HIDDEN_CHANNEL &&
+				_stream.get(count).line == _stream.get(i).line; i++) {
+				contents += _stream.get(i).text
+			}
+			if (contents.size > 0) {
+				_comments.add(new Comment(contents, node.parent))
+			}
+			_nextTokenIndex = i
+		}
 		node.text
 	}
 
@@ -108,7 +218,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 			]
 			return ret
 		}
-		if (obj instanceof Map<?,?>) {
+		if (obj instanceof Map<?, ?>) {
 			if (obj.size == 1) {
 				return obj.get(obj.keySet.get(0)).flatten
 			}
@@ -129,7 +239,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 			temp.forEach [ key, value |
 				switch key {
 					case "add": {
-						if (value instanceof Map<?,?>) {
+						if (value instanceof Map<?, ?>) {
 							ret += value.castTo(clazz)
 						} else if (value instanceof List<?>) {
 							value.forEach [
@@ -161,7 +271,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 
 	public def <T> T castTo(Object obj, Class<T> clazz) {
 		val temp = obj.flatten
-		if (temp instanceof Map<?,?>) {
+		if (temp instanceof Map<?, ?>) {
 			if (String.isAssignableFrom(clazz)) {
 				val builder = new StringBuilder
 				val hasAdd = temp.containsKey("add")
@@ -206,7 +316,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 				return if (builder.length > 0) clazz.getConstructor(StringBuilder).newInstance(builder) else null
 			}
 			val first = temp.findFirst[clazz.isAssignableFrom(it.class)]
-			return if (first == null) {
+			return if (first === null) {
 				try {
 					clazz.newInstance
 				} catch (InstantiationException e) {
@@ -216,6 +326,1274 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 				first.castTo(clazz)
 		}
 		clazz.cast(temp)
+	}
+
+	override public visitPrimaryexpression(CPP14Parser.PrimaryexpressionContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val ret = newArrayList
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 429: {
+						ret += it.visit
+					}
+					case 435: {
+						ret += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		if (!ret.isEmpty) {
+			return ret
+		}
+		map.castTo(UniUnaryOp)
+	}
+
+	override public visitIdentexpression(CPP14Parser.IdentexpressionContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val name = newArrayList
+		map.put("name", name)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 443: {
+						name += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(UniIdent)
+	}
+
+	override public visitPostfixexpression(CPP14Parser.PostfixexpressionContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val ret = newArrayList
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 563: {
+						ret += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		if (!ret.isEmpty) {
+			return ret
+		}
+		map.castTo(UniUnaryOp)
+	}
+
+	override public visitUnaryexpression(CPP14Parser.UnaryexpressionContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val ret = newArrayList
+		val operator = newArrayList
+		map.put("operator", operator)
+		val expr = newArrayList
+		map.put("expr", expr)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 697: {
+						ret += it.visit
+					}
+					case 699: {
+						expr += it.visit
+					}
+					case 701: {
+						expr += it.visit
+					}
+					case 702: {
+						operator += it.visit
+					}
+					case 703: {
+						expr += it.visit
+					}
+					case 722: {
+						ret += it.visit
+					}
+					case 723: {
+						ret += it.visit
+					}
+					case 724: {
+						ret += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					case CPP14Parser.PlusPlus: {
+						operator += it.visit.flatten
+					}
+					case CPP14Parser.MinusMinus: {
+						operator += it.visit.flatten
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		if (!ret.isEmpty) {
+			return ret
+		}
+		map.castTo(UniUnaryOp)
+	}
+
+	override public visitCastexpression(CPP14Parser.CastexpressionContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val ret = newArrayList
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 816: {
+						ret += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		if (!ret.isEmpty) {
+			return ret
+		}
+		map.castTo(UniUnaryOp)
+	}
+
+	override public visitPmexpression(CPP14Parser.PmexpressionContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val ret = newArrayList
+		val right = newArrayList
+		map.put("right", right)
+		val left = newArrayList
+		map.put("left", left)
+		val operator = newArrayList
+		map.put("operator", operator)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 825: {
+						ret += it.visit
+					}
+					case 60: {
+						left += it.visit
+					}
+					case 829: {
+						right += it.visit
+					}
+					case 832: {
+						right += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					case CPP14Parser.DotStar: {
+						operator += it.visit.flatten
+					}
+					case CPP14Parser.ArrowStar: {
+						operator += it.visit.flatten
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		if (!ret.isEmpty) {
+			return ret
+		}
+		map.castTo(UniBinOp)
+	}
+
+	override public visitMultiplicativeexpression(CPP14Parser.MultiplicativeexpressionContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val ret = newArrayList
+		val right = newArrayList
+		map.put("right", right)
+		val left = newArrayList
+		map.put("left", left)
+		val operator = newArrayList
+		map.put("operator", operator)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 839: {
+						ret += it.visit
+					}
+					case 62: {
+						left += it.visit
+					}
+					case 843: {
+						right += it.visit
+					}
+					case 846: {
+						right += it.visit
+					}
+					case 849: {
+						right += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					case CPP14Parser.Star: {
+						operator += it.visit.flatten
+					}
+					case CPP14Parser.Div: {
+						operator += it.visit.flatten
+					}
+					case CPP14Parser.Mod: {
+						operator += it.visit.flatten
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		if (!ret.isEmpty) {
+			return ret
+		}
+		map.castTo(UniBinOp)
+	}
+
+	override public visitAdditiveexpression(CPP14Parser.AdditiveexpressionContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val ret = newArrayList
+		val right = newArrayList
+		map.put("right", right)
+		val left = newArrayList
+		map.put("left", left)
+		val operator = newArrayList
+		map.put("operator", operator)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 856: {
+						ret += it.visit
+					}
+					case 64: {
+						left += it.visit
+					}
+					case 860: {
+						right += it.visit
+					}
+					case 863: {
+						right += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					case CPP14Parser.Plus: {
+						operator += it.visit.flatten
+					}
+					case CPP14Parser.Minus: {
+						operator += it.visit.flatten
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		if (!ret.isEmpty) {
+			return ret
+		}
+		map.castTo(UniBinOp)
+	}
+
+	override public visitShiftexpression(CPP14Parser.ShiftexpressionContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val ret = newArrayList
+		val right = newArrayList
+		map.put("right", right)
+		val left = newArrayList
+		map.put("left", left)
+		val operator = newArrayList
+		map.put("operator", operator)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 870: {
+						ret += it.visit
+					}
+					case 66: {
+						left += it.visit
+					}
+					case 874: {
+						right += it.visit
+					}
+					case 876: {
+						operator += it.visit
+					}
+					case 877: {
+						right += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					case CPP14Parser.LeftShift: {
+						operator += it.visit.flatten
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		if (!ret.isEmpty) {
+			return ret
+		}
+		map.castTo(UniBinOp)
+	}
+
+	override public visitRelationalexpression(CPP14Parser.RelationalexpressionContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val ret = newArrayList
+		val right = newArrayList
+		map.put("right", right)
+		val left = newArrayList
+		map.put("left", left)
+		val operator = newArrayList
+		map.put("operator", operator)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 885: {
+						ret += it.visit
+					}
+					case 68: {
+						left += it.visit
+					}
+					case 889: {
+						right += it.visit
+					}
+					case 892: {
+						right += it.visit
+					}
+					case 895: {
+						right += it.visit
+					}
+					case 898: {
+						right += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					case CPP14Parser.Less: {
+						operator += it.visit.flatten
+					}
+					case CPP14Parser.Greater: {
+						operator += it.visit.flatten
+					}
+					case CPP14Parser.LessEqual: {
+						operator += it.visit.flatten
+					}
+					case CPP14Parser.GreaterEqual: {
+						operator += it.visit.flatten
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		if (!ret.isEmpty) {
+			return ret
+		}
+		map.castTo(UniBinOp)
+	}
+
+	override public visitEqualityexpression(CPP14Parser.EqualityexpressionContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val ret = newArrayList
+		val right = newArrayList
+		map.put("right", right)
+		val left = newArrayList
+		map.put("left", left)
+		val operator = newArrayList
+		map.put("operator", operator)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 905: {
+						ret += it.visit
+					}
+					case 70: {
+						left += it.visit
+					}
+					case 909: {
+						right += it.visit
+					}
+					case 912: {
+						right += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					case CPP14Parser.Equal: {
+						operator += it.visit.flatten
+					}
+					case CPP14Parser.NotEqual: {
+						operator += it.visit.flatten
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		if (!ret.isEmpty) {
+			return ret
+		}
+		map.castTo(UniBinOp)
+	}
+
+	override public visitAndexpression(CPP14Parser.AndexpressionContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val ret = newArrayList
+		val right = newArrayList
+		map.put("right", right)
+		val left = newArrayList
+		map.put("left", left)
+		val operator = newArrayList
+		map.put("operator", operator)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 919: {
+						ret += it.visit
+					}
+					case 72: {
+						left += it.visit
+					}
+					case 923: {
+						right += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					case CPP14Parser.And: {
+						operator += it.visit.flatten
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		if (!ret.isEmpty) {
+			return ret
+		}
+		map.castTo(UniBinOp)
+	}
+
+	override public visitExclusiveorexpression(CPP14Parser.ExclusiveorexpressionContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val ret = newArrayList
+		val right = newArrayList
+		map.put("right", right)
+		val left = newArrayList
+		map.put("left", left)
+		val operator = newArrayList
+		map.put("operator", operator)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 930: {
+						ret += it.visit
+					}
+					case 74: {
+						left += it.visit
+					}
+					case 934: {
+						right += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					case CPP14Parser.Caret: {
+						operator += it.visit.flatten
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		if (!ret.isEmpty) {
+			return ret
+		}
+		map.castTo(UniBinOp)
+	}
+
+	override public visitInclusiveorexpression(CPP14Parser.InclusiveorexpressionContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val ret = newArrayList
+		val right = newArrayList
+		map.put("right", right)
+		val left = newArrayList
+		map.put("left", left)
+		val operator = newArrayList
+		map.put("operator", operator)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 941: {
+						ret += it.visit
+					}
+					case 76: {
+						left += it.visit
+					}
+					case 945: {
+						right += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					case CPP14Parser.Or: {
+						operator += it.visit.flatten
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		if (!ret.isEmpty) {
+			return ret
+		}
+		map.castTo(UniBinOp)
+	}
+
+	override public visitLogicalandexpression(CPP14Parser.LogicalandexpressionContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val ret = newArrayList
+		val right = newArrayList
+		map.put("right", right)
+		val left = newArrayList
+		map.put("left", left)
+		val operator = newArrayList
+		map.put("operator", operator)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 952: {
+						ret += it.visit
+					}
+					case 78: {
+						left += it.visit
+					}
+					case 956: {
+						right += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					case CPP14Parser.AndAnd: {
+						operator += it.visit.flatten
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		if (!ret.isEmpty) {
+			return ret
+		}
+		map.castTo(UniBinOp)
+	}
+
+	override public visitLogicalorexpression(CPP14Parser.LogicalorexpressionContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val ret = newArrayList
+		val right = newArrayList
+		map.put("right", right)
+		val left = newArrayList
+		map.put("left", left)
+		val operator = newArrayList
+		map.put("operator", operator)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 963: {
+						ret += it.visit
+					}
+					case 80: {
+						left += it.visit
+					}
+					case 967: {
+						right += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					case CPP14Parser.OrOr: {
+						operator += it.visit.flatten
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		if (!ret.isEmpty) {
+			return ret
+		}
+		map.castTo(UniBinOp)
+	}
+
+	override public visitConditionalexpression(CPP14Parser.ConditionalexpressionContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val ret = newArrayList
+		val cond = newArrayList
+		map.put("cond", cond)
+		val falseExpr = newArrayList
+		map.put("falseExpr", falseExpr)
+		val trueExpr = newArrayList
+		map.put("trueExpr", trueExpr)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 973: {
+						ret += it.visit
+					}
+					case 974: {
+						cond += it.visit
+					}
+					case 978: {
+						falseExpr += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		if (!ret.isEmpty) {
+			return ret
+		}
+		map.castTo(UniTernaryOp)
+	}
+
+	override public visitAssignmentexpression(CPP14Parser.AssignmentexpressionContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val ret = newArrayList
+		val right = newArrayList
+		map.put("right", right)
+		val left = newArrayList
+		map.put("left", left)
+		val operator = newArrayList
+		map.put("operator", operator)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 982: {
+						ret += it.visit
+					}
+					case 983: {
+						left += it.visit
+					}
+					case 984: {
+						operator += it.visit
+					}
+					case 985: {
+						right += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		if (!ret.isEmpty) {
+			return ret
+		}
+		map.castTo(UniBinOp)
+	}
+
+	override public visitExpressionstatement(CPP14Parser.ExpressionstatementContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val ret = newArrayList
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 1067: {
+						ret += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		if (!ret.isEmpty) {
+			return ret
+		}
+		map
+	}
+
+	override public visitCompoundstatement(CPP14Parser.CompoundstatementContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val body = newArrayList
+		map.put("body", body)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 1073: {
+						body += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(UniBlock)
+	}
+
+	override public visitStatementseq(CPP14Parser.StatementseqContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val add = newArrayList
+		map.put("add", add)
+		if (ctx.children != null) {
+			ctx.children.forEach [
+				if (it instanceof RuleContext) {
+					switch it.invokingState {
+						case 1078: {
+							add += it.visit
+						}
+						case 1079: {
+							add += it.visit
+						}
+						default: {
+							none += it.visit
+						}
+					}
+				} else if (it instanceof TerminalNode) {
+					switch it.symbol.type {
+						default: {
+							none += it.visit
+						}
+					}
+				}
+			]
+		}
+		map.castToList(UniExpr)
+	}
+
+	override public visitVariabledeclarationstatement(CPP14Parser.VariabledeclarationstatementContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val ret = newArrayList
+		if (ctx.children != null) {
+			ctx.children.forEach [
+				if (it instanceof RuleContext) {
+					switch it.invokingState {
+						case 1241: {
+							ret += it.visit
+						}
+						default: {
+							none += it.visit
+						}
+					}
+				} else if (it instanceof TerminalNode) {
+					switch it.symbol.type {
+						default: {
+							none += it.visit
+						}
+					}
+				}
+			]
+		}
+		if (!ret.isEmpty) {
+			return ret
+		}
+		map.castToList(UniVariableDec)
+	}
+
+	override public visitVariabledeclaration(CPP14Parser.VariabledeclarationContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val modifiers = newArrayList
+		map.put("modifiers", modifiers)
+		val type = newArrayList
+		map.put("type", type)
+		val merge = newArrayList
+		if (ctx.children != null) {
+			ctx.children.forEach [
+				if (it instanceof RuleContext) {
+					switch it.invokingState {
+						case 1247: {
+							modifiers += it.visit
+						}
+						case 1250: {
+							type += it.visit
+						}
+						case 1251: {
+							type += it.visit
+						}
+						case 1257: {
+							merge += it.visit
+						}
+						default: {
+							none += it.visit
+						}
+					}
+				} else if (it instanceof TerminalNode) {
+					switch it.symbol.type {
+						default: {
+							none += it.visit
+						}
+					}
+				}
+			]
+		}
+		val node = map.castTo(UniVariableDec)
+		val ret = newArrayList
+		merge.castToList(UniVariableDec).forEach [
+			it.merge(node)
+			ret += it
+		]
+		ret
+	}
+
+	override public visitVariableDeclaratorList(CPP14Parser.VariableDeclaratorListContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val add = newArrayList
+		map.put("add", add)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 1261: {
+						add += it.visit
+					}
+					case 132: {
+						add += it.visit
+					}
+					case 1265: {
+						add += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map
+	}
+
+	override public visitVariableDeclarator(CPP14Parser.VariableDeclaratorContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val name = newArrayList
+		map.put("name", name)
+		val value = newArrayList
+		map.put("value", value)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 1271: {
+						name += it.visit
+					}
+					case 1273: {
+						value += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map
+	}
+
+	override public visitTypespecifier(CPP14Parser.TypespecifierContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(String)
+	}
+
+	override public visitDeclaratorid(CPP14Parser.DeclaratoridContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(String)
+	}
+
+	override public visitParameterdeclarationclause(CPP14Parser.ParameterdeclarationclauseContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val add = newArrayList
+		map.put("add", add)
+		if (ctx.children != null) {
+			ctx.children.forEach [
+				if (it instanceof RuleContext) {
+					switch it.invokingState {
+						case 1912: {
+							add += it.visit
+						}
+						case 1918: {
+							add += it.visit
+						}
+						default: {
+							none += it.visit
+						}
+					}
+				} else if (it instanceof TerminalNode) {
+					switch it.symbol.type {
+						default: {
+							none += it.visit
+						}
+					}
+				}
+			]
+		}
+		map.castToList(UniArg)
+	}
+
+	override public visitParameterdeclarationlist(CPP14Parser.ParameterdeclarationlistContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val add = newArrayList
+		map.put("add", add)
+		if (ctx.children != null) {
+			ctx.children.forEach [
+				if (it instanceof RuleContext) {
+					switch it.invokingState {
+						case 1925: {
+							add += it.visit
+						}
+						case 282: {
+							add += it.visit
+						}
+						case 1929: {
+							add += it.visit
+						}
+						default: {
+							none += it.visit
+						}
+					}
+				} else if (it instanceof TerminalNode) {
+					switch it.symbol.type {
+						default: {
+							none += it.visit
+						}
+					}
+				}
+			]
+		}
+		map.castToList(UniArg)
+	}
+
+	override public visitFunctiondefinition(CPP14Parser.FunctiondefinitionContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val modifiers = newArrayList
+		map.put("modifiers", modifiers)
+		val block = newArrayList
+		map.put("block", block)
+		val merge = newArrayList
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 1971: {
+						modifiers += it.visit
+					}
+					case 1974: {
+						merge += it.visit
+					}
+					case 1978: {
+						block += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		val node = map.castTo(UniMethodDec)
+		merge.forEach[node.merge(it.castTo(UniMethodDec))]
+		node
+	}
+
+	override public visitFunctionheader(CPP14Parser.FunctionheaderContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val returnType = newArrayList
+		map.put("returnType", returnType)
+		val merge = newArrayList
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 1980: {
+						returnType += it.visit
+					}
+					case 1983: {
+						merge += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		val node = map.castTo(UniMethodDec)
+		merge.forEach[node.merge(it.castTo(UniMethodDec))]
+		node
+	}
+
+	override public visitFunctiondeclarator(CPP14Parser.FunctiondeclaratorContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val methodName = newArrayList
+		map.put("methodName", methodName)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 1985: {
+						methodName += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(UniMethodDec)
+	}
+
+	override public visitFunctionbody(CPP14Parser.FunctionbodyContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val merge = newArrayList
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 1993: {
+						merge += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		val node = map.castTo(UniBlock)
+		merge.forEach[node.merge(it.castTo(UniBlock))]
+		node
 	}
 
 	override public visitClassname(CPP14Parser.ClassnameContext ctx) {
@@ -239,7 +1617,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		]
 		map.castTo(String)
 	}
-	
+
 	override public visitClassspecifier(CPP14Parser.ClassspecifierContext ctx) {
 		val map = newHashMap
 		val none = newArrayList
@@ -250,7 +1628,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1955: {
+					case 2047: {
 						merge += it.visit
 					}
 					default: {
@@ -269,7 +1647,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		merge.forEach[node.merge(it.castTo(UniClassDec))]
 		node
 	}
-	
+
 	override public visitClassbody(CPP14Parser.ClassbodyContext ctx) {
 		val map = newHashMap
 		val none = newArrayList
@@ -280,7 +1658,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 1962: {
+						case 2054: {
 							add += it.visit
 						}
 						default: {
@@ -298,7 +1676,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		}
 		map.castToList(UniMemberDec)
 	}
-	
+
 	override public visitClasshead(CPP14Parser.ClassheadContext ctx) {
 		val map = newHashMap
 		val none = newArrayList
@@ -307,7 +1685,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1971: {
+					case 2063: {
 						merge += it.visit
 					}
 					default: {
@@ -326,7 +1704,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		merge.forEach[node.merge(it.castTo(UniClassDec))]
 		node
 	}
-	
+
 	override public visitClassheadname(CPP14Parser.ClassheadnameContext ctx) {
 		val map = newHashMap
 		val none = newArrayList
@@ -336,7 +1714,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1990: {
+					case 2082: {
 						className += it.visit
 					}
 					default: {
@@ -353,7 +1731,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		]
 		map.castTo(UniClassDec)
 	}
-	
+
 	override public visitMemberspecification(CPP14Parser.MemberspecificationContext ctx) {
 		val map = newHashMap
 		val none = newArrayList
@@ -364,7 +1742,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 1996: {
+						case 2088: {
 							add += it.visit
 						}
 						default: {
@@ -382,7 +1760,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		}
 		map.castToList(UniMemberDec)
 	}
-	
+
 	override public visitMemberdeclaration(CPP14Parser.MemberdeclarationContext ctx) {
 		val map = newHashMap
 		val none = newArrayList
@@ -393,10 +1771,10 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 2013: {
+						case 2105: {
 							add += it.visit
 						}
-						case 2017: {
+						case 2109: {
 							add += it.visit
 						}
 						default: {
@@ -414,5 +1792,53 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		}
 		map.castToList(UniMemberDec)
 	}
-	
+
+	override public visitIntegerliteral(CPP14Parser.IntegerliteralContext ctx) {
+		val text = ctx.children.findFirst [
+			if (it instanceof TerminalNodeImpl) {
+				if (it.symbol.type == CPP14Parser.Integerliteral) {
+					return true
+				}
+			}
+			return false
+		].visit as String
+		return new UniIntLiteral(Integer.parseInt(text))
+	}
+
+	override public visitFloatingliteral(CPP14Parser.FloatingliteralContext ctx) {
+		val text = ctx.children.findFirst [
+			if (it instanceof TerminalNodeImpl) {
+				if (it.symbol.type == CPP14Parser.Floatingliteral) {
+					return true
+				}
+			}
+			return false
+		].visit as String
+		return new UniDoubleLiteral(Double.parseDouble(text))
+	}
+
+	override public visitStringliteral(CPP14Parser.StringliteralContext ctx) {
+		val text = ctx.children.findFirst [
+			if (it instanceof TerminalNodeImpl) {
+				if (it.symbol.type == CPP14Parser.Stringliteral) {
+					return true
+				}
+			}
+			return false
+		].visit as String
+		return new UniStringLiteral(text.substring(1, text.length - 1))
+	}
+
+	override public visitBooleanliteral(CPP14Parser.BooleanliteralContext ctx) {
+		val text = ctx.children.findFirst [
+			if (it instanceof TerminalNodeImpl) {
+				if (it.symbol.type == CPP14Parser.Booleanliteral) {
+					return true
+				}
+			}
+			return false
+		].visit as String
+		return new UniBoolLiteral(Boolean.parseBoolean(text))
+	}
+
 }

@@ -1,4 +1,5 @@
 package net.unicoen.node;
+import net.unicoen.node_helper.*;
 
 public class UniImport extends UniNode {
 	public String targetName;
@@ -23,6 +24,7 @@ public class UniImport extends UniNode {
 		result = result * 31 + (targetName == null ? 0 : targetName.hashCode());
 		result = result * 31 + (isStatic ? 1 : 0);
 		result = result * 31 + (comments == null ? 0 : comments.hashCode());
+		result = result * 31 + (codeRange == null ? 0 : codeRange.hashCode());
 		return result;
 	}
 
@@ -32,7 +34,8 @@ public class UniImport extends UniNode {
 		UniImport that = (UniImport)obj;
 		return (this.targetName == null ? that.targetName == null : this.targetName.equals(that.targetName))
 			&& this.isStatic == that.isStatic
-			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments));
+			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments))
+			&& (this.codeRange == null ? that.codeRange == null : this.codeRange.equals(that.codeRange));
 	}
 
 	public void merge(UniImport that) {
@@ -48,6 +51,9 @@ public class UniImport extends UniNode {
 			} else {
 				this.comments.addAll(that.comments);
 			}
+		}
+		if (that.codeRange != null) {
+			this.codeRange = that.codeRange;
 		}
 	}
 }

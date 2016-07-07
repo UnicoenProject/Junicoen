@@ -1,4 +1,5 @@
 package net.unicoen.node;
+import net.unicoen.node_helper.*;
 
 public class UniArg extends UniMemberDec {
 	public String type;
@@ -23,6 +24,7 @@ public class UniArg extends UniMemberDec {
 		result = result * 31 + (type == null ? 0 : type.hashCode());
 		result = result * 31 + (name == null ? 0 : name.hashCode());
 		result = result * 31 + (comments == null ? 0 : comments.hashCode());
+		result = result * 31 + (codeRange == null ? 0 : codeRange.hashCode());
 		return result;
 	}
 
@@ -32,7 +34,8 @@ public class UniArg extends UniMemberDec {
 		UniArg that = (UniArg)obj;
 		return (this.type == null ? that.type == null : this.type.equals(that.type))
 			&& (this.name == null ? that.name == null : this.name.equals(that.name))
-			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments));
+			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments))
+			&& (this.codeRange == null ? that.codeRange == null : this.codeRange.equals(that.codeRange));
 	}
 
 	public void merge(UniArg that) {
@@ -48,6 +51,9 @@ public class UniArg extends UniMemberDec {
 			} else {
 				this.comments.addAll(that.comments);
 			}
+		}
+		if (that.codeRange != null) {
+			this.codeRange = that.codeRange;
 		}
 	}
 }

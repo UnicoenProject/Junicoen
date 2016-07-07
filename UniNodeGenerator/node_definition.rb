@@ -7,7 +7,7 @@ Dsl.define_node do |x|
 
   x.node "Node", abstract: true do |n|
     n.mem 'comments', String, list: true
-
+    n.mem 'codeRange', :CodeRange
     x.node "Expr", abstract: true, member: { statement: :boolean } do
       #
       # Factor

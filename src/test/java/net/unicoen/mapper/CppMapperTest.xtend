@@ -1,28 +1,40 @@
 package net.unicoen.mapper
 
-import org.junit.Test
-import net.unicoen.node.UniClassDec
-import net.unicoen.node.UniMemberDec
 import net.unicoen.node.UniMethodDec
-import net.unicoen.node.UniBlock
-import net.unicoen.node.UniArg
-import net.unicoen.generator.JavaGenerator
-import net.unicoen.node.UniMethodCall
-import net.unicoen.node.UniFieldAccess
-import net.unicoen.node.UniIdent
-import net.unicoen.node.UniExpr
-import net.unicoen.node.UniStringLiteral
-import net.unicoen.node.UniCast
-import net.unicoen.node.UniVariableDec
-import net.unicoen.node.UniUnaryOp
-import net.unicoen.node.UniBinOp
+import org.junit.Ignore
+import org.junit.Test
 
-class CppMapperTest extends MapperTest {
+import static org.hamcrest.Matchers.*
+import static org.junit.Assert.*
+
+class CppMapperTest  extends MapperTest {
 	val mapper = new CPP14Mapper(true)
-	
+
 	@Test
-	def void parseEmptyMethod() {
-		val actual = mapper.parse("class a{}")
-		
+	def CppTest() {
+		val node = mapper.parse("
+		#include <iostream>
+		int main()
+		{
+			int b = 3;
+			int c = b;
+			b = 5;
+			int* p = &a;
+		}
+		")
+		val dd = node;
+		//assertThat(node, instanceOf(typeof(UniMethodDec)))
+/*		
+		public class UniMethodDec extends UniMemberDec {
+			public String methodName;
+			public List<String> modifiers;
+			public String returnType;
+			public List<UniArg> args;
+			public UniBlock block;	
+				List<UniExpr> body;
+				String blockLabel;
+		}
+ */
+
 	}
 }

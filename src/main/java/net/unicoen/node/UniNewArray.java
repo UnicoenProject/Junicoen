@@ -1,6 +1,7 @@
 package net.unicoen.node;
 
 import java.util.List;
+import net.unicoen.node_helper.*;
 
 public class UniNewArray extends UniExpr {
 	public String type;
@@ -28,6 +29,7 @@ public class UniNewArray extends UniExpr {
 		result = result * 31 + (elementsNum == null ? 0 : elementsNum.hashCode());
 		result = result * 31 + (value == null ? 0 : value.hashCode());
 		result = result * 31 + (comments == null ? 0 : comments.hashCode());
+		result = result * 31 + (codeRange == null ? 0 : codeRange.hashCode());
 		return result;
 	}
 
@@ -38,7 +40,8 @@ public class UniNewArray extends UniExpr {
 		return (this.type == null ? that.type == null : this.type.equals(that.type))
 			&& (this.elementsNum == null ? that.elementsNum == null : this.elementsNum.equals(that.elementsNum))
 			&& (this.value == null ? that.value == null : this.value.equals(that.value))
-			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments));
+			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments))
+			&& (this.codeRange == null ? that.codeRange == null : this.codeRange.equals(that.codeRange));
 	}
 
 	@Override
@@ -66,6 +69,9 @@ public class UniNewArray extends UniExpr {
 			} else {
 				this.comments.addAll(that.comments);
 			}
+		}
+		if (that.codeRange != null) {
+			this.codeRange = that.codeRange;
 		}
 	}
 }
