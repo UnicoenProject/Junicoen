@@ -59,6 +59,38 @@ public class Engine {
 
 	public PrintStream out = System.out;
 	public List<ExecutionListener> listeners;
+	private boolean waitFlag = false;
+	private boolean stepExecing =false;
+	private Scope state;
+	private synchronized boolean getWaitingFlag(){
+		return waitFlag;
+	}
+	private synchronized void setWaitingFlag(boolean enable){
+		waitFlag = enable;
+	}
+	private synchronized boolean getStepExecing(){
+		return stepExecing;
+	}
+	private synchronized void setStepExecing(boolean enable){
+		stepExecing = enable;
+	}
+	public synchronized Scope getState() {
+		return state;
+	}
+	private synchronized void setState(Scope state) {
+		this.state = state;
+	}
+	private void waitForWaitingFlagIs(boolean is){
+		while(getWaitingFlag()==is)
+		{
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
 
 	public void addListener(ExecutionListener listener) {
 		if (listeners == null) {
@@ -113,6 +145,40 @@ public class Engine {
 		return executeSimple(expr, scope);
 	}
 
+	public Scope StartStepExecution(UniMethodDec dec) {
+		UniMethodDec fdec = dec;
+		if (fdec != null) {
+			new Thread(){
+	            public void run(){
+	            	setStepExecing(true);
+	            	
+	            	Scope global = Scope.createGlobal();
+	    			StdLibLoader.initialize(global);
+	    			firePreExecAll(global);
+	    			Object value = execFunc(fdec, global);
+	    			firePostExecAll(global, value);
+	    			
+	    			setStepExecing(false);
+	    			setWaitingFlag(true);
+	    			setState(null);
+	            }
+	        }.start();
+	        waitForWaitingFlagIs(false);
+	        return stepExecute();
+		} else {
+			throw new RuntimeException("No entry point in " + dec);
+		}
+	}
+
+	public Scope stepExecute() {
+		if(getStepExecing())
+		{
+			setWaitingFlag(false);
+			waitForWaitingFlagIs(false);
+		}
+		return getState();
+	}
+	
 	public Object execute(UniClassDec dec) {
 		UniMethodDec fdec = getEntryPoint(dec);
 		if (fdec != null) {
@@ -141,6 +207,7 @@ public class Engine {
 
 	private Object execFunc(UniMethodDec fdec, Scope global) {
 		Scope funcScope = Scope.createLocal(global);
+		funcScope.name = fdec.methodName;
 		// TODO: set argument to func scope
 		try {
 			return execBlock(fdec.block, funcScope);
@@ -155,6 +222,11 @@ public class Engine {
 	}
 
 	private Object execExpr(UniExpr expr, Scope scope) {
+		if(getStepExecing())
+		{
+			setWaitingFlag(true);
+			waitForWaitingFlagIs(true);
+		}
 		firePreExec(expr, scope);
 		Object value = _execExpr(expr, scope);
 		firePostExec(expr, scope, value);
@@ -329,6 +401,8 @@ public class Engine {
 	private Object execBlock(UniBlock block, Scope scope) {
 		Scope blockScope = Scope.createLocal(scope);
 		Object lastValue = null;
+		blockScope.name = scope.name;
+		setState(blockScope);
 		for (UniExpr expr : block.body) {
 			lastValue = execExpr(expr, blockScope);
 		}
