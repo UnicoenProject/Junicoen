@@ -52,9 +52,9 @@ public class CppEngineTest {
 		
 		CPP14Mapper cppMapper = new CPP14Mapper(true);
 		UniMethodDec node = (UniMethodDec) cppMapper.parse(text);
-		Scope state = engine.StartStepExecution(node);
+		ExecState state = engine.startStepExecution(node);
 
-		for(int i=0;state!=null;++i)
+		for(int i=0;engine.getStepExecing();++i)
 		{
 			state = engine.stepExecute();
 		}

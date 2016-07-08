@@ -61,24 +61,19 @@ public class Engine {
 	public List<ExecutionListener> listeners;
 	private boolean waitFlag = false;
 	private boolean stepExecing =false;
-	private Scope state;
+	private ExecState state;
+
 	private synchronized boolean getWaitingFlag(){
 		return waitFlag;
 	}
 	private synchronized void setWaitingFlag(boolean enable){
 		waitFlag = enable;
 	}
-	private synchronized boolean getStepExecing(){
+	public synchronized boolean getStepExecing(){
 		return stepExecing;
 	}
 	private synchronized void setStepExecing(boolean enable){
 		stepExecing = enable;
-	}
-	public synchronized Scope getState() {
-		return state;
-	}
-	private synchronized void setState(Scope state) {
-		this.state = state;
 	}
 	private void waitForWaitingFlagIs(boolean is){
 		while(getWaitingFlag()==is)
@@ -145,12 +140,13 @@ public class Engine {
 		return executeSimple(expr, scope);
 	}
 
-	public Scope StartStepExecution(UniMethodDec dec) {
+	public ExecState startStepExecution(UniMethodDec dec) {
 		UniMethodDec fdec = dec;
 		if (fdec != null) {
 			new Thread(){
 	            public void run(){
 	            	setStepExecing(true);
+	            	state = new ExecState();
 	            	
 	            	Scope global = Scope.createGlobal();
 	    			StdLibLoader.initialize(global);
@@ -160,7 +156,6 @@ public class Engine {
 	    			
 	    			setStepExecing(false);
 	    			setWaitingFlag(true);
-	    			setState(null);
 	            }
 	        }.start();
 	        waitForWaitingFlagIs(false);
@@ -170,13 +165,13 @@ public class Engine {
 		}
 	}
 
-	public Scope stepExecute() {
+	public ExecState stepExecute() {
 		if(getStepExecing())
 		{
 			setWaitingFlag(false);
 			waitForWaitingFlagIs(false);
 		}
-		return getState();
+		return state;
 	}
 	
 	public Object execute(UniClassDec dec) {
@@ -208,6 +203,7 @@ public class Engine {
 	private Object execFunc(UniMethodDec fdec, Scope global) {
 		Scope funcScope = Scope.createLocal(global);
 		funcScope.name = fdec.methodName;
+		state.addStack(fdec.methodName);
 		// TODO: set argument to func scope
 		try {
 			return execBlock(fdec.block, funcScope);
@@ -225,6 +221,7 @@ public class Engine {
 		if(getStepExecing())
 		{
 			setWaitingFlag(true);
+			state.setCurrentExpr(expr);
 			waitForWaitingFlagIs(true);
 		}
 		firePreExec(expr, scope);
@@ -296,6 +293,10 @@ public class Engine {
 			UniVariableDec decVar = (UniVariableDec) expr;
 			Object value = execExpr(decVar.value, scope);
 			scope.setTop(decVar.name, value);
+			if(getStepExecing()){
+				String stackName = scope.name;
+				state.addVariable(stackName, decVar, value);
+			}
 			return value;
 		}
 		if (expr instanceof UniBlock) {
@@ -402,7 +403,6 @@ public class Engine {
 		Scope blockScope = Scope.createLocal(scope);
 		Object lastValue = null;
 		blockScope.name = scope.name;
-		setState(blockScope);
 		for (UniExpr expr : block.body) {
 			lastValue = execExpr(expr, blockScope);
 		}
@@ -570,6 +570,10 @@ public class Engine {
 
 	private Object execAssign(UniIdent left, Object value, Scope scope) {
 		scope.set(left.name, value);
+		if(getStepExecing()){
+			String stackName = scope.name;
+			state.updateVariable(stackName, left.name, value);
+		}
 		return value;
 	}
 
