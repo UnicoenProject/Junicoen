@@ -20,6 +20,7 @@ import net.unicoen.node.UniDoWhile;
 import net.unicoen.node.UniDoubleLiteral;
 import net.unicoen.node.UniEmptyStatement;
 import net.unicoen.node.UniEnhancedFor;
+import net.unicoen.node.UniEnumConstant;
 import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniFieldAccess;
 import net.unicoen.node.UniFieldDec;
@@ -619,6 +620,12 @@ public class JavaGenerator extends CodeGenerator {
 
 	@Override
 	public void traverseSwitchUnit(UniSwitchUnit node) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void traverseEnumConstant(UniEnumConstant node) {
 		// TODO Auto-generated method stub
 		
 	}

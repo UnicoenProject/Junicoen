@@ -21,6 +21,7 @@ import net.unicoen.node.UniDoWhile;
 import net.unicoen.node.UniDoubleLiteral;
 import net.unicoen.node.UniEmptyStatement;
 import net.unicoen.node.UniEnhancedFor;
+import net.unicoen.node.UniEnumConstant;
 import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniFieldAccess;
 import net.unicoen.node.UniFieldDec;
@@ -604,19 +605,19 @@ public class SwiftCodeGenerator extends Traverser {
 	public void traverseClassDec(UniClassDec node) {
 		String modifiers = "";
 		String declaration = "";
+		String keyword = "class";
+		if(node.className.startsWith("_")){
+			node.className = node.className.substring(1,node.className.length());
+			keyword = "enum";
+		}
 		if(node.modifiers!=null){
 			modifiers = safeJoin(node.modifiers, " ");
-			if(node.className.startsWith("_")){
-				node.className = node.className.substring(1,node.className.length());
-				declaration = String.join(" ", modifiers, "enum", node.className);
-			}else{
-				declaration = String.join(" ", modifiers, "class", node.className);
-			}
+			declaration = String.join(" ", modifiers, keyword, node.className);
 		}else{
-			declaration = String.join(" ", "class", node.className);
+			declaration = String.join(" ", keyword, node.className);
 		}
-		
 		print(declaration);
+		
 		if(node.superClass!=null&&node.superClass.size()!=0){
 			String superclass = " : "+node.superClass.get(0);
 			print(superclass);
@@ -626,6 +627,13 @@ public class SwiftCodeGenerator extends Traverser {
 
 		withIndent(() -> {
 			for (UniMemberDec dec : iter(node.members)) {
+			
+				//constants without arguments
+				//dec as a UniConstantDec without arguments
+				
+				//constants with one arguments
+				//constants with two or more arguments
+				
 				traverseMemberDec(dec);
 				printNewLine();
 			}
@@ -838,6 +846,14 @@ public class SwiftCodeGenerator extends Traverser {
 					parseExpr(expr);
 			}
 		});
+	}
+
+	@Override
+	public void traverseEnumConstant(UniEnumConstant node) {
+		// TODO Auto-generated method stub
+		print("case");
+		print(" ");
+		print(node.name);
 	}
 
 

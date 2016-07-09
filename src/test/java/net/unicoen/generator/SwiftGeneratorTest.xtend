@@ -83,6 +83,7 @@ public class SwiftGeneratorTest{
 //		
 //			+"}")
 			val tree = mapper.parse("enum planets{"
+				+"SUNDAY, MONDAY, TUESDAY"
 //				+"private final double mass;"
 //				+"private final double radius;"
 //				+"Planet(double mass, double radius) {}"

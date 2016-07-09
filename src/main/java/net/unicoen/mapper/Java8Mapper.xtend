@@ -126,7 +126,6 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				result
 			}
 		if (node instanceof UniNode) {
-			
 			var List<String> contents = newArrayList
 			for (var i = _comments.size - 1; i >= 0 && _comments.get(i).parent == tree; i--) {
 				_comments.get(i).contents += contents
@@ -1817,6 +1816,9 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
+						case 1295: {
+							add += it.visit
+						}
 						case 1301: {
 							add += it.visit
 						}
@@ -1834,6 +1836,70 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			]
 		}
 		map.castToList(UniMemberDec)
+	}
+
+	override public visitEnumConstantList(Java8Parser.EnumConstantListContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val add = newArrayList
+		map.put("add", add)
+		if (ctx.children != null) {
+			ctx.children.forEach [
+				if (it instanceof RuleContext) {
+					switch it.invokingState {
+						case 1306: {
+							add += it.visit
+						}
+						case 1308: {
+							add += it.visit
+						}
+						default: {
+							none += it.visit
+						}
+					}
+				} else if (it instanceof TerminalNode) {
+					switch it.symbol.type {
+						default: {
+							none += it.visit
+						}
+					}
+				}
+			]
+		}
+		map.castToList(UniEnumConstant)
+	}
+
+	override public visitEnumConstant(Java8Parser.EnumConstantContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val name = newArrayList
+		map.put("name", name)
+		val args = newArrayList
+		map.put("args", args)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 1322: {
+						args += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					case Java8Parser.Identifier: {
+						name += it.visit.flatten
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(UniEnumConstant)
 	}
 
 	override public visitEnumBodyDeclarations(Java8Parser.EnumBodyDeclarationsContext ctx) {

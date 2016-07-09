@@ -152,6 +152,10 @@ Dsl.define_node do |x|
         d.mem "type", String
         d.mem "name", String
       end
+      x.node "EnumConstant" do |d|
+          d.mem "name", String
+          d.mem "args", "Expr", list: true
+      end
     end
     x.node "ClassDec" do |d|
       d.mem "className", String
