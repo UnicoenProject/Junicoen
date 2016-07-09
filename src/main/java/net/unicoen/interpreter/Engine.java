@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 
 import net.unicoen.node.UniBinOp;
@@ -59,27 +60,22 @@ public class Engine {
 
 	public PrintStream out = System.out;
 	public List<ExecutionListener> listeners;
-	private boolean waitFlag = false;
-	private boolean stepExecing =false;
+	
+	private AtomicBoolean isStepExecutionRunning = new AtomicBoolean(false);
+	private AtomicBoolean isExecutionThreadWaiting = new AtomicBoolean(false);
 	private ExecState state;
+	public boolean isStepExecutionRunning() {
+		return isStepExecutionRunning.get();
+	}
 
-	private synchronized boolean getWaitingFlag(){
-		return waitFlag;
+	private synchronized void notifyAllThread(){
+		notifyAll();
 	}
-	private synchronized void setWaitingFlag(boolean enable){
-		waitFlag = enable;
-	}
-	public synchronized boolean getStepExecing(){
-		return stepExecing;
-	}
-	private synchronized void setStepExecing(boolean enable){
-		stepExecing = enable;
-	}
-	private void waitForWaitingFlagIs(boolean is){
-		while(getWaitingFlag()==is)
+	private synchronized void waitForWaitingFlagIs(boolean is){
+		while(isExecutionThreadWaiting.get()==is)
 		{
 			try {
-				Thread.sleep(100);
+				wait();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -142,33 +138,35 @@ public class Engine {
 
 	public ExecState startStepExecution(UniMethodDec dec) {
 		UniMethodDec fdec = dec;
+		isStepExecutionRunning.set(true);
+		isExecutionThreadWaiting.set(false);
+		state = new ExecState();
 		if (fdec != null) {
 			new Thread(){
-	            public void run(){
-	            	setStepExecing(true);
-	            	state = new ExecState();
-	            	
+	            public void run(){        	
 	            	Scope global = Scope.createGlobal();
 	    			StdLibLoader.initialize(global);
 	    			firePreExecAll(global);
 	    			Object value = execFunc(fdec, global);
 	    			firePostExecAll(global, value);
-	    			
-	    			setStepExecing(false);
-	    			setWaitingFlag(true);
+	    			isExecutionThreadWaiting.set(true);
+	    			isStepExecutionRunning.set(false);
+	    			notifyAllThread();
 	            }
 	        }.start();
+	        notifyAllThread();
 	        waitForWaitingFlagIs(false);
-	        return stepExecute();
+	        return state;
 		} else {
 			throw new RuntimeException("No entry point in " + dec);
 		}
 	}
 
 	public ExecState stepExecute() {
-		if(getStepExecing())
+		if(isStepExecutionRunning.get())
 		{
-			setWaitingFlag(false);
+			isExecutionThreadWaiting.set(false);
+			notifyAllThread();
 			waitForWaitingFlagIs(false);
 		}
 		return state;
@@ -218,10 +216,11 @@ public class Engine {
 	}
 
 	private Object execExpr(UniExpr expr, Scope scope) {
-		if(getStepExecing())
+		if(isStepExecutionRunning.get())
 		{
-			setWaitingFlag(true);
 			state.setCurrentExpr(expr);
+			isExecutionThreadWaiting.set(true);
+			notifyAllThread();
 			waitForWaitingFlagIs(true);
 		}
 		firePreExec(expr, scope);
@@ -293,7 +292,7 @@ public class Engine {
 			UniVariableDec decVar = (UniVariableDec) expr;
 			Object value = execExpr(decVar.value, scope);
 			scope.setTop(decVar.name, value);
-			if(getStepExecing()){
+			if(isStepExecutionRunning.get()){
 				String stackName = scope.name;
 				state.addVariable(stackName, decVar, value);
 			}
@@ -570,7 +569,7 @@ public class Engine {
 
 	private Object execAssign(UniIdent left, Object value, Scope scope) {
 		scope.set(left.name, value);
-		if(getStepExecing()){
+		if(isStepExecutionRunning.get()){
 			String stackName = scope.name;
 			state.updateVariable(stackName, left.name, value);
 		}
