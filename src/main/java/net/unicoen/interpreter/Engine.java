@@ -429,6 +429,11 @@ public class Engine {
 
 	private Object execUnaryOp(UniUnaryOp uniOp, Scope scope) {
 		switch (uniOp.operator) {
+		case "&":
+			if(uniOp.expr instanceof UniIdent){
+				String name = ((UniIdent)uniOp.expr).name;
+				return "&"+name;
+			}
 		case "!":
 			return !toBool(execExpr(uniOp.expr, scope));
 		case "-": {
@@ -491,6 +496,19 @@ public class Engine {
 			if (left instanceof UniIdent) {
 				return execAssign((UniIdent) left, execExpr(right, scope),
 						scope);
+			}
+			if (left instanceof UniUnaryOp) {
+				UniUnaryOp uup = (UniUnaryOp)left;
+				if(uup.operator.equals("*") && uup.expr instanceof UniIdent){
+					UniIdent ui = (UniIdent)uup.expr;
+					String uiName = ui.name;
+					Object refVar = scope.get(uiName);
+					String refVarName = refVar.toString();
+					if(refVarName.substring(0,1).equals("&")){
+						UniIdent uiRef = new UniIdent(refVarName.substring(1));
+						return execAssign(uiRef,execExpr(right, scope),scope);
+					}
+				}
 			}
 			throw new RuntimeException("Assignment failure: " + left);
 		}
