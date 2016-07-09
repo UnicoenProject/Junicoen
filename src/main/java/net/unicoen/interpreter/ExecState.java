@@ -46,10 +46,13 @@ public class ExecState {
 		}
 	}
 
-	public synchronized UniNode getCurrentExpr() {
+	public final synchronized UniNode getCurrentExpr() {
 		return currentExpr;
 	}
 	public synchronized void setCurrentExpr(UniNode expr) {
 		this.currentExpr = expr;
 	}	
+	public final ArrayList<Stack> getStacks(){
+		return stacks;
+	}
 }

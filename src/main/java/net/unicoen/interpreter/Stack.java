@@ -3,9 +3,9 @@ package net.unicoen.interpreter;
 import java.util.ArrayList;
 
 public class Stack {
-	String name;
-	ArrayList<Variable> variables;
-	int address;
+	public final String name;
+	private ArrayList<Variable> variables;
+	public final int address;
 	
 	//引数(variables)あり版も必要
 	public Stack(String name, int address) {
@@ -29,8 +29,12 @@ public class Stack {
 	void updateVariable(String name, Object value){
 		for(Variable variable : variables){
 			if(variable.name.equals(name)){
-				variable.updateValue(value);
+				variable.setValue(value);
 			}
 		}
+	}
+	
+	public final ArrayList<Variable> getVariables() {
+		return variables;
 	}
 }
