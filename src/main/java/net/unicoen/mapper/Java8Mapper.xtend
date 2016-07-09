@@ -126,6 +126,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				result
 			}
 		if (node instanceof UniNode) {
+			
 			var List<String> contents = newArrayList
 			for (var i = _comments.size - 1; i >= 0 && _comments.get(i).parent == tree; i--) {
 				_comments.get(i).contents += contents
@@ -372,7 +373,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 536: {
+					case 538: {
 						ret += it.visit
 					}
 					default: {
@@ -405,7 +406,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 580: {
+					case 582: {
 						add += it.visit
 					}
 					default: {
@@ -500,10 +501,10 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 731: {
+					case 733: {
 						ret += it.visit
 					}
-					case 732: {
+					case 734: {
 						receiver += it.visit
 					}
 					default: {
@@ -539,7 +540,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 739: {
+					case 741: {
 						ret += it.visit
 					}
 					case 68: {
@@ -578,10 +579,10 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 749: {
+					case 751: {
 						ret += it.visit
 					}
-					case 750: {
+					case 752: {
 						receiver += it.visit
 					}
 					default: {
@@ -617,7 +618,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 757: {
+					case 759: {
 						ret += it.visit
 					}
 					case 72: {
@@ -679,7 +680,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 778: {
+					case 780: {
 						merge += it.visit
 					}
 					default: {
@@ -710,10 +711,10 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 833: {
+					case 835: {
 						classes += it.visit
 					}
-					case 834: {
+					case 836: {
 						interfaces += it.visit
 					}
 					default: {
@@ -739,7 +740,10 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 838: {
+					case 840: {
+						merge += it.visit
+					}
+					case 841: {
 						merge += it.visit
 					}
 					default: {
@@ -776,19 +780,19 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 842: {
+					case 844: {
 						modifiers += it.visit
 					}
-					case 844: {
+					case 846: {
 						className += it.visit
 					}
-					case 848: {
+					case 850: {
 						superClass += it.visit
 					}
-					case 851: {
+					case 853: {
 						interfaces += it.visit
 					}
-					case 854: {
+					case 856: {
 						members += it.visit
 					}
 					default: {
@@ -838,7 +842,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 858: {
+						case 860: {
 							add += it.visit
 						}
 						default: {
@@ -889,7 +893,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 887: {
+						case 889: {
 							add += it.visit
 						}
 						default: {
@@ -918,7 +922,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 890: {
+						case 892: {
 							add += it.visit
 						}
 						default: {
@@ -947,10 +951,10 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 892: {
+						case 894: {
 							add += it.visit
 						}
-						case 894: {
+						case 896: {
 							add += it.visit
 						}
 						default: {
@@ -979,7 +983,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 901: {
+						case 903: {
 							add += it.visit
 						}
 						default: {
@@ -1008,10 +1012,10 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 909: {
+						case 911: {
 							add += it.visit
 						}
-						case 912: {
+						case 914: {
 							add += it.visit
 						}
 						default: {
@@ -1040,10 +1044,10 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 915: {
+						case 917: {
 							add += it.visit
 						}
-						case 916: {
+						case 918: {
 							add += it.visit
 						}
 						default: {
@@ -1075,13 +1079,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 922: {
+						case 924: {
 							modifiers += it.visit
 						}
-						case 923: {
+						case 925: {
 							type += it.visit
 						}
-						case 924: {
+						case 926: {
 							merge += it.visit
 						}
 						default: {
@@ -1116,7 +1120,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 927: {
+						case 929: {
 							add += it.visit
 						}
 						default: {
@@ -1166,10 +1170,10 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 943: {
+					case 945: {
 						add += it.visit
 					}
-					case 945: {
+					case 947: {
 						add += it.visit
 					}
 					default: {
@@ -1197,10 +1201,10 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 951: {
+					case 953: {
 						merge += it.visit
 					}
-					case 953: {
+					case 955: {
 						value += it.visit
 					}
 					default: {
@@ -1240,7 +1244,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 957: {
+					case 959: {
 						type += it.visit
 					}
 					default: {
@@ -1295,13 +1299,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1040: {
+					case 1042: {
 						modifiers += it.visit
 					}
-					case 1046: {
+					case 1048: {
 						merge += it.visit
 					}
-					case 1047: {
+					case 1049: {
 						block += it.visit
 					}
 					default: {
@@ -1331,16 +1335,16 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1061: {
+					case 1063: {
 						returnType += it.visit
 					}
-					case 1062: {
+					case 1064: {
 						merge += it.visit
 					}
-					case 1073: {
+					case 1075: {
 						returnType += it.visit
 					}
-					case 1074: {
+					case 1076: {
 						merge += it.visit
 					}
 					default: {
@@ -1395,13 +1399,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1084: {
+					case 1086: {
 						methodName += it.visit
 					}
-					case 1086: {
+					case 1088: {
 						args += it.visit
 					}
-					case 1090: {
+					case 1092: {
 						returnType += it.visit
 					}
 					default: {
@@ -1451,13 +1455,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 1095: {
-							add += it.visit
-						}
 						case 1097: {
 							add += it.visit
 						}
 						case 1099: {
+							add += it.visit
+						}
+						case 1101: {
 							add += it.visit
 						}
 						default: {
@@ -1486,10 +1490,10 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 1102: {
+						case 1104: {
 							add += it.visit
 						}
-						case 1104: {
+						case 1106: {
 							add += it.visit
 						}
 						default: {
@@ -1518,10 +1522,10 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1126: {
+					case 1128: {
 						type += it.visit
 					}
-					case 1127: {
+					case 1129: {
 						merge += it.visit
 					}
 					default: {
@@ -1552,10 +1556,10 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1129: {
+					case 1131: {
 						name += it.visit
 					}
-					case 1130: {
+					case 1132: {
 						type += it.visit
 					}
 					default: {
@@ -1603,7 +1607,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1186: {
+					case 1188: {
 						merge += it.visit
 					}
 					default: {
@@ -1635,13 +1639,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1195: {
+					case 1197: {
 						modifiers += it.visit
 					}
-					case 1201: {
+					case 1203: {
 						merge += it.visit
 					}
-					case 1205: {
+					case 1207: {
 						block += it.visit
 					}
 					default: {
@@ -1694,10 +1698,10 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1216: {
+					case 1218: {
 						methodName += it.visit
 					}
-					case 1218: {
+					case 1220: {
 						args += it.visit
 					}
 					default: {
@@ -1737,6 +1741,130 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		map.castTo(String)
 	}
 
+	override public visitEnumDeclaration(Java8Parser.EnumDeclarationContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val className = newArrayList
+		val Object symbol = "_"
+		className.add(symbol)
+		map.put("className", className)
+		val interfaces = newArrayList
+		map.put("interfaces", interfaces)
+		val modifiers = newArrayList
+		map.put("modifiers", modifiers)
+		val members = newArrayList
+		map.put("members", members)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 1284: {
+						modifiers += it.visit
+					}
+					case 1286: {
+						className += it.visit
+					}
+					case 1287: {
+						interfaces += it.visit
+					}
+					case 1290: {
+						members += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(UniClassDec)
+	}
+
+	override public visitEnumName(Java8Parser.EnumNameContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(String)
+	}
+
+	override public visitEnumBody(Java8Parser.EnumBodyContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val add = newArrayList
+		map.put("add", add)
+		if (ctx.children != null) {
+			ctx.children.forEach [
+				if (it instanceof RuleContext) {
+					switch it.invokingState {
+						case 1301: {
+							add += it.visit
+						}
+						default: {
+							none += it.visit
+						}
+					}
+				} else if (it instanceof TerminalNode) {
+					switch it.symbol.type {
+						default: {
+							none += it.visit
+						}
+					}
+				}
+			]
+		}
+		map.castToList(UniMemberDec)
+	}
+
+	override public visitEnumBodyDeclarations(Java8Parser.EnumBodyDeclarationsContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val add = newArrayList
+		map.put("add", add)
+		if (ctx.children != null) {
+			ctx.children.forEach [
+				if (it instanceof RuleContext) {
+					switch it.invokingState {
+						case 1334: {
+							add += it.visit
+						}
+						default: {
+							none += it.visit
+						}
+					}
+				} else if (it instanceof TerminalNode) {
+					switch it.symbol.type {
+						default: {
+							none += it.visit
+						}
+					}
+				}
+			]
+		}
+		map.castToList(UniMemberDec)
+	}
+
 	override public visitInterfaceDeclaration(Java8Parser.InterfaceDeclarationContext ctx) {
 		val map = newHashMap
 		val none = newArrayList
@@ -1745,7 +1873,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1341: {
+					case 1340: {
 						merge += it.visit
 					}
 					default: {
@@ -1780,16 +1908,16 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1345: {
+					case 1344: {
 						modifiers += it.visit
 					}
-					case 1347: {
+					case 1346: {
 						interfaceName += it.visit
 					}
-					case 1351: {
+					case 1350: {
 						superInterface += it.visit
 					}
-					case 1354: {
+					case 1353: {
 						members += it.visit
 					}
 					default: {
@@ -1817,7 +1945,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 1356: {
+						case 1355: {
 							add += it.visit
 						}
 						default: {
@@ -1890,7 +2018,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 1374: {
+						case 1373: {
 							add += it.visit
 						}
 						default: {
@@ -1919,7 +2047,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 1377: {
+						case 1376: {
 							add += it.visit
 						}
 						default: {
@@ -1948,10 +2076,10 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 1385: {
+						case 1384: {
 							add += it.visit
 						}
-						case 1386: {
+						case 1385: {
 							add += it.visit
 						}
 						default: {
@@ -1983,13 +2111,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 1392: {
+						case 1391: {
 							modifiers += it.visit
 						}
-						case 1393: {
+						case 1392: {
 							type += it.visit
 						}
-						case 1394: {
+						case 1393: {
 							merge += it.visit
 						}
 						default: {
@@ -2024,7 +2152,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 1397: {
+						case 1396: {
 							add += it.visit
 						}
 						default: {
@@ -2077,13 +2205,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1409: {
+					case 1408: {
 						modifiers += it.visit
 					}
-					case 1410: {
+					case 1409: {
 						merge += it.visit
 					}
-					case 1411: {
+					case 1410: {
 						block += it.visit
 					}
 					default: {
@@ -2113,7 +2241,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 1413: {
+						case 1412: {
 							add += it.visit
 						}
 						default: {
@@ -2163,7 +2291,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1537: {
+					case 1536: {
 						items += it.visit
 					}
 					default: {
@@ -2191,10 +2319,10 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 1545: {
+						case 1544: {
 							add += it.visit
 						}
-						case 1547: {
+						case 1546: {
 							add += it.visit
 						}
 						default: {
@@ -2222,7 +2350,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1554: {
+					case 1553: {
 						body += it.visit
 					}
 					default: {
@@ -2250,10 +2378,10 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 1559: {
+						case 1558: {
 							add += it.visit
 						}
-						case 1560: {
+						case 1559: {
 							add += it.visit
 						}
 						default: {
@@ -2281,7 +2409,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 1571: {
+						case 1570: {
 							ret += it.visit
 						}
 						default: {
@@ -2316,13 +2444,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 1574: {
+						case 1573: {
 							modifiers += it.visit
 						}
-						case 1580: {
+						case 1579: {
 							type += it.visit
 						}
-						case 1581: {
+						case 1580: {
 							merge += it.visit
 						}
 						default: {
@@ -2355,7 +2483,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1622: {
+					case 1621: {
 						ret += it.visit
 					}
 					default: {
@@ -2387,10 +2515,10 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1636: {
+					case 1635: {
 						cond += it.visit
 					}
-					case 1638: {
+					case 1637: {
 						trueStatement += it.visit
 					}
 					default: {
@@ -2421,13 +2549,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1642: {
+					case 1641: {
 						cond += it.visit
 					}
-					case 1644: {
+					case 1643: {
 						trueStatement += it.visit
 					}
-					case 1646: {
+					case 1645: {
 						falseStatement += it.visit
 					}
 					default: {
@@ -2456,10 +2584,10 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1670: {
+					case 1669: {
 						cond += it.visit
 					}
-					case 1672: {
+					case 1671: {
 						cases += it.visit
 					}
 					default: {
@@ -2487,7 +2615,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 1675: {
+						case 1674: {
 							add += it.visit
 						}
 						default: {
@@ -2516,10 +2644,10 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1689: {
+					case 1688: {
 						merge += it.visit
 					}
-					case 1690: {
+					case 1689: {
 						statement += it.visit
 					}
 					default: {
@@ -2547,7 +2675,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1692: {
+					case 1691: {
 						merge += it.visit
 					}
 					default: {
@@ -2578,7 +2706,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1700: {
+					case 1699: {
 						cond += it.visit
 					}
 					default: {
@@ -2617,16 +2745,16 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1743: {
+					case 1742: {
 						init += it.visit
 					}
-					case 1747: {
+					case 1746: {
 						cond += it.visit
 					}
-					case 1751: {
+					case 1750: {
 						step += it.visit
 					}
-					case 1755: {
+					case 1754: {
 						statement += it.visit
 					}
 					default: {
@@ -2660,19 +2788,19 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1789: {
+					case 1788: {
 						modifiers += it.visit
 					}
-					case 1795: {
+					case 1794: {
 						type += it.visit
 					}
-					case 1796: {
+					case 1795: {
 						merge += it.visit
 					}
-					case 1798: {
+					case 1797: {
 						container += it.visit
 					}
-					case 1800: {
+					case 1799: {
 						statement += it.visit
 					}
 					default: {
@@ -2701,7 +2829,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1830: {
+					case 1829: {
 						value += it.visit
 					}
 					default: {
@@ -2728,13 +2856,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
+					case 1926: {
+						add += it.visit.flatten
+					}
 					case 1927: {
 						add += it.visit.flatten
 					}
-					case 1928: {
-						add += it.visit.flatten
-					}
-					case 1931: {
+					case 1930: {
 						add += it.visit.flatten
 					}
 					default: {
@@ -2774,13 +2902,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2015: {
+					case 2014: {
 						ret += it.visit
 					}
-					case 2051: {
+					case 2050: {
 						ret += it.visit
 					}
-					case 2053: {
+					case 2052: {
 						ret += it.visit
 					}
 					default: {
@@ -2789,6 +2917,9 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				}
 			} else if (it instanceof TerminalNode) {
 				switch it.symbol.type {
+					case Java8Parser.THIS: {
+						ret += it.visit.flatten
+					}
 					default: {
 						none += it.visit
 					}
@@ -2812,10 +2943,10 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2232: {
+					case 2231: {
 						type += it.visit
 					}
-					case 2236: {
+					case 2235: {
 						args += it.visit
 					}
 					default: {
@@ -2839,6 +2970,38 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		map.castTo(UniNew)
 	}
 
+	override public visitFieldAccess(Java8Parser.FieldAccessContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val receiver = newArrayList
+		map.put("receiver", receiver)
+		val fieldName = newArrayList
+		map.put("fieldName", fieldName)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 2273: {
+						receiver += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					case Java8Parser.Identifier: {
+						fieldName += it.visit.flatten
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(UniFieldAccess)
+	}
+
 	override public visitMethodInvocation(Java8Parser.MethodInvocationContext ctx) {
 		val map = newHashMap
 		val none = newArrayList
@@ -2852,34 +3015,34 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2362: {
+					case 2361: {
 						methodName += it.visit
 					}
-					case 2364: {
+					case 2363: {
 						args += it.visit
 					}
-					case 2369: {
+					case 2368: {
 						receiver += it.visit
 					}
-					case 2376: {
+					case 2375: {
 						args += it.visit
 					}
-					case 2381: {
+					case 2380: {
 						receiver += it.visit
 					}
-					case 2388: {
+					case 2387: {
 						args += it.visit
 					}
-					case 2393: {
+					case 2392: {
 						receiver += it.visit
 					}
-					case 2400: {
+					case 2399: {
 						args += it.visit
 					}
-					case 2412: {
+					case 2411: {
 						args += it.visit
 					}
-					case 2425: {
+					case 2424: {
 						args += it.visit
 					}
 					default: {
@@ -2911,7 +3074,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2438: {
+					case 2437: {
 						args += it.visit
 					}
 					default: {
@@ -2945,22 +3108,22 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2443: {
+					case 2442: {
 						methodName += it.visit
 					}
-					case 2445: {
+					case 2444: {
 						args += it.visit
 					}
-					case 2450: {
+					case 2449: {
 						receiver += it.visit
 					}
-					case 2457: {
+					case 2456: {
 						args += it.visit
 					}
-					case 2462: {
+					case 2461: {
 						receiver += it.visit
 					}
-					case 2469: {
+					case 2468: {
 						args += it.visit
 					}
 					default: {
@@ -2990,10 +3153,10 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2501: {
+					case 2500: {
 						add += it.visit
 					}
-					case 2503: {
+					case 2502: {
 						add += it.visit
 					}
 					default: {
@@ -3023,40 +3186,40 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2607: {
+					case 2606: {
 						type += it.visit
 					}
-					case 2608: {
+					case 2607: {
 						merge += it.visit
 					}
-					case 2609: {
+					case 2608: {
+						type += it.visit
+					}
+					case 2612: {
 						type += it.visit
 					}
 					case 2613: {
-						type += it.visit
-					}
-					case 2614: {
 						merge += it.visit
 					}
-					case 2615: {
+					case 2614: {
+						type += it.visit
+					}
+					case 2618: {
 						type += it.visit
 					}
 					case 2619: {
 						type += it.visit
 					}
 					case 2620: {
-						type += it.visit
-					}
-					case 2621: {
 						value += it.visit
+					}
+					case 2623: {
+						type += it.visit
 					}
 					case 2624: {
 						type += it.visit
 					}
 					case 2625: {
-						type += it.visit
-					}
-					case 2626: {
 						value += it.visit
 					}
 					default: {
@@ -3084,10 +3247,10 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2630: {
+					case 2629: {
 						merge += it.visit
 					}
-					case 2631: {
+					case 2630: {
 						merge += it.visit
 					}
 					default: {
@@ -3116,7 +3279,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2644: {
+					case 2643: {
 						elementsNum += it.visit
 					}
 					default: {
@@ -3147,13 +3310,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2685: {
+					case 2684: {
 						left += it.visit
 					}
-					case 2686: {
+					case 2685: {
 						operator += it.visit
 					}
-					case 2687: {
+					case 2686: {
 						right += it.visit
 					}
 					default: {
@@ -3207,16 +3370,16 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2696: {
+					case 2695: {
 						ret += it.visit
 					}
-					case 2697: {
+					case 2696: {
 						cond += it.visit
 					}
-					case 2699: {
+					case 2698: {
 						trueExpr += it.visit
 					}
-					case 2701: {
+					case 2700: {
 						falseExpr += it.visit
 					}
 					default: {
@@ -3251,13 +3414,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2706: {
+					case 2705: {
 						ret += it.visit
 					}
-					case 466: {
+					case 468: {
 						left += it.visit
 					}
-					case 2710: {
+					case 2709: {
 						right += it.visit
 					}
 					default: {
@@ -3295,13 +3458,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2717: {
+					case 2716: {
 						ret += it.visit
 					}
-					case 468: {
+					case 470: {
 						left += it.visit
 					}
-					case 2721: {
+					case 2720: {
 						right += it.visit
 					}
 					default: {
@@ -3339,13 +3502,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2728: {
+					case 2727: {
 						ret += it.visit
 					}
-					case 470: {
+					case 472: {
 						left += it.visit
 					}
-					case 2732: {
+					case 2731: {
 						right += it.visit
 					}
 					default: {
@@ -3383,13 +3546,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2739: {
+					case 2738: {
 						ret += it.visit
 					}
-					case 472: {
+					case 474: {
 						left += it.visit
 					}
-					case 2743: {
+					case 2742: {
 						right += it.visit
 					}
 					default: {
@@ -3427,13 +3590,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2750: {
+					case 2749: {
 						ret += it.visit
 					}
-					case 474: {
+					case 476: {
 						left += it.visit
 					}
-					case 2754: {
+					case 2753: {
 						right += it.visit
 					}
 					default: {
@@ -3471,16 +3634,16 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2761: {
+					case 2760: {
 						ret += it.visit
 					}
-					case 476: {
+					case 478: {
 						left += it.visit
 					}
-					case 2765: {
+					case 2764: {
 						right += it.visit
 					}
-					case 2768: {
+					case 2767: {
 						right += it.visit
 					}
 					default: {
@@ -3521,25 +3684,25 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2775: {
+					case 2774: {
 						ret += it.visit
 					}
-					case 478: {
+					case 480: {
 						left += it.visit
 					}
-					case 2779: {
+					case 2778: {
 						right += it.visit
 					}
-					case 2782: {
+					case 2781: {
 						right += it.visit
 					}
-					case 2785: {
+					case 2784: {
 						right += it.visit
 					}
-					case 2788: {
+					case 2787: {
 						right += it.visit
 					}
-					case 2791: {
+					case 2790: {
 						right += it.visit
 					}
 					default: {
@@ -3589,19 +3752,19 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2798: {
+					case 2797: {
 						ret += it.visit
 					}
-					case 480: {
+					case 482: {
 						left += it.visit
 					}
-					case 2803: {
+					case 2802: {
 						right += it.visit
 					}
-					case 2807: {
+					case 2806: {
 						right += it.visit
 					}
-					case 2812: {
+					case 2811: {
 						right += it.visit
 					}
 					default: {
@@ -3642,16 +3805,16 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2819: {
+					case 2818: {
 						ret += it.visit
 					}
-					case 482: {
+					case 484: {
 						left += it.visit
 					}
-					case 2823: {
+					case 2822: {
 						right += it.visit
 					}
-					case 2826: {
+					case 2825: {
 						right += it.visit
 					}
 					default: {
@@ -3692,19 +3855,19 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2833: {
+					case 2832: {
 						ret += it.visit
 					}
-					case 484: {
+					case 486: {
 						left += it.visit
 					}
-					case 2837: {
+					case 2836: {
 						right += it.visit
 					}
-					case 2840: {
+					case 2839: {
 						right += it.visit
 					}
-					case 2843: {
+					case 2842: {
 						right += it.visit
 					}
 					default: {
@@ -3746,19 +3909,19 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
+					case 2848: {
+						ret += it.visit
+					}
 					case 2849: {
 						ret += it.visit
 					}
-					case 2850: {
-						ret += it.visit
+					case 2851: {
+						expr += it.visit
 					}
-					case 2852: {
+					case 2853: {
 						expr += it.visit
 					}
 					case 2854: {
-						expr += it.visit
-					}
-					case 2855: {
 						ret += it.visit
 					}
 					default: {
@@ -3793,13 +3956,12 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val Object symbol = "_"
 		operator.add(symbol)
 		map.put("operator", operator)
-		
 		val expr = newArrayList
 		map.put("expr", expr)
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2859: {
+					case 2858: {
 						expr += it.visit
 					}
 					default: {
@@ -3833,7 +3995,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2862: {
+					case 2861: {
 						expr += it.visit
 					}
 					default: {
@@ -3868,13 +4030,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2864: {
+					case 2863: {
 						ret += it.visit
 					}
-					case 2866: {
+					case 2865: {
 						expr += it.visit
 					}
-					case 2868: {
+					case 2867: {
 						expr += it.visit
 					}
 					default: {
@@ -3909,10 +4071,10 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2872: {
+					case 2871: {
 						ret += it.visit
 					}
-					case 2873: {
+					case 2872: {
 						ret += it.visit
 					}
 					default: {
@@ -3944,7 +4106,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2883: {
+					case 2882: {
 						expr += it.visit
 					}
 					default: {
@@ -3978,7 +4140,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2888: {
+					case 2887: {
 						expr += it.visit
 					}
 					default: {

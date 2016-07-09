@@ -50,32 +50,47 @@ public class SwiftGeneratorTest{
 		//val tree = mapper.parse("public class A {}")
 		//val target = SwiftGenerator.generate(tree)
 		//assertEquals("public class A { } ",format(target))
-		val tree = mapper.parse("public class temp{ "
-			+"public final int temp = 5;"
-			+"temp(){int a = 0;int b = a; int c; c = b;}"
-			+"int ret(int a){ final int max = 10;"
-			+"String[] groceries = new Stirng[3];"
-			+"a.age=1;"
-			+"i--;"
-			+"++j;"
+//		var tree = mapper.parse("public class abcde{ "
+//			+"public final int temp = 5;"
+//			+"temp(){int a = 0;int b = a; int c; c = b;}"
+//			+"int ret(int a){"
+//			+"final int max = 10;"
+//			+"String[] groceries = new Stirng[3];"
+//			+"a.age=1;"
+//			+"i--;"
+//			+"++j;"
+//			+"}"
+//			+"this.age=1;"
+//			+"i=(String)j;"
 //			+"groceries[0] = \"Potato\";"
 //			+"String[] friends = {\"Bob\",\"Paul\",\"John\"};"
+//			+"return a.ret();"
 //			+"for(int i=0;i<5;i++){j++;}"
 //			+"while(1){}"
-//			+"do{++i;}while(a>b);}"
-//			+"private static int sum(int num1, int num2){return num1 + num2;}"
-//			//+"double a = (int) max;}"
-//			+"public static void main(){System.out.println(\"Hello World\"+hello);"
+//			+"do{++i;}while(a>b);"
 //			+"switch (a) { case 1: int a=1; default: a =b;}"
+//			+"}"
+//			+"private static int sum(int num1, int num2){return num1 + num2;}"
+			//+"double a = (int) max;}"
+//			+"public static void main(){System.out.println(\"Hello World\"+hello);"
+			
 //			+"int sum = sum(1,2);"
 //			+"final Year west = new Year(1992,02,22);"
 //			+"west.printYear();"
 //			+"if(rainP>50){System.out.println(\"Bring the umbrella\");}else if(rainP<70){System.out.println(\"No need\");"
 //			+"int[] arr = new int[3];"
 //			+"hm.put(\"potato\", 1);}"
-			+"}}")
 //		
 //			+"}")
+			val tree = mapper.parse("enum planets{"
+//				+"private final double mass;"
+//				+"private final double radius;"
+//				+"Planet(double mass, double radius) {}"
+//				+"private double mass() { return mass; }"
+//				+"private double radius() { return radius; }"
+				+"}"
+			)
+	
 			assertThat(tree, instanceOf(UniProgram))
 			val cl = (tree as UniProgram).classes.get(0)
 			assertThat(cl, instanceOf(UniClassDec))

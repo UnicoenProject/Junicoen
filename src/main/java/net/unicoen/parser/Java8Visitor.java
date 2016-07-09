@@ -649,6 +649,12 @@ public interface Java8Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitEnumDeclaration(Java8Parser.EnumDeclarationContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Java8Parser#enumName}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEnumName(Java8Parser.EnumNameContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Java8Parser#enumBody}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

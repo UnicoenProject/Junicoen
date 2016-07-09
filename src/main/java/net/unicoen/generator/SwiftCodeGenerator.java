@@ -606,7 +606,12 @@ public class SwiftCodeGenerator extends Traverser {
 		String declaration = "";
 		if(node.modifiers!=null){
 			modifiers = safeJoin(node.modifiers, " ");
-			declaration = String.join(" ", modifiers, "class", node.className);
+			if(node.className.startsWith("_")){
+				node.className = node.className.substring(1,node.className.length());
+				declaration = String.join(" ", modifiers, "enum", node.className);
+			}else{
+				declaration = String.join(" ", modifiers, "class", node.className);
+			}
 		}else{
 			declaration = String.join(" ", "class", node.className);
 		}
