@@ -1,5 +1,5 @@
 package net.unicoen.interpreter;
-
+import net.arnx.jsonic.JSON;
 import static net.unicoen.node_helper.Builder.bin;
 import static net.unicoen.node_helper.Builder.block;
 import static net.unicoen.node_helper.Builder.ident;
@@ -44,8 +44,11 @@ public class CppEngineTest {
 		String text = 
 				"int main()"+
 				"{"+
+					"int arr[5] = {1,2,3};"+
 					"int a=1;"+
 					"int b=2;"+
+					"int*pa = &b;"+
+					"*pa = 3;"+
 					"a = 5;"+
 					"int c=a+b;"+
 				"}";
@@ -53,8 +56,8 @@ public class CppEngineTest {
 		CPP14Mapper cppMapper = new CPP14Mapper(true);
 		UniMethodDec node = (UniMethodDec) cppMapper.parse(text);
 		ExecState state = engine.startStepExecution(node);
-
-		for(int i=0;engine.getStepExecing();++i)
+		
+		for(int i=0;engine.isStepExecutionRunning();++i)
 		{
 			state = engine.stepExecute();
 		}
