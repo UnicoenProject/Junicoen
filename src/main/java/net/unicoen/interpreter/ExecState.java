@@ -33,6 +33,7 @@ public class ExecState {
 		for(Stack stack : stacks){
 			if(stack.name.equals(stackName)){
 				stack.addVariable(decVar.type, decVar.name, value);
+				break;
 			}
 		}
 	}
@@ -42,6 +43,16 @@ public class ExecState {
 		for(Stack stack : stacks){
 			if(stack.name.equals(stackName)){
 				stack.updateVariable(varName, value);
+				break;
+			}
+		}
+	}
+	
+	public void updateVariable(String stackName, String varName,int index, Object value){
+		for(Stack stack : stacks){
+			if(stack.name.equals(stackName)){
+				stack.updateVariable(varName, index, value);
+				break;
 			}
 		}
 	}

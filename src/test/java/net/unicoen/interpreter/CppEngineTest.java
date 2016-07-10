@@ -45,6 +45,7 @@ public class CppEngineTest {
 				"int main()"+
 				"{"+
 					"int arr[5] = {1,2,3};"+
+					"arr[4]=6;"+//arr[4]はUnaryOp?
 					"int a=1;"+
 					"int b=2;"+
 					"int*pa = &b;"+

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 
+import net.unicoen.node.UniArray;
 import net.unicoen.node.UniBinOp;
 import net.unicoen.node.UniBlock;
 import net.unicoen.node.UniBoolLiteral;
@@ -27,6 +28,7 @@ import net.unicoen.node.UniLongLiteral;
 import net.unicoen.node.UniMemberDec;
 import net.unicoen.node.UniMethodCall;
 import net.unicoen.node.UniMethodDec;
+import net.unicoen.node.UniNewArray;
 import net.unicoen.node.UniNode;
 import net.unicoen.node.UniReturn;
 import net.unicoen.node.UniStringLiteral;
@@ -291,10 +293,22 @@ public class Engine {
 		if (expr instanceof UniVariableDec) {
 			UniVariableDec decVar = (UniVariableDec) expr;
 			Object value = execExpr(decVar.value, scope);
-			scope.setTop(decVar.name, value);
-			if(isStepExecutionRunning.get()){
-				String stackName = scope.name;
-				state.addVariable(stackName, decVar, value);
+			if(value instanceof ArrayList<?>){
+				ArrayList<?> varArray = (ArrayList<?>)value;
+				for(int i=0;i<varArray.size();++i){
+					scope.setTop(decVar.name+"["+i+"]", varArray.get(i));
+				}
+				if(isStepExecutionRunning.get()){
+					String stackName = scope.name;
+					state.addVariable(stackName, decVar, varArray);
+				}
+			}
+			else{
+				scope.setTop(decVar.name, value);
+				if(isStepExecutionRunning.get()){
+					String stackName = scope.name;
+					state.addVariable(stackName, decVar, value);
+				}
 			}
 			return value;
 		}
@@ -357,9 +371,31 @@ public class Engine {
 				return null;
 			}
 		}
+		if (expr instanceof UniArray) {
+			return execArray((UniArray) expr, scope);
+		}
+		if (expr instanceof UniNewArray) {
+			UniNewArray uniNewArray = (UniNewArray) expr;//C言語ではtypeは取れない
+			List<UniExpr> elementsNum = uniNewArray.elementsNum;//多次元未対応
+			int length = (int)execExpr(elementsNum.get(0),scope);//多次元未対応
+			UniArray value = uniNewArray.value;
+			ArrayList<Object> array = execArray(value,scope);
+			for(int i=array.size();i<length;++i){
+				array.add(0);
+			}
+			return array;
+		}
 		throw new RuntimeException("Not support expr type: " + expr);
 	}
-
+	private ArrayList<Object> execArray(UniArray uniArray, Scope scope) {
+		List<UniExpr> elements = uniArray.items;
+		ArrayList<Object> array = new ArrayList<Object>();
+		for(int i=0;i<elements.size();++i){
+			Object element = execExpr(elements.get(i),scope);
+			array.add(element);
+		}
+		return array;
+	}
 	private Object execMethodCall(Object receiver, String methodName,
 			Object[] args) {
 		assert receiver != null;
@@ -480,6 +516,18 @@ public class Engine {
 					}
 				}
 			}
+		case "*":{
+			UniUnaryOp uup = uniOp;
+			if(uup.expr instanceof UniIdent){
+				UniIdent ui = (UniIdent)uup.expr;
+				String uiName = ui.name;
+				Object refVar = scope.get(uiName);
+				String refVarName = refVar.toString();
+				if(refVarName.substring(0,1).equals("&")){
+					return new UniIdent(refVarName.substring(1));
+				}
+			}
+		}
 
 		}
 		throw new RuntimeException("Unkown binary operator: " + uniOp.operator);
@@ -494,23 +542,16 @@ public class Engine {
 		switch (op) {
 		case "=": {
 			if (left instanceof UniIdent) {
-				return execAssign((UniIdent) left, execExpr(right, scope),
-						scope);
+				return execAssign((UniIdent) left, execExpr(right, scope),scope);
 			}
-			if (left instanceof UniUnaryOp) {
-				UniUnaryOp uup = (UniUnaryOp)left;
-				if(uup.operator.equals("*") && uup.expr instanceof UniIdent){
-					UniIdent ui = (UniIdent)uup.expr;
-					String uiName = ui.name;
-					Object refVar = scope.get(uiName);
-					String refVarName = refVar.toString();
-					if(refVarName.substring(0,1).equals("&")){
-						UniIdent uiRef = new UniIdent(refVarName.substring(1));
-						return execAssign(uiRef,execExpr(right, scope),scope);
-					}
-				}
+			if (left instanceof UniUnaryOp || left instanceof UniBinOp) {
+				return execAssign((UniIdent)execExpr(left,scope),execExpr(right, scope),scope);
 			}
+			
 			throw new RuntimeException("Assignment failure: " + left);
+		}
+		case "[]":{
+			return new UniIdent((((UniIdent)left).name)+"["+execExpr(right, scope)+"]");
 		}
 		case "==":
 			return Eq.eq(execExpr(left, scope), execExpr(right, scope));
@@ -590,6 +631,15 @@ public class Engine {
 		if(isStepExecutionRunning.get()){
 			String stackName = scope.name;
 			state.updateVariable(stackName, left.name, value);
+		}
+		return value;
+	}
+	private Object execAssign(String left, int index, Object value, Scope scope) {
+		ArrayList<Object> arr = (ArrayList<Object>) scope.get(left);
+		arr.set(index, value);
+		if(isStepExecutionRunning.get()){
+			String stackName = scope.name;
+			state.updateVariable(stackName, left, index, value);
 		}
 		return value;
 	}

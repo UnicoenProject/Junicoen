@@ -95,25 +95,24 @@ lambdadeclarator
 
 postfixexpression
 	:	primaryexpression 
-	|	postfixexpression '[' expression ']' 
 	|	postfixexpression '[' bracedinitlist ']' 
 	|	postfixexpression '(' expressionlist? ')' 
 	|	simpletypespecifier '(' expressionlist? ')' 
 	|	typenamespecifier '(' expressionlist? ')' 
-	|	simpletypespecifier bracedinitlist 
-	|	typenamespecifier bracedinitlist 
-	|	postfixexpression '.' Template? idexpression 
-	|	postfixexpression '->' Template? idexpression 
-	|	postfixexpression '.' pseudodestructorname 
-	|	postfixexpression '->' pseudodestructorname 
-	|	postfixexpression '++' 
-	|	postfixexpression '--' 
 	|	Dynamic_cast '<' typeid '>' '(' expression ')' 
 	|	Static_cast '<' typeid '>' '(' expression ')' 
 	|	Reinterpret_cast '<' typeid '>' '(' expression ')' 
 	|	Const_cast '<' typeid '>' '(' expression ')' 
 	|	Typeid '(' expression ')' 
 	|	Typeid '(' typeid ')' 
+	|	postfixexpression '.' Template? idexpression 
+	|	postfixexpression '->' Template? idexpression 
+	|	postfixexpression '.' pseudodestructorname 
+	|	postfixexpression '->' pseudodestructorname 
+	|	postfixexpression '++' 
+	|	postfixexpression '--' 
+	|	simpletypespecifier bracedinitlist 
+	|	typenamespecifier bracedinitlist 
 	;
 
 expressionlist
@@ -127,18 +126,28 @@ pseudodestructorname
 	|	'~' decltypespecifier 
 	;
 
-unaryexpression
+postbinexpression
+	:	postfixexpression LeftBracket assignmentexpression RightBracket 
+	|	postbinexpression LeftBracket assignmentexpression RightBracket 
+	;
+
+binaryexpression
 	:	postfixexpression 
-	|	PlusPlus castexpression 
-	|	MinusMinus castexpression 
-	|	unaryoperator castexpression 
-	|	Sizeof unaryexpression 
+	|	unaryexpression 
+	|	postbinexpression 
 	|	Sizeof '(' typeid ')' 
 	|	Sizeof '...' '(' Identifier ')' 
 	|	Alignof '(' typeid ')' 
 	|	noexceptexpression 
 	|	newexpression 
 	|	deleteexpression 
+	;
+
+unaryexpression
+	:	PlusPlus castexpression 
+	|	MinusMinus castexpression 
+	|	unaryoperator castexpression 
+	|	Sizeof binaryexpression 
 	;
 
 unaryoperator
@@ -189,8 +198,8 @@ noexceptexpression
 	;
 
 castexpression
-	:	unaryexpression 
-	|	'(' typeid ')' castexpression 
+	:	binaryexpression 
+	|	LeftParen typeid RightParen castexpression 
 	;
 
 pmexpression
@@ -413,11 +422,34 @@ variabledeclaration
 
 variableDeclaratorList
 	:	variableDeclarator 
+	|	arrayDeclarator 
 	|	variableDeclaratorList ',' variableDeclarator 
+	;
+
+arrayDeclarator
+	:	declaratorid dims ('=' initializerclause )? 
+	|	declaratorid arrayCreationExpression 
+	;
+
+arrayCreationExpression
+	:	dimExprs dims? ('=' bracedinitlist )? 
+	|	dims bracedinitlist 
+	;
+
+dimExprs
+	:	dimExpr dimExpr* 
+	;
+
+dimExpr
+	:	'[' expression ']' 
 	;
 
 variableDeclarator
 	:	declaratorid ('=' initializerclause )? 
+	;
+
+dims
+	:	LeftBracket RightBracket (LeftBracket RightBracket )* 
 	;
 
 simpledeclaration
@@ -702,8 +734,7 @@ balancedtoken
 	;
 
 initdeclaratorlist
-	:	initdeclarator 
-	|	initdeclaratorlist ',' initdeclarator 
+	:	initdeclarator (',' initdeclarator )* 
 	;
 
 initdeclarator
@@ -845,12 +876,11 @@ initializerclause
 	;
 
 initializerlist
-	:	initializerclause '...'? 
-	|	initializerlist ',' initializerclause '...'? 
+	:	initializerclause (',' initializerclause )* 
 	;
 
 bracedinitlist
-	:	'{' initializerlist ','? '}' 
+	:	'{' initializerlist Comma? '}' 
 	|	'{' '}' 
 	;
 
