@@ -292,7 +292,9 @@ public class Engine {
 		}
 		if (expr instanceof UniVariableDec) {
 			UniVariableDec decVar = (UniVariableDec) expr;
-			Object value = execExpr(decVar.value, scope);
+			Object value = null;
+			if(decVar.value!=null)
+				value = execExpr(decVar.value, scope);
 			if(value instanceof ArrayList<?>){
 				ArrayList<?> varArray = (ArrayList<?>)value;
 				for(int i=0;i<varArray.size();++i){
