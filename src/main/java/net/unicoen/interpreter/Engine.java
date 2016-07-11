@@ -381,9 +381,17 @@ public class Engine {
 			List<UniExpr> elementsNum = uniNewArray.elementsNum;//多次元未対応
 			int length = (int)execExpr(elementsNum.get(0),scope);//多次元未対応
 			UniArray value = uniNewArray.value;
-			ArrayList<Object> array = execArray(value,scope);
-			for(int i=array.size();i<length;++i){
-				array.add(0);
+			ArrayList<Object> array = new ArrayList<Object>();
+			if(value.items==null){
+				for(int i=0;i<length;++i){
+					array.add(null);
+				}
+			}
+			else{
+				array = execArray(value,scope);
+				for(int i=array.size();i<length;++i){
+					array.add(0);
+				}
 			}
 			return array;
 		}
@@ -520,6 +528,8 @@ public class Engine {
 			UniIdent value = getLeftReference(uuo,scope);
 			return execExpr(value,scope);
 			}
+		case "()":
+			return execExpr(uniOp.expr,scope);
 		}
 		throw new RuntimeException("Unkown binary operator: " + uniOp.operator);
 	}
