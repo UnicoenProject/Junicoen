@@ -1,6 +1,7 @@
 package net.unicoen.node;
 
 import java.util.List;
+import net.unicoen.node_helper.*;
 
 public class UniBlock extends UniExpr {
 	public List<UniExpr> body;
@@ -25,6 +26,7 @@ public class UniBlock extends UniExpr {
 		result = result * 31 + (body == null ? 0 : body.hashCode());
 		result = result * 31 + (blockLabel == null ? 0 : blockLabel.hashCode());
 		result = result * 31 + (comments == null ? 0 : comments.hashCode());
+		result = result * 31 + (codeRange == null ? 0 : codeRange.hashCode());
 		return result;
 	}
 
@@ -34,7 +36,8 @@ public class UniBlock extends UniExpr {
 		UniBlock that = (UniBlock)obj;
 		return (this.body == null ? that.body == null : this.body.equals(that.body))
 			&& (this.blockLabel == null ? that.blockLabel == null : this.blockLabel.equals(that.blockLabel))
-			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments));
+			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments))
+			&& (this.codeRange == null ? that.codeRange == null : this.codeRange.equals(that.codeRange));
 	}
 
 	@Override
@@ -59,6 +62,9 @@ public class UniBlock extends UniExpr {
 			} else {
 				this.comments.addAll(that.comments);
 			}
+		}
+		if (that.codeRange != null) {
+			this.codeRange = that.codeRange;
 		}
 	}
 }

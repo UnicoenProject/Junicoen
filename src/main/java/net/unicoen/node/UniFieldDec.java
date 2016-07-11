@@ -1,6 +1,7 @@
 package net.unicoen.node;
 
 import java.util.List;
+import net.unicoen.node_helper.*;
 
 public class UniFieldDec extends UniMemberDec {
 	public List<String> modifiers;
@@ -31,6 +32,7 @@ public class UniFieldDec extends UniMemberDec {
 		result = result * 31 + (name == null ? 0 : name.hashCode());
 		result = result * 31 + (value == null ? 0 : value.hashCode());
 		result = result * 31 + (comments == null ? 0 : comments.hashCode());
+		result = result * 31 + (codeRange == null ? 0 : codeRange.hashCode());
 		return result;
 	}
 
@@ -42,7 +44,8 @@ public class UniFieldDec extends UniMemberDec {
 			&& (this.type == null ? that.type == null : this.type.equals(that.type))
 			&& (this.name == null ? that.name == null : this.name.equals(that.name))
 			&& (this.value == null ? that.value == null : this.value.equals(that.value))
-			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments));
+			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments))
+			&& (this.codeRange == null ? that.codeRange == null : this.codeRange.equals(that.codeRange));
 	}
 
 	public void merge(UniFieldDec that) {
@@ -68,6 +71,9 @@ public class UniFieldDec extends UniMemberDec {
 			} else {
 				this.comments.addAll(that.comments);
 			}
+		}
+		if (that.codeRange != null) {
+			this.codeRange = that.codeRange;
 		}
 	}
 }

@@ -1,4 +1,5 @@
 package net.unicoen.node;
+import net.unicoen.node_helper.*;
 
 public class UniDoWhile extends UniExpr {
 	public UniExpr statement;
@@ -23,6 +24,7 @@ public class UniDoWhile extends UniExpr {
 		result = result * 31 + (statement == null ? 0 : statement.hashCode());
 		result = result * 31 + (cond == null ? 0 : cond.hashCode());
 		result = result * 31 + (comments == null ? 0 : comments.hashCode());
+		result = result * 31 + (codeRange == null ? 0 : codeRange.hashCode());
 		return result;
 	}
 
@@ -32,7 +34,8 @@ public class UniDoWhile extends UniExpr {
 		UniDoWhile that = (UniDoWhile)obj;
 		return (this.statement == null ? that.statement == null : this.statement.equals(that.statement))
 			&& (this.cond == null ? that.cond == null : this.cond.equals(that.cond))
-			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments));
+			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments))
+			&& (this.codeRange == null ? that.codeRange == null : this.codeRange.equals(that.codeRange));
 	}
 
 	@Override
@@ -53,6 +56,9 @@ public class UniDoWhile extends UniExpr {
 			} else {
 				this.comments.addAll(that.comments);
 			}
+		}
+		if (that.codeRange != null) {
+			this.codeRange = that.codeRange;
 		}
 	}
 }

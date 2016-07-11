@@ -29,6 +29,7 @@ public class Scope {
 		}
 	}
 
+	public String name;
 	public final Type type;
 	public final Scope parent;
 	public final HashMap<String, Object> variables = new HashMap<>();

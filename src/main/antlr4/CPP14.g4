@@ -12,11 +12,16 @@ primaryexpression
 	:	literal 
 	|	This 
 	|	'(' expression ')' 
-	|	idexpression 
+	|	identexpression 
 	|	lambdaexpression 
 	;
 
 idexpression
+	:	unqualifiedid 
+	|	qualifiedid 
+	;
+
+identexpression
 	:	unqualifiedid 
 	|	qualifiedid 
 	;
@@ -124,8 +129,8 @@ pseudodestructorname
 
 unaryexpression
 	:	postfixexpression 
-	|	'++' castexpression 
-	|	'--' castexpression 
+	|	PlusPlus castexpression 
+	|	MinusMinus castexpression 
 	|	unaryoperator castexpression 
 	|	Sizeof unaryexpression 
 	|	Sizeof '(' typeid ')' 
@@ -190,66 +195,66 @@ castexpression
 
 pmexpression
 	:	castexpression 
-	|	pmexpression '.*' castexpression 
-	|	pmexpression '->*' castexpression 
+	|	pmexpression DotStar castexpression 
+	|	pmexpression ArrowStar castexpression 
 	;
 
 multiplicativeexpression
 	:	pmexpression 
-	|	multiplicativeexpression '*' pmexpression 
-	|	multiplicativeexpression '/' pmexpression 
-	|	multiplicativeexpression '%' pmexpression 
+	|	multiplicativeexpression Star pmexpression 
+	|	multiplicativeexpression Div pmexpression 
+	|	multiplicativeexpression Mod pmexpression 
 	;
 
 additiveexpression
 	:	multiplicativeexpression 
-	|	additiveexpression '+' multiplicativeexpression 
-	|	additiveexpression '-' multiplicativeexpression 
+	|	additiveexpression Plus multiplicativeexpression 
+	|	additiveexpression Minus multiplicativeexpression 
 	;
 
 shiftexpression
 	:	additiveexpression 
-	|	shiftexpression '<<' additiveexpression 
+	|	shiftexpression LeftShift additiveexpression 
 	|	shiftexpression rightShift additiveexpression 
 	;
 
 relationalexpression
 	:	shiftexpression 
-	|	relationalexpression '<' shiftexpression 
-	|	relationalexpression '>' shiftexpression 
-	|	relationalexpression '<=' shiftexpression 
-	|	relationalexpression '>=' shiftexpression 
+	|	relationalexpression Less shiftexpression 
+	|	relationalexpression Greater shiftexpression 
+	|	relationalexpression LessEqual shiftexpression 
+	|	relationalexpression GreaterEqual shiftexpression 
 	;
 
 equalityexpression
 	:	relationalexpression 
-	|	equalityexpression '==' relationalexpression 
-	|	equalityexpression '!=' relationalexpression 
+	|	equalityexpression Equal relationalexpression 
+	|	equalityexpression NotEqual relationalexpression 
 	;
 
 andexpression
 	:	equalityexpression 
-	|	andexpression '&' equalityexpression 
+	|	andexpression And equalityexpression 
 	;
 
 exclusiveorexpression
 	:	andexpression 
-	|	exclusiveorexpression '^' andexpression 
+	|	exclusiveorexpression Caret andexpression 
 	;
 
 inclusiveorexpression
 	:	exclusiveorexpression 
-	|	inclusiveorexpression '|' exclusiveorexpression 
+	|	inclusiveorexpression Or exclusiveorexpression 
 	;
 
 logicalandexpression
 	:	inclusiveorexpression 
-	|	logicalandexpression '&&' inclusiveorexpression 
+	|	logicalandexpression AndAnd inclusiveorexpression 
 	;
 
 logicalorexpression
 	:	logicalandexpression 
-	|	logicalorexpression '||' logicalandexpression 
+	|	logicalorexpression OrOr logicalandexpression 
 	;
 
 conditionalexpression
@@ -293,6 +298,7 @@ statement
 	|	attributespecifierseq? selectionstatement 
 	|	attributespecifierseq? iterationstatement 
 	|	attributespecifierseq? jumpstatement 
+	|	variabledeclarationstatement 
 	|	declarationstatement 
 	|	attributespecifierseq? tryblock 
 	;
@@ -312,8 +318,7 @@ compoundstatement
 	;
 
 statementseq
-	:	statement 
-	|	statementseq statement 
+	:	statement statement* 
 	;
 
 selectionstatement
@@ -358,7 +363,8 @@ jumpstatement
 	;
 
 declarationstatement
-	:	blockdeclaration 
+	:	simpledeclaration 
+	|	blockdeclarationwithoutsimpledeclaration 
 	;
 
 declarationseq
@@ -378,9 +384,8 @@ declaration
 	|	attributedeclaration 
 	;
 
-blockdeclaration
-	:	simpledeclaration 
-	|	asmdefinition 
+blockdeclarationwithoutsimpledeclaration
+	:	asmdefinition 
 	|	namespacealiasdefinition 
 	|	usingdeclaration 
 	|	usingdirective 
@@ -389,8 +394,30 @@ blockdeclaration
 	|	opaqueenumdeclaration 
 	;
 
+blockdeclaration
+	:	simpledeclaration 
+	|	blockdeclarationwithoutsimpledeclaration 
+	;
+
 aliasdeclaration
 	:	Using Identifier attributespecifierseq? '=' typeid ';' 
+	;
+
+variabledeclarationstatement
+	:	variabledeclaration ';' 
+	;
+
+variabledeclaration
+	:	attributespecifierseq? declspecifierseqwithouttype? typespecifier ptroperator* variableDeclaratorList? 
+	;
+
+variableDeclaratorList
+	:	variableDeclarator 
+	|	variableDeclaratorList ',' variableDeclarator 
+	;
+
+variableDeclarator
+	:	declaratorid ('=' initializerclause )? 
 	;
 
 simpledeclaration
@@ -411,17 +438,26 @@ attributedeclaration
 	;
 
 declspecifier
-	:	storageclassspecifier 
+	:	declspecifierwithouttype 
 	|	typespecifier 
+	;
+
+declspecifierseq
+	:	declspecifier attributespecifierseq? 
+	|	declspecifier declspecifierseq 
+	;
+
+declspecifierwithouttype
+	:	storageclassspecifier 
 	|	functionspecifier 
 	|	Friend 
 	|	Typedef 
 	|	Constexpr 
 	;
 
-declspecifierseq
-	:	declspecifier attributespecifierseq? 
-	|	declspecifier declspecifierseq 
+declspecifierseqwithouttype
+	:	declspecifierwithouttype attributespecifierseq? 
+	|	declspecifierwithouttype declspecifierseq 
 	;
 
 storageclassspecifier
@@ -680,8 +716,7 @@ declarator
 	;
 
 ptrdeclarator
-	:	noptrdeclarator 
-	|	ptroperator ptrdeclarator 
+	:	ptroperator* noptrdeclarator 
 	;
 
 noptrdeclarator
@@ -776,7 +811,15 @@ parameterdeclaration
 	;
 
 functiondefinition
-	:	attributespecifierseq? declspecifierseq? declarator virtspecifierseq? functionbody 
+	:	attributespecifierseq? declspecifierseqwithouttype? functionheader virtspecifierseq? functionbody 
+	;
+
+functionheader
+	:	typespecifier? functiondeclarator 
+	;
+
+functiondeclarator
+	:	declaratorid '(' parameterdeclarationclause ')' 
 	;
 
 functionbody
@@ -1638,13 +1681,17 @@ DIGIT
 	;
 
 literal
-	:	Integerliteral 
+	:	integerliteral 
 	|	Characterliteral 
-	|	Floatingliteral 
-	|	Stringliteral 
+	|	floatingliteral 
+	|	stringliteral 
 	|	booleanliteral 
 	|	pointerliteral 
 	|	userdefinedliteral 
+	;
+
+integerliteral
+	:	Integerliteral 
 	;
 
 Integerliteral
@@ -1769,6 +1816,10 @@ Hexadecimalescapesequence
 	:	'\\x' HEXADECIMALDIGIT+ 
 	;
 
+floatingliteral
+	:	Floatingliteral 
+	;
+
 Floatingliteral
 	:	Fractionalconstant Exponentpart? Floatingsuffix? 
 	|	Digitsequence Exponentpart Floatingsuffix? 
@@ -1802,6 +1853,10 @@ Floatingsuffix
 	:	[flFL] 
 	;
 
+stringliteral
+	:	Stringliteral 
+	;
+
 Stringliteral
 	:	Encodingprefix? '"' Schar* '"' 
 	|	Encodingprefix? 'R' Rawstring 
@@ -1828,6 +1883,10 @@ Rawstring
 	;
 
 booleanliteral
+	:	Booleanliteral 
+	;
+
+Booleanliteral
 	:	False 
 	|	True 
 	;

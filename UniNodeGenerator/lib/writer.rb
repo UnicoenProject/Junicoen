@@ -81,7 +81,7 @@ module Writer
           w.newline
           w << "import java.util.List;"
         end
-
+        w << "import net.unicoen.node_helper.*;"
         # -- class declaration
         w.newline
         write_class_dec(dsl, node, w)

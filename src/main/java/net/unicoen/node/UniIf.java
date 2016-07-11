@@ -1,4 +1,5 @@
 package net.unicoen.node;
+import net.unicoen.node_helper.*;
 
 public class UniIf extends UniExpr {
 	public UniExpr cond;
@@ -26,6 +27,7 @@ public class UniIf extends UniExpr {
 		result = result * 31 + (trueStatement == null ? 0 : trueStatement.hashCode());
 		result = result * 31 + (falseStatement == null ? 0 : falseStatement.hashCode());
 		result = result * 31 + (comments == null ? 0 : comments.hashCode());
+		result = result * 31 + (codeRange == null ? 0 : codeRange.hashCode());
 		return result;
 	}
 
@@ -36,7 +38,8 @@ public class UniIf extends UniExpr {
 		return (this.cond == null ? that.cond == null : this.cond.equals(that.cond))
 			&& (this.trueStatement == null ? that.trueStatement == null : this.trueStatement.equals(that.trueStatement))
 			&& (this.falseStatement == null ? that.falseStatement == null : this.falseStatement.equals(that.falseStatement))
-			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments));
+			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments))
+			&& (this.codeRange == null ? that.codeRange == null : this.codeRange.equals(that.codeRange));
 	}
 
 	@Override
@@ -60,6 +63,9 @@ public class UniIf extends UniExpr {
 			} else {
 				this.comments.addAll(that.comments);
 			}
+		}
+		if (that.codeRange != null) {
+			this.codeRange = that.codeRange;
 		}
 	}
 }
