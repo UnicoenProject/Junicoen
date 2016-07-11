@@ -328,6 +328,7 @@ public class Engine {
 		if (expr instanceof UniFor) {
 			UniFor uniFor = (UniFor) expr;
 			Scope forScope = Scope.createLocal(scope);
+			forScope.name = scope.name;
 			try {
 				Object lastEval = null;
 				for (execExpr(uniFor.init, forScope); toBool(
