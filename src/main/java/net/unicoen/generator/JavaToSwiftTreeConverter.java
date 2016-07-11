@@ -52,6 +52,8 @@ public class JavaToSwiftTreeConverter extends Traverser {
 	public static UniNode keyWord = null;
 	
 	private static String className = null;
+	private static String enumType = null;
+	private static boolean enumFlag = false;
 	
 	/////////////////////////////////////
 	/////////////////////////////////////
@@ -151,6 +153,13 @@ public class JavaToSwiftTreeConverter extends Traverser {
 				g.traverseInterfaceDec(interfaceDec);
 			}
 		}
+		if(enumFlag&&(enumType!=null)){//it is enum with value
+			if(program.classes!=null){
+				for (UniClassDec classDec : program.classes) {
+					classDec.className = classDec.className+" : "+enumType;
+				}
+			}
+		}
 		return node;
 	}
 	public static int search(Object node, UniNode toSearch) {
@@ -164,27 +173,37 @@ public class JavaToSwiftTreeConverter extends Traverser {
 	@Override
 	public void traverseBoolLiteral(UniBoolLiteral node) {
 		// TODO Auto-generated method stub
-		
+		if(enumType==null){
+			enumType = "Boolean";
+		}
 	}
 	@Override
 	public void traverseIntLiteral(UniIntLiteral node) {
 		// TODO Auto-generated method stub
-		
+		if(enumType==null){
+			enumType = "Int";
+		}
 	}
 	@Override
 	public void traverseLongLiteral(UniLongLiteral node) {
 		// TODO Auto-generated method stub
-		
+		if(enumType==null){
+			enumType = "Double";
+		}
 	}
 	@Override
 	public void traverseDoubleLiteral(UniDoubleLiteral node) {
 		// TODO Auto-generated method stub
-		
+		if(enumType==null){
+			enumType = "Double";
+		}
 	}
 	@Override
 	public void traverseStringLiteral(UniStringLiteral node) {
 		// TODO Auto-generated method stub
-		
+		if(enumType==null){
+			enumType = "String";
+		}
 	}
 	@Override
 	public void traverseIdent(UniIdent node) {
@@ -467,7 +486,7 @@ public class JavaToSwiftTreeConverter extends Traverser {
 	@Override
 	public void traverseClassDec(UniClassDec node) {
 		// TODO Auto-generated method stub
-
+		//if it is enum and args are not empty
 		for (UniMemberDec dec : iter(node.members)) {
 			traverseMemberDec(dec);
 		}
@@ -491,7 +510,6 @@ public class JavaToSwiftTreeConverter extends Traverser {
 	@Override
 	public void traverseInterfaceDec(UniInterfaceDec node) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -509,6 +527,14 @@ public class JavaToSwiftTreeConverter extends Traverser {
 	@Override
 	public void traverseEnumConstant(UniEnumConstant node) {
 		// TODO Auto-generated method stub
+		if(node.args!=null){
+			for(UniExpr arg : iter(node.args)){
+				if(!enumFlag){
+					enumFlag = true;
+				}
+				traverseExpr(arg);
+			}
+		}
 		
 	}
 

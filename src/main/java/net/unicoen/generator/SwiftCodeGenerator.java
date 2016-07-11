@@ -609,6 +609,8 @@ public class SwiftCodeGenerator extends Traverser {
 		if(node.className.startsWith("_")){
 			node.className = node.className.substring(1,node.className.length());
 			keyword = "enum";
+			//check whether any constant have value
+			
 		}
 		if(node.modifiers!=null){
 			modifiers = safeJoin(node.modifiers, " ");
@@ -627,13 +629,6 @@ public class SwiftCodeGenerator extends Traverser {
 
 		withIndent(() -> {
 			for (UniMemberDec dec : iter(node.members)) {
-			
-				//constants without arguments
-				//dec as a UniConstantDec without arguments
-				
-				//constants with one arguments
-				//constants with two or more arguments
-				
 				traverseMemberDec(dec);
 				printNewLine();
 			}
@@ -851,9 +846,17 @@ public class SwiftCodeGenerator extends Traverser {
 	@Override
 	public void traverseEnumConstant(UniEnumConstant node) {
 		// TODO Auto-generated method stub
+		//constants without arguments
 		print("case");
 		print(" ");
 		print(node.name);
+		int num = node.args.size();
+		if(num == 1){
+			//constants with one arguments
+			print("=");
+			parseExpr(node.args.get(0));
+		}
+		//constants with two or more arguments
 	}
 
 
