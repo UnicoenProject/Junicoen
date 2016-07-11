@@ -89,6 +89,7 @@ public class Scope {
 		}
 		if (parent != null) {
 			parent.set(key, value);
+			return;
 		}
 		throw new RuntimeException("variable " + key + "is not declared.");
 	}
