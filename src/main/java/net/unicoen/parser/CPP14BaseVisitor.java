@@ -152,13 +152,6 @@ public class CPP14BaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitPostbinexpression(CPP14Parser.PostbinexpressionContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
 	@Override public T visitBinaryexpression(CPP14Parser.BinaryexpressionContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}

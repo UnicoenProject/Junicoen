@@ -127,12 +127,6 @@ public interface CPP14Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitPseudodestructorname(CPP14Parser.PseudodestructornameContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link CPP14Parser#postbinexpression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPostbinexpression(CPP14Parser.PostbinexpressionContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link CPP14Parser#binaryexpression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

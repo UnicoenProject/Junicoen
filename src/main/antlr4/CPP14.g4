@@ -95,24 +95,25 @@ lambdadeclarator
 
 postfixexpression
 	:	primaryexpression 
+	|	postfixexpression LeftBracket assignmentexpression RightBracket 
 	|	postfixexpression '[' bracedinitlist ']' 
 	|	postfixexpression '(' expressionlist? ')' 
 	|	simpletypespecifier '(' expressionlist? ')' 
 	|	typenamespecifier '(' expressionlist? ')' 
-	|	Dynamic_cast '<' typeid '>' '(' expression ')' 
-	|	Static_cast '<' typeid '>' '(' expression ')' 
-	|	Reinterpret_cast '<' typeid '>' '(' expression ')' 
-	|	Const_cast '<' typeid '>' '(' expression ')' 
-	|	Typeid '(' expression ')' 
-	|	Typeid '(' typeid ')' 
+	|	simpletypespecifier bracedinitlist 
+	|	typenamespecifier bracedinitlist 
 	|	postfixexpression '.' Template? idexpression 
 	|	postfixexpression '->' Template? idexpression 
 	|	postfixexpression '.' pseudodestructorname 
 	|	postfixexpression '->' pseudodestructorname 
 	|	postfixexpression '++' 
 	|	postfixexpression '--' 
-	|	simpletypespecifier bracedinitlist 
-	|	typenamespecifier bracedinitlist 
+	|	Dynamic_cast '<' typeid '>' '(' expression ')' 
+	|	Static_cast '<' typeid '>' '(' expression ')' 
+	|	Reinterpret_cast '<' typeid '>' '(' expression ')' 
+	|	Const_cast '<' typeid '>' '(' expression ')' 
+	|	Typeid '(' expression ')' 
+	|	Typeid '(' typeid ')' 
 	;
 
 expressionlist
@@ -126,19 +127,9 @@ pseudodestructorname
 	|	'~' decltypespecifier 
 	;
 
-postbinexpression
-	:	postfixexpression LeftBracket assignmentexpression RightBracket 
-	|	postbinexpression LeftBracket assignmentexpression RightBracket 
-	;
-
 binaryexpression
 	:	postfixexpression 
 	|	unaryexpression 
-	|	postbinexpression 
-	|	Sizeof '(' typeid ')' 
-	|	Sizeof '...' '(' Identifier ')' 
-	|	Alignof '(' typeid ')' 
-	|	noexceptexpression 
 	|	newexpression 
 	|	deleteexpression 
 	;
@@ -148,6 +139,10 @@ unaryexpression
 	|	MinusMinus castexpression 
 	|	unaryoperator castexpression 
 	|	Sizeof binaryexpression 
+	|	Sizeof '(' typeid ')' 
+	|	Sizeof '...' '(' Identifier ')' 
+	|	Alignof '(' typeid ')' 
+	|	noexceptexpression 
 	;
 
 unaryoperator
@@ -199,7 +194,7 @@ noexceptexpression
 
 castexpression
 	:	binaryexpression 
-	|	LeftParen typeid RightParen castexpression 
+	|	LeftBracket typeid RightBracket castexpression 
 	;
 
 pmexpression
