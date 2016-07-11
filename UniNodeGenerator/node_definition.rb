@@ -156,15 +156,16 @@ Dsl.define_node do |x|
           d.mem "name", String
           d.mem "args", "Expr", list: true
       end
+      x.node "ClassDec" do |d|
+          d.mem "className", String
+          d.mem "modifiers", String, list: true
+          d.mem "members", "MemberDec", list: true
+          d.mem "superClass", String, list: true
+          d.mem "interfaces", String, list: true
+          d.mem "innerClasses", "ClassDec", list: true
+      end
     end
-    x.node "ClassDec" do |d|
-      d.mem "className", String
-      d.mem "modifiers", String, list: true
-      d.mem "members", "MemberDec", list: true
-      d.mem "superClass", String, list: true
-      d.mem "interfaces", String, list: true
-      d.mem "innerClasses", "ClassDec", list: true
-    end
+    
     x.node "InterfaceDec" do |d|
         d.mem "interfaceName", String
         d.mem "modifiers", String, list: true

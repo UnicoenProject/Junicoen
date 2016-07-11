@@ -173,6 +173,10 @@ public abstract class Traverser {
 			traverseEnumConstant((UniEnumConstant)node);
 			return;
 		}
+		if (node instanceof UniClassDec) {
+			traverseClassDec((UniClassDec)node);
+			return;
+		}
 		throw new RuntimeException("Unknown node: " + node);
 	}
 
@@ -183,10 +187,6 @@ public abstract class Traverser {
 		}
 		if (node instanceof UniMemberDec) {
 			traverseMemberDec((UniMemberDec)node);
-			return;
-		}
-		if (node instanceof UniClassDec) {
-			traverseClassDec((UniClassDec)node);
 			return;
 		}
 		if (node instanceof UniInterfaceDec) {

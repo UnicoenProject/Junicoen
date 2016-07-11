@@ -609,8 +609,6 @@ public class SwiftCodeGenerator extends Traverser {
 		if(node.className.startsWith("_")){
 			node.className = node.className.substring(1,node.className.length());
 			keyword = "enum";
-			//check whether any constant have value
-			
 		}
 		if(node.modifiers!=null){
 			modifiers = safeJoin(node.modifiers, " ");
@@ -856,7 +854,12 @@ public class SwiftCodeGenerator extends Traverser {
 			print("=");
 			parseExpr(node.args.get(0));
 		}
-		//constants with two or more arguments
+		else{
+			//constants with two or more arguments
+			//NEED TO MODIFY
+			print("=");
+			parseExpr(node.args.get(0));
+		}
 	}
 
 

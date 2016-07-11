@@ -82,16 +82,75 @@ public class SwiftGeneratorTest{
 //			+"hm.put(\"potato\", 1);}"
 //		
 //			+"}")
-			val tree = mapper.parse("enum planets{"
-				+"SUNDAY(1), MONDAY(true), TUESDAY"
+//			val tree = mapper.parse("enum planets{"
+//				+"SUNDAY(1), MONDAY(true), TUESDAY;"
 //				+"private final double mass;"
 //				+"private final double radius;"
 //				+"Planet(double mass, double radius) {}"
 //				+"private double mass() { return mass; }"
 //				+"private double radius() { return radius; }"
+//				+"}"
+//			)
+			/*1.First Java Program in Java-Basic Syntax 
+			val tree = mapper.parse("public class MyFirstJavaProgram {"
+				+"public static void main(String []args) {"
+				+"System.out.println(\"Hello World\");"
+				+"}"
 				+"}"
 			)
-	
+			*/
+			
+			/*2. Java Enums in Java-Basic Syntax 
+			val tree = mapper.parse("class FreshJuice {"
+				+"enum FreshJuiceSize{ SMALL, MEDIUM, LARGE }"
+				+"FreshJuiceSize size;"
+				+"}"
+				+"public class FreshJuiceTest {
+
+   public static void main(String args[]){
+      FreshJuice juice = new FreshJuice();
+      juice.size = FreshJuice.FreshJuiceSize.MEDIUM ;
+      System.out.println(\"Size: \" + juice.size);
+   }
+}"
+			)
+			*/
+			/*3.Sample of class declaration in Java-Object&Classes 
+			val tree = mapper.parse("public class Dog{
+   String breed;
+   int ageC;
+   String color;
+
+   void barking(){
+   }
+   
+   void hungry(){
+   }
+   
+   void sleeping(){
+   }
+}")*/
+			/*4. Constructor in Java-Object&Classes */
+//			val tree = mapper.parse("public class Puppy{public Puppy(){}"
+//				+"public Puppy(String name){}"
+//				+"}")
+
+			/*5. Creating an object in Java-Object&Classes 
+			val tree= mapper.parse("public class Puppy{
+public Puppy(String name){
+System.out.println(\"Passed Name is:\"+name);
+}
+public static void main(String[] args){
+Puppy myPuppy  =new Puppy(\"tommy\");
+}
+}")*/
+			/*6. Access instance variables and methods of a class in Java-Object&classes*/
+//			val tree = mapper.parse("public class Puppy{int puppyAge;"
+//				+"public Puppy(String name){System.out.println(\"Name chosen is :\" + name );}"
+//				+"public temp(String temp){System.out.println(temp);}"
+//				+"}")
+
+			val tree = mapper.parse("class a{int temp(int a, int b, int c, int d){}}")
 			assertThat(tree, instanceOf(UniProgram))
 			val cl = (tree as UniProgram).classes.get(0)
 			assertThat(cl, instanceOf(UniClassDec))
