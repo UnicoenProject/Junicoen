@@ -29,10 +29,10 @@ public class ExecState {
 	}
 	
 	//追加
-	public void addVariable(String stackName, UniVariableDec decVar,Object value){
+	public void addVariable(String stackName, UniVariableDec decVar,Object value,int depth){
 		for(Stack stack : stacks){
 			if(stack.name.equals(stackName)){
-				stack.addVariable(decVar.type, decVar.name, value);
+				stack.addVariable(decVar.type, decVar.name, value, depth);
 				break;
 			}
 		}
@@ -55,6 +55,18 @@ public class ExecState {
 				break;
 			}
 		}
+	}
+	
+	public void removeVariables(String stackName, int depth){
+		if(stackName.equals("main") && depth <2)
+			return;
+		for(Stack stack : stacks){
+			if(stack.name.equals(stackName)){
+				stack.removeVariables(depth);
+				break;
+			}
+		}
+		
 	}
 
 	public final UniNode getCurrentExpr() {

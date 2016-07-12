@@ -30,6 +30,7 @@ public class Scope {
 	}
 
 	public String name;
+	public int depth;
 	public final Type type;
 	public final Scope parent;
 	public final HashMap<String, Object> variables = new HashMap<>();
@@ -44,6 +45,7 @@ public class Scope {
 	private Scope(Type type, Scope parent) {
 		this.parent = parent;
 		this.type = type;
+		this.depth = parent==null ? 0 : parent.depth + 1;
 	}
 
 	public void setListener(VariableNotFoundListener listener) {

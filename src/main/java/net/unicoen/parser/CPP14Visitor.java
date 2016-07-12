@@ -331,17 +331,41 @@ public interface CPP14Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitSelectionstatement(CPP14Parser.SelectionstatementContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#switchstatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSwitchstatement(CPP14Parser.SwitchstatementContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link CPP14Parser#condition}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitCondition(CPP14Parser.ConditionContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#whilestatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitWhilestatement(CPP14Parser.WhilestatementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#dowhilestatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDowhilestatement(CPP14Parser.DowhilestatementContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link CPP14Parser#iterationstatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitIterationstatement(CPP14Parser.IterationstatementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#enhancedForStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEnhancedForStatement(CPP14Parser.EnhancedForStatementContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link CPP14Parser#forinitstatement}.
 	 * @param ctx the parse tree
@@ -420,12 +444,6 @@ public interface CPP14Visitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitVariableDeclaratorList(CPP14Parser.VariableDeclaratorListContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link CPP14Parser#arrayDeclarator}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitArrayDeclarator(CPP14Parser.ArrayDeclaratorContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link CPP14Parser#arrayCreationExpression}.
 	 * @param ctx the parse tree

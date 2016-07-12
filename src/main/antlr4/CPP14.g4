@@ -11,7 +11,7 @@ translationunit
 primaryexpression
 	:	literal 
 	|	This 
-	|	'(' expression ')' 
+	|	LeftParen expression RightParen 
 	|	identexpression 
 	|	lambdaexpression 
 	;
@@ -300,7 +300,10 @@ statement
 	|	attributespecifierseq? expressionstatement 
 	|	attributespecifierseq? compoundstatement 
 	|	attributespecifierseq? selectionstatement 
+	|	attributespecifierseq? switchstatement 
 	|	attributespecifierseq? iterationstatement 
+	|	attributespecifierseq? whilestatement 
+	|	attributespecifierseq? dowhilestatement 
 	|	attributespecifierseq? jumpstatement 
 	|	variabledeclarationstatement 
 	|	declarationstatement 
@@ -328,7 +331,10 @@ statementseq
 selectionstatement
 	:	If '(' condition ')' statement 
 	|	If '(' condition ')' statement Else statement 
-	|	Switch '(' condition ')' statement 
+	;
+
+switchstatement
+	:	Switch '(' condition ')' statement 
 	;
 
 condition
@@ -337,15 +343,25 @@ condition
 	|	attributespecifierseq? declspecifierseq declarator bracedinitlist 
 	;
 
-iterationstatement
+whilestatement
 	:	While '(' condition ')' statement 
-	|	Do statement While '(' expression ')' ';' 
-	|	For '(' forinitstatement condition? ';' expression? ')' statement 
-	|	For '(' forrangedeclaration ':' forrangeinitializer ')' statement 
+	;
+
+dowhilestatement
+	:	Do compoundstatement While '(' expression ')' ';' 
+	;
+
+iterationstatement
+	:	For '(' forinitstatement condition? ';' expression? ')' statement 
+	;
+
+enhancedForStatement
+	:	For '(' forrangedeclaration ':' forrangeinitializer ')' statement 
 	;
 
 forinitstatement
 	:	expressionstatement 
+	|	variabledeclarationstatement 
 	|	simpledeclaration 
 	;
 
@@ -416,14 +432,7 @@ variabledeclaration
 	;
 
 variableDeclaratorList
-	:	variableDeclarator 
-	|	arrayDeclarator 
-	|	variableDeclaratorList ',' variableDeclarator 
-	;
-
-arrayDeclarator
-	:	declaratorid dims ('=' initializerclause )? 
-	|	declaratorid arrayCreationExpression 
+	:|	variableDeclarator (',' variableDeclarator )* 
 	;
 
 arrayCreationExpression
@@ -441,6 +450,8 @@ dimExpr
 
 variableDeclarator
 	:	declaratorid ('=' initializerclause )? 
+	|	declaratorid dims ('=' initializerclause )? 
+	|	declaratorid arrayCreationExpression 
 	;
 
 dims

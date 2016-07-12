@@ -10,11 +10,13 @@ public class Variable{
 	public final String name;
 	private Object value;//数値などの組み込み型でなければUniArray,UniCrassDecが考えられる。
 	public final int address;
+	public final int depth;
 	
-	public Variable(String type, String name, Object value, int address) {
+	public Variable(String type, String name, Object value, int address, int depth) {
 		this.type = type;
 		this.name = name;
 		this.address = address;
+		this.depth = depth;
 		setValue(value);
 	}
 	
@@ -47,7 +49,7 @@ public class Variable{
 					lastAddress = lastVar.address;
 					lastAddress += lastVar.getByteSize();
 				}
-				Variable var = new Variable(type,name+"["+i+"]",varArray.get(i),lastAddress);
+				Variable var = new Variable(type,name+"["+i+"]",varArray.get(i),lastAddress,this.depth);
 				vars.add(var);	
 			}
 			this.value = vars;

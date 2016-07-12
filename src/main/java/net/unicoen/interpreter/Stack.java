@@ -15,7 +15,7 @@ public class Stack {
 		this.address = address;
 	}
 
-	void addVariable(String type, String name, Object value){
+	void addVariable(String type, String name, Object value, int depth){
 		int lastAddress = this.address;
 		if(!variables.isEmpty())
 		{
@@ -23,7 +23,7 @@ public class Stack {
 			lastAddress = lastVar.address;
 			lastAddress += lastVar.getByteSize();
 		}
-		Variable var = new Variable(type,name,value,lastAddress);
+		Variable var = new Variable(type,name,value,lastAddress,depth);
 		variables.add(var);		
 	}
 	
@@ -41,6 +41,10 @@ public class Stack {
 				variable.setValue(index, value);
 			}
 		}
+	}
+	
+	public void removeVariables(int depth){
+		variables.removeIf(var->{ return depth<=var.depth;});
 	}
 	
 	public final ArrayList<Variable> getVariables() {

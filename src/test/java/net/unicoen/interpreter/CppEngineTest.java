@@ -1,5 +1,5 @@
 package net.unicoen.interpreter;
-import net.arnx.jsonic.JSON;
+
 import static net.unicoen.node_helper.Builder.bin;
 import static net.unicoen.node_helper.Builder.block;
 import static net.unicoen.node_helper.Builder.ident;
@@ -44,21 +44,42 @@ public class CppEngineTest {
 		String text = 
 				"int main()"+
 				"{"+
+				"int a=1;"+
+				"int b=a;"+
+				"int*pa = &b;"+
+				"*pa = *pa;"+
+				"a = b;"+
 					"int arr[5] = {1,2,3};"+
-					"arr[4]=6;"+//arr[4]はUnaryOp?
-					"int a=1;"+
-					"int b=2;"+
-					"int*pa = &b;"+
-					"*pa = 3;"+
+					"int a = arr[2];"+
+					"a=arr[0];"+
+					"arr[4]=6;"+
 					"a = 5;"+
 					"int c=a+b;"+
 				"}";
-		
+		String text2 = 
+				"int main()"+
+				"{"+
+				"int i=1;"+
+				"int sum=0;"+
+				"do{sum+=i;i+=1;}"+
+				"while(i<20);"+
+				"}";
+		String text3 = 
+				"int main()"+
+				"{"+
+					"double x = 1.0, e = 0.0000000005;"+
+					"int i;"+
+					"for(i=0;((x*x-2)<-e) || (e<(x*x-2));i+=1)"+
+					"{"+
+						"int a = 10;"+
+						"x -= ((x*x)-2) / (2*x);"+
+					"}"+
+				"}";
 		CPP14Mapper cppMapper = new CPP14Mapper(true);
-		UniMethodDec node = (UniMethodDec) cppMapper.parse(text);
+		UniMethodDec node 	= (UniMethodDec) cppMapper.parse(text3);
 		ExecState state = engine.startStepExecution(node);
-		
-		for(int i=0;engine.isStepExecutionRunning();++i)
+		int i=0;
+		for(;engine.isStepExecutionRunning();++i)
 		{
 			state = engine.stepExecute();
 		}

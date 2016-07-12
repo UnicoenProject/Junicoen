@@ -147,6 +147,7 @@ public class Engine {
 			new Thread(){
 	            public void run(){        	
 	            	Scope global = Scope.createGlobal();
+	            	global.name = "GLOBAL";
 	    			StdLibLoader.initialize(global);
 	    			firePreExecAll(global);
 	    			Object value = execFunc(fdec, global);
@@ -218,13 +219,6 @@ public class Engine {
 	}
 
 	private Object execExpr(UniExpr expr, Scope scope) {
-		if(isStepExecutionRunning.get())
-		{
-			state.setCurrentExpr(expr);
-			isExecutionThreadWaiting.set(true);
-			notifyAllThread();
-			waitForWaitingFlagIs(true);
-		}
 		firePreExec(expr, scope);
 		Object value = _execExpr(expr, scope);
 		firePostExec(expr, scope, value);
@@ -302,14 +296,14 @@ public class Engine {
 				}
 				if(isStepExecutionRunning.get()){
 					String stackName = scope.name;
-					state.addVariable(stackName, decVar, varArray);
+					state.addVariable(stackName, decVar, varArray,scope.depth);
 				}
 			}
 			else{
 				scope.setTop(decVar.name, value);
 				if(isStepExecutionRunning.get()){
 					String stackName = scope.name;
-					state.addVariable(stackName, decVar, value);
+					state.addVariable(stackName, decVar, value, scope.depth);
 				}
 			}
 			return value;
@@ -450,8 +444,16 @@ public class Engine {
 		Object lastValue = null;
 		blockScope.name = scope.name;
 		for (UniExpr expr : block.body) {
+			if(isStepExecutionRunning.get())
+			{
+				state.setCurrentExpr(expr);
+				isExecutionThreadWaiting.set(true);
+				notifyAllThread();
+				waitForWaitingFlagIs(true);
+			}
 			lastValue = execExpr(expr, blockScope);
 		}
+		state.removeVariables(scope.name, scope.depth);
 		return lastValue;
 	}
 
