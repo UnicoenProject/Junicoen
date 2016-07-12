@@ -616,10 +616,13 @@ public class Engine {
 				if (numL instanceof Double || numR instanceof Double) {
 					calculater = Calc.doubleOperation;
 				}
-				if (numL instanceof Long || numR instanceof Long) {
+				else if (numL instanceof Float || numR instanceof Float) {
 					calculater = Calc.longOperation;
 				}
-				if (numL instanceof Integer || numR instanceof Integer) {
+				else if (numL instanceof Long || numR instanceof Long) {
+					calculater = Calc.longOperation;
+				}
+				else if (numL instanceof Integer || numR instanceof Integer) {
 					calculater = Calc.intOperation;
 				}
 				if (calculater != null) {
