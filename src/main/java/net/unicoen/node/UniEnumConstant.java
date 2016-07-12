@@ -1,6 +1,7 @@
 package net.unicoen.node;
 
 import java.util.List;
+import net.unicoen.node_helper.*;
 
 public class UniEnumConstant extends UniMemberDec {
 	public String name;
@@ -25,6 +26,7 @@ public class UniEnumConstant extends UniMemberDec {
 		result = result * 31 + (name == null ? 0 : name.hashCode());
 		result = result * 31 + (args == null ? 0 : args.hashCode());
 		result = result * 31 + (comments == null ? 0 : comments.hashCode());
+		result = result * 31 + (codeRange == null ? 0 : codeRange.hashCode());
 		return result;
 	}
 
@@ -34,7 +36,8 @@ public class UniEnumConstant extends UniMemberDec {
 		UniEnumConstant that = (UniEnumConstant)obj;
 		return (this.name == null ? that.name == null : this.name.equals(that.name))
 			&& (this.args == null ? that.args == null : this.args.equals(that.args))
-			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments));
+			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments))
+			&& (this.codeRange == null ? that.codeRange == null : this.codeRange.equals(that.codeRange));
 	}
 
 	public void merge(UniEnumConstant that) {
@@ -54,6 +57,9 @@ public class UniEnumConstant extends UniMemberDec {
 			} else {
 				this.comments.addAll(that.comments);
 			}
+		}
+		if (that.codeRange != null) {
+			this.codeRange = that.codeRange;
 		}
 	}
 }

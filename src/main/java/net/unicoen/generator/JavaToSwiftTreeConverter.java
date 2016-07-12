@@ -283,10 +283,22 @@ public class JavaToSwiftTreeConverter extends Traverser {
 	@Override
 	public void traverseUnaryOp(UniUnaryOp node) {
 		// TODO Auto-generated method stub
-		if (node.operator.startsWith("_")) {
+		if (node.operator.startsWith("_")) {//++i
+			String operator = node.operator.substring(1);
+			if(operator.equals("++")){
+				node.operator = "_+=";
+			}else if(operator.equals("--")){
+				node.operator = "_-=";
+			}
 			parseExpr(node.expr);
-		} else if (node.operator.endsWith("_")) {
+		} else if (node.operator.endsWith("_")) {//i++
 			parseExpr(node.expr);
+			String operator = node.operator.substring(0, node.operator.length() - 1);
+			if(operator.equals("++")){
+				node.operator = "+1_";
+			}else if(operator.equals("--")){
+				node.operator = "-1_";
+			}
 		} else {
 			parseExpr(node.expr);
 		}
@@ -407,7 +419,7 @@ public class JavaToSwiftTreeConverter extends Traverser {
 					keyword = "let";
 				}
 			}
-			else{
+			if(modifier.equals("public")||modifier.equals("private")){
 				modifiers.add(modifier);
 			}
 		}
@@ -434,7 +446,7 @@ public class JavaToSwiftTreeConverter extends Traverser {
 					keyword = "let";
 				}
 			}
-			else{
+			if(modifier.equals("public")||modifier.equals("private")){
 				modifiers.add(modifier);
 			}
 		}

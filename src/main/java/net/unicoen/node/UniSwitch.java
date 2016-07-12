@@ -1,6 +1,7 @@
 package net.unicoen.node;
 
 import java.util.List;
+import net.unicoen.node_helper.*;
 
 public class UniSwitch extends UniExpr {
 	public UniExpr cond;
@@ -25,6 +26,7 @@ public class UniSwitch extends UniExpr {
 		result = result * 31 + (cond == null ? 0 : cond.hashCode());
 		result = result * 31 + (cases == null ? 0 : cases.hashCode());
 		result = result * 31 + (comments == null ? 0 : comments.hashCode());
+		result = result * 31 + (codeRange == null ? 0 : codeRange.hashCode());
 		return result;
 	}
 
@@ -34,7 +36,8 @@ public class UniSwitch extends UniExpr {
 		UniSwitch that = (UniSwitch)obj;
 		return (this.cond == null ? that.cond == null : this.cond.equals(that.cond))
 			&& (this.cases == null ? that.cases == null : this.cases.equals(that.cases))
-			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments));
+			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments))
+			&& (this.codeRange == null ? that.codeRange == null : this.codeRange.equals(that.codeRange));
 	}
 
 	@Override
@@ -59,6 +62,9 @@ public class UniSwitch extends UniExpr {
 			} else {
 				this.comments.addAll(that.comments);
 			}
+		}
+		if (that.codeRange != null) {
+			this.codeRange = that.codeRange;
 		}
 	}
 }

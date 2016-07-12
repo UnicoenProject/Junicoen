@@ -1719,7 +1719,7 @@ CharacterLiteral
 
 fragment
 SingleCharacter
-	:	~['¥¥] 
+	:	~['\\] 
 	;
 
 StringLiteral
@@ -1733,22 +1733,22 @@ StringCharacters
 
 fragment
 StringCharacter
-	:	~["¥¥] 
+	:	~["\\] 
 	|	EscapeSequence 
 	;
 
 fragment
 EscapeSequence
-	:	'¥¥' [btnfr'"¥¥] 
+	:	'\\' [btnfr'"\\] 
 	|	OctalEscape 
 	|	UnicodeEscape 
 	;
 
 fragment
 OctalEscape
-	:	'¥¥' OctalDigit 
-	|	'¥¥' OctalDigit OctalDigit 
-	|	'¥¥' ZeroToThree OctalDigit OctalDigit 
+	:	'\\' OctalDigit 
+	|	'\\' OctalDigit OctalDigit 
+	|	'\\' ZeroToThree OctalDigit OctalDigit 
 	;
 
 fragment
@@ -1758,7 +1758,7 @@ ZeroToThree
 
 fragment
 UnicodeEscape
-	:	'¥¥' 'u' HexDigit HexDigit HexDigit HexDigit 
+	:	'\\' 'u' HexDigit HexDigit HexDigit HexDigit 
 	;
 
 NullLiteral
@@ -1952,15 +1952,15 @@ Identifier
 fragment
 JavaLetter
 	:	[a-zA-Z$_] 
-	|	~[¥u0000-¥u00FF¥uD800-¥uDBFF] {Character.isJavaIdentifierStart(_input.LA(-1))}? 
-	|	[¥uD800-¥uDBFF] [¥uDC00-¥uDFFF] {Character.isJavaIdentifierStart(Character.toCodePoint((char)_input.LA(-2), (char)_input.LA(-1)))}? 
+	|	~[\u0000-\u00FF\uD800-\uDBFF] {Character.isJavaIdentifierStart(_input.LA(-1))}? 
+	|	[\uD800-\uDBFF] [\uDC00-\uDFFF] {Character.isJavaIdentifierStart(Character.toCodePoint((char)_input.LA(-2), (char)_input.LA(-1)))}? 
 	;
 
 fragment
 JavaLetterOrDigit
 	:	[a-zA-Z0-9$_] 
-	|	~[¥u0000-¥u00FF¥uD800-¥uDBFF] {Character.isJavaIdentifierPart(_input.LA(-1))}? 
-	|	[¥uD800-¥uDBFF] [¥uDC00-¥uDFFF] {Character.isJavaIdentifierPart(Character.toCodePoint((char)_input.LA(-2), (char)_input.LA(-1)))}? 
+	|	~[\u0000-\u00FF\uD800-\uDBFF] {Character.isJavaIdentifierPart(_input.LA(-1))}? 
+	|	[\uD800-\uDBFF] [\uDC00-\uDFFF] {Character.isJavaIdentifierPart(Character.toCodePoint((char)_input.LA(-2), (char)_input.LA(-1)))}? 
 	;
 
 AT
@@ -1978,6 +1978,5 @@ COMMENT
 	;
 
 LINE_COMMENT
-	:	'//' ~[¥r¥n]*  ->skip
+	:	'//' ~[\r\n]*  ->skip
 	;
-

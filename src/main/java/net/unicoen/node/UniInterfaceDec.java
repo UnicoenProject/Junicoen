@@ -1,6 +1,7 @@
 package net.unicoen.node;
 
 import java.util.List;
+import net.unicoen.node_helper.*;
 
 public class UniInterfaceDec extends UniNode {
 	public String interfaceName;
@@ -31,6 +32,7 @@ public class UniInterfaceDec extends UniNode {
 		result = result * 31 + (members == null ? 0 : members.hashCode());
 		result = result * 31 + (superInterface == null ? 0 : superInterface.hashCode());
 		result = result * 31 + (comments == null ? 0 : comments.hashCode());
+		result = result * 31 + (codeRange == null ? 0 : codeRange.hashCode());
 		return result;
 	}
 
@@ -42,7 +44,8 @@ public class UniInterfaceDec extends UniNode {
 			&& (this.modifiers == null ? that.modifiers == null : this.modifiers.equals(that.modifiers))
 			&& (this.members == null ? that.members == null : this.members.equals(that.members))
 			&& (this.superInterface == null ? that.superInterface == null : this.superInterface.equals(that.superInterface))
-			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments));
+			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments))
+			&& (this.codeRange == null ? that.codeRange == null : this.codeRange.equals(that.codeRange));
 	}
 
 	public void merge(UniInterfaceDec that) {
@@ -76,6 +79,9 @@ public class UniInterfaceDec extends UniNode {
 			} else {
 				this.comments.addAll(that.comments);
 			}
+		}
+		if (that.codeRange != null) {
+			this.codeRange = that.codeRange;
 		}
 	}
 }

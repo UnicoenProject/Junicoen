@@ -1889,6 +1889,8 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val none = newArrayList
 		map.put("none", none)
 		val className = newArrayList
+		val Object symbol = "_"
+		className.add(symbol)
 		map.put("className", className)
 		val interfaces = newArrayList
 		map.put("interfaces", interfaces)
@@ -3038,6 +3040,70 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 			}
 		]
 		map.castTo(UniSwitchUnit)
+	}
+
+	override public visitWhileStatement(Java8Parser.WhileStatementContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val cond = newArrayList
+		map.put("cond", cond)
+		val statement = newArrayList
+		map.put("statement", statement)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 1714: {
+						cond += it.visit
+					}
+					case 1716: {
+						statement += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(UniWhile)
+	}
+
+	override public visitDoStatement(Java8Parser.DoStatementContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val statement = newArrayList
+		map.put("statement", statement)
+		val cond = newArrayList
+		map.put("cond", cond)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 1725: {
+						statement += it.visit
+					}
+					case 1728: {
+						cond += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(UniDoWhile)
 	}
 
 	override public visitBasicForStatement(Java8Parser.BasicForStatementContext ctx) {
@@ -4263,6 +4329,8 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val none = newArrayList
 		map.put("none", none)
 		val operator = newArrayList
+		val Object symbol = "_"
+		operator.add(symbol)
 		map.put("operator", operator)
 		val expr = newArrayList
 		map.put("expr", expr)
@@ -4295,6 +4363,8 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val none = newArrayList
 		map.put("none", none)
 		val operator = newArrayList
+		val Object symbol = "_"
+		operator.add(symbol)
 		map.put("operator", operator)
 		val expr = newArrayList
 		map.put("expr", expr)
@@ -4328,6 +4398,8 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		map.put("none", none)
 		val ret = newArrayList
 		val operator = newArrayList
+		val Object symbol = "_"
+		operator.add(symbol)
 		map.put("operator", operator)
 		val expr = newArrayList
 		map.put("expr", expr)
@@ -4428,6 +4500,8 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				}
 			}
 		]
+		val Object symbol = "_"
+		operator.add(symbol)
 		map.castTo(UniUnaryOp)
 	}
 
@@ -4460,6 +4534,8 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				}
 			}
 		]
+		val Object symbol = "_"
+		operator.add(symbol)
 		map.castTo(UniUnaryOp)
 	}
 
