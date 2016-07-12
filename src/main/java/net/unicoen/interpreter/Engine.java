@@ -204,7 +204,8 @@ public class Engine {
 	private Object execFunc(UniMethodDec fdec, Scope global) {
 		Scope funcScope = Scope.createLocal(global);
 		funcScope.name = fdec.methodName;
-		state.addStack(fdec.methodName);
+		if(isStepExecutionRunning.get())
+			state.addStack(fdec.methodName);
 		// TODO: set argument to func scope
 		try {
 			return execBlock(fdec.block, funcScope);
@@ -453,7 +454,8 @@ public class Engine {
 			}
 			lastValue = execExpr(expr, blockScope);
 		}
-		state.removeVariables(scope.name, scope.depth);
+		if(isStepExecutionRunning.get())
+			state.removeVariables(scope.name, scope.depth);
 		return lastValue;
 	}
 
