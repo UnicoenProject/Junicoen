@@ -20,6 +20,8 @@ import org.antlr.v4.runtime.tree.TerminalNode
 import org.antlr.v4.runtime.tree.TerminalNodeImpl
 import org.eclipse.xtext.xbase.lib.Functions.Function1
 import java.lang.reflect.ParameterizedType
+import net.unicoen.node_helper.CodeLocation
+import net.unicoen.node_helper.CodeRange
 
 class Java8Mapper extends Java8BaseVisitor<Object> {
 
@@ -126,6 +128,16 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				result
 			}
 		if (node instanceof UniNode) {
+			if (tree instanceof RuleContext)
+			{
+				val start = (tree as ParserRuleContext).start
+				val stop = (tree as ParserRuleContext).stop
+				val begin = new CodeLocation(start.charPositionInLine,start.line)
+				val endPos = stop.charPositionInLine
+				val length = 1 + stop.stopIndex - stop.startIndex
+				val end = new CodeLocation(endPos + length, stop.line)
+				node.codeRange = new CodeRange(begin,end)
+			}
 			var List<String> contents = newArrayList
 			for (var i = _comments.size - 1; i >= 0 && _comments.get(i).parent == tree; i--) {
 				_comments.get(i).contents += contents
@@ -842,7 +854,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
 						case 860: {
-							add += it.visit
+							val results = it.visit.flatten
+							if(results instanceof ArrayList<?>){
+								for (result: results)
+									add += result
+							}
+							else
+								add += it.visit
 						}
 						default: {
 							none += it.visit
@@ -893,7 +911,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
 						case 889: {
-							add += it.visit
+							val results = it.visit.flatten
+							if(results instanceof ArrayList<?>){
+								for (result: results)
+									add += result
+							}
+							else
+								add += it.visit
 						}
 						default: {
 							none += it.visit
@@ -922,7 +946,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
 						case 892: {
-							add += it.visit
+							val results = it.visit.flatten
+							if(results instanceof ArrayList<?>){
+								for (result: results)
+									add += result
+							}
+							else
+								add += it.visit
 						}
 						default: {
 							none += it.visit
@@ -951,10 +981,22 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
 						case 894: {
-							add += it.visit
+							val results = it.visit.flatten
+							if(results instanceof ArrayList<?>){
+								for (result: results)
+									add += result
+							}
+							else
+								add += it.visit
 						}
 						case 896: {
-							add += it.visit
+							val results = it.visit.flatten
+							if(results instanceof ArrayList<?>){
+								for (result: results)
+									add += result
+							}
+							else
+								add += it.visit
 						}
 						default: {
 							none += it.visit
@@ -983,7 +1025,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
 						case 903: {
-							add += it.visit
+							val results = it.visit.flatten
+							if(results instanceof ArrayList<?>){
+								for (result: results)
+									add += result
+							}
+							else
+								add += it.visit
 						}
 						default: {
 							none += it.visit
@@ -1012,10 +1060,22 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
 						case 911: {
-							add += it.visit
+							val results = it.visit.flatten
+							if(results instanceof ArrayList<?>){
+								for (result: results)
+									add += result
+							}
+							else
+								add += it.visit
 						}
 						case 914: {
-							add += it.visit
+							val results = it.visit.flatten
+							if(results instanceof ArrayList<?>){
+								for (result: results)
+									add += result
+							}
+							else
+								add += it.visit
 						}
 						default: {
 							none += it.visit
@@ -1044,13 +1104,31 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
 						case 917: {
-							add += it.visit
+							val results = it.visit.flatten
+							if(results instanceof ArrayList<?>){
+								for (result: results)
+									add += result
+							}
+							else
+								add += it.visit
 						}
 						case 918: {
-							add += it.visit
+							val results = it.visit.flatten
+							if(results instanceof ArrayList<?>){
+								for (result: results)
+									add += result
+							}
+							else
+								add += it.visit
 						}
 						case 919: {
-							add += it.visit
+							val results = it.visit.flatten
+							if(results instanceof ArrayList<?>){
+								for (result: results)
+									add += result
+							}
+							else
+								add += it.visit
 						}
 						default: {
 							none += it.visit
@@ -1123,7 +1201,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
 						case 929: {
-							add += it.visit
+							val results = it.visit.flatten
+							if(results instanceof ArrayList<?>){
+								for (result: results)
+									add += result
+							}
+							else
+								add += it.visit
 						}
 						default: {
 							none += it.visit
@@ -1458,13 +1542,31 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
 						case 1097: {
-							add += it.visit
+							val results = it.visit.flatten
+							if(results instanceof ArrayList<?>){
+								for (result: results)
+									add += result
+							}
+							else
+								add += it.visit
 						}
 						case 1099: {
-							add += it.visit
+							val results = it.visit.flatten
+							if(results instanceof ArrayList<?>){
+								for (result: results)
+									add += result
+							}
+							else
+								add += it.visit
 						}
 						case 1101: {
-							add += it.visit
+							val results = it.visit.flatten
+							if(results instanceof ArrayList<?>){
+								for (result: results)
+									add += result
+							}
+							else
+								add += it.visit
 						}
 						default: {
 							none += it.visit
@@ -1493,10 +1595,22 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
 						case 1104: {
-							add += it.visit
+							val results = it.visit.flatten
+							if(results instanceof ArrayList<?>){
+								for (result: results)
+									add += result
+							}
+							else
+								add += it.visit
 						}
 						case 1106: {
-							add += it.visit
+							val results = it.visit.flatten
+							if(results instanceof ArrayList<?>){
+								for (result: results)
+									add += result
+							}
+							else
+								add += it.visit
 						}
 						default: {
 							none += it.visit
@@ -1743,13 +1857,38 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		map.castTo(String)
 	}
 
+	override public visitConstructorBody(Java8Parser.ConstructorBodyContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val body = newArrayList
+		map.put("body", body)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 1231: {
+						body += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(UniBlock)
+	}
+
 	override public visitEnumDeclaration(Java8Parser.EnumDeclarationContext ctx) {
 		val map = newHashMap
 		val none = newArrayList
 		map.put("none", none)
 		val className = newArrayList
-		val Object symbol = "_"
-		className.add(symbol)
 		map.put("className", className)
 		val interfaces = newArrayList
 		map.put("interfaces", interfaces)
@@ -1820,10 +1959,22 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
 						case 1295: {
-							add += it.visit
+							val results = it.visit.flatten
+							if(results instanceof ArrayList<?>){
+								for (result: results)
+									add += result
+							}
+							else
+								add += it.visit
 						}
 						case 1301: {
-							add += it.visit
+							val results = it.visit.flatten
+							if(results instanceof ArrayList<?>){
+								for (result: results)
+									add += result
+							}
+							else
+								add += it.visit
 						}
 						default: {
 							none += it.visit
@@ -1852,10 +2003,22 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
 						case 1306: {
-							add += it.visit
+							val results = it.visit.flatten
+							if(results instanceof ArrayList<?>){
+								for (result: results)
+									add += result
+							}
+							else
+								add += it.visit
 						}
 						case 1308: {
-							add += it.visit
+							val results = it.visit.flatten
+							if(results instanceof ArrayList<?>){
+								for (result: results)
+									add += result
+							}
+							else
+								add += it.visit
 						}
 						default: {
 							none += it.visit
@@ -1916,7 +2079,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
 						case 1334: {
-							add += it.visit
+							val results = it.visit.flatten
+							if(results instanceof ArrayList<?>){
+								for (result: results)
+									add += result
+							}
+							else
+								add += it.visit
 						}
 						default: {
 							none += it.visit
@@ -2015,7 +2184,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
 						case 1355: {
-							add += it.visit
+							val results = it.visit.flatten
+							if(results instanceof ArrayList<?>){
+								for (result: results)
+									add += result
+							}
+							else
+								add += it.visit
 						}
 						default: {
 							none += it.visit
@@ -2088,7 +2263,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
 						case 1373: {
-							add += it.visit
+							val results = it.visit.flatten
+							if(results instanceof ArrayList<?>){
+								for (result: results)
+									add += result
+							}
+							else
+								add += it.visit
 						}
 						default: {
 							none += it.visit
@@ -2117,7 +2298,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
 						case 1376: {
-							add += it.visit
+							val results = it.visit.flatten
+							if(results instanceof ArrayList<?>){
+								for (result: results)
+									add += result
+							}
+							else
+								add += it.visit
 						}
 						default: {
 							none += it.visit
@@ -2146,10 +2333,22 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
 						case 1384: {
-							add += it.visit
+							val results = it.visit.flatten
+							if(results instanceof ArrayList<?>){
+								for (result: results)
+									add += result
+							}
+							else
+								add += it.visit
 						}
 						case 1385: {
-							add += it.visit
+							val results = it.visit.flatten
+							if(results instanceof ArrayList<?>){
+								for (result: results)
+									add += result
+							}
+							else
+								add += it.visit
 						}
 						default: {
 							none += it.visit
@@ -2222,7 +2421,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
 						case 1396: {
-							add += it.visit
+							val results = it.visit.flatten
+							if(results instanceof ArrayList<?>){
+								for (result: results)
+									add += result
+							}
+							else
+								add += it.visit
 						}
 						default: {
 							none += it.visit
@@ -2311,7 +2516,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
 						case 1412: {
-							add += it.visit
+							val results = it.visit.flatten
+							if(results instanceof ArrayList<?>){
+								for (result: results)
+									add += result
+							}
+							else
+								add += it.visit
 						}
 						default: {
 							none += it.visit
@@ -2389,10 +2600,22 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
 						case 1544: {
-							add += it.visit
+							val results = it.visit.flatten
+							if(results instanceof ArrayList<?>){
+								for (result: results)
+									add += result
+							}
+							else
+								add += it.visit
 						}
 						case 1546: {
-							add += it.visit
+							val results = it.visit.flatten
+							if(results instanceof ArrayList<?>){
+								for (result: results)
+									add += result
+							}
+							else
+								add += it.visit
 						}
 						default: {
 							none += it.visit
@@ -2448,10 +2671,22 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
 						case 1558: {
-							add += it.visit
+							val results = it.visit.flatten
+							if(results instanceof ArrayList<?>){
+								for (result: results)
+									add += result
+							}
+							else
+								add += it.visit
 						}
 						case 1559: {
-							add += it.visit
+							val results = it.visit.flatten
+							if(results instanceof ArrayList<?>){
+								for (result: results)
+									add += result
+							}
+							else
+								add += it.visit
 						}
 						default: {
 							none += it.visit
@@ -2685,7 +2920,13 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
 						case 1674: {
-							add += it.visit
+							val results = it.visit.flatten
+							if(results instanceof ArrayList<?>){
+								for (result: results)
+									add += result
+							}
+							else
+								add += it.visit
 						}
 						default: {
 							none += it.visit

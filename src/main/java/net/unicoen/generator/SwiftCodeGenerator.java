@@ -291,6 +291,7 @@ public class SwiftCodeGenerator extends Traverser {
 
 	@Override
 	public void traverseMethodCall(UniMethodCall mCall) {
+		//analyze system.out.println
 		if (mCall.receiver != null) {
 			parseExpr(mCall.receiver);
 			print(".");
@@ -854,7 +855,7 @@ public class SwiftCodeGenerator extends Traverser {
 			print("=");
 			parseExpr(node.args.get(0));
 		}
-		else{
+		else if(num>=2){
 			//constants with two or more arguments
 			//NEED TO MODIFY
 			print("=");
