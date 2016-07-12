@@ -477,6 +477,7 @@ public class JavaToSwiftTreeConverter extends Traverser {
 		String methodName = node.methodName;
 		if(methodName.equals(className)){
 			node.methodName = "init";
+			node.modifiers = null;
 		}
 //		if(node.returnType!=null){
 //			if(node.returnType.equals("void")){

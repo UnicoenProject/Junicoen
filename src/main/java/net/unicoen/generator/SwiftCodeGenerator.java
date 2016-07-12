@@ -566,9 +566,11 @@ public class SwiftCodeGenerator extends Traverser {
 			this.mainDec = node;
 		}else{
 			String modifier = "";
-			for (String temp : iter(node.modifiers)){
-				if(temp.equals("public")){
-					modifier = "public";
+			if(node.methodName!="init"){
+				for (String temp : iter(node.modifiers)) {
+					if (temp.equals("public")) {
+						modifier = "public";
+					}
 				}
 			}
 			ArrayList<String> args = new ArrayList<>();
@@ -586,8 +588,11 @@ public class SwiftCodeGenerator extends Traverser {
 					returnType = "->"+returnType;
 				}
 			}
-			declaration = String.join(" ", modifier, "func", node.methodName, argWithParen,
-						returnType);
+			if(node.methodName=="init"){
+				declaration = String.join(" ",node.methodName, argWithParen);
+			} else {
+				declaration = String.join(" ", modifier, "func", node.methodName, argWithParen, returnType);
+			}
 			print(declaration + ' ');
 			print("{");
 			withIndent(() -> {

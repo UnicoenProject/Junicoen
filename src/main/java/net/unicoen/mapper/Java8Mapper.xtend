@@ -3195,7 +3195,50 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		merge.forEach[node.merge(it.castTo(UniEnhancedFor))]
 		node
 	}
-
+	override public visitBreakStatement(Java8Parser.BreakStatementContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(UniBreak)
+	}
+	
+	override public visitContinueStatement(Java8Parser.ContinueStatementContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(UniContinue)
+	}
+	
 	override public visitReturnStatement(Java8Parser.ReturnStatementContext ctx) {
 		val map = newHashMap
 		val none = newArrayList
