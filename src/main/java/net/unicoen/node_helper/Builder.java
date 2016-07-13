@@ -54,6 +54,6 @@ public class Builder {
 	}
 
 	public static UniFieldAccess field(UniExpr receiver, String fieldName) {
-		return new UniFieldAccess(receiver, fieldName);
+		return new UniFieldAccess(receiver, fieldName,null);
 	}
 }

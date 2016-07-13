@@ -1219,6 +1219,12 @@ public interface Java8Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitPrimaryNoNewArray_lfno_primary(Java8Parser.PrimaryNoNewArray_lfno_primaryContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Java8Parser#ttTHIS}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTtTHIS(Java8Parser.TtTHISContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Java8Parser#primaryNoNewArray_lfno_primary_lf_arrayAccess_lfno_primary}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

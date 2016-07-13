@@ -56,7 +56,7 @@ public class JavaGeneratorTest {
 	@Test
 	public void genHelloWorld() {
 		UniExpr body = new UniMethodCall(
-				new UniFieldAccess(ident("System"), "out"), "println",
+				new UniFieldAccess(ident("System"), "out", null), "println",
 				list(lit("Hello, world")));
 		String bodyStr = "System.out.println(\"Hello, world\");";
 
@@ -103,7 +103,7 @@ public class JavaGeneratorTest {
 	@Test
 	public void genHelloWorld_with_indent() {
 		UniExpr body = new UniMethodCall(
-				new UniFieldAccess(ident("System"), "out"), "println",
+				new UniFieldAccess(ident("System"), "out", null), "println",
 				list(lit("Hello, world")));
 		String code = "System.out.println(\"Hello, world\");";
 		assertGen(code, body);
@@ -120,7 +120,7 @@ public class JavaGeneratorTest {
 
 	@Test
 	public void test_FieldAccess() {
-		UniExpr expr = new UniFieldAccess(ident("System"), "out");
+		UniExpr expr = new UniFieldAccess(ident("System"), "out", null);
 		String code = "System.out;";
 		assertGen(code, expr);
 	}

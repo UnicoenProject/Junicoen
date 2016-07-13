@@ -984,7 +984,7 @@ primaryNoNewArray_lfno_primary
 	|	typeName ('[' ']' )* '.' 'class' 
 	|	unannPrimitiveType ('[' ']' )* '.' 'class' 
 	|	'void' '.' 'class' 
-	|	THIS 
+	|	ttTHIS 
 	|	typeName '.' 'this' 
 	|	'(' expression ')' 
 	|	classInstanceCreationExpression_lfno_primary 
@@ -994,6 +994,9 @@ primaryNoNewArray_lfno_primary
 	|	methodReference_lfno_primary 
 	;
 
+ttTHIS
+	:	THIS 
+	;
 primaryNoNewArray_lfno_primary_lf_arrayAccess_lfno_primary
 	:	
 	;

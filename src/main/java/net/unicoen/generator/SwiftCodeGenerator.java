@@ -103,6 +103,8 @@ public class SwiftCodeGenerator extends Traverser {
 			return "String";
 		case "boolean":
 			return "Boolean";
+		case "Integer":
+			return "Int";
 		}
 		if(type.contains("[")){ //array
 			return toSwiftArrayType(type);
@@ -284,9 +286,18 @@ public class SwiftCodeGenerator extends Traverser {
 
 	@Override
 	public void traverseFieldAccess(UniFieldAccess fa) {
-		parseExpr(fa.receiver);
-		print(".");
-		print(fa.fieldName);
+		if(fa.receiver!=null){
+			parseExpr(fa.receiver);
+		}
+		if(fa.fieldName!=null){
+			print(".");
+			print(fa.fieldName);
+		}
+		if(fa.index!=null){
+			print("[");
+			parseExpr(fa.index);
+			print("]");
+		}
 	}
 
 	@Override
@@ -853,8 +864,10 @@ public class SwiftCodeGenerator extends Traverser {
 		printNewLine();
 		withIndent(() -> {
 			if(node.statement!=null){
-				for (UniExpr expr : node.statement)
+				for (UniExpr expr : node.statement){
 					parseExpr(expr);
+					printNewLine();
+				}
 			}
 		});
 	}

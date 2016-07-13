@@ -437,7 +437,7 @@ public class BlockMapper {
 			method.receiver = functionArgs.get(0);
 			return method;
 		} else if (blockGenusName.equals(BlockFieldAccessModel.GENUS_NAME)) {
-			return new UniFieldAccess(functionArgs.get(0), ((UniIdent) (functionArgs.get(1))).name);
+			return new UniFieldAccess(functionArgs.get(0), ((UniIdent) (functionArgs.get(1))).name,null);
 		} else {
 			// MethodCallとする
 			UniMethodCall call = new UniMethodCall(null, MyDOMUtil.getChildText(node, BlockElementModel.NAME_NODE), functionArgs);

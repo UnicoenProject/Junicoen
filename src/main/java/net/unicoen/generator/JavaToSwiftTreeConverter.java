@@ -222,7 +222,12 @@ public class JavaToSwiftTreeConverter extends Traverser {
 	@Override
 	public void traverseFieldAccess(UniFieldAccess node) {
 		// TODO Auto-generated method stub
+		if(node.receiver!=null){
 		parseExpr(node.receiver);
+		}
+		if(node.index!=null){
+			parseExpr(node.index);
+		}
 	}
 	@Override
 	public void traverseMethodCall(UniMethodCall node) {

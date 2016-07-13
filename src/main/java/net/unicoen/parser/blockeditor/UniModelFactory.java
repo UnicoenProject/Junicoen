@@ -66,7 +66,7 @@ public class UniModelFactory {
 		} else if (uniModelName.equals(UniBlockNames.UNIFIELDACCESS.toString())) {
 			UniExpr receiver = (UniExpr) (map.get(UniModelData.UniModelParameters.RECEIVER.toString()));
 			String name = (String) (map.get(UniModelData.UniModelParameters.NAME.toString()));
-			return new UniFieldAccess(receiver, name);
+			return new UniFieldAccess(receiver, name, null);
 		} else if (uniModelName.equals(UniBlockNames.UNIFOR.toString())) {
 			return new UniFor();
 		} else if (uniModelName.equals(UniBlockNames.UNIIDENT.toString())) {

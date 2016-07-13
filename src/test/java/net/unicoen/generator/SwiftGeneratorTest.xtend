@@ -97,6 +97,7 @@ public class SwiftGeneratorTest {
 		 int ageC;
 		 String color;
 	     void barking(){
+			this.age = 1;
 	     }
 	     void hungry(){
 	     }
@@ -599,6 +600,187 @@ public class SwiftGeneratorTest {
 		println(target)
 		println("---------------------------------------------")
 	}
+	/*18. nestedIf */
+	@Test
+	def void nestedIf(){
+		val tree = mapper.parse("
+			public class Test {
+   				public static void main(String args[]){
+      				int x = 30;
+      				int y = 10;
+
+      				if( x == 30 ){
+         				if( y == 10 ){
+             				System.out.print(\"X = 30 and Y = 10\");
+          				}
+       				}
+    			}
+		}
+		")
+		assertThat(tree, instanceOf(UniProgram))
+		val cl = (tree as UniProgram).classes.get(0)
+		assertThat(cl, instanceOf(UniClassDec))
+		val modified = JavaToSwiftTreeConverter.convert(tree)
+		val target = SwiftCodeGenerator.generate(modified)
+		println(target)
+		println("---------------------------------------------")
+	}
+	/*19. switchStatement */
+	@Test
+	def void switchStatement(){
+		val tree = mapper.parse("
+			public class Test {
+   				public static void main(String args[]){"
+//      			char grade = 'C';
+      			+"String grade = \"C\";
+				switch(grade)
+      			{
+         			case \"A\" :
+            			System.out.println(\"Excellent!\"); 
+            			break;
+         			case \"B\" :
+         			case \"C\" :
+            			System.out.println(\"Well done\");
+            			break;
+         			case \"D\" :
+            			System.out.println(\"You passed\");
+         			case \"F\" :
+            			System.out.println(\"Better try again\");
+            			break;
+         			default :
+            			System.out.println(\"Invalid grade\");
+      			}
+      			System.out.println(\"Your grade is \" + grade);
+   			}
+		}
+		")
+		assertThat(tree, instanceOf(UniProgram))
+		val cl = (tree as UniProgram).classes.get(0)
+		assertThat(cl, instanceOf(UniClassDec))
+		val modified = JavaToSwiftTreeConverter.convert(tree)
+		val target = SwiftCodeGenerator.generate(modified)
+		println(target)
+		println("---------------------------------------------")
+	}
+	/*20. numbers */
+	@Test
+	def void numbers() {
+		val tree = mapper.parse("
+			public class Test{
+   				public static void main(String args[]){
+      				Integer x = 5;
+      				x =  x + 10;
+      				System.out.println(x); 
+   				}
+		}")
+		assertThat(tree, instanceOf(UniProgram))
+		val cl = (tree as UniProgram).classes.get(0)
+		assertThat(cl, instanceOf(UniClassDec))
+		val modified = JavaToSwiftTreeConverter.convert(tree)
+		val target = SwiftCodeGenerator.generate(modified)
+		println(target)
+		println("---------------------------------------------")
+	}
+	/*21. Strings*/
+	@Test
+	def void Strings() {
+		val tree = mapper.parse("
+			public class StringDemo{
+   				public static void main(String args[]){"
+//      			char[] helloArray = { 'h', 'e', 'l', 'l', 'o', '.'};
+      			+"String helloString = new String(helloArray);
+				String greeting = \"Hello world!\";
+      			System.out.println( helloString );
+				
+				String palindrome = \"Dot saw I was Tod\";
+      			int len = palindrome.length();
+      			System.out.println( \"String Length is : \" + len );
+
+				String string1 = \"saw I was \";
+      			System.out.println(\"Dot \" + string1 + \"Tod\");
+
+				System.out.printf(\"The value of the float variable is \" +
+                  \"%f, while the value of the integer \" +
+                  \"variable is %d, and the string \" +
+                  \"is %s\", floatVar, intVar, stringVar);
+
+				String fs;
+				fs = String.format(\"The value of the float variable is \" +
+                   \"%f, while the value of the integer \" +
+                   \"variable is %d, and the string \" +
+                   \"is %s\", floatVar, intVar, stringVar);
+				System.out.println(fs);
+   			}
+		}")
+		assertThat(tree, instanceOf(UniProgram))
+		val cl = (tree as UniProgram).classes.get(0)
+		assertThat(cl, instanceOf(UniClassDec))
+		val modified = JavaToSwiftTreeConverter.convert(tree)
+		val target = SwiftCodeGenerator.generate(modified)
+		println(target)
+		println("---------------------------------------------")
+	}
+	/*22. arrays */
+	@Test
+	def void arrays() {
+		val tree = mapper.parse("
+		public class TestArray {
+   			public static void main(String[] args) {
+      			double[] myList = {1.9, 2.9, 3.4, 3.5};
+
+      		for (int i = 0; i < myList.length; i++) {
+         		System.out.println(myList[i] + \" \");
+      		}
+      		
+      		double total = 0;
+      		for (int i = 0; i < myList.length; i++) {
+         		total += myList[i];
+      		}
+      		System.out.println(\"Total is \" + total);
+      		double max = myList[0];
+      		for (int i = 1; i < myList.length; i++) {
+         		if (myList[i] > max) max = myList[i];
+      		}
+      		System.out.println(\"Max is \" + max);
+
+			double[] myList = new double[10];
+
+			double[] myList = {1.9, 2.9, 3.4, 3.5};
+
+      		for (double element: myList) {
+         		System.out.println(element);
+      		}
+
+			for (int i = 0; i < array.length; i++) {
+    			System.out.print(array[i] + \" \");
+  			}
+
+			printArray(new int[]{3, 1, 2, 6, 4, 2});
+   		}
+
+			public static int[] reverse(int[] list) {"
+			//DECLARATION NEED TO IMPLEMENT
+  			+"int[] result = new int[list.length];"
+			//FOR LOOP ONLY FOR ONE STEPPER
+//  			for (int i = 0, j = result.length - 1; i < list.length; i++, j--) {
+			//NOT IMPLEMENTED
+    			+"result[j] = list[i];"
+//  			}
+  			+"return result;
+		}
+		}
+	")
+		assertThat(tree, instanceOf(UniProgram))
+		val cl = (tree as UniProgram).classes.get(0)
+		assertThat(cl, instanceOf(UniClassDec))
+		val modified = JavaToSwiftTreeConverter.convert(tree)
+		val target = SwiftCodeGenerator.generate(modified)
+		println(target)
+		println("---------------------------------------------")
+	}
+	/*23. methods */
+	
+	
 //		println("YYYYYYYEEEEAAAAAHHHHH")
 //		val counter = JavaToSwiftTreeConverter.search(tree, methodCall)
 //		println(counter)

@@ -18,6 +18,8 @@ Dsl.define_node do |x|
                 "Long" => :long,
                 "Double" => :double,
                 "String" => String
+#                "Byte" => :byte,
+#                "Character" => :char
             }.each do |name, type|
                 x.node "#{name}Literal" do |d|
                     d.mem "value", type
@@ -35,6 +37,7 @@ Dsl.define_node do |x|
             x.node "FieldAccess" do |d|
                 d.mem "receiver", "Expr"
                 d.mem "fieldName", String
+                d.mem "index", "Expr"
             end
             x.node "MethodCall", doc: '関数/メソッド呼び出し' do |d|
                 d.mem "receiver", "Expr"

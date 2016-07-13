@@ -374,7 +374,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		val nodes = createNodeMap(ctx)
 		val identifier = ctx.identifierStr
 		if (nodes.containsKey(JavaParser.RULE_packageOrTypeName)) {
-			new UniFieldAccess(nodes.getOneNode(JavaParser.RULE_packageOrTypeName), identifier)
+			new UniFieldAccess(nodes.getOneNode(JavaParser.RULE_packageOrTypeName), identifier, null)
 		} else {
 			new UniIdent(identifier)
 		}
@@ -388,7 +388,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		val nodes = createNodeMap(ctx)
 		val identifier = ctx.identifierStr
 		if (nodes.containsKey(JavaParser.RULE_packageOrTypeName)) {
-			new UniFieldAccess(nodes.getOneNode(JavaParser.RULE_packageOrTypeName), identifier)
+			new UniFieldAccess(nodes.getOneNode(JavaParser.RULE_packageOrTypeName), identifier, null)
 		} else {
 			new UniIdent(identifier)
 		}

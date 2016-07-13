@@ -28,7 +28,7 @@ public class ForceConvertionMapTest {
 		Node node = MyDOMUtil.getNodeFromXMLFilePath("blockeditor/blocks/force_convertion_list.xml");
 		
 		ForceConvertionMap map = new ForceConvertionMap(node);
-		assertEquals("cui-println[@string]", map.getBlockGenusName(new UniMethodCall(new UniFieldAccess(new UniIdent("System"), "out"),"println", Lists.newArrayList(new UniStringLiteral("hogehoge")))));
+		assertEquals("cui-println[@string]", map.getBlockGenusName(new UniMethodCall(new UniFieldAccess(new UniIdent("System"), "out",null),"println", Lists.newArrayList(new UniStringLiteral("hogehoge")))));
 		assertEquals("Math-random[]", map.getBlockGenusName(new UniMethodCall(new UniIdent("Math"),"random", null)));
 		
 		
