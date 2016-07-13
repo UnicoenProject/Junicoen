@@ -11,7 +11,7 @@ translationunit
 primaryexpression
 	:	literal 
 	|	This 
-	|	'(' expression ')' 
+	|	LeftParen expression RightParen 
 	|	identexpression 
 	|	lambdaexpression 
 	;
@@ -95,7 +95,7 @@ lambdadeclarator
 
 postfixexpression
 	:	primaryexpression 
-	|	postfixexpression '[' expression ']' 
+	|	postfixexpression LeftBracket assignmentexpression RightBracket 
 	|	postfixexpression '[' bracedinitlist ']' 
 	|	postfixexpression '(' expressionlist? ')' 
 	|	simpletypespecifier '(' expressionlist? ')' 
@@ -127,18 +127,22 @@ pseudodestructorname
 	|	'~' decltypespecifier 
 	;
 
-unaryexpression
+binaryexpression
 	:	postfixexpression 
-	|	PlusPlus castexpression 
+	|	unaryexpression 
+	|	newexpression 
+	|	deleteexpression 
+	;
+
+unaryexpression
+	:	PlusPlus castexpression 
 	|	MinusMinus castexpression 
 	|	unaryoperator castexpression 
-	|	Sizeof unaryexpression 
+	|	Sizeof binaryexpression 
 	|	Sizeof '(' typeid ')' 
 	|	Sizeof '...' '(' Identifier ')' 
 	|	Alignof '(' typeid ')' 
 	|	noexceptexpression 
-	|	newexpression 
-	|	deleteexpression 
 	;
 
 unaryoperator
@@ -189,8 +193,8 @@ noexceptexpression
 	;
 
 castexpression
-	:	unaryexpression 
-	|	'(' typeid ')' castexpression 
+	:	binaryexpression 
+	|	LeftBracket typeid RightBracket castexpression 
 	;
 
 pmexpression
@@ -296,7 +300,10 @@ statement
 	|	attributespecifierseq? expressionstatement 
 	|	attributespecifierseq? compoundstatement 
 	|	attributespecifierseq? selectionstatement 
+	|	attributespecifierseq? switchstatement 
 	|	attributespecifierseq? iterationstatement 
+	|	attributespecifierseq? whilestatement 
+	|	attributespecifierseq? dowhilestatement 
 	|	attributespecifierseq? jumpstatement 
 	|	variabledeclarationstatement 
 	|	declarationstatement 
@@ -324,7 +331,10 @@ statementseq
 selectionstatement
 	:	If '(' condition ')' statement 
 	|	If '(' condition ')' statement Else statement 
-	|	Switch '(' condition ')' statement 
+	;
+
+switchstatement
+	:	Switch '(' condition ')' statement 
 	;
 
 condition
@@ -333,15 +343,25 @@ condition
 	|	attributespecifierseq? declspecifierseq declarator bracedinitlist 
 	;
 
-iterationstatement
+whilestatement
 	:	While '(' condition ')' statement 
-	|	Do statement While '(' expression ')' ';' 
-	|	For '(' forinitstatement condition? ';' expression? ')' statement 
-	|	For '(' forrangedeclaration ':' forrangeinitializer ')' statement 
+	;
+
+dowhilestatement
+	:	Do compoundstatement While '(' expression ')' ';' 
+	;
+
+iterationstatement
+	:	For '(' forinitstatement condition? ';' expression? ')' statement 
+	;
+
+enhancedForStatement
+	:	For '(' forrangedeclaration ':' forrangeinitializer ')' statement 
 	;
 
 forinitstatement
 	:	expressionstatement 
+	|	variabledeclarationstatement 
 	|	simpledeclaration 
 	;
 
@@ -412,12 +432,30 @@ variabledeclaration
 	;
 
 variableDeclaratorList
-	:	variableDeclarator 
-	|	variableDeclaratorList ',' variableDeclarator 
+	:|	variableDeclarator (',' variableDeclarator )* 
+	;
+
+arrayCreationExpression
+	:	dimExprs dims? ('=' bracedinitlist )? 
+	|	dims bracedinitlist 
+	;
+
+dimExprs
+	:	dimExpr dimExpr* 
+	;
+
+dimExpr
+	:	'[' expression ']' 
 	;
 
 variableDeclarator
 	:	declaratorid ('=' initializerclause )? 
+	|	declaratorid dims ('=' initializerclause )? 
+	|	declaratorid arrayCreationExpression 
+	;
+
+dims
+	:	LeftBracket RightBracket (LeftBracket RightBracket )* 
 	;
 
 simpledeclaration
@@ -702,8 +740,7 @@ balancedtoken
 	;
 
 initdeclaratorlist
-	:	initdeclarator 
-	|	initdeclaratorlist ',' initdeclarator 
+	:	initdeclarator (',' initdeclarator )* 
 	;
 
 initdeclarator
@@ -845,12 +882,11 @@ initializerclause
 	;
 
 initializerlist
-	:	initializerclause '...'? 
-	|	initializerlist ',' initializerclause '...'? 
+	:	initializerclause (',' initializerclause )* 
 	;
 
 bracedinitlist
-	:	'{' initializerlist ','? '}' 
+	:	'{' initializerlist Comma? '}' 
 	|	'{' '}' 
 	;
 
