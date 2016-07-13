@@ -29,10 +29,11 @@ public class ExecState {
 	}
 	
 	//追加
-	public void addVariable(String stackName, UniVariableDec decVar,Object value){
+	public void addVariable(String stackName, UniVariableDec decVar,Object value,int depth){
 		for(Stack stack : stacks){
 			if(stack.name.equals(stackName)){
-				stack.addVariable(decVar.type, decVar.name, value);
+				stack.addVariable(decVar.type, decVar.name, value, depth);
+				break;
 			}
 		}
 	}
@@ -42,14 +43,36 @@ public class ExecState {
 		for(Stack stack : stacks){
 			if(stack.name.equals(stackName)){
 				stack.updateVariable(varName, value);
+				break;
 			}
 		}
 	}
+	
+	public void updateVariable(String stackName, String varName,int index, Object value){
+		for(Stack stack : stacks){
+			if(stack.name.equals(stackName)){
+				stack.updateVariable(varName, index, value);
+				break;
+			}
+		}
+	}
+	
+	public void removeVariables(String stackName, int depth){
+		if(stackName.equals("main") && depth <2)
+			return;
+		for(Stack stack : stacks){
+			if(stack.name.equals(stackName)){
+				stack.removeVariables(depth);
+				break;
+			}
+		}
+		
+	}
 
-	public final synchronized UniNode getCurrentExpr() {
+	public final UniNode getCurrentExpr() {
 		return currentExpr;
 	}
-	public synchronized void setCurrentExpr(UniNode expr) {
+	public void setCurrentExpr(UniNode expr) {
 		this.currentExpr = expr;
 	}	
 	public final ArrayList<Stack> getStacks(){

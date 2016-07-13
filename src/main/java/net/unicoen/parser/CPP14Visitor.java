@@ -127,6 +127,12 @@ public interface CPP14Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitPseudodestructorname(CPP14Parser.PseudodestructornameContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#binaryexpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBinaryexpression(CPP14Parser.BinaryexpressionContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link CPP14Parser#unaryexpression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -325,17 +331,41 @@ public interface CPP14Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitSelectionstatement(CPP14Parser.SelectionstatementContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#switchstatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSwitchstatement(CPP14Parser.SwitchstatementContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link CPP14Parser#condition}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitCondition(CPP14Parser.ConditionContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#whilestatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitWhilestatement(CPP14Parser.WhilestatementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#dowhilestatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDowhilestatement(CPP14Parser.DowhilestatementContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link CPP14Parser#iterationstatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitIterationstatement(CPP14Parser.IterationstatementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#enhancedForStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEnhancedForStatement(CPP14Parser.EnhancedForStatementContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link CPP14Parser#forinitstatement}.
 	 * @param ctx the parse tree
@@ -415,11 +445,35 @@ public interface CPP14Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitVariableDeclaratorList(CPP14Parser.VariableDeclaratorListContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#arrayCreationExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArrayCreationExpression(CPP14Parser.ArrayCreationExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#dimExprs}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDimExprs(CPP14Parser.DimExprsContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#dimExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDimExpr(CPP14Parser.DimExprContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link CPP14Parser#variableDeclarator}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitVariableDeclarator(CPP14Parser.VariableDeclaratorContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#dims}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDims(CPP14Parser.DimsContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link CPP14Parser#simpledeclaration}.
 	 * @param ctx the parse tree

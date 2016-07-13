@@ -83,11 +83,11 @@ public class EngineTest {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		engine.out = new PrintStream(baos);
 
-//		engine.execute(mkClassDec());
+		engine.execute(mkClassDec());
 		String output = baos.toString("UTF8");
 
 		String expect = "3" + System.lineSeparator();
-//		assertEquals(expect, output);
+		assertEquals(expect, output);
 	}
 
 	@Test

@@ -7,8 +7,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 
+import net.unicoen.node.UniArray;
 import net.unicoen.node.UniBinOp;
 import net.unicoen.node.UniBlock;
 import net.unicoen.node.UniBoolLiteral;
@@ -26,6 +28,7 @@ import net.unicoen.node.UniLongLiteral;
 import net.unicoen.node.UniMemberDec;
 import net.unicoen.node.UniMethodCall;
 import net.unicoen.node.UniMethodDec;
+import net.unicoen.node.UniNewArray;
 import net.unicoen.node.UniNode;
 import net.unicoen.node.UniReturn;
 import net.unicoen.node.UniStringLiteral;
@@ -59,27 +62,22 @@ public class Engine {
 
 	public PrintStream out = System.out;
 	public List<ExecutionListener> listeners;
-	private boolean waitFlag = false;
-	private boolean stepExecing =false;
+	
+	private AtomicBoolean isStepExecutionRunning = new AtomicBoolean(false);
+	private AtomicBoolean isExecutionThreadWaiting = new AtomicBoolean(false);
 	private ExecState state;
+	public boolean isStepExecutionRunning() {
+		return isStepExecutionRunning.get();
+	}
 
-	private synchronized boolean getWaitingFlag(){
-		return waitFlag;
+	private synchronized void notifyAllThread(){
+		notifyAll();
 	}
-	private synchronized void setWaitingFlag(boolean enable){
-		waitFlag = enable;
-	}
-	public synchronized boolean getStepExecing(){
-		return stepExecing;
-	}
-	private synchronized void setStepExecing(boolean enable){
-		stepExecing = enable;
-	}
-	private void waitForWaitingFlagIs(boolean is){
-		while(getWaitingFlag()==is)
+	private synchronized void waitForWaitingFlagIs(boolean is){
+		while(isExecutionThreadWaiting.get()==is)
 		{
 			try {
-				Thread.sleep(100);
+				wait();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -142,33 +140,36 @@ public class Engine {
 
 	public ExecState startStepExecution(UniMethodDec dec) {
 		UniMethodDec fdec = dec;
+		isStepExecutionRunning.set(true);
+		isExecutionThreadWaiting.set(false);
+		state = new ExecState();
 		if (fdec != null) {
 			new Thread(){
-	            public void run(){
-	            	setStepExecing(true);
-	            	state = new ExecState();
-	            	
+	            public void run(){        	
 	            	Scope global = Scope.createGlobal();
+	            	global.name = "GLOBAL";
 	    			StdLibLoader.initialize(global);
 	    			firePreExecAll(global);
 	    			Object value = execFunc(fdec, global);
 	    			firePostExecAll(global, value);
-	    			
-	    			setStepExecing(false);
-	    			setWaitingFlag(true);
+	    			isExecutionThreadWaiting.set(true);
+	    			isStepExecutionRunning.set(false);
+	    			notifyAllThread();
 	            }
 	        }.start();
+	        notifyAllThread();
 	        waitForWaitingFlagIs(false);
-	        return stepExecute();
+	        return state;
 		} else {
 			throw new RuntimeException("No entry point in " + dec);
 		}
 	}
 
 	public ExecState stepExecute() {
-		if(getStepExecing())
+		if(isStepExecutionRunning.get())
 		{
-			setWaitingFlag(false);
+			isExecutionThreadWaiting.set(false);
+			notifyAllThread();
 			waitForWaitingFlagIs(false);
 		}
 		return state;
@@ -203,7 +204,8 @@ public class Engine {
 	private Object execFunc(UniMethodDec fdec, Scope global) {
 		Scope funcScope = Scope.createLocal(global);
 		funcScope.name = fdec.methodName;
-		state.addStack(fdec.methodName);
+		if(isStepExecutionRunning.get())
+			state.addStack(fdec.methodName);
 		// TODO: set argument to func scope
 		try {
 			return execBlock(fdec.block, funcScope);
@@ -218,12 +220,6 @@ public class Engine {
 	}
 
 	private Object execExpr(UniExpr expr, Scope scope) {
-		if(getStepExecing())
-		{
-			setWaitingFlag(true);
-			state.setCurrentExpr(expr);
-			waitForWaitingFlagIs(true);
-		}
 		firePreExec(expr, scope);
 		Object value = _execExpr(expr, scope);
 		firePostExec(expr, scope, value);
@@ -291,11 +287,25 @@ public class Engine {
 		}
 		if (expr instanceof UniVariableDec) {
 			UniVariableDec decVar = (UniVariableDec) expr;
-			Object value = execExpr(decVar.value, scope);
-			scope.setTop(decVar.name, value);
-			if(getStepExecing()){
-				String stackName = scope.name;
-				state.addVariable(stackName, decVar, value);
+			Object value = null;
+			if(decVar.value!=null)
+				value = execExpr(decVar.value, scope);
+			if(value instanceof ArrayList<?>){
+				ArrayList<?> varArray = (ArrayList<?>)value;
+				for(int i=0;i<varArray.size();++i){
+					scope.setTop(decVar.name+"["+i+"]", varArray.get(i));
+				}
+				if(isStepExecutionRunning.get()){
+					String stackName = scope.name;
+					state.addVariable(stackName, decVar, varArray,scope.depth);
+				}
+			}
+			else{
+				scope.setTop(decVar.name, value);
+				if(isStepExecutionRunning.get()){
+					String stackName = scope.name;
+					state.addVariable(stackName, decVar, value, scope.depth);
+				}
 			}
 			return value;
 		}
@@ -313,6 +323,7 @@ public class Engine {
 		if (expr instanceof UniFor) {
 			UniFor uniFor = (UniFor) expr;
 			Scope forScope = Scope.createLocal(scope);
+			forScope.name = scope.name;
 			try {
 				Object lastEval = null;
 				for (execExpr(uniFor.init, forScope); toBool(
@@ -358,9 +369,39 @@ public class Engine {
 				return null;
 			}
 		}
+		if (expr instanceof UniArray) {
+			return execArray((UniArray) expr, scope);
+		}
+		if (expr instanceof UniNewArray) {
+			UniNewArray uniNewArray = (UniNewArray) expr;//C言語ではtypeは取れない
+			List<UniExpr> elementsNum = uniNewArray.elementsNum;//多次元未対応
+			int length = (int)execExpr(elementsNum.get(0),scope);//多次元未対応
+			UniArray value = uniNewArray.value;
+			ArrayList<Object> array = new ArrayList<Object>();
+			if(value.items==null){
+				for(int i=0;i<length;++i){
+					array.add(null);
+				}
+			}
+			else{
+				array = execArray(value,scope);
+				for(int i=array.size();i<length;++i){
+					array.add(0);
+				}
+			}
+			return array;
+		}
 		throw new RuntimeException("Not support expr type: " + expr);
 	}
-
+	private ArrayList<Object> execArray(UniArray uniArray, Scope scope) {
+		List<UniExpr> elements = uniArray.items;
+		ArrayList<Object> array = new ArrayList<Object>();
+		for(int i=0;i<elements.size();++i){
+			Object element = execExpr(elements.get(i),scope);
+			array.add(element);
+		}
+		return array;
+	}
 	private Object execMethodCall(Object receiver, String methodName,
 			Object[] args) {
 		assert receiver != null;
@@ -404,8 +445,17 @@ public class Engine {
 		Object lastValue = null;
 		blockScope.name = scope.name;
 		for (UniExpr expr : block.body) {
+			if(isStepExecutionRunning.get())
+			{
+				state.setCurrentExpr(expr);
+				isExecutionThreadWaiting.set(true);
+				notifyAllThread();
+				waitForWaitingFlagIs(true);
+			}
 			lastValue = execExpr(expr, blockScope);
 		}
+		if(isStepExecutionRunning.get())
+			state.removeVariables(scope.name, scope.depth);
 		return lastValue;
 	}
 
@@ -476,7 +526,15 @@ public class Engine {
 					}
 				}
 			}
-
+		case "&":
+			return "&"+getLeftReference(uniOp.expr,scope).name;
+		case "*":{
+			UniUnaryOp uuo = new UniUnaryOp("*",uniOp.expr);
+			UniIdent value = getLeftReference(uuo,scope);
+			return execExpr(value,scope);
+			}
+		case "()":
+			return execExpr(uniOp.expr,scope);
 		}
 		throw new RuntimeException("Unkown binary operator: " + uniOp.operator);
 	}
@@ -484,16 +542,50 @@ public class Engine {
 	private Object execBinOp(UniBinOp binOp, Scope scope) {
 		return execBinOp(binOp.operator, binOp.left, binOp.right, scope);
 	}
-
+	
+	//execAssignのleftにあたるUniIdentを返す
+	private UniIdent getLeftReference(UniExpr left, Scope scope) {
+		if(left instanceof UniIdent){
+			return (UniIdent)left;
+		}
+		else if(left instanceof UniUnaryOp){
+			UniUnaryOp uuo = (UniUnaryOp)left;
+			UniIdent ui = getLeftReference(uuo.expr,scope);
+			if(uuo.operator.equals("*")){
+				String uiName = ui.name;
+				Object refVar = scope.get(uiName);
+				String refVarName = refVar.toString();
+				if(refVarName.substring(0,1).equals("&")){
+					return new UniIdent(refVarName.substring(1));
+				}
+			}
+		}
+		else if(left instanceof UniBinOp){
+			UniBinOp ubo = (UniBinOp)left;
+			UniIdent l = getLeftReference(ubo.left,scope);
+			if(ubo.operator.equals("[]")){
+				return new UniIdent((l.name)+"["+execExpr(ubo.right, scope)+"]");
+			}
+		}
+		else{
+			Object obj = execExpr(left,scope);
+			if(obj instanceof UniExpr){
+				return getLeftReference((UniExpr)obj,scope);
+			}
+		}
+		throw new RuntimeException("Assignment failure: " + left);
+	}
+	
 	private Object execBinOp(String op, UniExpr left, UniExpr right,
 			Scope scope) {
 		switch (op) {
 		case "=": {
-			if (left instanceof UniIdent) {
-				return execAssign((UniIdent) left, execExpr(right, scope),
-						scope);
-			}
-			throw new RuntimeException("Assignment failure: " + left);
+			return execAssign(getLeftReference(left,scope),execExpr(right, scope),scope);
+		}
+		case "[]":{
+			UniBinOp ubo = new UniBinOp("[]",left,right);
+			UniIdent value = getLeftReference(ubo,scope);			
+			return execExpr(value,scope);
 		}
 		case "==":
 			return Eq.eq(execExpr(left, scope), execExpr(right, scope));
@@ -528,10 +620,13 @@ public class Engine {
 				if (numL instanceof Double || numR instanceof Double) {
 					calculater = Calc.doubleOperation;
 				}
-				if (numL instanceof Long || numR instanceof Long) {
+				else if (numL instanceof Float || numR instanceof Float) {
 					calculater = Calc.longOperation;
 				}
-				if (numL instanceof Integer || numR instanceof Integer) {
+				else if (numL instanceof Long || numR instanceof Long) {
+					calculater = Calc.longOperation;
+				}
+				else if (numL instanceof Integer || numR instanceof Integer) {
 					calculater = Calc.intOperation;
 				}
 				if (calculater != null) {
@@ -570,9 +665,18 @@ public class Engine {
 
 	private Object execAssign(UniIdent left, Object value, Scope scope) {
 		scope.set(left.name, value);
-		if(getStepExecing()){
+		if(isStepExecutionRunning.get()){
 			String stackName = scope.name;
 			state.updateVariable(stackName, left.name, value);
+		}
+		return value;
+	}
+	private Object execAssign(String left, int index, Object value, Scope scope) {
+		ArrayList<Object> arr = (ArrayList<Object>) scope.get(left);
+		arr.set(index, value);
+		if(isStepExecutionRunning.get()){
+			String stackName = scope.name;
+			state.updateVariable(stackName, left, index, value);
 		}
 		return value;
 	}
