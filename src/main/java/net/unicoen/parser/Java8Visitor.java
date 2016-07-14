@@ -595,6 +595,12 @@ public interface Java8Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitMethodBody(Java8Parser.MethodBodyContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Java8Parser#emptyBlock}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEmptyBlock(Java8Parser.EmptyBlockContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Java8Parser#instanceInitializer}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -642,6 +648,18 @@ public interface Java8Visitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitExplicitConstructorInvocation(Java8Parser.ExplicitConstructorInvocationContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Java8Parser#ssTHIS}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSsTHIS(Java8Parser.SsTHISContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Java8Parser#ssSUPER}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSsSUPER(Java8Parser.SsSUPERContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Java8Parser#enumDeclaration}.
 	 * @param ctx the parse tree
@@ -1219,11 +1237,11 @@ public interface Java8Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitPrimaryNoNewArray_lfno_primary(Java8Parser.PrimaryNoNewArray_lfno_primaryContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Java8Parser#ttTHIS}.
+	 * Visit a parse tree produced by {@link Java8Parser#iiTHIS}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTtTHIS(Java8Parser.TtTHISContext ctx);
+	T visitIiTHIS(Java8Parser.IiTHISContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Java8Parser#primaryNoNewArray_lfno_primary_lf_arrayAccess_lfno_primary}.
 	 * @param ctx the parse tree
@@ -1278,6 +1296,12 @@ public interface Java8Visitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitFieldAccess_lfno_primary(Java8Parser.FieldAccess_lfno_primaryContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Java8Parser#iiSUPER}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIiSUPER(Java8Parser.IiSUPERContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Java8Parser#arrayAccess}.
 	 * @param ctx the parse tree

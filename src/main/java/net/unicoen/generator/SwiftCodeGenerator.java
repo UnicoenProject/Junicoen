@@ -433,7 +433,6 @@ public class SwiftCodeGenerator extends Traverser {
 			print("{");
 			printNewLine();
 			if (node.trueStatement instanceof UniBlock) {
-				
 				withIndent(()-> {
 					traverseBlock((UniBlock) node.trueStatement);
 				});
@@ -452,7 +451,7 @@ public class SwiftCodeGenerator extends Traverser {
 			print("else");
 			print(" ");
 			print("{");
-			
+			printNewLine();
 			if (node.falseStatement instanceof UniBlock) {
 				withIndent(() -> {
 					traverseBlock((UniBlock) node.falseStatement);
@@ -463,6 +462,7 @@ public class SwiftCodeGenerator extends Traverser {
 				});
 			}
 			print("}");
+			
 		}
 	}
 

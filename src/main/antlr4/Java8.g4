@@ -467,7 +467,12 @@ exceptionType
 
 methodBody
 	:	block 
-	|	';' 
+	|	emptyBlock
+	;
+
+
+emptyBlock
+	:	SEMI 
 	;
 
 instanceInitializer
@@ -502,10 +507,16 @@ constructorBody
 	;
 
 explicitConstructorInvocation
-	:	typeArguments? 'this' '(' argumentList? ')' ';' 
-	|	typeArguments? 'super' '(' argumentList? ')' ';' 
+	:	typeArguments? ssTHIS '(' argumentList? ')' ';' 
+	|	typeArguments? ssSUPER '(' argumentList? ')' ';' 
 	|	expressionName '.' typeArguments? 'super' '(' argumentList? ')' ';' 
 	|	primary '.' typeArguments? 'super' '(' argumentList? ')' ';' 
+	;
+ssTHIS
+	:	THIS
+	;
+ssSUPER
+	:	SUPER 
 	;
 
 enumDeclaration
@@ -984,7 +995,7 @@ primaryNoNewArray_lfno_primary
 	|	typeName ('[' ']' )* '.' 'class' 
 	|	unannPrimitiveType ('[' ']' )* '.' 'class' 
 	|	'void' '.' 'class' 
-	|	ttTHIS 
+	|	iiTHIS 
 	|	typeName '.' 'this' 
 	|	'(' expression ')' 
 	|	classInstanceCreationExpression_lfno_primary 
@@ -994,7 +1005,7 @@ primaryNoNewArray_lfno_primary
 	|	methodReference_lfno_primary 
 	;
 
-ttTHIS
+iiTHIS
 	:	THIS 
 	;
 primaryNoNewArray_lfno_primary_lf_arrayAccess_lfno_primary
@@ -1046,8 +1057,12 @@ fieldAccess_lf_primary
 	;
 
 fieldAccess_lfno_primary
-	:	'super' '.' Identifier 
+	:	iiSUPER '.' Identifier 
 	|	typeName '.' 'super' '.' Identifier 
+	;
+
+iiSUPER
+	:	SUPER 
 	;
 
 arrayAccess
@@ -1067,7 +1082,7 @@ methodInvocation
 	|	typeName '.' typeArguments? Identifier '(' argumentList? ')' 
 	|	expressionName '.' typeArguments? Identifier '(' argumentList? ')' 
 	|	primary '.' typeArguments? Identifier '(' argumentList? ')' 
-	|	'super' '.' typeArguments? Identifier '(' argumentList? ')' 
+	|	iiSUPER '.' typeArguments? Identifier '(' argumentList? ')' 
 	|	typeName '.' 'super' '.' typeArguments? Identifier '(' argumentList? ')' 
 	;
 

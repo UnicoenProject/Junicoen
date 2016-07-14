@@ -763,7 +763,6 @@ public class SwiftGeneratorTest {
   			+"int[] result = new int[list.length];"
 			//FOR LOOP ONLY FOR ONE STEPPER
 //  			for (int i = 0, j = result.length - 1; i < list.length; i++, j--) {
-			//NOT IMPLEMENTED
     			+"result[j] = list[i];"
 //  			}
   			+"return result;
@@ -779,8 +778,528 @@ public class SwiftGeneratorTest {
 		println("---------------------------------------------")
 	}
 	/*23. methods */
-	
-	
+	@Test
+	def void methods(){
+		val tree = mapper.parse("
+		public class ExampleMinNumber{
+				public static void main(String[] args) {
+      				int a = 11;
+      				int b = 6;
+      				int c = minFunction(a, b);
+      				System.out.println(\"Minimum Value = \" + c);
+   			}
+   			public static int minFunction(int n1, int n2) {
+      			int min;
+      			if (n1 > n2)
+         			min = n2;
+      			else
+         			min = n1;
+      			return min; 
+   			}
+			}
+		")
+		assertThat(tree, instanceOf(UniProgram))
+		val cl = (tree as UniProgram).classes.get(0)
+		assertThat(cl, instanceOf(UniClassDec))
+		val modified = JavaToSwiftTreeConverter.convert(tree)
+		val target = SwiftCodeGenerator.generate(modified)
+		println(target)
+		println("---------------------------------------------")
+	}
+	@Test
+	def void methods2(){
+		val tree = mapper.parse("
+			public class ExampleVoid {
+   				public static void main(String[] args) {
+      				methodRankPoints(255.7);
+   				}
+   			public static void methodRankPoints(double points) {
+      			if (points >= 202.5) {
+         			System.out.println(\"Rank:A1\");
+      			}
+      			else if (points >= 122.4) {
+         			System.out.println(\"Rank:A2\");
+      			}
+      			else {
+         			System.out.println(\"Rank:A3\");
+      			}
+   			}
+		}
+		")
+		assertThat(tree, instanceOf(UniProgram))
+		val cl = (tree as UniProgram).classes.get(0)
+		assertThat(cl, instanceOf(UniClassDec))
+		val modified = JavaToSwiftTreeConverter.convert(tree)
+		val target = SwiftCodeGenerator.generate(modified)
+		println(target)
+		println("---------------------------------------------")
+	}
+	@Test
+	def void methods3(){
+		val tree = mapper.parse("
+			public class swappingExample {
+   			public static void main(String[] args) {
+      			int a = 30;
+      			int b = 45;
+      			System.out.println(\"Before swapping, a = \" +
+                          a + \" and b = \" + b);
+      			swapFunction(a, b);
+      			System.out.println(\"**Now, Before and After swapping values will be same here**:\");
+      			System.out.println(\"After swapping, a = \" +
+                         a + \" and b is \" + b);
+   			}
+   			public static void swapFunction(int a, int b) {
+      			System.out.println(\"Before swapping(Inside), a = \" + a
+                           + \" b = \" + b);
+      			int c = a;
+     			a = b;
+      			b = c;
+      			System.out.println(\"After swapping(Inside), a = \" + a
+                           + \" b = \" + b);
+   			}
+		}")
+		assertThat(tree, instanceOf(UniProgram))
+		val cl = (tree as UniProgram).classes.get(0)
+		assertThat(cl, instanceOf(UniClassDec))
+		val modified = JavaToSwiftTreeConverter.convert(tree)
+		val target = SwiftCodeGenerator.generate(modified)
+		println(target)
+		println("---------------------------------------------")
+	}
+	@Test
+	def void method4(){
+		val tree = mapper.parse("
+			public class ExampleOverloading{
+   				public static void main(String[] args) {
+      				int a = 11;
+      				int b = 6;
+      				double c = 7.3;
+      				double d = 9.4;
+      				int result1 = minFunction(a, b);
+      				double result2 = minFunction(c, d);
+      				System.out.println(\"Minimum Value = \" + result1);
+      				System.out.println(\"Minimum Value = \" + result2);
+   				}
+   				public static int minFunction(int n1, int n2) {
+      				int min;
+      				if (n1 > n2)
+         				min = n2;
+      				else
+         				min = n1;
+      				return min; 
+   				}
+   				public static double minFunction(double n1, double n2) {
+     				double min;
+      				if (n1 > n2)
+         				min = n2;
+      				else
+         				min = n1;
+      				return min; 
+   				}
+			}
+		")
+		assertThat(tree, instanceOf(UniProgram))
+		val cl = (tree as UniProgram).classes.get(0)
+		assertThat(cl, instanceOf(UniClassDec))
+		val modified = JavaToSwiftTreeConverter.convert(tree)
+		val target = SwiftCodeGenerator.generate(modified)
+		println(target)
+		println("---------------------------------------------")
+	}
+	@Test
+	def void methods5(){
+		val tree = mapper.parse("
+		public class CommandLine {
+   			public static void main(String args[]){ 
+      			for(int i=0; i<args.length; i++){
+         			System.out.println(\"args[\" + i + \"]: \" +
+                                           args[i]);
+      			}
+   			}
+		}
+		")
+		assertThat(tree, instanceOf(UniProgram))
+		val cl = (tree as UniProgram).classes.get(0)
+		assertThat(cl, instanceOf(UniClassDec))
+		val modified = JavaToSwiftTreeConverter.convert(tree)
+		val target = SwiftCodeGenerator.generate(modified)
+		println(target)
+		println("---------------------------------------------")
+	}
+	@Test
+	def void method6(){
+		val tree = mapper.parse("
+		public class ConsDemo {
+			MyClass(int i ) {
+      				x = i;
+   			}
+   			public static void main(String args[]) {
+      			MyClass t1 = new MyClass();
+      			MyClass t2 = new MyClass();
+				MyClass t1 = new MyClass( 10 );
+      			MyClass t2 = new MyClass( 20 );
+      			System.out.println(t1.x + \" \" + t2.x);
+   			}
+		}
+		")
+		assertThat(tree, instanceOf(UniProgram))
+		val cl = (tree as UniProgram).classes.get(0)
+		assertThat(cl, instanceOf(UniClassDec))
+		val modified = JavaToSwiftTreeConverter.convert(tree)
+		val target = SwiftCodeGenerator.generate(modified)
+		println(target)
+		println("---------------------------------------------")
+	}
+	@Test
+	def void methods7(){
+		val tree = mapper.parse("
+		public class This_Example {
+   			int num=10;
+   			This_Example(){
+      			System.out.println(\"This is an example program on keyword this \");	
+   			}
+  			This_Example(int num){"
+//  			NOT IMPLEMENTED
+//      			this();
+      			+"this.num=num;	   
+   			}
+   			public void greet(){
+      			System.out.println(\"Hi Welcome to Tutorialspoint\");
+   			}
+   			public void print(){
+      			int num=20;
+      			System.out.println(\"value of local variable num is : \"+num);
+      			System.out.println(\"value of instance variable num is : \"+this.num);
+      			this.greet();     
+   			}
+   			public static void main(String[] args){
+      			This_Example obj1=new This_Example();
+      			obj1.print();
+      			This_Example obj2=new This_Example(30);
+      			obj2.print(); 
+   			}
+		}
+		")
+		assertThat(tree, instanceOf(UniProgram))
+		val cl = (tree as UniProgram).classes.get(0)
+		assertThat(cl, instanceOf(UniClassDec))
+		val modified = JavaToSwiftTreeConverter.convert(tree)
+		val target = SwiftCodeGenerator.generate(modified)
+		println(target)
+		println("---------------------------------------------")
+	}
+	@Test
+	def void methods8(){
+		val tree = mapper.parse("
+		public class VarargsDemo {
+	   		public static void main(String args[]) {
+	  			printMax(34, 3, 3, 2, 56.5);
+      			printMax(new double[]{1, 2, 3});
+   			}
+   			public static void printMax( double[] numbers) {
+   				if (numbers.length == 0) {
+      			System.out.println(\"No argument passed\");
+      			return;
+   				}
+   				double result = numbers[0];
+   				for (int i = 1; i <  numbers.length; i++)
+      				if (numbers[i] >  result)
+      					result = numbers[i];
+      			System.out.println(\"The max value is \" + result);
+   			}
+		}
+		")
+		assertThat(tree, instanceOf(UniProgram))
+		val cl = (tree as UniProgram).classes.get(0)
+		assertThat(cl, instanceOf(UniClassDec))
+		val modified = JavaToSwiftTreeConverter.convert(tree)
+		val target = SwiftCodeGenerator.generate(modified)
+		println(target)
+		println("---------------------------------------------")
+	}
+	/*24. inner classes */
+	@Test
+	def void innerClasses() {
+		val tree = mapper.parse("
+		class Outer_Demo{
+   			int num;
+   			private class Inner_Demo{
+      			public void print(){	   
+         			System.out.println(\"This is an inner class\");
+      			}
+   			}
+   			void display_Inner(){
+      			Inner_Demo inner = new Inner_Demo();
+      			inner.print();
+   			}
+			public static void main(String args[]){
+      			Outer_Demo outer = new Outer_Demo();
+      			outer.display_Inner();
+   			}
+		}
+		")		
+		assertThat(tree, instanceOf(UniProgram))
+		val cl = (tree as UniProgram).classes.get(0)
+		assertThat(cl, instanceOf(UniClassDec))
+		val modified = JavaToSwiftTreeConverter.convert(tree)
+		val target = SwiftCodeGenerator.generate(modified)
+		println(target)
+		println("---------------------------------------------")
+	}
+	@Test
+	def void innerClasses2(){
+		val tree = mapper.parse("
+		class Outer_Demo {
+   			private int num= 175;  
+   			public class Inner_Demo{
+      			public int getNum(){
+         			System.out.println(\"This is the getnum method of the inner class\");
+         			return num;
+      			}
+   			}
+			public static void main(String args[]){
+      			Outer_Demo outer=new Outer_Demo();"
+//      			NOT IMPLEMENTED
+//      			Outer_Demo.Inner_Demo inner=outer.new Inner_Demo();
+      			+"System.out.println(inner.getNum());
+   			}
+		}
+		")
+		assertThat(tree, instanceOf(UniProgram))
+		val cl = (tree as UniProgram).classes.get(0)
+		assertThat(cl, instanceOf(UniClassDec))
+		val modified = JavaToSwiftTreeConverter.convert(tree)
+		val target = SwiftCodeGenerator.generate(modified)
+		println(target)
+		println("---------------------------------------------")
+	}
+	@Test
+	//NOT IMPLEMENTED-INNER CLASS INSIDE A METHOD
+	def void methodLocalInnerClasses(){
+		val tree = mapper.parse("
+		public class Outerclass{
+   			void my_Method(){
+      			int num = 23;
+      			class MethodInner_Demo{
+         			public void print(){
+            			System.out.println(\"This is method inner class \"+num);	   
+         			}   
+				}	   
+      			MethodInner_Demo inner = new MethodInner_Demo();
+      			inner.print();
+   			}
+   			public static void main(String args[]){
+      			Outerclass outer = new Outerclass();
+      			outer.my_Method();	   	   
+   			}
+		}
+		")
+		assertThat(tree, instanceOf(UniProgram))
+		val cl = (tree as UniProgram).classes.get(0)
+		assertThat(cl, instanceOf(UniClassDec))
+		val modified = JavaToSwiftTreeConverter.convert(tree)
+		val target = SwiftCodeGenerator.generate(modified)
+		println(target)
+		println("---------------------------------------------")
+	}
+	//NOT IMPLEMENTED
+	@Test
+	def void anonymousInnerClasses(){
+		val tree = mapper.parse("
+		public class My_class {
+   			public void displayMessage(Message m){
+      			System.out.println(m.greet() +\", This is an example of anonymous inner class as an argument\");	   
+   			}
+   			public static void main(String args[]){
+      			My_class obj = new My_class();
+      			obj.displayMessage(new Message(){
+         			public String greet(){
+            			return \"Hello\";  		   
+         			}
+      			});
+   			}
+		}
+		")
+		assertThat(tree, instanceOf(UniProgram))
+		val cl = (tree as UniProgram).classes.get(0)
+		assertThat(cl, instanceOf(UniClassDec))
+		val modified = JavaToSwiftTreeConverter.convert(tree)
+		val target = SwiftCodeGenerator.generate(modified)
+		println(target)
+		println("---------------------------------------------")
+	}
+	@Test
+	def void staticInnerClass(){
+		val tree = mapper.parse("
+		public class Outer{
+   			static class Nested_Demo{
+      			public void my_method(){
+         			System.out.println(\"This is my nested class\");
+      			}
+   			}
+   
+   			public static void main(String args[]){
+      			Outer.Nested_Demo nested = new Outer.Nested_Demo();	 
+      			nested.my_method();
+   			}
+		}
+		")
+		assertThat(tree, instanceOf(UniProgram))
+		val cl = (tree as UniProgram).classes.get(0)
+		assertThat(cl, instanceOf(UniClassDec))
+		val modified = JavaToSwiftTreeConverter.convert(tree)
+		val target = SwiftCodeGenerator.generate(modified)
+		println(target)
+		println("---------------------------------------------")
+	}
+	/*25. Inheritance */
+	@Test
+	def void inheritance(){
+		val tree = mapper.parse("
+		public class My_Calculation extends Calculation{    
+   			public void multiplication(int x, int y){
+      			z = x*y;
+      			System.out.println(\"The product of the given numbers:\"+z);
+   			}
+   			public static void main(String args[]){"
+   			//ADD NOT IMPLEMENTED
+//      			int a = 20, b = 10;
+      			+"My_Calculation demo = new My_Calculation();
+      			demo.addition(a, b);
+      			demo.Subtraction(a, b);
+      			demo.multiplication(a, b);      
+   			}
+		}
+		")
+		assertThat(tree, instanceOf(UniProgram))
+		val cl = (tree as UniProgram).classes.get(0)
+		assertThat(cl, instanceOf(UniClassDec))
+		val modified = JavaToSwiftTreeConverter.convert(tree)
+		val target = SwiftCodeGenerator.generate(modified)
+		println(target)
+		println("---------------------------------------------")
+	}
+	//with super keyword
+	@Test
+	def void inheritance2(){
+		val tree = mapper.parse("
+		public class Sub_class extends Super_class {
+   			int num = 10;
+   			public void display(){
+      			System.out.println(\"This is the display method of subclass\");
+   			}
+   			public void my_method(){
+      			Sub_class sub = new Sub_class();
+      			sub.display();
+      			super.display();
+      			System.out.println(\"value of the variable named num in sub class:\"+ sub.num);
+      			System.out.println(\"value of the variable named num in super class:\"+ super.num);     
+   			}
+   			public static void main(String args[]){
+      			Sub_class obj = new Sub_class();
+      			obj.my_method();
+      
+   			}
+		}
+		")
+		assertThat(tree, instanceOf(UniProgram))
+		val cl = (tree as UniProgram).classes.get(0)
+		assertThat(cl, instanceOf(UniClassDec))
+		val modified = JavaToSwiftTreeConverter.convert(tree)
+		val target = SwiftCodeGenerator.generate(modified)
+		println(target)
+		println("---------------------------------------------")
+	}
+	@Test
+	def void inheritance3(){
+		val tree = mapper.parse("
+		class Superclass{
+   			int age;
+   			Superclass(int age){
+      			this.age = age; 		 
+   			}
+   			public void getAge(){
+      			System.out.println(\"The value of the variable named age in super class is: \" +age);
+   			}
+		}
+		public class Subclass extends Superclass {
+   			Subclass(int age){
+      			super(age);
+   			}
+   			public static void main(String argd[]){
+      			Subclass s = new Subclass(24);
+      			s.getAge();
+   			}
+		}
+		")
+		assertThat(tree, instanceOf(UniProgram))
+		val cl = (tree as UniProgram).classes.get(0)
+		assertThat(cl, instanceOf(UniClassDec))
+		val modified = JavaToSwiftTreeConverter.convert(tree)
+		val target = SwiftCodeGenerator.generate(modified)
+		println(target)
+		println("---------------------------------------------")
+	}
+	/*25. override */
+	@Test
+	def void testOverride(){
+		val tree = mapper.parse("
+		class Animal{
+   			public void move(){
+      			System.out.println(\"Animals can move\");
+   			}
+		}
+		class Dog extends Animal{
+   			public void move(){
+      			System.out.println(\"Dogs can walk and run\");
+   			}
+		}
+		public class TestDog{
+   			public static void main(String args[]){
+      			Animal a = new Animal();
+      			Animal b = new Dog();
+      			a.move();
+      			b.move();
+   			}
+		}
+		")
+		assertThat(tree, instanceOf(UniProgram))
+		val cl = (tree as UniProgram).classes.get(0)
+		assertThat(cl, instanceOf(UniClassDec))
+		val modified = JavaToSwiftTreeConverter.convert(tree)
+		val target = SwiftCodeGenerator.generate(modified)
+		println(target)
+		println("---------------------------------------------")
+	}
+	@Test
+	def void testOverride2(){
+		val tree = mapper.parse("
+		class Animal{
+   			public void move(){
+      			System.out.println(\"Animals can move\");
+   			}
+		}
+		class Dog extends Animal{
+   			public void move(){
+      			super.move();
+      			System.out.println(\"Dogs can walk and run\");
+   			}
+		}
+		public class TestDog{
+   			public static void main(String args[]){
+      			Animal b = new Dog(); //Runs the method in Dog class
+
+   			}
+		}
+		")
+		assertThat(tree, instanceOf(UniProgram))
+		val cl = (tree as UniProgram).classes.get(0)
+		assertThat(cl, instanceOf(UniClassDec))
+		val modified = JavaToSwiftTreeConverter.convert(tree)
+		val target = SwiftCodeGenerator.generate(modified)
+		println(target)
+		println("---------------------------------------------")
+	}
 //		println("YYYYYYYEEEEAAAAAHHHHH")
 //		val counter = JavaToSwiftTreeConverter.search(tree, methodCall)
 //		println(counter)
@@ -788,7 +1307,183 @@ public class SwiftGeneratorTest {
 //		val counter2 = JavaToSwiftTreeConverter.search(tree2, methodCall)
 //		println(counter2)
 	
-
+	@Test
+	def void p(){
+		val tree = mapper.parse("
+		public class Employee{
+   			private String name;
+   			private String address;
+   			private int number;
+   			public Employee(String name, String address, int number){
+      			System.out.println(\"Constructing an Employee\");
+      			this.name = name;
+      			this.address = address;
+      			this.number = number;
+   			}
+   			public void mailCheck(){
+      			System.out.println(\"Mailing a check to \" + this.name
+       + \" \" + this.address);
+   			}
+   			public String toString(){
+      			return name + \" \" + address + \" \" + number;
+   			}
+   			public String getName(){
+      			return name;
+   			}
+   			public String getAddress(){
+      			return address;
+   			}
+   			public void setAddress(String newAddress){
+      			address = newAddress;
+   			}
+   			public int getNumber(){
+     			return number;
+   			}
+		}
+		public class Salary extends Employee{
+   			private double salary;
+   			public Salary(String name, String address, int number, double salary){
+       			super(name, address, number);
+       			setSalary(salary);
+   			}
+   			public void mailCheck(){
+       			System.out.println(\"Within mailCheck of Salary class \");
+       			System.out.println(\"Mailing check to \" + getName()
+       + \" with salary \" + salary);
+   			}
+   			public double getSalary(){
+       			return salary;
+   			}
+   			public void setSalary(double newSalary){
+       			if(newSalary >= 0.0){
+          			salary = newSalary;
+       			}
+   			}
+   			public double computePay(){
+      			System.out.println(\"Computing salary pay for \" + getName());
+      			return salary/52;
+   			}
+		}
+		public class VirtualDemo{
+   			public static void main(String [] args){
+      			Salary s = new Salary(\"Mohd Mohtashim\", \"Ambehta, UP\", 3, 3600.00);
+      			Employee e = new Salary(\"John Adams\", \"Boston, MA\", 2, 2400.00);
+      			System.out.println(\"Call mailCheck using Salary reference --\");
+      			s.mailCheck();
+      			System.out.println(\" Call mailCheck using Employee reference--\");
+      			e.mailCheck();
+    		}
+		}
+		")
+		assertThat(tree, instanceOf(UniProgram))
+		val cl = (tree as UniProgram).classes.get(0)
+		assertThat(cl, instanceOf(UniClassDec))
+		val modified = JavaToSwiftTreeConverter.convert(tree)
+		val target = SwiftCodeGenerator.generate(modified)
+		println(target)
+		println("---------------------------------------------")
+	}
+	@Test
+	def void abstraction(){
+		val tree = mapper.parse("
+		public abstract class Employee{
+   			private String name;
+   			private String address;
+   			private int number;
+   			public Employee(String name, String address, int number){
+      			System.out.println(\"Constructing an Employee\");
+      			this.name = name;
+      			this.address = address;
+      			this.number = number;
+   			}
+   			public double computePay(){
+     			System.out.println(\"Inside Employee computePay\");
+     			return 0.0;
+   			}
+   			public void mailCheck(){
+      			System.out.println(\"Mailing a check to \" + this.name
+       + \" \" + this.address);
+   			}
+   			public String toString(){
+      			return name + \" \" + address + \" \" + number;
+   			}
+   			public String getName(){
+      			return name;
+   			}
+			public String getAddress(){
+      			return address;
+   			}
+			public void setAddress(String newAddress){
+      			address = newAddress;
+   			}
+   			public int getNumber(){
+     			return number;
+   			}
+		}
+		public class AbstractDemo{
+   			public static void main(String [] args){
+      			Employee e = new Employee(\"George W.\", \"Houston, TX\", 43);
+      			System.out.println(\" Call mailCheck using Employee reference--\");
+      			e.mailCheck();
+    		}
+		}
+		public class Salary extends Employee{
+   			private double salary; //Annual salary
+   			public Salary(String name, String address, int number, double salary){
+       			super(name, address, number);
+       			setSalary(salary);
+   			}
+   			public void mailCheck(){
+       			System.out.println(\"Within mailCheck of Salary class \");
+       			System.out.println(\"Mailing check to \" + getName()
+       + \" with salary \" + salary);
+   			}
+   			public double getSalary(){
+       			return salary;
+   			}
+   			public void setSalary(double newSalary){
+       			if(newSalary >= 0.0){
+          			salary = newSalary;
+       			}
+   			}
+   			public double computePay(){
+      			System.out.println(\"Computing salary pay for \" + getName());
+      			return salary/52;
+   			}
+		}
+		public class AbstractDemo{
+   			public static void main(String [] args){
+      			Salary s = new Salary(\"Mohd Mohtashim\", \"Ambehta, UP\", 3, 3600.00);
+      			Employee e = new Salary(\"John Adams\", \"Boston, MA\", 2, 2400.00);
+      			System.out.println(\"Call mailCheck using Salary reference --\");
+      			s.mailCheck();
+      			System.out.println(\" Call mailCheck using Employee reference--\");
+      			e.mailCheck();
+    		}
+		}
+		public abstract class Employee{
+   			private String name;
+   			private String address;
+   			private int number;
+   
+   			public abstract double computePay();
+		}
+		public class Salary extends Employee{
+   			private double salary;
+   			public double computePay(){
+      			System.out.println(\"Computing salary pay for \" + getName());
+      			return salary/52;
+   			}
+		}
+		")
+		assertThat(tree, instanceOf(UniProgram))
+		val cl = (tree as UniProgram).classes.get(0)
+		assertThat(cl, instanceOf(UniClassDec))
+		val modified = JavaToSwiftTreeConverter.convert(tree)
+		val target = SwiftCodeGenerator.generate(modified)
+		println(target)
+		println("---------------------------------------------")
+	}
 	@Test @Ignore
 	def void parseClassWithExtendsAndImplements() {
 		val tree = mapper.parse("public static class A extends SuperClass implements Interface,Interface1 {}")

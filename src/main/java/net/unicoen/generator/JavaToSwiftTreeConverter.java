@@ -238,7 +238,6 @@ public class JavaToSwiftTreeConverter extends Traverser {
 		/////////////////////////////////////
 		//Java- System.out.println
 		/////////////////////////////////////
-
 		UniIdent system = new UniIdent();
 		system.name = "System";
 		
