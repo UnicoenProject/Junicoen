@@ -17,9 +17,9 @@ Dsl.define_node do |x|
                 "Int" => :int,
                 "Long" => :long,
                 "Double" => :double,
-                "String" => String
-#                "Byte" => :byte,
-#                "Character" => :char
+                "String" => String,
+                "Byte" => :byte,
+                "Character" => :char
             }.each do |name, type|
                 x.node "#{name}Literal" do |d|
                     d.mem "value", type

@@ -202,6 +202,8 @@ module Writer
         "(#{name} ? 1 : 0)"
       when /int/
         name
+      when /byte|char/
+        "(int)#{name}"
       when /long/
         "(int)(#{name}^(#{name}>>32))"
       when /double/
@@ -275,7 +277,7 @@ module Writer
           w.block "if (that.#{name})" do
             w << "this.#{name} = true;"
           end
-        when /int|long|double|float/
+        when /int|long|double|float|byte|char/
           w.block "if (that.#{name} != 0)" do
             w << "this.#{name} = that.#{name};"
           end
