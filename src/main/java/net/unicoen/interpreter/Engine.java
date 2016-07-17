@@ -65,7 +65,7 @@ public class Engine {
 	
 	private AtomicBoolean isStepExecutionRunning = new AtomicBoolean(false);
 	private AtomicBoolean isExecutionThreadWaiting = new AtomicBoolean(false);
-	private ExecState state;
+	private ExecState state = new ExecState();
 	public boolean isStepExecutionRunning() {
 		return isStepExecutionRunning.get();
 	}
@@ -204,8 +204,7 @@ public class Engine {
 	private Object execFunc(UniMethodDec fdec, Scope global) {
 		Scope funcScope = Scope.createLocal(global);
 		funcScope.name = fdec.methodName;
-		if(isStepExecutionRunning.get())
-			state.addStack(fdec.methodName);
+		state.addStack(fdec.methodName);
 		// TODO: set argument to func scope
 		try {
 			return execBlock(fdec.block, funcScope);
@@ -295,17 +294,13 @@ public class Engine {
 				for(int i=0;i<varArray.size();++i){
 					scope.setTop(decVar.name+"["+i+"]", varArray.get(i));
 				}
-				if(isStepExecutionRunning.get()){
-					String stackName = scope.name;
-					state.addVariable(stackName, decVar, varArray,scope.depth);
-				}
+				String stackName = scope.name;
+				state.addVariable(stackName, decVar, varArray,scope.depth);
 			}
 			else{
 				scope.setTop(decVar.name, value);
-				if(isStepExecutionRunning.get()){
-					String stackName = scope.name;
-					state.addVariable(stackName, decVar, value, scope.depth);
-				}
+				String stackName = scope.name;
+				state.addVariable(stackName, decVar, value, scope.depth);
 			}
 			return value;
 		}
@@ -445,17 +440,16 @@ public class Engine {
 		Object lastValue = null;
 		blockScope.name = scope.name;
 		for (UniExpr expr : block.body) {
+			state.setCurrentExpr(expr);
 			if(isStepExecutionRunning.get())
 			{
-				state.setCurrentExpr(expr);
 				isExecutionThreadWaiting.set(true);
 				notifyAllThread();
 				waitForWaitingFlagIs(true);
 			}
 			lastValue = execExpr(expr, blockScope);
 		}
-		if(isStepExecutionRunning.get())
-			state.removeVariables(scope.name, scope.depth);
+		state.removeVariables(scope.name, scope.depth);
 		return lastValue;
 	}
 
@@ -665,19 +659,15 @@ public class Engine {
 
 	private Object execAssign(UniIdent left, Object value, Scope scope) {
 		scope.set(left.name, value);
-		if(isStepExecutionRunning.get()){
-			String stackName = scope.name;
-			state.updateVariable(stackName, left.name, value);
-		}
+		String stackName = scope.name;
+		state.updateVariable(stackName, left.name, value);
 		return value;
 	}
 	private Object execAssign(String left, int index, Object value, Scope scope) {
 		ArrayList<Object> arr = (ArrayList<Object>) scope.get(left);
 		arr.set(index, value);
-		if(isStepExecutionRunning.get()){
-			String stackName = scope.name;
-			state.updateVariable(stackName, left, index, value);
-		}
+		String stackName = scope.name;
+		state.updateVariable(stackName, left, index, value);
 		return value;
 	}
 
