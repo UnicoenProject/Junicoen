@@ -37,7 +37,7 @@ import net.unicoen.mapper.*;
 public class CppEngineTest {
 	@Test
 	public void test(){		
-		Engine engine = new Engine();
+		CppEngine engine = new CppEngine();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		engine.out = new PrintStream(baos);
 
@@ -76,7 +76,7 @@ public class CppEngineTest {
 					"}"+
 				"}";
 		CPP14Mapper cppMapper = new CPP14Mapper(true);
-		UniMethodDec node 	= (UniMethodDec) cppMapper.parse(text3);
+		UniMethodDec node 	= (UniMethodDec) cppMapper.parse(text);
 		ExecState state = engine.startStepExecution(node);
 		int i=0;
 		for(;engine.isStepExecutionRunning();++i)

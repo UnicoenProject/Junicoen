@@ -218,7 +218,7 @@ public class Engine {
 		throw new RuntimeException("Not support call method for: " + instance);
 	}
 
-	private Object execExpr(UniExpr expr, Scope scope) {
+	protected Object execExpr(UniExpr expr, Scope scope) {
 		firePreExec(expr, scope);
 		Object value = _execExpr(expr, scope);
 		firePostExec(expr, scope, value);
@@ -521,11 +521,9 @@ public class Engine {
 				}
 			}
 		case "&":
-			return "&"+getLeftReference(uniOp.expr,scope).name;
+			return execUnAndOp(uniOp.expr,scope);
 		case "*":{
-			UniUnaryOp uuo = new UniUnaryOp("*",uniOp.expr);
-			UniIdent value = getLeftReference(uuo,scope);
-			return execExpr(value,scope);
+			return execUnAsteriskOp(uniOp.expr,scope);
 			}
 		case "()":
 			return execExpr(uniOp.expr,scope);
@@ -533,12 +531,22 @@ public class Engine {
 		throw new RuntimeException("Unkown binary operator: " + uniOp.operator);
 	}
 
+	protected String execUnAndOp(UniExpr expr, Scope scope){
+		return "&"+getLeftReference(expr,scope).name;
+	}
+	
+	protected Object execUnAsteriskOp(UniExpr expr, Scope scope){
+		UniUnaryOp uuo = new UniUnaryOp("*", expr);
+		UniIdent value = getLeftReference(uuo,scope);
+		return execExpr(value,scope);
+	}
+	
 	private Object execBinOp(UniBinOp binOp, Scope scope) {
 		return execBinOp(binOp.operator, binOp.left, binOp.right, scope);
 	}
 	
 	//execAssignのleftにあたるUniIdentを返す
-	private UniIdent getLeftReference(UniExpr left, Scope scope) {
+	protected UniIdent getLeftReference(UniExpr left, Scope scope) {
 		if(left instanceof UniIdent){
 			return (UniIdent)left;
 		}
@@ -570,6 +578,11 @@ public class Engine {
 		throw new RuntimeException("Assignment failure: " + left);
 	}
 	
+	protected Object execSubscriptOp(UniExpr var, UniExpr index, Scope scope){
+		UniBinOp ubo = new UniBinOp("[]",var,index);
+		UniIdent value = getLeftReference(ubo,scope);			
+		return execExpr(value,scope);
+	}
 	private Object execBinOp(String op, UniExpr left, UniExpr right,
 			Scope scope) {
 		switch (op) {
@@ -577,9 +590,7 @@ public class Engine {
 			return execAssign(getLeftReference(left,scope),execExpr(right, scope),scope);
 		}
 		case "[]":{
-			UniBinOp ubo = new UniBinOp("[]",left,right);
-			UniIdent value = getLeftReference(ubo,scope);			
-			return execExpr(value,scope);
+			return execSubscriptOp(left, right, scope);
 		}
 		case "==":
 			return Eq.eq(execExpr(left, scope), execExpr(right, scope));
@@ -657,7 +668,7 @@ public class Engine {
 		throw new RuntimeException("Unkown binary operator: " + op);
 	}
 
-	private Object execAssign(UniIdent left, Object value, Scope scope) {
+	protected Object execAssign(UniIdent left, Object value, Scope scope) {
 		scope.set(left.name, value);
 		String stackName = scope.name;
 		state.updateVariable(stackName, left.name, value);

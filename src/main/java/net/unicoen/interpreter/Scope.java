@@ -45,7 +45,13 @@ public class Scope {
 	private Scope(Type type, Scope parent) {
 		this.parent = parent;
 		this.type = type;
-		this.depth = parent==null ? 0 : parent.depth + 1;
+		if(parent==null){
+			this.depth = 0;
+			this.name = "GLOBAL";
+		}
+		else{
+			this.depth = parent.depth + 1;
+		}
 	}
 
 	public void setListener(VariableNotFoundListener listener) {
