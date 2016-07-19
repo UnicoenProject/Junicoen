@@ -320,15 +320,30 @@ public class SwiftCodeGenerator extends Traverser {
 
 	@Override
 	public void traverseNew(UniNew node) {
-		print(node.type);
-		print("(");
-		String delimiter = "";
-		for (UniExpr innerExpr : iter(node.args)) {
-			print(delimiter);
-			delimiter = ", ";
-			parseExpr(innerExpr);
+		if(node.type.equals("Dictionary")){
+			node.type = "";
+			print("[");
+			String delimiter = "";
+			for (UniExpr innerExpr : iter(node.args)) {
+				print(delimiter);
+				delimiter = ": ";
+				parseExpr(innerExpr);
+			}
+			print("]");
+			print("(");
+			print(")");
+			
+		}else{
+			print(node.type);
+			print("(");
+			String delimiter = "";
+			for (UniExpr innerExpr : iter(node.args)) {
+				print(delimiter);
+				delimiter = ", ";
+				parseExpr(innerExpr);
+			}
+			print(")");
 		}
-		print(")");
 	}
 
 	@Override
@@ -550,8 +565,10 @@ public class SwiftCodeGenerator extends Traverser {
 			}
 		}
 		print(node.name);
-		print(" : ");
-		print(toSwiftDataType(node.type));
+		if(node.type!=""){
+			print(" : ");
+			print(toSwiftDataType(node.type));
+		}
 		if((node.value!=null)&&(!(node.value instanceof UniNewArray))){
 			print(" = ");
 			parseExpr(node.value);
@@ -667,8 +684,10 @@ public class SwiftCodeGenerator extends Traverser {
 			}
 		}
 		print(node.name);
-		print(" : ");
-		print(toSwiftDataType(node.type));
+		if(node.type!=""){
+			print(" : ");
+			print(toSwiftDataType(node.type));//if multiple array -> print []
+		}
 		if((node.value!=null)&&(!(node.value instanceof UniNewArray))){
 			print(" = ");
 			parseExpr(node.value);

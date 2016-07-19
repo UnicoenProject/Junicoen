@@ -1306,9 +1306,9 @@ public class SwiftGeneratorTest {
 //		val tree2 = mapper.parse("public class temp{ public static void main(String[] args){System.out.println(\"aaa\");System.out.println(\"bbb\");}}")
 //		val counter2 = JavaToSwiftTreeConverter.search(tree2, methodCall)
 //		println(counter2)
-	
+	/*26. polymorphism */
 	@Test
-	def void p(){
+	def void polymorphism(){
 		val tree = mapper.parse("
 		public class Employee{
    			private String name;
@@ -1383,6 +1383,7 @@ public class SwiftGeneratorTest {
 		println(target)
 		println("---------------------------------------------")
 	}
+	/*27. abstraction */
 	@Test
 	def void abstraction(){
 		val tree = mapper.parse("
@@ -1476,6 +1477,125 @@ public class SwiftGeneratorTest {
    			}
 		}
 		")
+		assertThat(tree, instanceOf(UniProgram))
+		val cl = (tree as UniProgram).classes.get(0)
+		assertThat(cl, instanceOf(UniClassDec))
+		val modified = JavaToSwiftTreeConverter.convert(tree)
+		val target = SwiftCodeGenerator.generate(modified)
+		println(target)
+		println("---------------------------------------------")
+	}
+	/*28. Encapsulation */
+	@Test
+	def void encapsulation(){
+		val tree = mapper.parse("
+public class EncapTest{
+
+   private String name;
+   private String idNum;
+   private int age;
+
+   public int getAge(){
+      return age;
+   }
+
+   public String getName(){
+      return name;
+   }
+
+   public String getIdNum(){
+      return idNum;
+   }
+
+   public void setAge( int newAge){
+      age = newAge;
+   }
+
+   public void setName(String newName){
+      name = newName;
+   }
+
+   public void setIdNum( String newId){
+      idNum = newId;
+   }
+}
+public class RunEncap{
+
+   public static void main(String args[]){
+      EncapTest encap = new EncapTest();
+      encap.setName(\"James\");
+      encap.setAge(20);
+      encap.setIdNum(\"12343ms\");
+
+      System.out.print(\"Name : \" + encap.getName() + \" Age : \" + encap.getAge());
+    }
+}		")
+		assertThat(tree, instanceOf(UniProgram))
+		val cl = (tree as UniProgram).classes.get(0)
+		assertThat(cl, instanceOf(UniClassDec))
+		val modified = JavaToSwiftTreeConverter.convert(tree)
+		val target = SwiftCodeGenerator.generate(modified)
+		println(target)
+		println("---------------------------------------------")
+	}
+	/*29. interfaces */
+	@Test
+	def void interfaces(){
+		val tree = mapper.parse("
+public class MammalInt implements Animal{
+
+   public void eat(){
+      System.out.println(\"Mammal eats\");
+   }
+
+   public void travel(){
+      System.out.println(\"Mammal travels\");
+   } 
+
+   public int noOfLegs(){
+      return 0;
+   }
+
+   public static void main(String args[]){
+      MammalInt m = new MammalInt();
+      m.eat();
+      m.travel();
+   }
+} 
+public interface Sports
+{
+   public void setHomeTeam(String name);
+   public void setVisitingTeam(String name);
+}
+
+//Filename: Football.java
+public interface Football extends Sports
+{
+   public void homeTeamScored(int points);
+   public void visitingTeamScored(int points);
+   public void endOfQuarter(int quarter);
+}
+
+//Filename: Hockey.java
+public interface Hockey extends Sports
+{
+   public void homeGoalScored();
+   public void visitingGoalScored();
+   public void endOfPeriod(int period);
+   public void overtimePeriod(int ot);
+}
+		")
+		assertThat(tree, instanceOf(UniProgram))
+		val cl = (tree as UniProgram).classes.get(0)
+		assertThat(cl, instanceOf(UniClassDec))
+		val modified = JavaToSwiftTreeConverter.convert(tree)
+		val target = SwiftCodeGenerator.generate(modified)
+		println(target)
+		println("---------------------------------------------")
+	}
+	@Test
+	def void temp(){
+		val tree = mapper.parse("class a{HashMap a = new HashMap(Integer, String);}")
 		assertThat(tree, instanceOf(UniProgram))
 		val cl = (tree as UniProgram).classes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))

@@ -54,6 +54,7 @@ public class JavaToSwiftTreeConverter extends Traverser {
 	private static String className = null;
 	private static String enumType = null;
 	private static boolean enumFlag = false;
+	private static boolean dictionaryFlag = false;
 	
 	/////////////////////////////////////
 	/////////////////////////////////////
@@ -246,9 +247,14 @@ public class JavaToSwiftTreeConverter extends Traverser {
 		receiver.fieldName = "out";
 		
 		String methodName = "println";
+		System.out.println("I am here");
 
 		/////////////////////////////////////
 		/////////////////////////////////////
+		if(node.methodName.equals("HashMap")){
+			node.methodName = "Dictionary";
+			System.out.println("METHODNAME");
+		}
 		
 		if (node.receiver != null) {
 			parseExpr(node.receiver);
@@ -258,6 +264,7 @@ public class JavaToSwiftTreeConverter extends Traverser {
 				node.methodName = "println";
 				
 			}
+			
 		}
 		
 		for (UniExpr innerExpr : iter(node.args)) {
@@ -268,6 +275,10 @@ public class JavaToSwiftTreeConverter extends Traverser {
 	@Override
 	public void traverseNew(UniNew node) {
 		// TODO Auto-generated method stub
+		if(node.type.equals("HashMap")){
+			node.type = "Dictionary";
+		}
+		
 		for (UniExpr innerExpr : iter(node.args)) {
 			parseExpr(innerExpr);
 		}
@@ -415,6 +426,9 @@ public class JavaToSwiftTreeConverter extends Traverser {
 	public void traverseVariableDec(UniVariableDec node) {
 		// TODO Auto-generated method stub
 		String keyword = "var";
+		if(node.type.equals("HashMap")){
+			node.type = "Dictionary";
+		}
 		List<String> modifiers = new ArrayList<String>();
 		for (String modifier : iter(node.modifiers)){
 			if(modifier.equals("final")){
@@ -441,6 +455,10 @@ public class JavaToSwiftTreeConverter extends Traverser {
 	public void traverseFieldDec(UniFieldDec node) {
 		// TODO Auto-generated method stub
 		//Java- Change modifiers
+		if(node.type.equals("HashMap")){
+			node.type = "";
+			dictionaryFlag = true;
+		}
 		String keyword = "var";
 		List<String> modifiers = new ArrayList<String>();
 		for (String modifier : iter(node.modifiers)){
