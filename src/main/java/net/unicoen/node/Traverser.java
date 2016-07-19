@@ -7,6 +7,8 @@ public abstract class Traverser {
 	public abstract void traverseLongLiteral(UniLongLiteral node);
 	public abstract void traverseDoubleLiteral(UniDoubleLiteral node);
 	public abstract void traverseStringLiteral(UniStringLiteral node);
+	public abstract void traverseByteLiteral(UniByteLiteral node);
+	public abstract void traverseCharacterLiteral(UniCharacterLiteral node);
 	public abstract void traverseIdent(UniIdent node);
 	public abstract void traverseArray(UniArray node);
 	public abstract void traverseFieldAccess(UniFieldAccess node);
@@ -59,6 +61,14 @@ public abstract class Traverser {
 		}
 		if (node instanceof UniStringLiteral) {
 			traverseStringLiteral((UniStringLiteral)node);
+			return;
+		}
+		if (node instanceof UniByteLiteral) {
+			traverseByteLiteral((UniByteLiteral)node);
+			return;
+		}
+		if (node instanceof UniCharacterLiteral) {
+			traverseCharacterLiteral((UniCharacterLiteral)node);
 			return;
 		}
 		if (node instanceof UniIdent) {

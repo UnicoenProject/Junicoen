@@ -14,7 +14,9 @@ import net.unicoen.node.UniBinOp;
 import net.unicoen.node.UniBlock;
 import net.unicoen.node.UniBoolLiteral;
 import net.unicoen.node.UniBreak;
+import net.unicoen.node.UniByteLiteral;
 import net.unicoen.node.UniCast;
+import net.unicoen.node.UniCharacterLiteral;
 import net.unicoen.node.UniClassDec;
 import net.unicoen.node.UniContinue;
 import net.unicoen.node.UniDoWhile;
@@ -910,6 +912,18 @@ public class SwiftCodeGenerator extends Traverser {
 			print("=");
 			parseExpr(node.args.get(0));
 		}
+	}
+
+	@Override
+	public void traverseByteLiteral(UniByteLiteral node) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void traverseCharacterLiteral(UniCharacterLiteral node) {
+		// TODO Auto-generated method stub
+		
 	}
 
 
