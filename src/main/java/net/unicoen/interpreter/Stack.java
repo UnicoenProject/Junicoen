@@ -1,6 +1,7 @@
 package net.unicoen.interpreter;
 
 import java.util.ArrayList;
+import java.util.ListIterator;
 
 public class Stack {
 	public final String name;
@@ -28,21 +29,15 @@ public class Stack {
 	}
 	
 	void updateVariable(String name, Object value){
-		for(Variable variable : variables){
-			if(variable.hasValue(name)){
-				variable.setValue(name,value);
+		for(ListIterator<Variable> it=variables.listIterator(variables.size()); it.hasPrevious();){
+			Variable var = it.previous();//内側のスコープから探すため逆順に探索
+			if(var.hasValue(name)){
+				var.setValue(name,value);
+				break;
 			}
 		}
 	}
-	
-	void updateVariable(String name, int index, Object value){
-		for(Variable variable : variables){
-			if(variable.name.equals(name)){
-				variable.setValue(index, value);
-			}
-		}
-	}
-	
+		
 	public void removeVariables(int depth){
 		variables.removeIf(var->{ return depth<=var.depth;});
 	}

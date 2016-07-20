@@ -59,10 +59,9 @@ public class CppEngineTest {
 		String text2 = 
 				"int main()"+
 				"{"+
-				"int i=1;"+
-				"int sum=0;"+
-				"do{sum+=i;i+=1;}"+
-				"while(i<20);"+
+					"int i=1;"+
+					"{int i = 100;i+=20;}"+
+					"i+=50;"+
 				"}";
 		String text3 = 
 				"int main()"+
@@ -76,7 +75,7 @@ public class CppEngineTest {
 					"}"+
 				"}";
 		CPP14Mapper cppMapper = new CPP14Mapper(true);
-		UniMethodDec node 	= (UniMethodDec) cppMapper.parse(text);
+		UniMethodDec node 	= (UniMethodDec) cppMapper.parse(text3);
 		ExecState state = engine.startStepExecution(node);
 		int i=0;
 		for(;engine.isStepExecutionRunning();++i)

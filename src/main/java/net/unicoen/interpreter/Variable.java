@@ -8,7 +8,7 @@ import net.unicoen.node.UniVariableDec;
 public class Variable{
 	public final String type;
 	public final String name;
-	private Object value;//数値などの組み込み型でなければUniArray,UniCrassDecが考えられる。
+	private Object value;//配列などはArrayList<Variable>として持つ。
 	public final int address;
 	public final int depth;
 	
@@ -74,10 +74,6 @@ public class Variable{
 			}
 		}
 	}
-	
-	public void setValue(int index, Object value) {
-		((ArrayList<Variable>)this.value).get(index).setValue(value);
-	}
 
 	public int getByteSize(){
 		if(value instanceof ArrayList){
@@ -94,6 +90,4 @@ public class Variable{
 		return "Variable [type=" + type + ", name=" + name + ", value=" + value + ", "
 				+ "address=" + address + ", depth=" + depth + "]";
 	}
-	
-	
 }

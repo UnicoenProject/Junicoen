@@ -47,16 +47,7 @@ public class ExecState {
 			}
 		}
 	}
-	
-	public void updateVariable(String stackName, String varName,int index, Object value){
-		for(Stack stack : stacks){
-			if(stack.name.equals(stackName)){
-				stack.updateVariable(varName, index, value);
-				break;
-			}
-		}
-	}
-	
+		
 	public void removeVariables(String stackName, int depth){
 		if(stackName.equals("main") && depth <2)
 			return;
