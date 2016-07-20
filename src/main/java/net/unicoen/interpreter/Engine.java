@@ -281,7 +281,7 @@ public class Engine {
 		}
 		if (expr instanceof UniReturn) {
 			UniReturn uniRet = (UniReturn) expr;
-			Object retValue = execExpr(uniRet, scope);
+			Object retValue = execExpr(uniRet.value, scope);
 			throw new Return(retValue);
 		}
 		if (expr instanceof UniVariableDec) {
