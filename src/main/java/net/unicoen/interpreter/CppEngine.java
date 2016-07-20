@@ -34,7 +34,7 @@ public class CppEngine extends Engine {
 	
 	@Override
 	protected String execAddressOp(UniUnaryOp expr, Scope scope){
-		return expr.operator + getLeftReference(expr,scope).name;
+		return expr.operator + getLeftReference(expr.expr,scope).name;
 	}
 	
 	@Override

@@ -15,6 +15,7 @@ import net.unicoen.node.UniBinOp;
 import net.unicoen.node.UniBlock;
 import net.unicoen.node.UniBoolLiteral;
 import net.unicoen.node.UniBreak;
+import net.unicoen.node.UniCharacterLiteral;
 import net.unicoen.node.UniClassDec;
 import net.unicoen.node.UniContinue;
 import net.unicoen.node.UniDoWhile;
@@ -255,6 +256,9 @@ public class Engine {
 		if (expr instanceof UniLongLiteral) {
 			return ((UniLongLiteral) expr).value;
 		}
+		if (expr instanceof UniCharacterLiteral) {
+			return ((UniCharacterLiteral) expr).value;
+		}
 		if (expr instanceof UniDoubleLiteral) {
 			return ((UniDoubleLiteral) expr).value;
 		}
@@ -289,11 +293,11 @@ public class Engine {
 			
 			
 			if(decVar.name.startsWith("*")){
-				decVar.name.replace("*", "");
+				decVar.name = decVar.name.substring(1);
 				decVar.type+="*";
 			}
 			else if(decVar.name.startsWith("&")){
-				decVar.name.replace("&", "");
+				decVar.name = decVar.name.substring(1);
 				decVar.type+="&";
 			}
 			

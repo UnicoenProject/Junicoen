@@ -2470,10 +2470,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 			}
 			return false
 		].visit as String
-		if(1<text.length())
-			return new UniCharacterLiteral(text.substring(text.indexOf("'"),text.lastIndexOf("'")).charAt(0))
-		else
-			return new UniCharacterLiteral(text.charAt(0))	
+		return new UniCharacterLiteral(text.substring(1, text.length - 1).charAt(0))
 	}
 
 	override public visitFloatingliteral(CPP14Parser.FloatingliteralContext ctx) {

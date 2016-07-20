@@ -47,7 +47,7 @@ public class CppEngineTest {
 				"{"+
 					"char ca = 'a';"+
 					"int a=1,b=2;"+
-					"int b=a, *pa = &b;"+
+					"int y=a, *pa = &b;"+
 					"*pa = *pa;"+
 					"a = b;"+
 					"int arr[5] = {1,2,3};"+
@@ -57,7 +57,6 @@ public class CppEngineTest {
 					"a = 5;"+
 					"int c=a+b;"+
 				"}";
-		char a = text.endsWith("'") ? text.substring(text.indexOf("'"),text.lastIndexOf("'")).charAt(0):text.charAt(0);
 		CPP14Mapper cppMapper = new CPP14Mapper(true);
 		UniMethodDec node = (UniMethodDec) cppMapper.parse(text);
 		ExecState state = engine.startStepExecution(node);
