@@ -16,6 +16,10 @@ primaryexpression
 	|	lambdaexpression 
 	;
 
+ttThis
+	:	This 
+	;
+
 idexpression
 	:	unqualifiedid 
 	|	qualifiedid 
@@ -305,6 +309,9 @@ statement
 	|	attributespecifierseq? whilestatement 
 	|	attributespecifierseq? dowhilestatement 
 	|	attributespecifierseq? jumpstatement 
+	|	attributespecifierseq? breakStatement 
+	|	attributespecifierseq? continueStatement 
+	|	attributespecifierseq? returnStatement 
 	|	variabledeclarationstatement 
 	|	declarationstatement 
 	|	attributespecifierseq? tryblock 
@@ -375,11 +382,20 @@ forrangeinitializer
 	;
 
 jumpstatement
+	:	Goto Identifier ';' 
+	;
+
+breakStatement
 	:	Break ';' 
-	|	Continue ';' 
-	|	Return expression? ';' 
+	;
+
+continueStatement
+	:	Continue ';' 
+	;
+
+returnStatement
+	:	Return expression? ';' 
 	|	Return bracedinitlist ';' 
-	|	Goto Identifier ';' 
 	;
 
 declarationstatement
@@ -428,7 +444,7 @@ variabledeclarationstatement
 	;
 
 variabledeclaration
-	:	attributespecifierseq? declspecifierseqwithouttype? typespecifier ptroperator* variableDeclaratorList? 
+	:	attributespecifierseq? declspecifierseqwithouttype? typespecifier variableDeclaratorList? 
 	;
 
 variableDeclaratorList
@@ -449,9 +465,9 @@ dimExpr
 	;
 
 variableDeclarator
-	:	declaratorid ('=' initializerclause )? 
-	|	declaratorid dims ('=' initializerclause )? 
-	|	declaratorid arrayCreationExpression 
+	:	ptroperator* declaratorid ('=' initializerclause )? 
+	|	ptroperator* declaratorid dims ('=' initializerclause )? 
+	|	ptroperator* declaratorid arrayCreationExpression 
 	;
 
 dims

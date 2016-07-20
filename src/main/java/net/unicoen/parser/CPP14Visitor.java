@@ -25,6 +25,12 @@ public interface CPP14Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitPrimaryexpression(CPP14Parser.PrimaryexpressionContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#ttThis}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTtThis(CPP14Parser.TtThisContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link CPP14Parser#idexpression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -390,6 +396,24 @@ public interface CPP14Visitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitJumpstatement(CPP14Parser.JumpstatementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#breakStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBreakStatement(CPP14Parser.BreakStatementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#continueStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitContinueStatement(CPP14Parser.ContinueStatementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#returnStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitReturnStatement(CPP14Parser.ReturnStatementContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link CPP14Parser#declarationstatement}.
 	 * @param ctx the parse tree

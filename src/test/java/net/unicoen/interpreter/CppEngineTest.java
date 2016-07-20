@@ -45,8 +45,7 @@ public class CppEngineTest {
 				"int main()"+
 				"{"+
 				"int a=1;"+
-				"int b=a;"+
-				"int*pa = &b;"+
+				"int b=a, *pa = &b;"+
 				"*pa = *pa;"+
 				"a = b;"+
 					"int arr[5] = {1,2,3};"+
@@ -70,9 +69,11 @@ public class CppEngineTest {
 					"int i;"+
 					"for(i=0;((x*x-2)<-e) || (e<(x*x-2));i+=1)"+
 					"{"+
-						"int a = 10;"+
 						"x -= ((x*x)-2) / (2*x);"+
+						"int a = 10;"+
+						"continue;"+
 					"}"+
+					"return x;"+
 				"}";
 		CPP14Mapper cppMapper = new CPP14Mapper(true);
 		UniMethodDec node 	= (UniMethodDec) cppMapper.parse(text3);
