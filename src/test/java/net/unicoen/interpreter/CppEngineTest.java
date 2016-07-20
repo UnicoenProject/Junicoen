@@ -34,9 +34,10 @@ import net.unicoen.node.UniUnaryOp;
 import net.unicoen.node.UniVariableDec;
 import net.unicoen.node.UniWhile;
 import net.unicoen.mapper.*;
+
 public class CppEngineTest {
 	@Test
-	public void test(){		
+	public void test1() {
 		CppEngine engine = new CppEngine();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		engine.out = new PrintStream(baos);
@@ -44,10 +45,11 @@ public class CppEngineTest {
 		String text = 
 				"int main()"+
 				"{"+
-				"int a=1;"+
-				"int b=a, *pa = &b;"+
-				"*pa = *pa;"+
-				"a = b;"+
+					"char ca = 'a';"+
+					"int a=1,b=2;"+
+					"int b=a, *pa = &b;"+
+					"*pa = *pa;"+
+					"a = b;"+
 					"int arr[5] = {1,2,3};"+
 					"int a = arr[2];"+
 					"a=arr[0];"+
@@ -55,32 +57,12 @@ public class CppEngineTest {
 					"a = 5;"+
 					"int c=a+b;"+
 				"}";
-		String text2 = 
-				"int main()"+
-				"{"+
-					"int i=1;"+
-					"{int i = 100;i+=20;}"+
-					"i+=50;"+
-				"}";
-		String text3 = 
-				"int main()"+
-				"{"+
-					"double x = 1.0, e = 0.0000000005;"+
-					"int i;"+
-					"for(i=0;((x*x-2)<-e) || (e<(x*x-2));i+=1)"+
-					"{"+
-						"x -= ((x*x)-2) / (2*x);"+
-						"int a = 10;"+
-						"continue;"+
-					"}"+
-					"return x;"+
-				"}";
+		char a = text.endsWith("'") ? text.substring(text.indexOf("'"),text.lastIndexOf("'")).charAt(0):text.charAt(0);
 		CPP14Mapper cppMapper = new CPP14Mapper(true);
-		UniMethodDec node 	= (UniMethodDec) cppMapper.parse(text3);
+		UniMethodDec node = (UniMethodDec) cppMapper.parse(text);
 		ExecState state = engine.startStepExecution(node);
-		int i=0;
-		for(;engine.isStepExecutionRunning();++i)
-		{
+		int i = 0;
+		for (; engine.isStepExecutionRunning(); ++i) {
 			state = engine.stepExecute();
 		}
 
@@ -90,5 +72,67 @@ public class CppEngineTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public void test2() {
+		CppEngine engine = new CppEngine();
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		engine.out = new PrintStream(baos);
+		String text = 
+				"int main()"+
+				"{"+
+					"int i=1;"+
+					"{int i = 100;i+=20;}"+
+					"i+=50;"+
+				"}";
+		CPP14Mapper cppMapper = new CPP14Mapper(true);
+		UniMethodDec node = (UniMethodDec) cppMapper.parse(text);
+		ExecState state = engine.startStepExecution(node);
+		int i = 0;
+		for (; engine.isStepExecutionRunning(); ++i) {
+			state = engine.stepExecute();
+		}
+
+		try {
+			String output = baos.toString("UTF8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void test3(){		
+			CppEngine engine = new CppEngine();
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			engine.out = new PrintStream(baos);
+
+			String text = 
+					"int main()"+
+					"{"+
+						"double x = 1.0, e = 0.0000000005;"+
+						"int i;"+
+						"for(i=0;((x*x-2)<-e) || (e<(x*x-2));i+=1)"+
+						"{"+
+							"x -= ((x*x)-2) / (2*x);"+
+							"int a = 10;"+
+							"continue;"+
+						"}"+
+						"return x;"+
+					"}";
+			CPP14Mapper cppMapper = new CPP14Mapper(true);
+			UniMethodDec node 	= (UniMethodDec) cppMapper.parse(text);
+			ExecState state = engine.startStepExecution(node);
+			int i=0;
+			for(;engine.isStepExecutionRunning();++i)
+			{
+				state = engine.stepExecute();
+			}
+
+			try {
+				String output = baos.toString("UTF8");
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	}
 }

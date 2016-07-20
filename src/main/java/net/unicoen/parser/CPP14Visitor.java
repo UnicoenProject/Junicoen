@@ -25,12 +25,6 @@ public interface CPP14Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitPrimaryexpression(CPP14Parser.PrimaryexpressionContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link CPP14Parser#ttThis}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitTtThis(CPP14Parser.TtThisContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link CPP14Parser#idexpression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -1338,6 +1332,12 @@ public interface CPP14Visitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitIntegerliteral(CPP14Parser.IntegerliteralContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#characterliteral}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCharacterliteral(CPP14Parser.CharacterliteralContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link CPP14Parser#floatingliteral}.
 	 * @param ctx the parse tree

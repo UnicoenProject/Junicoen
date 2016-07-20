@@ -16,10 +16,6 @@ primaryexpression
 	|	lambdaexpression 
 	;
 
-ttThis
-	:	This 
-	;
-
 idexpression
 	:	unqualifiedid 
 	|	qualifiedid 
@@ -1734,7 +1730,7 @@ DIGIT
 
 literal
 	:	integerliteral 
-	|	Characterliteral 
+	|	characterliteral 
 	|	floatingliteral 
 	|	stringliteral 
 	|	booleanliteral 
@@ -1818,6 +1814,10 @@ fragment
 Longlongsuffix
 	:	'll' 
 	|	'LL' 
+	;
+
+characterliteral
+	:	Characterliteral 
 	;
 
 Characterliteral
