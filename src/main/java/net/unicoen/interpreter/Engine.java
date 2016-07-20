@@ -286,6 +286,17 @@ public class Engine {
 		}
 		if (expr instanceof UniVariableDec) {
 			UniVariableDec decVar = (UniVariableDec) expr;
+			
+			
+			if(decVar.name.startsWith("*")){
+				decVar.name.replace("*", "");
+				decVar.type+="*";
+			}
+			else if(decVar.name.startsWith("&")){
+				decVar.name.replace("&", "");
+				decVar.type+="&";
+			}
+			
 			Object value = null;
 			if(decVar.value!=null)
 				value = execExpr(decVar.value, scope);
