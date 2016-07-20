@@ -291,6 +291,7 @@ public class Engine {
 				value = execExpr(decVar.value, scope);
 			if(value instanceof ArrayList<?>){
 				ArrayList<?> varArray = (ArrayList<?>)value;
+				scope.setTop(decVar.name, "&"+decVar.name+"[0]");
 				for(int i=0;i<varArray.size();++i){
 					scope.setTop(decVar.name+"["+i+"]", varArray.get(i));
 				}
@@ -521,83 +522,74 @@ public class Engine {
 				}
 			}
 		case "&":
-			return execUnAndOp(uniOp.expr,scope);
+			return execAddressOp(uniOp,scope);
 		case "*":{
-			return execUnAsteriskOp(uniOp.expr,scope);
+			return execDereferenceOp(uniOp,scope);
 			}
 		case "()":
 			return execExpr(uniOp.expr,scope);
 		}
 		throw new RuntimeException("Unkown binary operator: " + uniOp.operator);
 	}
-
-	protected String execUnAndOp(UniExpr expr, Scope scope){
-		return "&"+getLeftReference(expr,scope).name;
+	
+	protected String execAddressOp(UniUnaryOp expr, Scope scope){
+		return expr.operator + getLeftReference(expr,scope).name;
 	}
 	
-	protected Object execUnAsteriskOp(UniExpr expr, Scope scope){
-		UniUnaryOp uuo = new UniUnaryOp("*", expr);
-		UniIdent value = getLeftReference(uuo,scope);
-		return execExpr(value,scope);
+	protected Object execDereferenceOp(UniExpr expr, Scope scope){
+		return execExpr(getLeftReference(expr,scope),scope);
 	}
 	
 	private Object execBinOp(UniBinOp binOp, Scope scope) {
 		return execBinOp(binOp.operator, binOp.left, binOp.right, scope);
 	}
 	
-	//execAssignのleftにあたるUniIdentを返す
-	protected UniIdent getLeftReference(UniExpr left, Scope scope) {
-		if(left instanceof UniIdent){
-			return (UniIdent)left;
+	protected UniIdent getLeftReference(UniExpr expr, Scope scope) {
+		if(expr instanceof UniIdent){
+			UniIdent ui = (UniIdent)expr;
+			if(ui.name.startsWith("&")){
+				return new UniIdent(ui.name.substring(1));
+			}
+			return ui;
 		}
-		else if(left instanceof UniUnaryOp){
-			UniUnaryOp uuo = (UniUnaryOp)left;
-			UniIdent ui = getLeftReference(uuo.expr,scope);
+		else if(expr instanceof UniUnaryOp){
+			UniUnaryOp uuo = (UniUnaryOp)expr;
 			if(uuo.operator.equals("*")){
-				String uiName = ui.name;
-				Object refVar = scope.get(uiName);
-				String refVarName = refVar.toString();
-				if(refVarName.substring(0,1).equals("&")){
-					return new UniIdent(refVarName.substring(1));
-				}
+				String refAddress = (String)execExpr(uuo.expr,scope);//必ず &変数名:String が返ってくる
+				return getLeftReference(new UniIdent((String)refAddress),scope);
 			}
 		}
-		else if(left instanceof UniBinOp){
-			UniBinOp ubo = (UniBinOp)left;
-			UniIdent l = getLeftReference(ubo.left,scope);
+		else if(expr instanceof UniBinOp){
+			UniBinOp ubo = (UniBinOp)expr;
 			if(ubo.operator.equals("[]")){
-				return new UniIdent((l.name)+"["+execExpr(ubo.right, scope)+"]");
+				return getLeftReference(new UniUnaryOp("*",new UniBinOp("+",ubo.left,ubo.right)),scope);
 			}
 		}
-		else{
-			Object obj = execExpr(left,scope);
-			if(obj instanceof UniExpr){
-				return getLeftReference((UniExpr)obj,scope);
-			}
-		}
-		throw new RuntimeException("Assignment failure: " + left);
+		throw new RuntimeException("Assignment failure: " + expr);
 	}
-	
-	protected Object execSubscriptOp(UniExpr var, UniExpr index, Scope scope){
-		UniBinOp ubo = new UniBinOp("[]",var,index);
-		UniIdent value = getLeftReference(ubo,scope);			
-		return execExpr(value,scope);
+
+	private String calcAddress(String var, Object idxObj){
+		int lastIndexPos = var.lastIndexOf("[");
+		String target = var.substring(0, lastIndexPos);
+		String index =  var.substring(lastIndexPos).replace("[", "").replace("]", "");
+		target += "[" + (Integer.parseInt(index) + (Integer)idxObj) + "]";
+		return target;
 	}
 	private Object execBinOp(String op, UniExpr left, UniExpr right,
 			Scope scope) {
+		
 		switch (op) {
 		case "=": {
 			return execAssign(getLeftReference(left,scope),execExpr(right, scope),scope);
 		}
 		case "[]":{
-			return execSubscriptOp(left, right, scope);
+			return execExpr(getLeftReference(new UniBinOp(op,left,right),scope),scope);
 		}
 		case "==":
 			return Eq.eq(execExpr(left, scope), execExpr(right, scope));
 		case "!=":
 			return Eq.eq(execExpr(left, scope),
 					execExpr(right, scope)) == false;
-
 		case "<":
 			return toDouble(execExpr(left, scope)) < toDouble(
 					execExpr(right, scope));
@@ -618,7 +610,13 @@ public class Engine {
 		case "%": {
 			Object objL = execExpr(left, scope);
 			Object objR = execExpr(right, scope);
-			if (objL instanceof Number && objR instanceof Number) {
+			if(objL instanceof String && ((String)objL).startsWith("&")){
+				return calcAddress((String)objL,objR);
+			}
+			else if(objR instanceof String && ((String)objR).startsWith("&")){
+				return calcAddress((String)objR,objL);
+			}
+			else if (objL instanceof Number && objR instanceof Number) {
 				Number numL = (Number) objL;
 				Number numR = (Number) objR;
 				Calc.Operation<?> calculater = null;
@@ -674,14 +672,11 @@ public class Engine {
 		state.updateVariable(stackName, left.name, value);
 		return value;
 	}
-	private Object execAssign(String left, int index, Object value, Scope scope) {
-		ArrayList<Object> arr = (ArrayList<Object>) scope.get(left);
-		arr.set(index, value);
-		String stackName = scope.name;
-		state.updateVariable(stackName, left, index, value);
-		return value;
+	
+	protected Object execSubscriptOp(UniBinOp ubo, UniExpr index, Scope scope){		
+		return execExpr(getLeftReference(ubo,scope),scope);
 	}
-
+	
 	public static int toInt(Object obj) {
 		if (obj instanceof Integer) {
 			return ((Integer) obj).intValue();

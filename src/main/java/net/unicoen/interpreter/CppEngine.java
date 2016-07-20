@@ -8,21 +8,42 @@ import net.unicoen.node.UniUnaryOp;
 public class CppEngine extends Engine {
 	
 	@Override
-	protected String execUnAndOp(UniExpr expr, Scope scope){
-		return "&"+getLeftReference(expr,scope).name;
+	protected UniIdent getLeftReference(UniExpr expr, Scope scope) {
+		if(expr instanceof UniIdent){
+			UniIdent ui = (UniIdent)expr;
+			if(ui.name.startsWith("&")){
+				return new UniIdent(ui.name.substring(1));
+			}
+			return ui;
+		}
+		else if(expr instanceof UniUnaryOp){
+			UniUnaryOp uuo = (UniUnaryOp)expr;
+			if(uuo.operator.equals("*")){
+				String refAddress = (String)execExpr(uuo.expr,scope);//必ず &変数名:String が返ってくる
+				return getLeftReference(new UniIdent((String)refAddress),scope);
+			}
+		}
+		else if(expr instanceof UniBinOp){
+			UniBinOp ubo = (UniBinOp)expr;
+			if(ubo.operator.equals("[]")){
+				return getLeftReference(new UniUnaryOp("*",new UniBinOp("+",ubo.left,ubo.right)),scope);
+			}
+		}
+		throw new RuntimeException("Assignment failure: " + expr);
 	}
 	
 	@Override
-	protected Object execUnAsteriskOp(UniExpr expr, Scope scope){
-		UniUnaryOp uuo = new UniUnaryOp("*", expr);
-		UniIdent value = getLeftReference(uuo,scope);
-		return execExpr(value,scope);
+	protected String execAddressOp(UniUnaryOp expr, Scope scope){
+		return expr.operator + getLeftReference(expr,scope).name;
 	}
 	
 	@Override
-	protected Object execSubscriptOp(UniExpr var, UniExpr index, Scope scope){
-		UniBinOp ubo = new UniBinOp("[]",var,index);
-		UniIdent value = getLeftReference(ubo,scope);			
-		return execExpr(value,scope);
+	protected Object execDereferenceOp(UniExpr expr, Scope scope){
+		return execExpr(getLeftReference(expr,scope),scope);
+	}
+	
+	@Override
+	protected Object execSubscriptOp(UniBinOp ubo, UniExpr index, Scope scope){		
+		return execExpr(getLeftReference(ubo,scope),scope);
 	}
 }

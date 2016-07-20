@@ -88,4 +88,12 @@ public class Variable{
 		//処理系依存かもしれないが、リテラルのサイズ、構造体はメンバ変数のsize合計、配列の場合は型*size()などを考慮する必要がある。
 		return 4;
 	}
+
+	@Override
+	public String toString() {
+		return "Variable [type=" + type + ", name=" + name + ", value=" + value + ", "
+				+ "address=" + address + ", depth=" + depth + "]";
+	}
+	
+	
 }
