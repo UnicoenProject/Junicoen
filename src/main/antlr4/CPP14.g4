@@ -93,19 +93,23 @@ lambdadeclarator
 	:	'(' parameterdeclarationclause ')' Mutable? exceptionspecification? attributespecifierseq? trailingreturntype? 
 	;
 
+idexpressionlapper
+	:	idexpression 
+	;
+
 postfixexpression
 	:	primaryexpression 
-	|	postfixexpression '[' expression ']' 
+	|	postfixexpression LeftBracket assignmentexpression RightBracket 
 	|	postfixexpression '[' bracedinitlist ']' 
 	|	postfixexpression '(' expressionlist? ')' 
 	|	simpletypespecifier '(' expressionlist? ')' 
 	|	typenamespecifier '(' expressionlist? ')' 
 	|	simpletypespecifier bracedinitlist 
 	|	typenamespecifier bracedinitlist 
-	|	postfixexpression '.' Template? idexpression 
-	|	postfixexpression '->' Template? idexpression 
-	|	postfixexpression '.' pseudodestructorname 
-	|	postfixexpression '->' pseudodestructorname 
+	|	postfixexpression Dot Template? idexpressionlapper 
+	|	postfixexpression Arrow Template? idexpressionlapper 
+	|	postfixexpression Dot pseudodestructorname 
+	|	postfixexpression Arrow pseudodestructorname 
 	|	postfixexpression '++' 
 	|	postfixexpression '--' 
 	|	Dynamic_cast '<' typeid '>' '(' expression ')' 
@@ -127,18 +131,22 @@ pseudodestructorname
 	|	'~' decltypespecifier 
 	;
 
-unaryexpression
+binaryexpression
 	:	postfixexpression 
-	|	PlusPlus castexpression 
+	|	unaryexpression 
+	|	newexpression 
+	|	deleteexpression 
+	;
+
+unaryexpression
+	:	PlusPlus castexpression 
 	|	MinusMinus castexpression 
 	|	unaryoperator castexpression 
-	|	Sizeof unaryexpression 
+	|	Sizeof binaryexpression 
 	|	Sizeof '(' typeid ')' 
 	|	Sizeof '...' '(' Identifier ')' 
 	|	Alignof '(' typeid ')' 
 	|	noexceptexpression 
-	|	newexpression 
-	|	deleteexpression 
 	;
 
 unaryoperator
@@ -189,8 +197,8 @@ noexceptexpression
 	;
 
 castexpression
-	:	unaryexpression 
-	|	'(' typeid ')' castexpression 
+	:	binaryexpression 
+	|	LeftParen typeid RightParen castexpression 
 	;
 
 pmexpression
@@ -296,8 +304,14 @@ statement
 	|	attributespecifierseq? expressionstatement 
 	|	attributespecifierseq? compoundstatement 
 	|	attributespecifierseq? selectionstatement 
+	|	attributespecifierseq? switchstatement 
 	|	attributespecifierseq? iterationstatement 
+	|	attributespecifierseq? whilestatement 
+	|	attributespecifierseq? dowhilestatement 
 	|	attributespecifierseq? jumpstatement 
+	|	attributespecifierseq? breakStatement 
+	|	attributespecifierseq? continueStatement 
+	|	attributespecifierseq? returnStatement 
 	|	variabledeclarationstatement 
 	|	declarationstatement 
 	|	attributespecifierseq? tryblock 
@@ -324,7 +338,10 @@ statementseq
 selectionstatement
 	:	If '(' condition ')' statement 
 	|	If '(' condition ')' statement Else statement 
-	|	Switch '(' condition ')' statement 
+	;
+
+switchstatement
+	:	Switch '(' condition ')' statement 
 	;
 
 condition
@@ -333,15 +350,25 @@ condition
 	|	attributespecifierseq? declspecifierseq declarator bracedinitlist 
 	;
 
-iterationstatement
+whilestatement
 	:	While '(' condition ')' statement 
-	|	Do statement While '(' expression ')' ';' 
-	|	For '(' forinitstatement condition? ';' expression? ')' statement 
-	|	For '(' forrangedeclaration ':' forrangeinitializer ')' statement 
+	;
+
+dowhilestatement
+	:	Do compoundstatement While '(' expression ')' ';' 
+	;
+
+iterationstatement
+	:	For '(' forinitstatement condition? ';' expression? ')' statement 
+	;
+
+enhancedForStatement
+	:	For '(' forrangedeclaration ':' forrangeinitializer ')' statement 
 	;
 
 forinitstatement
 	:	expressionstatement 
+	|	variabledeclarationstatement 
 	|	simpledeclaration 
 	;
 
@@ -355,11 +382,20 @@ forrangeinitializer
 	;
 
 jumpstatement
+	:	Goto Identifier ';' 
+	;
+
+breakStatement
 	:	Break ';' 
-	|	Continue ';' 
-	|	Return expression? ';' 
+	;
+
+continueStatement
+	:	Continue ';' 
+	;
+
+returnStatement
+	:	Return expression? ';' 
 	|	Return bracedinitlist ';' 
-	|	Goto Identifier ';' 
 	;
 
 declarationstatement
@@ -422,22 +458,15 @@ variabledeclarationstatement
 	;
 
 variabledeclaration
-	:	attributespecifierseq? declspecifierseqwithouttype? typespecifier ptroperator* variableDeclaratorList? 
+	:	attributespecifierseq? declspecifierseqwithouttype? typespecifier variableDeclaratorList? 
 	;
 
 variableDeclaratorList
-	:	variableDeclarator 
-	|	arrayDeclarator 
-	|	variableDeclaratorList ',' variableDeclarator 
-	;
-
-arrayDeclarator
-	:	declaratorid dims ('=' initializerclause )? 
-	|	declaratorid arrayCreationExpression 
+	:|	variableDeclarator (',' variableDeclarator )* 
 	;
 
 arrayCreationExpression
-	:	dimExprs dims? '=' bracedinitlist 
+	:	dimExprs dims? ('=' bracedinitlist )? 
 	|	dims bracedinitlist 
 	;
 
@@ -450,7 +479,9 @@ dimExpr
 	;
 
 variableDeclarator
-	:	declaratorid ('=' initializerclause )? 
+	:	ptroperator* declaratorid ('=' initializerclause )? 
+	|	ptroperator* declaratorid dims ('=' initializerclause )? 
+	|	ptroperator* declaratorid arrayCreationExpression 
 	;
 
 dims
@@ -1726,7 +1757,7 @@ DIGIT
 
 literal
 	:	integerliteral 
-	|	Characterliteral 
+	|	characterliteral 
 	|	floatingliteral 
 	|	stringliteral 
 	|	booleanliteral 
@@ -1810,6 +1841,10 @@ fragment
 Longlongsuffix
 	:	'll' 
 	|	'LL' 
+	;
+
+characterliteral
+	:	Characterliteral 
 	;
 
 Characterliteral

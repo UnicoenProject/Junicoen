@@ -21,6 +21,7 @@ import net.unicoen.node.UniContinue;
 import net.unicoen.node.UniDoWhile;
 import net.unicoen.node.UniDoubleLiteral;
 import net.unicoen.node.UniExpr;
+import net.unicoen.node.UniFieldDec;
 import net.unicoen.node.UniFor;
 import net.unicoen.node.UniIdent;
 import net.unicoen.node.UniIf;
@@ -63,7 +64,7 @@ public class Engine {
 
 	public PrintStream out = System.out;
 	public List<ExecutionListener> listeners;
-	
+
 	private AtomicBoolean isStepExecutionRunning = new AtomicBoolean(false);
 	private AtomicBoolean isExecutionThreadWaiting = new AtomicBoolean(false);
 	private ExecState state = new ExecState();
@@ -139,30 +140,47 @@ public class Engine {
 		return executeSimple(expr, scope);
 	}
 
-	public ExecState startStepExecution(UniMethodDec dec) {
-		UniMethodDec fdec = dec;
+	public ExecState startStepExecution(ArrayList<UniNode> nodes) {
 		isStepExecutionRunning.set(true);
 		isExecutionThreadWaiting.set(false);
 		state = new ExecState();
-		if (fdec != null) {
+		if (!nodes.isEmpty()) {
 			new Thread(){
-	            public void run(){        	
+	            public void run(){
 	            	Scope global = Scope.createGlobal();
 	            	global.name = "GLOBAL";
 	    			StdLibLoader.initialize(global);
 	    			firePreExecAll(global);
-	    			Object value = execFunc(fdec, global);
-	    			firePostExecAll(global, value);
-	    			isExecutionThreadWaiting.set(true);
-	    			isStepExecutionRunning.set(false);
-	    			notifyAllThread();
+	    			for (UniNode node : nodes) {
+	    				if (node instanceof UniMethodDec) {
+	    					UniMethodDec fdec = (UniMethodDec) node;
+	    					if ("main".equals(fdec.methodName)) {//main関数なら実行開始
+	    						Object value = execFunc(fdec, global);
+	    		    			firePostExecAll(global, value);
+	    		    			isExecutionThreadWaiting.set(true);
+	    		    			isStepExecutionRunning.set(false);
+	    		    			notifyAllThread();
+	    		    			break;
+	    					}
+	    					else{//他の関数定義ならセット
+
+	    					}
+	    				}
+	    				else if(node instanceof UniVariableDec){//グローバル変数のセット
+	    					execExpr((UniVariableDec)node, global);
+	    				}
+	    				else if(node instanceof UniClassDec){//struct情報のセット
+	    					UniClassDec ucd = (UniClassDec)node;
+	    					global.setTop(ucd.className, ucd.members);
+	    				}
+	    			}
 	            }
 	        }.start();
 	        notifyAllThread();
 	        waitForWaitingFlagIs(false);
 	        return state;
 		} else {
-			throw new RuntimeException("No entry point in " + dec);
+			throw new RuntimeException("No entry point in " + nodes);
 		}
 	}
 
@@ -175,7 +193,7 @@ public class Engine {
 		}
 		return state;
 	}
-	
+
 	public Object execute(UniClassDec dec) {
 		UniMethodDec fdec = getEntryPoint(dec);
 		if (fdec != null) {
@@ -290,8 +308,8 @@ public class Engine {
 		}
 		if (expr instanceof UniVariableDec) {
 			UniVariableDec decVar = (UniVariableDec) expr;
-			
-			
+
+
 			if(decVar.name.startsWith("*")){
 				decVar.name = decVar.name.substring(1);
 				decVar.type+="*";
@@ -300,23 +318,40 @@ public class Engine {
 				decVar.name = decVar.name.substring(1);
 				decVar.type+="&";
 			}
-			
+
 			Object value = null;
 			if(decVar.value!=null)
 				value = execExpr(decVar.value, scope);
-			if(value instanceof ArrayList<?>){
+			if(scope.hasValue(decVar.type)){
+				ArrayList<?> varArray = (ArrayList<?>)value;//評価した初期化リストの配列
+				ArrayList<UniFieldDec> ufds = (ArrayList<UniFieldDec>)scope.get(decVar.type);//structのメンバ構造
+				if(varArray == null){
+					varArray = new ArrayList<Object>();
+					for(UniFieldDec ufd : ufds){
+						varArray.add(null);
+					}
+				}
+				scope.setTop(decVar.name, varArray);
+				ArrayList<Variable> varsAsVariable = new ArrayList<Variable>();//メンバの型と名前を一緒に渡すためVariable型にする。
+				for(int i=0;i<ufds.size();++i){
+					UniFieldDec ufd = ufds.get(i);
+					scope.setTop(decVar.name+"."+ufd.name, varArray.get(i));
+					varsAsVariable.add(new Variable(ufd.type,ufd.name,varArray.get(i),-1,-1));
+				}
+				state.addVariable(scope.name, decVar, varsAsVariable, scope.depth);
+			}
+			else if(value instanceof ArrayList<?>){
 				ArrayList<?> varArray = (ArrayList<?>)value;
 				scope.setTop(decVar.name, "&"+decVar.name+"[0]");
 				for(int i=0;i<varArray.size();++i){
 					scope.setTop(decVar.name+"["+i+"]", varArray.get(i));
 				}
-				String stackName = scope.name;
-				state.addVariable(stackName, decVar, varArray,scope.depth);
+				state.addVariable(scope.name, decVar, varArray,scope.depth);
 			}
-			else{
+			else
+			{
 				scope.setTop(decVar.name, value);
-				String stackName = scope.name;
-				state.addVariable(stackName, decVar, value, scope.depth);
+				state.addVariable(scope.name, decVar, value, scope.depth);
 			}
 			return value;
 		}
@@ -546,19 +581,19 @@ public class Engine {
 		}
 		throw new RuntimeException("Unkown binary operator: " + uniOp.operator);
 	}
-	
+
 	protected String execAddressOp(UniUnaryOp expr, Scope scope){
 		return expr.operator + getLeftReference(expr,scope).name;
 	}
-	
+
 	protected Object execDereferenceOp(UniExpr expr, Scope scope){
 		return execExpr(getLeftReference(expr,scope),scope);
 	}
-	
+
 	private Object execBinOp(UniBinOp binOp, Scope scope) {
 		return execBinOp(binOp.operator, binOp.left, binOp.right, scope);
 	}
-	
+
 	protected UniIdent getLeftReference(UniExpr expr, Scope scope) {
 		if(expr instanceof UniIdent){
 			UniIdent ui = (UniIdent)expr;
@@ -579,6 +614,11 @@ public class Engine {
 			if(ubo.operator.equals("[]")){
 				return getLeftReference(new UniUnaryOp("*",new UniBinOp("+",ubo.left,ubo.right)),scope);
 			}
+			else if(ubo.operator.equals(".")){
+				UniIdent left = getLeftReference(ubo.left,scope);
+				UniIdent right = getLeftReference(ubo.right,scope);
+				return new UniIdent(left.name + "." + right.name);
+			}
 		}
 		throw new RuntimeException("Assignment failure: " + expr);
 	}
@@ -592,14 +632,14 @@ public class Engine {
 	}
 	private Object execBinOp(String op, UniExpr left, UniExpr right,
 			Scope scope) {
-		
+
 		switch (op) {
-		case "=": {
+		case "=":
 			return execAssign(getLeftReference(left,scope),execExpr(right, scope),scope);
-		}
-		case "[]":{
+		case "[]":
 			return execExpr(getLeftReference(new UniBinOp(op,left,right),scope),scope);
-		}
+		case ".":
+			return execExpr(getLeftReference(new UniBinOp(op,left,right),scope),scope);
 		case "==":
 			return Eq.eq(execExpr(left, scope), execExpr(right, scope));
 		case "!=":
@@ -687,11 +727,11 @@ public class Engine {
 		state.updateVariable(stackName, left.name, value);
 		return value;
 	}
-	
-	protected Object execSubscriptOp(UniBinOp ubo, UniExpr index, Scope scope){		
+
+	protected Object execSubscriptOp(UniBinOp ubo, UniExpr index, Scope scope){
 		return execExpr(getLeftReference(ubo,scope),scope);
 	}
-	
+
 	public static int toInt(Object obj) {
 		if (obj instanceof Integer) {
 			return ((Integer) obj).intValue();

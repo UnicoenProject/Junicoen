@@ -61,6 +61,15 @@ public class Scope {
 		listeners.add(listener);
 	}
 
+	public Boolean hasValue(String key) {
+		try {
+			get(key);
+			return true;
+		} catch (UniRuntimeError e) {
+			return false;
+		}
+	}
+
 	public Object get(String key) {
 		if (variables.containsKey(key)) {
 			return variables.get(key);

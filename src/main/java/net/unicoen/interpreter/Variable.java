@@ -2,16 +2,13 @@ package net.unicoen.interpreter;
 
 import java.util.ArrayList;
 
-import net.unicoen.node.UniDoubleLiteral;
-import net.unicoen.node.UniVariableDec;
-
 public class Variable{
 	public final String type;
 	public final String name;
 	private Object value;//配列などはArrayList<Variable>として持つ。
 	public final int address;
 	public final int depth;
-	
+
 	public Variable(String type, String name, Object value, int address, int depth) {
 		this.type = type;
 		this.name = name;
@@ -19,7 +16,7 @@ public class Variable{
 		this.depth = depth;
 		setValue(value);
 	}
-	
+
 	//構造体や配列の場合はvalueそのままでなくArrayList<Variable> valuesなど
 	public final Object getValue() {
 		return value;
@@ -27,7 +24,7 @@ public class Variable{
 	public boolean hasValue(String name){
 		if(this.name.equals(name))
 			return true;
-		
+
 		if(this.value instanceof ArrayList){
 			ArrayList<Variable> varArray = (ArrayList<Variable>) this.value;
 			for(Variable var : varArray){
@@ -49,15 +46,23 @@ public class Variable{
 					lastAddress = lastVar.address;
 					lastAddress += lastVar.getByteSize();
 				}
-				Variable var = new Variable(type,name+"["+i+"]",varArray.get(i),lastAddress,this.depth);
-				vars.add(var);	
+				Object element = varArray.get(i);
+				if(element instanceof Variable){//構造体の場合
+					Variable tempvar = (Variable)element;
+					Variable var = new Variable(tempvar.type, name+"."+tempvar.name, tempvar.value,lastAddress,this.depth);
+					vars.add(var);
+				}
+				else{//配列の場合
+					Variable var = new Variable(type,name+"["+i+"]",element,lastAddress,this.depth);
+					vars.add(var);
+				}
 			}
 			this.value = vars;
 		}
 		else
 			this.value = value;
 	}
-	
+
 	public void setValue(String name, Object value) {
 		if(this.name.equals(name)){
 			this.value = value;

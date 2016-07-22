@@ -3,12 +3,13 @@ package net.unicoen.interpreter;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 
 import org.junit.Ignore;
 import org.junit.Test;
 
 import net.unicoen.mapper.CPP14Mapper;
-import net.unicoen.node.UniMethodDec;
+import net.unicoen.node.UniNode;
 
 public class CppEngineTest {
 	@Test @Ignore
@@ -33,10 +34,19 @@ public class CppEngineTest {
 					"int c=a+b;"+
 				"}";
 		CPP14Mapper cppMapper = new CPP14Mapper(true);
-		UniMethodDec node = (UniMethodDec) cppMapper.parse(text);
-		ExecState state = engine.startStepExecution(node);
-		int i = 0;
-		for (; engine.isStepExecutionRunning(); ++i) {
+		Object node = cppMapper.parse(text);
+		ExecState  state;
+		if(!(node instanceof ArrayList)){
+			ArrayList<UniNode> nodes = new ArrayList<UniNode>();
+			nodes.add((UniNode) node);
+			engine.startStepExecution(nodes);
+		}
+		else{
+			engine.startStepExecution((ArrayList<UniNode>)node);
+		}
+		//
+		for(int i=0;engine.isStepExecutionRunning();++i)
+		{
 			state = engine.stepExecute();
 		}
 
@@ -61,10 +71,19 @@ public class CppEngineTest {
 					"i+=50;"+
 				"}";
 		CPP14Mapper cppMapper = new CPP14Mapper(true);
-		UniMethodDec node = (UniMethodDec) cppMapper.parse(text);
-		ExecState state = engine.startStepExecution(node);
-		int i = 0;
-		for (; engine.isStepExecutionRunning(); ++i) {
+		Object node = cppMapper.parse(text);
+		ExecState  state;
+		if(!(node instanceof ArrayList)){
+			ArrayList<UniNode> nodes = new ArrayList<UniNode>();
+			nodes.add((UniNode) node);
+			engine.startStepExecution(nodes);
+		}
+		else{
+			engine.startStepExecution((ArrayList<UniNode>)node);
+		}
+		//
+		for(int i=0;engine.isStepExecutionRunning();++i)
+		{
 			state = engine.stepExecute();
 		}
 
@@ -96,10 +115,18 @@ public class CppEngineTest {
 					"return x;"+
 				"}";
 		CPP14Mapper cppMapper = new CPP14Mapper(true);
-		UniMethodDec node 	= (UniMethodDec) cppMapper.parse(text);
-		ExecState state = engine.startStepExecution(node);
-		int i=0;
-		for(;engine.isStepExecutionRunning();++i)
+		Object node = cppMapper.parse(text);
+		ExecState  state;
+		if(!(node instanceof ArrayList)){
+			ArrayList<UniNode> nodes = new ArrayList<UniNode>();
+			nodes.add((UniNode) node);
+			engine.startStepExecution(nodes);
+		}
+		else{
+			engine.startStepExecution((ArrayList<UniNode>)node);
+		}
+		//
+		for(int i=0;engine.isStepExecutionRunning();++i)
 		{
 			state = engine.stepExecute();
 		}
@@ -121,20 +148,32 @@ public class CppEngineTest {
 		String text =
 				"struct Str"+
 				"{"+
-					"int a;"+
-					"double b;"+
+					"int i;"+
+					"double d;"+
 				"};"+
 				"int main()"+
 				"{"+
-					"int a=1,b=2;"+
-				"	int b=a, *pa = &b;"+
-					"*pa = *pa;"+
+					"Str str1 = {-1,2.3};"+
+					"int a = str1.i;"+
+					"double b = str1.d;"+
+					"Str str2 = str1;"+
+					"str2.d = 3.5;"+
+					"Str str3;"+
+					"str3 = str2;"+
 				"}";
 		CPP14Mapper cppMapper = new CPP14Mapper(true);
-		Object node 	= cppMapper.parse(text);
-		ExecState state;// = engine.startStepExecution((UniMethodDec)node);
-		int i=0;
-		for(;engine.isStepExecutionRunning();++i)
+		Object node = cppMapper.parse(text);
+		ExecState  state;
+		if(!(node instanceof ArrayList)){
+			ArrayList<UniNode> nodes = new ArrayList<UniNode>();
+			nodes.add((UniNode) node);
+			engine.startStepExecution(nodes);
+		}
+		else{
+			engine.startStepExecution((ArrayList<UniNode>)node);
+		}
+		//
+		for(int i=0;engine.isStepExecutionRunning();++i)
 		{
 			state = engine.stepExecute();
 		}

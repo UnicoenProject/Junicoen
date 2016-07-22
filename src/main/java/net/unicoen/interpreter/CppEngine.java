@@ -6,7 +6,7 @@ import net.unicoen.node.UniIdent;
 import net.unicoen.node.UniUnaryOp;
 
 public class CppEngine extends Engine {
-	
+
 	@Override
 	protected UniIdent getLeftReference(UniExpr expr, Scope scope) {
 		if(expr instanceof UniIdent){
@@ -28,22 +28,27 @@ public class CppEngine extends Engine {
 			if(ubo.operator.equals("[]")){
 				return getLeftReference(new UniUnaryOp("*",new UniBinOp("+",ubo.left,ubo.right)),scope);
 			}
+			else if(ubo.operator.equals(".")){
+				UniIdent left = getLeftReference(ubo.left,scope);
+				UniIdent right = getLeftReference(ubo.right,scope);
+				return new UniIdent(left.name + "." + right.name);
+			}
 		}
 		throw new RuntimeException("Assignment failure: " + expr);
 	}
-	
+
 	@Override
 	protected String execAddressOp(UniUnaryOp expr, Scope scope){
 		return expr.operator + getLeftReference(expr.expr,scope).name;
 	}
-	
+
 	@Override
 	protected Object execDereferenceOp(UniExpr expr, Scope scope){
 		return execExpr(getLeftReference(expr,scope),scope);
 	}
-	
+
 	@Override
-	protected Object execSubscriptOp(UniBinOp ubo, UniExpr index, Scope scope){		
+	protected Object execSubscriptOp(UniBinOp ubo, UniExpr index, Scope scope){
 		return execExpr(getLeftReference(ubo,scope),scope);
 	}
 }
