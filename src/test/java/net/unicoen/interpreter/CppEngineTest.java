@@ -167,10 +167,10 @@ public class CppEngineTest {
 		if(!(node instanceof ArrayList)){
 			ArrayList<UniNode> nodes = new ArrayList<UniNode>();
 			nodes.add((UniNode) node);
-			engine.startStepExecution(nodes);
+			state = engine.startStepExecution(nodes);
 		}
 		else{
-			engine.startStepExecution((ArrayList<UniNode>)node);
+			state = engine.startStepExecution((ArrayList<UniNode>)node);
 		}
 		//
 		for(int i=0;engine.isStepExecutionRunning();++i)

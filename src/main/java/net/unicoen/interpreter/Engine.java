@@ -21,7 +21,6 @@ import net.unicoen.node.UniContinue;
 import net.unicoen.node.UniDoWhile;
 import net.unicoen.node.UniDoubleLiteral;
 import net.unicoen.node.UniExpr;
-import net.unicoen.node.UniFieldDec;
 import net.unicoen.node.UniFor;
 import net.unicoen.node.UniIdent;
 import net.unicoen.node.UniIf;
@@ -67,7 +66,7 @@ public class Engine {
 
 	private AtomicBoolean isStepExecutionRunning = new AtomicBoolean(false);
 	private AtomicBoolean isExecutionThreadWaiting = new AtomicBoolean(false);
-	private ExecState state = new ExecState();
+	protected ExecState state = new ExecState();
 	public boolean isStepExecutionRunning() {
 		return isStepExecutionRunning.get();
 	}
@@ -307,53 +306,7 @@ public class Engine {
 			throw new Return(retValue);
 		}
 		if (expr instanceof UniVariableDec) {
-			UniVariableDec decVar = (UniVariableDec) expr;
-
-
-			if(decVar.name.startsWith("*")){
-				decVar.name = decVar.name.substring(1);
-				decVar.type+="*";
-			}
-			else if(decVar.name.startsWith("&")){
-				decVar.name = decVar.name.substring(1);
-				decVar.type+="&";
-			}
-
-			Object value = null;
-			if(decVar.value!=null)
-				value = execExpr(decVar.value, scope);
-			if(scope.hasValue(decVar.type)){
-				ArrayList<?> varArray = (ArrayList<?>)value;//評価した初期化リストの配列
-				ArrayList<UniFieldDec> ufds = (ArrayList<UniFieldDec>)scope.get(decVar.type);//structのメンバ構造
-				if(varArray == null){
-					varArray = new ArrayList<Object>();
-					for(UniFieldDec ufd : ufds){
-						varArray.add(null);
-					}
-				}
-				scope.setTop(decVar.name, varArray);
-				ArrayList<Variable> varsAsVariable = new ArrayList<Variable>();//メンバの型と名前を一緒に渡すためVariable型にする。
-				for(int i=0;i<ufds.size();++i){
-					UniFieldDec ufd = ufds.get(i);
-					scope.setTop(decVar.name+"."+ufd.name, varArray.get(i));
-					varsAsVariable.add(new Variable(ufd.type,ufd.name,varArray.get(i),-1,-1));
-				}
-				state.addVariable(scope.name, decVar, varsAsVariable, scope.depth);
-			}
-			else if(value instanceof ArrayList<?>){
-				ArrayList<?> varArray = (ArrayList<?>)value;
-				scope.setTop(decVar.name, "&"+decVar.name+"[0]");
-				for(int i=0;i<varArray.size();++i){
-					scope.setTop(decVar.name+"["+i+"]", varArray.get(i));
-				}
-				state.addVariable(scope.name, decVar, varArray,scope.depth);
-			}
-			else
-			{
-				scope.setTop(decVar.name, value);
-				state.addVariable(scope.name, decVar, value, scope.depth);
-			}
-			return value;
+			return execVariableDec((UniVariableDec)expr,scope);
 		}
 		if (expr instanceof UniBlock) {
 			return execBlock((UniBlock) expr, scope);
@@ -439,6 +392,36 @@ public class Engine {
 		}
 		throw new RuntimeException("Not support expr type: " + expr);
 	}
+
+	protected Object execVariableDec(UniVariableDec decVar, Scope scope){
+		if(decVar.name.startsWith("*")){
+			decVar.name = decVar.name.substring(1);
+			decVar.type+="*";
+		}
+		else if(decVar.name.startsWith("&")){
+			decVar.name = decVar.name.substring(1);
+			decVar.type+="&";
+		}
+
+		Object value = null;
+		if(decVar.value!=null)
+			value = execExpr(decVar.value, scope);
+		if(value instanceof ArrayList<?>){
+			ArrayList<?> varArray = (ArrayList<?>)value;
+			scope.setTop(decVar.name, "&"+decVar.name+"[0]");
+			for(int i=0;i<varArray.size();++i){
+				scope.setTop(decVar.name+"["+i+"]", varArray.get(i));
+			}
+			state.addVariable(scope.name, decVar, varArray,scope.depth);
+		}
+		else
+		{
+			scope.setTop(decVar.name, value);
+			state.addVariable(scope.name, decVar, value, scope.depth);
+		}
+		return value;
+	}
+
 	private ArrayList<Object> execArray(UniArray uniArray, Scope scope) {
 		List<UniExpr> elements = uniArray.items;
 		ArrayList<Object> array = new ArrayList<Object>();
