@@ -14,6 +14,11 @@ class CppMapperTest  extends MapperTest {
 	def CppTest() {
 		val node = mapper.parse("
 		#include <iostream>
+		struct Str
+		{
+			int a;
+			double b;
+		};
 		int main()
 		{
 			int b = 3;
@@ -24,13 +29,13 @@ class CppMapperTest  extends MapperTest {
 		")
 		val dd = node;
 		//assertThat(node, instanceOf(typeof(UniMethodDec)))
-/*		
+/*
 		public class UniMethodDec extends UniMemberDec {
 			public String methodName;
 			public List<String> modifiers;
 			public String returnType;
 			public List<UniArg> args;
-			public UniBlock block;	
+			public UniBlock block;
 				List<UniExpr> body;
 				String blockLabel;
 		}

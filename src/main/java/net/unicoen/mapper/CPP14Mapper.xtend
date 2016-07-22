@@ -332,23 +332,14 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		val map = newHashMap
 		val none = newArrayList
 		map.put("none", none)
-		val name = newArrayList
-		map.put("name", name)
 		val ret = newArrayList
-		val expr = newArrayList
-		map.put("expr", expr)
-		val operator = newArrayList
-		map.put("operator", operator)
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 455: {
+					case 449: {
 						ret += it.visit
 					}
-					case 458: {
-						expr += it.visit
-					}
-					case 461: {
+					case 455: {
 						ret += it.visit
 					}
 					default: {
@@ -357,15 +348,6 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 				}
 			} else if (it instanceof TerminalNode) {
 				switch it.symbol.type {
-					case CPP14Parser.This: {
-						name += it.visit.flatten
-					}
-					case CPP14Parser.LeftParen: {
-						operator += it.visit.flatten
-					}
-					case CPP14Parser.RightParen: {
-						operator += it.visit.flatten
-					}
 					default: {
 						none += it.visit
 					}
@@ -387,7 +369,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 469: {
+					case 463: {
 						name += it.visit
 					}
 					default: {
@@ -410,66 +392,10 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		val none = newArrayList
 		map.put("none", none)
 		val ret = newArrayList
-		val right = newArrayList
-		map.put("right", right)
-		val left = newArrayList
-		map.put("left", left)
-		val operator = newArrayList
-		map.put("operator", operator)
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 589: {
-						ret += it.visit
-					}
-					case 32: {
-						left += it.visit
-					}
-					case 656: {
-						right += it.visit
-					}
-					default: {
-						none += it.visit
-					}
-				}
-			} else if (it instanceof TerminalNode) {
-				switch it.symbol.type {
-					case CPP14Parser.LeftBracket: {
-						operator += it.visit.flatten
-					}
-					case CPP14Parser.RightBracket: {
-						operator += it.visit.flatten
-					}
-					default: {
-						none += it.visit
-					}
-				}
-			}
-		]
-		if (!ret.isEmpty) {
-			return ret
-		}
-		map.castTo(UniBinOp)
-	}
-
-	override public visitBinaryexpression(CPP14Parser.BinaryexpressionContext ctx) {
-		val map = newHashMap
-		val none = newArrayList
-		map.put("none", none)
-		val ret = newArrayList
-		ctx.children.forEach [
-			if (it instanceof RuleContext) {
-				switch it.invokingState {
-					case 723: {
-						ret += it.visit
-					}
-					case 724: {
-						ret += it.visit
-					}
-					case 725: {
-						ret += it.visit
-					}
-					case 726: {
+					case 583: {
 						ret += it.visit
 					}
 					default: {
@@ -487,7 +413,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		if (!ret.isEmpty) {
 			return ret
 		}
-		map.castTo(UniBinOp)
+		map.castTo(UniUnaryOp)
 	}
 
 	override public visitUnaryexpression(CPP14Parser.UnaryexpressionContext ctx) {
@@ -502,19 +428,28 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 730: {
+					case 717: {
+						ret += it.visit
+					}
+					case 719: {
 						expr += it.visit
 					}
-					case 732: {
+					case 721: {
 						expr += it.visit
 					}
-					case 733: {
+					case 722: {
 						operator += it.visit
 					}
-					case 734: {
+					case 723: {
 						expr += it.visit
 					}
-					case 753: {
+					case 742: {
+						ret += it.visit
+					}
+					case 743: {
+						ret += it.visit
+					}
+					case 744: {
 						ret += it.visit
 					}
 					default: {
@@ -546,21 +481,11 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		val none = newArrayList
 		map.put("none", none)
 		val ret = newArrayList
-		val operator = newArrayList
-		map.put("operator", operator)
-		val right = newArrayList
-		map.put("right", right)
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 845: {
+					case 836: {
 						ret += it.visit
-					}
-					case 847: {
-						right += it.visit
-					}
-					case 849: {
-						right += it.visit
 					}
 					default: {
 						none += it.visit
@@ -568,12 +493,6 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 				}
 			} else if (it instanceof TerminalNode) {
 				switch it.symbol.type {
-					case CPP14Parser.LeftBracket: {
-						operator += it.visit.flatten
-					}
-					case CPP14Parser.RightBracket: {
-						operator += it.visit.flatten
-					}
 					default: {
 						none += it.visit
 					}
@@ -583,7 +502,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		if (!ret.isEmpty) {
 			return ret
 		}
-		map.castTo(UniBinOp)
+		map.castTo(UniUnaryOp)
 	}
 
 	override public visitPmexpression(CPP14Parser.PmexpressionContext ctx) {
@@ -600,16 +519,16 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 854: {
+					case 845: {
 						ret += it.visit
 					}
-					case 62: {
+					case 60: {
 						left += it.visit
 					}
-					case 858: {
+					case 849: {
 						right += it.visit
 					}
-					case 861: {
+					case 852: {
 						right += it.visit
 					}
 					default: {
@@ -650,19 +569,19 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 868: {
+					case 859: {
 						ret += it.visit
 					}
-					case 64: {
+					case 62: {
 						left += it.visit
 					}
-					case 872: {
+					case 863: {
 						right += it.visit
 					}
-					case 875: {
+					case 866: {
 						right += it.visit
 					}
-					case 878: {
+					case 869: {
 						right += it.visit
 					}
 					default: {
@@ -706,16 +625,16 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 885: {
+					case 876: {
 						ret += it.visit
 					}
-					case 66: {
+					case 64: {
 						left += it.visit
 					}
-					case 889: {
+					case 880: {
 						right += it.visit
 					}
-					case 892: {
+					case 883: {
 						right += it.visit
 					}
 					default: {
@@ -756,19 +675,19 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 899: {
+					case 890: {
 						ret += it.visit
 					}
-					case 68: {
+					case 66: {
 						left += it.visit
 					}
-					case 903: {
+					case 894: {
 						right += it.visit
 					}
-					case 905: {
+					case 896: {
 						operator += it.visit
 					}
-					case 906: {
+					case 897: {
 						right += it.visit
 					}
 					default: {
@@ -806,22 +725,22 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 914: {
+					case 905: {
 						ret += it.visit
 					}
-					case 70: {
+					case 68: {
 						left += it.visit
 					}
+					case 909: {
+						right += it.visit
+					}
+					case 912: {
+						right += it.visit
+					}
+					case 915: {
+						right += it.visit
+					}
 					case 918: {
-						right += it.visit
-					}
-					case 921: {
-						right += it.visit
-					}
-					case 924: {
-						right += it.visit
-					}
-					case 927: {
 						right += it.visit
 					}
 					default: {
@@ -868,16 +787,16 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 934: {
+					case 925: {
 						ret += it.visit
 					}
-					case 72: {
+					case 70: {
 						left += it.visit
 					}
-					case 938: {
+					case 929: {
 						right += it.visit
 					}
-					case 941: {
+					case 932: {
 						right += it.visit
 					}
 					default: {
@@ -918,13 +837,13 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 948: {
+					case 939: {
 						ret += it.visit
 					}
-					case 74: {
+					case 72: {
 						left += it.visit
 					}
-					case 952: {
+					case 943: {
 						right += it.visit
 					}
 					default: {
@@ -962,13 +881,13 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 959: {
+					case 950: {
 						ret += it.visit
 					}
-					case 76: {
+					case 74: {
 						left += it.visit
 					}
-					case 963: {
+					case 954: {
 						right += it.visit
 					}
 					default: {
@@ -1006,13 +925,13 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 970: {
+					case 961: {
 						ret += it.visit
 					}
-					case 78: {
+					case 76: {
 						left += it.visit
 					}
-					case 974: {
+					case 965: {
 						right += it.visit
 					}
 					default: {
@@ -1050,13 +969,13 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 981: {
+					case 972: {
 						ret += it.visit
 					}
-					case 80: {
+					case 78: {
 						left += it.visit
 					}
-					case 985: {
+					case 976: {
 						right += it.visit
 					}
 					default: {
@@ -1094,13 +1013,13 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 992: {
+					case 983: {
 						ret += it.visit
 					}
-					case 82: {
+					case 80: {
 						left += it.visit
 					}
-					case 996: {
+					case 987: {
 						right += it.visit
 					}
 					default: {
@@ -1138,13 +1057,13 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1002: {
+					case 993: {
 						ret += it.visit
 					}
-					case 1003: {
+					case 994: {
 						cond += it.visit
 					}
-					case 1007: {
+					case 998: {
 						falseExpr += it.visit
 					}
 					default: {
@@ -1179,16 +1098,16 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1011: {
+					case 1002: {
 						ret += it.visit
 					}
-					case 1012: {
+					case 1003: {
 						left += it.visit
 					}
-					case 1013: {
+					case 1004: {
 						operator += it.visit
 					}
-					case 1014: {
+					case 1005: {
 						right += it.visit
 					}
 					default: {
@@ -1217,7 +1136,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1120: {
+					case 1087: {
 						ret += it.visit
 					}
 					default: {
@@ -1247,7 +1166,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1126: {
+					case 1093: {
 						body += it.visit
 					}
 					default: {
@@ -1275,23 +1194,11 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 1131: {
-							val results = it.visit.flatten
-							if(results instanceof ArrayList<?>){
-								for (result: results)
-									add += result
-							}
-							else
-								add += it.visit
+						case 1098: {
+							add += it.visit
 						}
-						case 1132: {
-							val results = it.visit.flatten
-							if(results instanceof ArrayList<?>){
-								for (result: results)
-									add += result
-							}
-							else
-								add += it.visit
+						case 1099: {
+							add += it.visit
 						}
 						default: {
 							none += it.visit
@@ -1309,175 +1216,50 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		map.castToList(UniExpr)
 	}
 
-	override public visitSelectionstatement(CPP14Parser.SelectionstatementContext ctx) {
+	override public visitMyclassbody(CPP14Parser.MyclassbodyContext ctx) {
 		val map = newHashMap
 		val none = newArrayList
 		map.put("none", none)
-		val cond = newArrayList
-		map.put("cond", cond)
-		val falseStatement = newArrayList
-		map.put("falseStatement", falseStatement)
-		val trueStatement = newArrayList
-		map.put("trueStatement", trueStatement)
-		ctx.children.forEach [
-			if (it instanceof RuleContext) {
-				switch it.invokingState {
-					case 1140: {
-						cond += it.visit
+		val add = newArrayList
+		map.put("add", add)
+		if (ctx.children != null) {
+			ctx.children.forEach [
+				if (it instanceof RuleContext) {
+					switch it.invokingState {
+						case 1228: {
+							add += it.visit
+						}
+						default: {
+							none += it.visit
+						}
 					}
-					case 1142: {
-						trueStatement += it.visit
-					}
-					case 1146: {
-						cond += it.visit
-					}
-					case 1148: {
-						trueStatement += it.visit
-					}
-					case 1150: {
-						falseStatement += it.visit
-					}
-					default: {
-						none += it.visit
+				} else if (it instanceof TerminalNode) {
+					switch it.symbol.type {
+						default: {
+							none += it.visit
+						}
 					}
 				}
-			} else if (it instanceof TerminalNode) {
-				switch it.symbol.type {
-					default: {
-						none += it.visit
-					}
-				}
-			}
-		]
-		map.castTo(UniIf)
+			]
+		}
+		map.castToList(UniMemberDec)
 	}
 
-	override public visitWhilestatement(CPP14Parser.WhilestatementContext ctx) {
+	override public visitMyclassspecifier(CPP14Parser.MyclassspecifierContext ctx) {
 		val map = newHashMap
 		val none = newArrayList
 		map.put("none", none)
-		val cond = newArrayList
-		map.put("cond", cond)
-		val statement = newArrayList
-		map.put("statement", statement)
-		ctx.children.forEach [
-			if (it instanceof RuleContext) {
-				switch it.invokingState {
-					case 1180: {
-						cond += it.visit
-					}
-					case 1182: {
-						statement += it.visit
-					}
-					default: {
-						none += it.visit
-					}
-				}
-			} else if (it instanceof TerminalNode) {
-				switch it.symbol.type {
-					default: {
-						none += it.visit
-					}
-				}
-			}
-		]
-		map.castTo(UniWhile)
-	}
-
-	override public visitDowhilestatement(CPP14Parser.DowhilestatementContext ctx) {
-		val map = newHashMap
-		val none = newArrayList
-		map.put("none", none)
-		val statement = newArrayList
-		map.put("statement", statement)
-		val cond = newArrayList
-		map.put("cond", cond)
-		ctx.children.forEach [
-			if (it instanceof RuleContext) {
-				switch it.invokingState {
-					case 1185: {
-						statement += it.visit
-					}
-					case 1188: {
-						cond += it.visit
-					}
-					default: {
-						none += it.visit
-					}
-				}
-			} else if (it instanceof TerminalNode) {
-				switch it.symbol.type {
-					default: {
-						none += it.visit
-					}
-				}
-			}
-		]
-		map.castTo(UniDoWhile)
-	}
-
-	override public visitIterationstatement(CPP14Parser.IterationstatementContext ctx) {
-		val map = newHashMap
-		val none = newArrayList
-		map.put("none", none)
-		val statement = newArrayList
-		map.put("statement", statement)
-		val init = newArrayList
-		map.put("init", init)
-		val step = newArrayList
-		map.put("step", step)
-		val cond = newArrayList
-		map.put("cond", cond)
-		ctx.children.forEach [
-			if (it instanceof RuleContext) {
-				switch it.invokingState {
-					case 1194: {
-						init += it.visit
-					}
-					case 1195: {
-						cond += it.visit
-					}
-					case 1199: {
-						step += it.visit
-					}
-					case 1203: {
-						statement += it.visit
-					}
-					default: {
-						none += it.visit
-					}
-				}
-			} else if (it instanceof TerminalNode) {
-				switch it.symbol.type {
-					default: {
-						none += it.visit
-					}
-				}
-			}
-		]
-		map.castTo(UniFor)
-	}
-
-	override public visitEnhancedForStatement(CPP14Parser.EnhancedForStatementContext ctx) {
-		val map = newHashMap
-		val none = newArrayList
-		map.put("none", none)
-		val container = newArrayList
-		map.put("container", container)
-		val statement = newArrayList
-		map.put("statement", statement)
+		val members = newArrayList
+		map.put("members", members)
 		val merge = newArrayList
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1207: {
+					case 1231: {
 						merge += it.visit
 					}
-					case 1209: {
-						container += it.visit
-					}
-					case 1211: {
-						statement += it.visit
+					case 1233: {
+						members += it.visit
 					}
 					default: {
 						none += it.visit
@@ -1491,69 +1273,22 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 				}
 			}
 		]
-		val node = map.castTo(UniEnhancedFor)
-		merge.forEach[node.merge(it.castTo(UniEnhancedFor))]
+		val node = map.castTo(UniClassDec)
+		merge.forEach[node.merge(it.castTo(UniClassDec))]
 		node
 	}
 
-	override public visitBreakStatement(CPP14Parser.BreakStatementContext ctx) {
+	override public visitMyclasshead(CPP14Parser.MyclassheadContext ctx) {
 		val map = newHashMap
 		val none = newArrayList
 		map.put("none", none)
+		val className = newArrayList
+		map.put("className", className)
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					default: {
-						none += it.visit
-					}
-				}
-			} else if (it instanceof TerminalNode) {
-				switch it.symbol.type {
-					default: {
-						none += it.visit
-					}
-				}
-			}
-		]
-		map.castTo(UniBreak)
-	}
-
-	override public visitContinueStatement(CPP14Parser.ContinueStatementContext ctx) {
-		val map = newHashMap
-		val none = newArrayList
-		map.put("none", none)
-		ctx.children.forEach [
-			if (it instanceof RuleContext) {
-				switch it.invokingState {
-					default: {
-						none += it.visit
-					}
-				}
-			} else if (it instanceof TerminalNode) {
-				switch it.symbol.type {
-					default: {
-						none += it.visit
-					}
-				}
-			}
-		]
-		map.castTo(UniContinue)
-	}
-
-	override public visitReturnStatement(CPP14Parser.ReturnStatementContext ctx) {
-		val map = newHashMap
-		val none = newArrayList
-		map.put("none", none)
-		val value = newArrayList
-		map.put("value", value)
-		ctx.children.forEach [
-			if (it instanceof RuleContext) {
-				switch it.invokingState {
-					case 1239: {
-						value += it.visit
-					}
 					case 1244: {
-						value += it.visit
+						className += it.visit
 					}
 					default: {
 						none += it.visit
@@ -1567,7 +1302,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 				}
 			}
 		]
-		map.castTo(UniReturn)
+		map.castTo(UniClassDec)
 	}
 
 	override public visitVariabledeclarationstatement(CPP14Parser.VariabledeclarationstatementContext ctx) {
@@ -1579,7 +1314,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 1296: {
+						case 1294: {
 							ret += it.visit
 						}
 						default: {
@@ -1614,13 +1349,16 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 1302: {
+						case 1300: {
 							modifiers += it.visit
 						}
-						case 1305: {
+						case 1303: {
 							type += it.visit
 						}
-						case 1306: {
+						case 1304: {
+							type += it.visit
+						}
+						case 1310: {
 							merge += it.visit
 						}
 						default: {
@@ -1654,11 +1392,55 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1310: {
+					case 1314: {
 						add += it.visit
 					}
-					case 1312: {
+					case 1315: {
 						add += it.visit
+					}
+					case 138: {
+						add += it.visit
+					}
+					case 1320: {
+						add += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map
+	}
+
+	override public visitArrayDeclarator(CPP14Parser.ArrayDeclaratorContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val name = newArrayList
+		map.put("name", name)
+		val value = newArrayList
+		map.put("value", value)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 1326: {
+						name += it.visit
+					}
+					case 1329: {
+						value += it.visit
+					}
+					case 1332: {
+						name += it.visit
+					}
+					case 1333: {
+						value += it.visit
 					}
 					default: {
 						none += it.visit
@@ -1687,19 +1469,19 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1320: {
+					case 1337: {
 						merge += it.visit
 					}
-					case 1321: {
+					case 1338: {
 						type += it.visit
 					}
-					case 1325: {
+					case 1342: {
 						value += it.visit
 					}
-					case 1328: {
+					case 1344: {
 						type += it.visit
 					}
-					case 1329: {
+					case 1345: {
 						value += it.visit
 					}
 					default: {
@@ -1727,10 +1509,10 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1333: {
+					case 1349: {
 						merge += it.visit
 					}
-					case 1334: {
+					case 1350: {
 						merge += it.visit
 					}
 					default: {
@@ -1759,7 +1541,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1341: {
+					case 1357: {
 						elementsNum += it.visit
 					}
 					default: {
@@ -1788,31 +1570,10 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1344: {
+					case 1360: {
 						name += it.visit
 					}
-					case 1350: {
-						name += it.visit
-					}
-					case 1352: {
-						value += it.visit
-					}
-					case 1355: {
-						name += it.visit
-					}
-					case 1361: {
-						name += it.visit
-					}
-					case 1364: {
-						value += it.visit
-					}
-					case 1367: {
-						name += it.visit
-					}
-					case 1373: {
-						name += it.visit
-					}
-					case 1374: {
+					case 1362: {
 						value += it.visit
 					}
 					default: {
@@ -1860,7 +1621,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		map.castTo(String)
 	}
 
-	override public visitTypespecifier(CPP14Parser.TypespecifierContext ctx) {
+	override public visitTrailingtypespecifier(CPP14Parser.TrailingtypespecifierContext ctx) {
 		val map = newHashMap
 		val none = newArrayList
 		map.put("none", none)
@@ -1891,10 +1652,10 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1830: {
+					case 1817: {
 						add += it.visit
 					}
-					case 1832: {
+					case 1819: {
 						add += it.visit
 					}
 					default: {
@@ -1944,23 +1705,11 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 2020: {
-							val results = it.visit.flatten
-							if(results instanceof ArrayList<?>){
-								for (result: results)
-									add += result
-							}
-							else
-								add += it.visit
+						case 2007: {
+							add += it.visit
 						}
-						case 2026: {
-							val results = it.visit.flatten
-							if(results instanceof ArrayList<?>){
-								for (result: results)
-									add += result
-							}
-							else
-								add += it.visit
+						case 2013: {
+							add += it.visit
 						}
 						default: {
 							none += it.visit
@@ -1988,32 +1737,14 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 2033: {
-							val results = it.visit.flatten
-							if(results instanceof ArrayList<?>){
-								for (result: results)
-									add += result
-							}
-							else
-								add += it.visit
+						case 2020: {
+							add += it.visit
 						}
-						case 306: {
-							val results = it.visit.flatten
-							if(results instanceof ArrayList<?>){
-								for (result: results)
-									add += result
-							}
-							else
-								add += it.visit
+						case 298: {
+							add += it.visit
 						}
-						case 2037: {
-							val results = it.visit.flatten
-							if(results instanceof ArrayList<?>){
-								for (result: results)
-									add += result
-							}
-							else
-								add += it.visit
+						case 2024: {
+							add += it.visit
 						}
 						default: {
 							none += it.visit
@@ -2043,13 +1774,13 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2079: {
+					case 2066: {
 						modifiers += it.visit
 					}
-					case 2082: {
+					case 2069: {
 						merge += it.visit
 					}
-					case 2086: {
+					case 2073: {
 						block += it.visit
 					}
 					default: {
@@ -2079,10 +1810,10 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2088: {
+					case 2075: {
 						returnType += it.visit
 					}
-					case 2091: {
+					case 2078: {
 						merge += it.visit
 					}
 					default: {
@@ -2111,7 +1842,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2093: {
+					case 2080: {
 						methodName += it.visit
 					}
 					default: {
@@ -2137,7 +1868,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2101: {
+					case 2088: {
 						merge += it.visit
 					}
 					default: {
@@ -2167,23 +1898,11 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 2127: {
-							val results = it.visit.flatten
-							if(results instanceof ArrayList<?>){
-								for (result: results)
-									add += result
-							}
-							else
-								add += it.visit
+						case 2114: {
+							add += it.visit
 						}
-						case 2129: {
-							val results = it.visit.flatten
-							if(results instanceof ArrayList<?>){
-								for (result: results)
-									add += result
-							}
-							else
-								add += it.visit
+						case 2116: {
+							add += it.visit
 						}
 						default: {
 							none += it.visit
@@ -2210,7 +1929,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2136: {
+					case 2123: {
 						items += it.visit
 					}
 					default: {
@@ -2228,7 +1947,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		map.castTo(UniArray)
 	}
 
-	override public visitClassname(CPP14Parser.ClassnameContext ctx) {
+	override public visitMyclassname(CPP14Parser.MyclassnameContext ctx) {
 		val map = newHashMap
 		val none = newArrayList
 		map.put("none", none)
@@ -2260,8 +1979,11 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2147: {
+					case 1231: {
 						merge += it.visit
+					}
+					case 1233: {
+						members += it.visit
 					}
 					default: {
 						none += it.visit
@@ -2290,14 +2012,8 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 2154: {
-							val results = it.visit.flatten
-							if(results instanceof ArrayList<?>){
-								for (result: results)
-									add += result
-							}
-							else
-								add += it.visit
+						case 1228: {
+							add += it.visit
 						}
 						default: {
 							none += it.visit
@@ -2319,40 +2035,12 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		val map = newHashMap
 		val none = newArrayList
 		map.put("none", none)
-		val merge = newArrayList
-		ctx.children.forEach [
-			if (it instanceof RuleContext) {
-				switch it.invokingState {
-					case 2163: {
-						merge += it.visit
-					}
-					default: {
-						none += it.visit
-					}
-				}
-			} else if (it instanceof TerminalNode) {
-				switch it.symbol.type {
-					default: {
-						none += it.visit
-					}
-				}
-			}
-		]
-		val node = map.castTo(UniClassDec)
-		merge.forEach[node.merge(it.castTo(UniClassDec))]
-		node
-	}
-
-	override public visitClassheadname(CPP14Parser.ClassheadnameContext ctx) {
-		val map = newHashMap
-		val none = newArrayList
-		map.put("none", none)
 		val className = newArrayList
 		map.put("className", className)
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2182: {
+					case 1244: {
 						className += it.visit
 					}
 					default: {
@@ -2380,14 +2068,17 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 2188: {
-							val results = it.visit.flatten
-							if(results instanceof ArrayList<?>){
-								for (result: results)
-									add += result
-							}
-							else
-								add += it.visit
+						case 2178: {
+							add += it.visit
+						}
+						case 2179: {
+							add += it.visit
+						}
+						case 2182: {
+							add += it.visit
+						}
+						case 2184: {
+							add += it.visit
 						}
 						default: {
 							none += it.visit
@@ -2405,33 +2096,17 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		map.castToList(UniMemberDec)
 	}
 
-	override public visitMemberdeclaration(CPP14Parser.MemberdeclarationContext ctx) {
+	override public visitMembervariabledeclarationstatement(CPP14Parser.MembervariabledeclarationstatementContext ctx) {
 		val map = newHashMap
 		val none = newArrayList
 		map.put("none", none)
-		val add = newArrayList
-		map.put("add", add)
+		val ret = newArrayList
 		if (ctx.children != null) {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 2205: {
-							val results = it.visit.flatten
-							if(results instanceof ArrayList<?>){
-								for (result: results)
-									add += result
-							}
-							else
-								add += it.visit
-						}
-						case 2209: {
-							val results = it.visit.flatten
-							if(results instanceof ArrayList<?>){
-								for (result: results)
-									add += result
-							}
-							else
-								add += it.visit
+						case 2198: {
+							ret += it.visit
 						}
 						default: {
 							none += it.visit
@@ -2446,7 +2121,142 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 				}
 			]
 		}
-		map.castToList(UniMemberDec)
+		if (!ret.isEmpty) {
+			return ret
+		}
+		map.castToList(UniFieldDec)
+	}
+
+	override public visitMembervariabledeclaration(CPP14Parser.MembervariabledeclarationContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val modifiers = newArrayList
+		map.put("modifiers", modifiers)
+		val type = newArrayList
+		map.put("type", type)
+		val merge = newArrayList
+		if (ctx.children != null) {
+			ctx.children.forEach [
+				if (it instanceof RuleContext) {
+					switch it.invokingState {
+						case 2204: {
+							modifiers += it.visit
+						}
+						case 2207: {
+							type += it.visit
+						}
+						case 2208: {
+							type += it.visit
+						}
+						case 2214: {
+							merge += it.visit
+						}
+						default: {
+							none += it.visit
+						}
+					}
+				} else if (it instanceof TerminalNode) {
+					switch it.symbol.type {
+						default: {
+							none += it.visit
+						}
+					}
+				}
+			]
+		}
+		val node = map.castTo(UniFieldDec)
+		val ret = newArrayList
+		merge.castToList(UniFieldDec).forEach [
+			it.merge(node)
+			ret += it
+		]
+		ret
+	}
+
+	override public visitMemberdeclaratorlist(CPP14Parser.MemberdeclaratorlistContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val add = newArrayList
+		map.put("add", add)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 2218: {
+						add += it.visit
+					}
+					case 342: {
+						add += it.visit
+					}
+					case 2222: {
+						add += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map
+	}
+
+	override public visitMemberdeclarator(CPP14Parser.MemberdeclaratorContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val name = newArrayList
+		map.put("name", name)
+		val modifiers = newArrayList
+		map.put("modifiers", modifiers)
+		val value = newArrayList
+		map.put("value", value)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 2228: {
+						name += it.visit
+					}
+					case 2229: {
+						modifiers += it.visit
+					}
+					case 2235: {
+						name += it.visit
+					}
+					case 2237: {
+						value += it.visit
+					}
+					case 2240: {
+						name += it.visit
+					}
+					case 2241: {
+						value += it.visit
+					}
+					case 2251: {
+						value += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					case CPP14Parser.Identifier: {
+						name += it.visit.flatten
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map
 	}
 
 	override public visitIntegerliteral(CPP14Parser.IntegerliteralContext ctx) {
@@ -2459,18 +2269,6 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 			return false
 		].visit as String
 		return new UniIntLiteral(Integer.parseInt(text))
-	}
-
-	override public visitCharacterliteral(CPP14Parser.CharacterliteralContext ctx) {
-		val text = ctx.children.findFirst [
-			if (it instanceof TerminalNodeImpl) {
-				if (it.symbol.type == CPP14Parser.Characterliteral) {
-					return true
-				}
-			}
-			return false
-		].visit as String
-		return new UniCharacterLiteral(text.substring(1, text.length - 1).charAt(0))
 	}
 
 	override public visitFloatingliteral(CPP14Parser.FloatingliteralContext ctx) {
