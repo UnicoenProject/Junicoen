@@ -101,7 +101,7 @@ postfixexpression
 	:	primaryexpression 
 	|	postfixexpression LeftBracket assignmentexpression RightBracket 
 	|	postfixexpression '[' bracedinitlist ']' 
-	|	postfixexpression '(' expressionlist? ')' 
+	|	postfixexpression LeftParen expressionlist? RightParen 
 	|	simpletypespecifier '(' expressionlist? ')' 
 	|	typenamespecifier '(' expressionlist? ')' 
 	|	simpletypespecifier bracedinitlist 

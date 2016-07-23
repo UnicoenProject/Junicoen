@@ -437,6 +437,9 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 					case 670: {
 						right += it.visit
 					}
+					case 680: {
+						right += it.visit
+					}
 					case 689: {
 						right += it.visit
 					}
@@ -461,6 +464,12 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 					case CPP14Parser.RightBracket: {
 						operator += it.visit.flatten
 					}
+					case CPP14Parser.LeftParen: {
+						operator += it.visit.flatten
+					}
+					case CPP14Parser.RightParen: {
+						operator += it.visit.flatten
+					}
 					case CPP14Parser.Dot: {
 						operator += it.visit.flatten
 					}
@@ -477,6 +486,33 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 			return ret
 		}
 		map.castTo(UniBinOp)
+	}
+
+	override public visitExpressionlist(CPP14Parser.ExpressionlistContext ctx) {
+		val map = newHashMap
+		val none = newArrayList
+		map.put("none", none)
+		val items = newArrayList
+		map.put("items", items)
+		ctx.children.forEach [
+			if (it instanceof RuleContext) {
+				switch it.invokingState {
+					case 711: {
+						items += it.visit
+					}
+					default: {
+						none += it.visit
+					}
+				}
+			} else if (it instanceof TerminalNode) {
+				switch it.symbol.type {
+					default: {
+						none += it.visit
+					}
+				}
+			}
+		]
+		map.castTo(UniArray)
 	}
 
 	override public visitBinaryexpression(CPP14Parser.BinaryexpressionContext ctx) {

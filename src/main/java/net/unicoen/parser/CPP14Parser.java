@@ -1450,6 +1450,8 @@ public class CPP14Parser extends Parser {
 			return getRuleContext(AssignmentexpressionContext.class,0);
 		}
 		public TerminalNode RightBracket() { return getToken(CPP14Parser.RightBracket, 0); }
+		public TerminalNode LeftParen() { return getToken(CPP14Parser.LeftParen, 0); }
+		public TerminalNode RightParen() { return getToken(CPP14Parser.RightParen, 0); }
 		public TerminalNode Dot() { return getToken(CPP14Parser.Dot, 0); }
 		public IdexpressionlapperContext idexpressionlapper() {
 			return getRuleContext(IdexpressionlapperContext.class,0);
