@@ -159,6 +159,9 @@ public class CppEngineTest {
 				"}"+
 				"int main()"+
 				"{"+
+					"int *buf;"+
+					"buf = (int *)malloc( 100 );"+
+					"buf[2] = 2;"+
 					"int a = fibonacci(10);"+
 					"return a;"+
 					"int b = 3;"+

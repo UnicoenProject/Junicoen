@@ -88,7 +88,7 @@ public class Variable{
 			return vars.get(size-1).getByteSize() * size;
 		}
 		//処理系依存かもしれないが、リテラルのサイズ、構造体はメンバ変数のsize合計、配列の場合は型*size()などを考慮する必要がある。
-		return 4;
+		return CppEngine.sizeof(this.type);
 	}
 
 	@Override

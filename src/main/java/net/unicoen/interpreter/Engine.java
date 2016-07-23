@@ -16,6 +16,7 @@ import net.unicoen.node.UniBinOp;
 import net.unicoen.node.UniBlock;
 import net.unicoen.node.UniBoolLiteral;
 import net.unicoen.node.UniBreak;
+import net.unicoen.node.UniCast;
 import net.unicoen.node.UniCharacterLiteral;
 import net.unicoen.node.UniClassDec;
 import net.unicoen.node.UniContinue;
@@ -140,6 +141,9 @@ public class Engine {
 		return executeSimple(expr, scope);
 	}
 
+	protected void loadLibarary(Scope global){
+		StdLibLoader.initialize(global);
+	}
 	public ExecState startStepExecution(ArrayList<UniNode> nodes) {
 		isStepExecutionRunning.set(true);
 		isExecutionThreadWaiting.set(false);
@@ -149,7 +153,7 @@ public class Engine {
 	            public void run(){
 	            	Scope global = Scope.createGlobal();
 	            	global.name = "GLOBAL";
-	    			StdLibLoader.initialize(global);
+	            	loadLibarary(global);
 	    			firePreExecAll(global);
 	    			for (UniNode node : nodes) {
 	    				if (node instanceof UniMethodDec) {
@@ -198,7 +202,7 @@ public class Engine {
 		UniMethodDec fdec = getEntryPoint(dec);
 		if (fdec != null) {
 			Scope global = Scope.createGlobal();
-			StdLibLoader.initialize(global);
+			loadLibarary(global);
 			firePreExecAll(global);
 			Object value = execFunc(fdec, global,null);
 			firePostExecAll(global, value);
@@ -244,7 +248,7 @@ public class Engine {
 		}
 		finally{
 			if(1<state.getStacks().size())
-			state.popStack();
+				state.popStack();
 		}
 	}
 
@@ -410,9 +414,15 @@ public class Engine {
 			}
 			return array;
 		}
+		if (expr instanceof UniCast) {
+			return execCast((UniCast)expr, scope);
+		}
 		throw new RuntimeException("Not support expr type: " + expr);
 	}
 
+	protected Object execCast(UniCast expr, Scope scope){
+		return execExpr(expr.value, scope);
+	}
 	protected Object execVariableDec(UniVariableDec decVar, Scope scope){
 		if(decVar.name.startsWith("*")){
 			decVar.name = decVar.name.substring(1);

@@ -34,6 +34,7 @@ public class Scope {
 	public final Type type;
 	public final Scope parent;
 	public final HashMap<String, Object> variables = new HashMap<>();
+	public final HashMap<String, String> variableTypes = new HashMap<>();
 	private List<VariableNotFoundListener> listeners = null;
 
 	private static void assertNotUnicoen(Object value) {
@@ -65,8 +66,6 @@ public class Scope {
 	public Object get(String key) {
 		return getImple(key,name);
 	}
-
-
 
 	private Object getImple(String key, String stackName) {
 		if (variables.containsKey(key)) {
@@ -108,12 +107,28 @@ public class Scope {
 		}
 	}
 
+	public String getType(String key) {
+		if (variableTypes.containsKey(key)){
+			return variableTypes.get(key);
+		}
+		else if (parent != null) {
+			return parent.getType(key);
+		}
+		throw new UniRuntimeError(
+				String.format("type '%s' is not defined.", key));
+	}
+	
 	/** 現在のスコープに新しい変数を定義し、代入します */
 	public void setTop(String key, Object value) {
 		assertNotUnicoen(value);
 		variables.put(key, value);
 	}
-
+	
+	public void setTop(String key, Object value, String type) {
+		setTop(key,value);
+		variableTypes.put(key, type);
+	}
+		
 	/** 定義済みの変数に対し、代入します */
 	public void set(String key, Object value) {
 		assertNotUnicoen(value);

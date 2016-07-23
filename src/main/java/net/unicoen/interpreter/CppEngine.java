@@ -1,16 +1,43 @@
 package net.unicoen.interpreter;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
 
 import net.unicoen.node.UniBinOp;
+import net.unicoen.node.UniCast;
 import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniFieldDec;
 import net.unicoen.node.UniIdent;
+import net.unicoen.node.UniIntLiteral;
 import net.unicoen.node.UniUnaryOp;
 import net.unicoen.node.UniVariableDec;
 
 public class CppEngine extends Engine {
 
+	@Override
+	protected void loadLibarary(Scope global){
+		global.setTop("printf", new FunctionWithEngine() {
+			@Override
+			public Object invoke(Engine engine, Object[] args) {
+				engine.out.println(args[0]);
+				return args[0].toString().length();
+			}
+		});
+		global.setTop("sizeof", new FunctionWithEngine() {
+			@Override
+			public Object invoke(Engine engine, Object[] args) {
+				return CppEngine.sizeof((String) args[0]);
+			}
+		});
+		global.setTop("malloc", new FunctionWithEngine() {
+			@Override
+			public Object invoke(Engine engine, Object[] args) {
+				return new Variable("void","malloc",args[0],-1,-1);
+			}
+		});
+	}
+	
 	@Override
 	protected UniIdent getLeftReference(UniExpr expr, Scope scope) {
 		if(expr instanceof UniIdent){
@@ -57,12 +84,39 @@ public class CppEngine extends Engine {
 	}
 
 	@Override
+	protected Object execCast(UniCast expr, Scope scope){
+		return execExpr(expr.value, scope);
+	}
+	
+	@Override
 	protected Object execAssign(UniIdent left, Object value, Scope scope) {
 		if(value instanceof ArrayList){//構造体の場合のみ
 			ArrayList<String> values = (ArrayList<String>)value;
+			Object last=null;
 			for(String s : values){
 				String fieldname = left.name + s.substring(s.indexOf("."));
 				execAssign(new UniIdent(fieldname),scope.get(s),scope);
+			}
+			return last;
+		}
+		if(value instanceof Variable){
+			Variable var = (Variable)value;
+			if(var.name.equals("malloc")){
+				String type = scope.getType(left.name);
+				type = type.replace("*", "");
+				int typesize = sizeof(type);
+				int bytesize = (int)var.getValue();
+				int length = bytesize/typesize;
+				scope.setTop(left.name, "&"+left.name+"[0]", type+"*");
+				List<Object> varArray = new ArrayList<Object>();
+				for(int i=0;i<length;++i){
+					String fieldname = left.name+"["+i+"]";
+					scope.setTop(fieldname, null,type);
+					varArray.add(null);
+				}
+				
+				state.addVariable(scope.name,new UniVariableDec(null,type,left.name,new UniIntLiteral(0)), varArray, scope.depth);
+				return varArray;
 			}
 		}
 		return super.execAssign(left, value, scope);
@@ -118,25 +172,54 @@ public class CppEngine extends Engine {
 				UniFieldDec ufd = ufds.get(i);
 				String name = decVar.name+"."+ufd.name;
 				memberNames.add(name);
-				scope.setTop(name, varArray.get(i));
+				scope.setTop(name, varArray.get(i),ufd.type);
 				varsAsVariable.add(new Variable(ufd.type,ufd.name,varArray.get(i),-1,-1));
 			}
-			scope.setTop(decVar.name, memberNames);//str1 = str2の場合は展開してフィールド毎に代入
+			scope.setTop(decVar.name, memberNames,decVar.type);//str1 = str2の場合は展開してフィールド毎に代入
 			state.addVariable(scope.name, decVar, varsAsVariable, scope.depth);
 		}
-		else if(value instanceof ArrayList<?>){
-			ArrayList<?> varArray = (ArrayList<?>)value;
-			scope.setTop(decVar.name, "&"+decVar.name+"[0]");
+		else if(value instanceof List){
+			List<?> varArray = (List)value;
+			scope.setTop(decVar.name, "&"+decVar.name+"[0]",decVar.type+"*");
 			for(int i=0;i<varArray.size();++i){
-				scope.setTop(decVar.name+"["+i+"]", varArray.get(i));
+				scope.setTop(decVar.name+"["+i+"]", varArray.get(i),decVar.type);
 			}
 			state.addVariable(scope.name, decVar, varArray,scope.depth);
 		}
+		else if(value instanceof Variable){
+			Variable var = (Variable)value;
+			if(var.name.equals("malloc")){
+				decVar.type = decVar.type.replace("*", "");
+				int typesize = sizeof(decVar.type);
+				int bytesize = (int)var.getValue();
+				int length = bytesize/typesize;
+				scope.setTop(decVar.name, "&"+decVar.name+"[0]",decVar.type+"*");
+				List<Object> varArray = new ArrayList<Object>();
+				for(int i=0;i<length;++i){
+					varArray.add(null);
+					scope.setTop(decVar.name+"["+i+"]", null,decVar.type);
+				}
+				state.addVariable(scope.name, decVar, varArray, scope.depth);
+			}
+		}
 		else
 		{
-			scope.setTop(decVar.name, value);
+			scope.setTop(decVar.name, value,decVar.type);
 			state.addVariable(scope.name, decVar, value, scope.depth);
 		}
 		return value;
+	}
+	
+	public static int sizeof(String type){
+		if(type.contains("char")){
+			return 1;
+		}
+		else if(type.contains("short")){
+			return 2;
+		}
+		else if(type.contains("double")){
+			return 8;
+		}
+		return 4;
 	}
 }
