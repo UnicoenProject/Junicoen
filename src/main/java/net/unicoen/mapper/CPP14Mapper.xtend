@@ -609,10 +609,12 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		val none = newArrayList
 		map.put("none", none)
 		val ret = newArrayList
+		val type = newArrayList
+		map.put("type", type)
+		val value = newArrayList
+		map.put("value", value)
 		val operator = newArrayList
 		map.put("operator", operator)
-		val right = newArrayList
-		map.put("right", right)
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
@@ -620,10 +622,10 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 						ret += it.visit
 					}
 					case 861: {
-						right += it.visit
+						type += it.visit
 					}
 					case 863: {
-						right += it.visit
+						value += it.visit
 					}
 					default: {
 						none += it.visit
@@ -631,9 +633,6 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 				}
 			} else if (it instanceof TerminalNode) {
 				switch it.symbol.type {
-					case CPP14Parser.LeftParen: {
-						operator += it.visit.flatten
-					}
 					case CPP14Parser.RightParen: {
 						operator += it.visit.flatten
 					}
@@ -646,7 +645,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		if (!ret.isEmpty) {
 			return ret
 		}
-		map.castTo(UniBinOp)
+		map.castTo(UniCast)
 	}
 
 	override public visitPmexpression(CPP14Parser.PmexpressionContext ctx) {
