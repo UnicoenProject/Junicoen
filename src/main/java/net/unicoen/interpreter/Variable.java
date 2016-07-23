@@ -34,6 +34,7 @@ public class Variable{
 		}
 		return false;
 	}
+
 	public void setValue(Object value) {
 		if(value instanceof ArrayList){
 			ArrayList<?> varArray = (ArrayList)value;

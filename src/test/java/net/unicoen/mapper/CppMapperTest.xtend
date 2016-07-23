@@ -26,6 +26,10 @@ class CppMapperTest  extends MapperTest {
 		}
 		int main()
 		{
+			if(n<2)
+				return n;
+			else
+				return fibonacci(n-1) + fibonacci(n-2);
 			int a = add(1,2);
 			int b = 3;
 			int c = b;

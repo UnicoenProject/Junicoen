@@ -61,19 +61,26 @@ public class Scope {
 		listeners.add(listener);
 	}
 
-	public Boolean hasValue(String key) {
-		try {
-			get(key);
-			return true;
-		} catch (UniRuntimeError e) {
-			return false;
-		}
+	public Object get(String key) {
+		return getImple(key,name);
 	}
 
-	public Object get(String key) {
+
+
+	private Object getImple(String key, String stackName) {
 		if (variables.containsKey(key)) {
-			return variables.get(key);
+			Object var = variables.get(key);
+			if(stackName.equals(name))
+				return var;
+
+			//同じstackNameでなければポインタ渡しの場合のみparentからget可能
+			if(var instanceof String){
+				if(((String)var).startsWith("&")){
+					return var;
+				}
+			}
 		}
+
 		if (parent != null) {
 			return parent.get(key);
 		} else {
@@ -88,6 +95,15 @@ public class Scope {
 			}
 			throw new UniRuntimeError(
 					String.format("variable '%s' is not defined.", key));
+		}
+	}
+
+	public Boolean hasValue(String key) {
+		try {
+			get(key);
+			return true;
+		} catch (UniRuntimeError e) {
+			return false;
 		}
 	}
 

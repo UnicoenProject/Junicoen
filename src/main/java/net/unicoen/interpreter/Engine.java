@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 
+import net.unicoen.node.UniArg;
 import net.unicoen.node.UniArray;
 import net.unicoen.node.UniBinOp;
 import net.unicoen.node.UniBlock;
@@ -154,7 +155,7 @@ public class Engine {
 	    				if (node instanceof UniMethodDec) {
 	    					UniMethodDec fdec = (UniMethodDec) node;
 	    					if ("main".equals(fdec.methodName)) {//main関数なら実行開始
-	    						Object value = execFunc(fdec, global);
+	    						Object value = execFunc(fdec, global,null);
 	    		    			firePostExecAll(global, value);
 	    		    			isExecutionThreadWaiting.set(true);
 	    		    			isStepExecutionRunning.set(false);
@@ -162,7 +163,7 @@ public class Engine {
 	    		    			break;
 	    					}
 	    					else{//他の関数定義ならセット
-
+	    						global.setTop(fdec.methodName,fdec);
 	    					}
 	    				}
 	    				else if(node instanceof UniVariableDec){//グローバル変数のセット
@@ -199,7 +200,7 @@ public class Engine {
 			Scope global = Scope.createGlobal();
 			StdLibLoader.initialize(global);
 			firePreExecAll(global);
-			Object value = execFunc(fdec, global);
+			Object value = execFunc(fdec, global,null);
 			firePostExecAll(global, value);
 			return value;
 		} else {
@@ -219,15 +220,31 @@ public class Engine {
 		return null;
 	}
 
-	private Object execFunc(UniMethodDec fdec, Scope global) {
+	private Object execFunc(UniMethodDec fdec, Scope global, List<UniExpr> arguments) {
 		Scope funcScope = Scope.createLocal(global);
 		funcScope.name = fdec.methodName;
 		state.addStack(fdec.methodName);
-		// TODO: set argument to func scope
+		List<UniArg> parameters = fdec.args;
+		if(!parameters.isEmpty() && !arguments.isEmpty())
+		{
+			assert parameters.size() == arguments.size() ;
+			for(int i=0;i<arguments.size();++i){
+				UniArg param = parameters.get(i);
+				UniExpr arg = arguments.get(i);
+				UniVariableDec uvd = new UniVariableDec(null, param.type, param.name, arg);
+				execExpr(uvd,funcScope);
+			}
+		}
+		//ToDo再起の場合のチェック(連番など?
+		//スコープも呼び出し先関数中とGLOBAL以外はスキップさせる
 		try {
 			return execBlock(fdec.block, funcScope);
 		} catch (Return e) {
 			return e.value;
+		}
+		finally{
+			if(1<state.getStacks().size())
+			state.popStack();
 		}
 	}
 
@@ -248,6 +265,10 @@ public class Engine {
 
 		if (expr instanceof UniMethodCall) {
 			UniMethodCall mc = (UniMethodCall) expr;
+			Object func = scope.get(mc.methodName);
+			if(func instanceof UniMethodDec){
+				return execFunc((UniMethodDec)func,scope,mc.args);
+			}
 
 			Object[] args = new Object[mc.args == null ? 0 : mc.args.size()];
 			for (int i = 0; i < args.length; i++) {
@@ -256,8 +277,8 @@ public class Engine {
 			if (mc.receiver != null) {
 				Object receiver = execExpr(mc.receiver, scope);
 				return execMethodCall(receiver, mc.methodName, args);
-			} else {
-				Object func = scope.get(mc.methodName);
+			}
+			else {
 				return execFuncCall(func, args);
 			}
 		}
@@ -621,6 +642,10 @@ public class Engine {
 			return execAssign(getLeftReference(left,scope),execExpr(right, scope),scope);
 		case "[]":
 			return execExpr(getLeftReference(new UniBinOp(op,left,right),scope),scope);
+		case "()":{
+			UniMethodCall umc = new UniMethodCall(null,((UniIdent)left).name,((UniArray)right).items);
+			return execExpr(umc,scope);
+		}
 		case ".":
 			return execExpr(getLeftReference(new UniBinOp(op,left,right),scope),scope);
 		case "==":

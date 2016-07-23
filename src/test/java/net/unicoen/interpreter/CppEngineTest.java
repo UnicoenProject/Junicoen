@@ -146,20 +146,25 @@ public class CppEngineTest {
 		engine.out = new PrintStream(baos);
 
 		String text =
-				"struct Str"+
-				"{"+
-					"int i;"+
-					"double d;"+
-				"};"+
+				//"struct Str"+
+				//"{"+
+				//	"int a;"+
+				//	"double b;"+
+				//"};"+
+				"int fibonacci(int n) {"+
+					"if(n<2)"+
+						"return n;"+
+					"else "+
+						"return fibonacci(n-1) + fibonacci(n-2);"+
+				"}"+
 				"int main()"+
 				"{"+
-					"Str str1 = {-1,2.3};"+
-					"int a = str1.i;"+
-					"double b = str1.d;"+
-					"Str str2 = str1;"+
-					"str2.d = 3.5;"+
-					"Str str3;"+
-					"str3 = str2;"+
+					"int a = fibonacci(10);"+
+					"return a;"+
+					"int b = 3;"+
+					"int c = b;"+
+					"b = 5;"+
+					"int* p = &a;"+
 				"}";
 		CPP14Mapper cppMapper = new CPP14Mapper(true);
 		Object node = cppMapper.parse(text);
@@ -177,7 +182,7 @@ public class CppEngineTest {
 		{
 			state = engine.stepExecute();
 		}
-
+		state.toString();
 		try {
 			String output = baos.toString("UTF8");
 		} catch (UnsupportedEncodingException e) {
