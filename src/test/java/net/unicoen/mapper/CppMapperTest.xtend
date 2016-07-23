@@ -19,8 +19,14 @@ class CppMapperTest  extends MapperTest {
 			int a;
 			double b;
 		};
+		int add(int x, int y)
+		{
+			int z = z+y;
+			return z;
+		}
 		int main()
 		{
+			int a = add(1,2);
 			int b = 3;
 			int c = b;
 			b = 5;
