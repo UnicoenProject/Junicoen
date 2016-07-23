@@ -225,7 +225,7 @@ public class Engine {
 		funcScope.name = fdec.methodName;
 		state.addStack(fdec.methodName);
 		List<UniArg> parameters = fdec.args;
-		if(!parameters.isEmpty() && !arguments.isEmpty())
+		if(parameters!=null && arguments!=null)
 		{
 			assert parameters.size() == arguments.size() ;
 			for(int i=0;i<arguments.size();++i){
@@ -265,11 +265,6 @@ public class Engine {
 
 		if (expr instanceof UniMethodCall) {
 			UniMethodCall mc = (UniMethodCall) expr;
-			Object func = scope.get(mc.methodName);
-			if(func instanceof UniMethodDec){
-				return execFunc((UniMethodDec)func,scope,mc.args);
-			}
-
 			Object[] args = new Object[mc.args == null ? 0 : mc.args.size()];
 			for (int i = 0; i < args.length; i++) {
 				args[i] = execExpr(mc.args.get(i), scope);
@@ -279,6 +274,10 @@ public class Engine {
 				return execMethodCall(receiver, mc.methodName, args);
 			}
 			else {
+				Object func = scope.get(mc.methodName);
+				if(func instanceof UniMethodDec){
+					return execFunc((UniMethodDec)func,scope,mc.args);
+				}
 				return execFuncCall(func, args);
 			}
 		}

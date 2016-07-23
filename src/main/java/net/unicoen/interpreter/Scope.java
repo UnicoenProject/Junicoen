@@ -51,6 +51,7 @@ public class Scope {
 		}
 		else{
 			this.depth = parent.depth + 1;
+			this.name = parent.name;
 		}
 	}
 
@@ -70,7 +71,7 @@ public class Scope {
 	private Object getImple(String key, String stackName) {
 		if (variables.containsKey(key)) {
 			Object var = variables.get(key);
-			if(stackName.equals(name))
+			if(stackName.equals(name) || this.type==Type.GLOBAL)
 				return var;
 
 			//同じstackNameでなければポインタ渡しの場合のみparentからget可能
