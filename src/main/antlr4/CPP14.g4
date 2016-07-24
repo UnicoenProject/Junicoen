@@ -11,7 +11,7 @@ translationunit
 primaryexpression
 	:	literal 
 	|	This 
-	|	'(' expression ')' 
+	|	LeftParen expression RightParen 
 	|	identexpression 
 	|	lambdaexpression 
 	;

@@ -333,10 +333,15 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		val none = newArrayList
 		map.put("none", none)
 		val ret = newArrayList
+		val operator = newArrayList
+		map.put("operator", operator)
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
 					case 467: {
+						ret += it.visit
+					}
+					case 470: {
 						ret += it.visit
 					}
 					case 473: {
@@ -348,6 +353,12 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 				}
 			} else if (it instanceof TerminalNode) {
 				switch it.symbol.type {
+					case CPP14Parser.LeftParen: {
+						operator += it.visit.flatten
+					}
+					case CPP14Parser.RightParen: {
+						operator += it.visit.flatten
+					}
 					default: {
 						none += it.visit
 					}

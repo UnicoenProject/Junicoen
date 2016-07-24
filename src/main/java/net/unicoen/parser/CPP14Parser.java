@@ -329,9 +329,11 @@ public class CPP14Parser extends Parser {
 			return getRuleContext(LiteralContext.class,0);
 		}
 		public TerminalNode This() { return getToken(CPP14Parser.This, 0); }
+		public TerminalNode LeftParen() { return getToken(CPP14Parser.LeftParen, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TerminalNode RightParen() { return getToken(CPP14Parser.RightParen, 0); }
 		public IdentexpressionContext identexpression() {
 			return getRuleContext(IdentexpressionContext.class,0);
 		}
