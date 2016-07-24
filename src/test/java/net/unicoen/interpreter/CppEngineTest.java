@@ -96,7 +96,7 @@ public class CppEngineTest {
 		}
 	}
 
-	@Test @Ignore
+	@Test //@Ignore
 	public void test3(){
 		CppEngine engine = new CppEngine();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -141,7 +141,7 @@ public class CppEngineTest {
 		}
 	}
 
-	@Test //@Ignore
+	@Test @Ignore
 	public void test4(){
 		CppEngine engine = new CppEngine();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();

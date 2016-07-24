@@ -508,13 +508,19 @@ public class Engine {
 		for (UniExpr expr : block.body) {
 			if(isStepExecutionRunning.get())
 			{
+				state.setCurrentExpr(expr);
 				isExecutionThreadWaiting.set(true);
 				notifyAllThread();
 				waitForWaitingFlagIs(true);
 			}
-			lastValue = execExpr(expr, blockScope);
+			try{
+				lastValue = execExpr(expr, blockScope);
+			}
+			catch (ControlException e){
+				scope.removeChild(blockScope);
+				throw e;
+			}
 		}
-		scope.removeChild(blockScope);
 		return lastValue;
 	}
 
