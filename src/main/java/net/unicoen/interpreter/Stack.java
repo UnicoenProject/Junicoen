@@ -15,6 +15,10 @@ public class Stack {
 		this.address = address;
 	}
 
+	void addVariable(Variable variable){
+		variables.add(variable);
+	}
+
 	void addVariable(String type, String name, Object value, int depth){
 		int lastAddress = this.address;
 		if(!variables.isEmpty())

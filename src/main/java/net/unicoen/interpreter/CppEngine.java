@@ -10,19 +10,19 @@ public class CppEngine extends Engine {
 				engine.out.println(args[0]);
 				return args[0].toString().length();
 			}
-		},"int");
+		},"FUNCTION");
 		global.setTop("sizeof", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				return CppEngine.sizeof((String) args[0]);
 			}
-		},"int");
+		},"FUNCTION");
 		global.setTop("malloc", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				return new Variable("void","malloc",args[0],-1,-1);
 			}
-		},"void*");
+		},"FUNCTION");
 	}
 
 //

@@ -151,11 +151,11 @@ public class Engine {
 	public ExecState startStepExecution(ArrayList<UniNode> nodes) {
 		isStepExecutionRunning.set(true);
 		isExecutionThreadWaiting.set(false);
-		state = new ExecState();
 		if (!nodes.isEmpty()) {
 			new Thread(){
 	            public void run(){
 	            	Scope global = Scope.createGlobal();
+	            	state = new ExecState(global);
 	            	global.name = "GLOBAL";
 	            	loadLibarary(global);
 	    			firePreExecAll(global);
@@ -194,7 +194,7 @@ public class Engine {
 	        }.start();
 	        notifyAllThread();
 	        waitForWaitingFlagIs(false);
-	        return state;
+	        return state.make();
 		} else {
 			throw new RuntimeException("No entry point in " + nodes);
 		}
@@ -207,7 +207,7 @@ public class Engine {
 			notifyAllThread();
 			waitForWaitingFlagIs(false);
 		}
-		return state;
+		return state.make();
 	}
 
 	public Object execute(UniClassDec dec) {
@@ -236,10 +236,9 @@ public class Engine {
 		return null;
 	}
 
-	private Object execFunc(UniMethodDec fdec, Scope global, List<UniExpr> arguments) {
-		Scope funcScope = Scope.createLocal(global);
+	private Object execFunc(UniMethodDec fdec, Scope scope, List<UniExpr> arguments) {
+		Scope funcScope = Scope.createLocal(scope);
 		funcScope.name = fdec.methodName;
-		state.addStack(fdec.methodName);
 		List<UniArg> parameters = fdec.args;
 		if(parameters!=null && arguments!=null)
 		{
@@ -259,8 +258,8 @@ public class Engine {
 			return e.value;
 		}
 		finally{
-			if(1<state.getStacks().size())
-				state.popStack();
+			if(!funcScope.name.equals("main"))
+				scope.removeChild(funcScope);
 		}
 	}
 
@@ -451,15 +450,6 @@ public class Engine {
 		if(decVar.value!=null)
 			value = execExpr(decVar.value, scope);
 		scope.setTop(decVar.name,value,decVar.type);
-//		if(value instanceof List<?>){
-//			scope.setTop(decVar.name,value,decVar.type);
-//			state.addVariable(scope.name, decVar, varArray,scope.depth);
-//		}
-//		else
-//		{
-//			scope.setTop(decVar.name, value);
-//			state.addVariable(scope.name, decVar, value, scope.depth);
-//		}
 		return value;
 	}
 
@@ -515,7 +505,6 @@ public class Engine {
 		Object lastValue = null;
 		blockScope.name = scope.name;
 		for (UniExpr expr : block.body) {
-			state.setCurrentExpr(expr);
 			if(isStepExecutionRunning.get())
 			{
 				isExecutionThreadWaiting.set(true);
@@ -524,7 +513,7 @@ public class Engine {
 			}
 			lastValue = execExpr(expr, blockScope);
 		}
-		state.removeVariables(scope.name, scope.depth);
+		scope.removeChild(blockScope);
 		return lastValue;
 	}
 
@@ -781,14 +770,8 @@ public class Engine {
 
 	protected Object execAssign(int address, Object value, Scope scope) {
 		scope.set(address, value);
-		//String stackName = scope.name;
-		//state.updateVariable(stackName, left.name, value);
 		return value;
 	}
-//
-//	protected Object execSubscriptOp(UniBinOp ubo, UniExpr index, Scope scope){
-//		return execExpr(getLeftReference(ubo,scope),scope);
-//	}
 
 	public static int toInt(Object obj) {
 		if (obj instanceof Integer) {

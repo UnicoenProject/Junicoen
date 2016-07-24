@@ -33,9 +33,11 @@ public class Scope {
 
 	public String name;
 	public int depth;
+	public int address;
 	public final Type type;
 	public final Scope parent;
-	public int address;
+	public final Scope global;
+	public List<Scope> children = new ArrayList<Scope>();
 	public final HashMap<String, Integer> variableAddress = new LinkedHashMap<>();
 	public final HashMap<String, String> variableTypes = new LinkedHashMap<>();
 	public final HashMap<Integer, Object> objectOnMemory = new LinkedHashMap<>();
@@ -55,11 +57,14 @@ public class Scope {
 		if(parent==null){
 			this.depth = 0;
 			this.name = "GLOBAL";
+			this.global = this;
 			address = 0;
 		}
 		else{
+			parent.children.add(this);
 			this.depth = parent.depth + 1;
 			this.name = parent.name;
+			this.global = parent.global;
 			address = parent.address;
 		}
 	}
@@ -250,5 +255,9 @@ public class Scope {
 	public static Scope createLocal(Scope parent) {
 		assert parent != null;
 		return new Scope(Scope.Type.LOCAL, parent);
+	}
+
+	public boolean removeChild(Scope scope){
+		return children.remove(scope);
 	}
 }
