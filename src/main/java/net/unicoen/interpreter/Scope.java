@@ -260,4 +260,24 @@ public class Scope {
 	public boolean removeChild(Scope scope){
 		return children.remove(scope);
 	}
+
+	private boolean hasName(String funcName){
+		if (this.name.equals(funcName)){
+			return true;
+		}
+		else if (parent != null) {
+			return parent.hasName(funcName);
+		}
+		return false;
+	}
+	public String getNextName(String funcName){
+		if(!hasName(funcName))
+			return funcName;
+		for(int i=2;	;++i){
+			String indexName = funcName + "." + i;
+			if(!hasName(indexName)){
+				return indexName;
+			}
+		}
+	}
 }

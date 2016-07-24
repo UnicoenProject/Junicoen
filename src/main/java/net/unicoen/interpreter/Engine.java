@@ -238,7 +238,8 @@ public class Engine {
 
 	private Object execFunc(UniMethodDec fdec, Scope scope, List<UniExpr> arguments) {
 		Scope funcScope = Scope.createLocal(scope);
-		funcScope.name = fdec.methodName;
+		funcScope.name = funcScope.getNextName(fdec.methodName);
+
 		List<UniArg> parameters = fdec.args;
 		if(parameters!=null && arguments!=null)
 		{

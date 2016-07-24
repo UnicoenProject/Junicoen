@@ -12,7 +12,7 @@ import net.unicoen.mapper.CPP14Mapper;
 import net.unicoen.node.UniNode;
 
 public class CppEngineTest {
-	@Test //@Ignore
+	@Test @Ignore
 	public void test1() {
 		CppEngine engine = new CppEngine();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -141,37 +141,38 @@ public class CppEngineTest {
 		}
 	}
 
-	@Test @Ignore
+	@Test //@Ignore
 	public void test4(){
 		CppEngine engine = new CppEngine();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		engine.out = new PrintStream(baos);
 
 		String text =
-				"struct Str"+
-				"{"+
-					"int i;"+
-					"double d;"+
-				"};"+
-//				"int fibonacci(int n) {"+
-//					"if(n<2)"+
-//						"return n;"+
-//					"else "+
-//						"return fibonacci(n-1) + fibonacci(n-2);"+
-//				"}"+
+//				"struct Str"+
+//				"{"+
+//					"int i;"+
+//					"double d;"+
+//				"};"+
+				"int fibonacci(int n) {"+
+					"if(n<2)"+
+						"return n;"+
+					"else "+
+						"return fibonacci(n-1) + fibonacci(n-2);"+
+				"}"+
 				"int main()"+
 				"{"
 					//"int *buf;"+
 					//"buf = (int *)malloc( 100 );"+
 					//"buf[2] = 2;"+
-					//"int a = fibonacci(10);"
-					+ "Str str1 = {123, 2.3};"
-					+ "str1.i = str1.d;"
-					+ "Str str2 = str1;"
-					+ "str2.i = 321;"
-					+ "Str str3;"
-					+ "str3 = str2;"
-					+ "return str3;"
+					+"int a = fibonacci(10);"
+					+ "return a;"
+//					+ "Str str1 = {123, 2.3};"
+//					+ "str1.i = str1.d;"
+//					+ "Str str2 = str1;"
+//					+ "str2.i = 321;"
+//					+ "Str str3;"
+//					+ "str3 = str2;"
+//					+ "return str3;"
 				+"}";
 		CPP14Mapper cppMapper = new CPP14Mapper(true);
 		Object node = cppMapper.parse(text);

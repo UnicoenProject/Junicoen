@@ -56,4 +56,9 @@ public class Stack {
 		}
 		return sum;
 	}
+
+	@Override
+	public String toString() {
+		return "Stack [name=" + name + ", variables=" + variables + ", address=" + address + "]";
+	}
 }
