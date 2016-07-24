@@ -12,7 +12,7 @@ import net.unicoen.mapper.CPP14Mapper;
 import net.unicoen.node.UniNode;
 
 public class CppEngineTest {
-	@Test @Ignore
+	@Test //@Ignore
 	public void test1() {
 		CppEngine engine = new CppEngine();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -22,12 +22,13 @@ public class CppEngineTest {
 				"int main()"+
 				"{"+
 					"char ca = 'a';"+
-					"int a=1,b=2;"+
-					"int y=a, *pa = &b;"+
+					"int a=1;"
+					+ "int b=2;"+
+					"int *pa = &b;"+
 					"*pa = *pa;"+
 					"a = b;"+
 					"int arr[5] = {1,2,3};"+
-					"int a = arr[2];"+
+					"a = 2[arr];"+
 					"a=arr[0];"+
 					"arr[4]=6;"+
 					"a = 5;"+
@@ -104,7 +105,8 @@ public class CppEngineTest {
 		String text =
 				"int main()"+
 				"{"+
-					"double x = 1.0, e = 0.0000000005;"+
+					"double x = 1.0;"
+					+ "double e = 0.0000000005;"+
 					"int i;"+
 					"for(i=0;((x*x-2)<-e) || (e<(x*x-2));i+=1)"+
 					"{"+
@@ -139,36 +141,38 @@ public class CppEngineTest {
 		}
 	}
 
-	@Test
+	@Test @Ignore
 	public void test4(){
 		CppEngine engine = new CppEngine();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		engine.out = new PrintStream(baos);
 
 		String text =
-				//"struct Str"+
-				//"{"+
-				//	"int a;"+
-				//	"double b;"+
-				//"};"+
-				"int fibonacci(int n) {"+
-					"if(n<2)"+
-						"return n;"+
-					"else "+
-						"return fibonacci(n-1) + fibonacci(n-2);"+
-				"}"+
-				"int main()"+
+				"struct Str"+
 				"{"+
-					"int *buf;"+
-					"buf = (int *)malloc( 100 );"+
-					"buf[2] = 2;"+
-					"int a = fibonacci(10);"+
-					"return a;"+
-					"int b = 3;"+
-					"int c = b;"+
-					"b = 5;"+
-					"int* p = &a;"+
-				"}";
+					"int i;"+
+					"double d;"+
+				"};"+
+//				"int fibonacci(int n) {"+
+//					"if(n<2)"+
+//						"return n;"+
+//					"else "+
+//						"return fibonacci(n-1) + fibonacci(n-2);"+
+//				"}"+
+				"int main()"+
+				"{"
+					//"int *buf;"+
+					//"buf = (int *)malloc( 100 );"+
+					//"buf[2] = 2;"+
+					//"int a = fibonacci(10);"
+					+ "Str str1 = {123, 2.3};"
+					+ "str1.i = str1.d;"
+					+ "Str str2 = str1;"
+					+ "str2.i = 321;"
+					+ "Str str3;"
+					+ "str3 = str2;"
+					+ "return str3;"
+				+"}";
 		CPP14Mapper cppMapper = new CPP14Mapper(true);
 		Object node = cppMapper.parse(text);
 		ExecState  state;

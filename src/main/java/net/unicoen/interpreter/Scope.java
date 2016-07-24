@@ -2,7 +2,9 @@ package net.unicoen.interpreter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import net.unicoen.node.UniExpr;
@@ -14,7 +16,7 @@ public class Scope {
 
 	@FunctionalInterface
 	public interface VariableNotFoundListener {
-		public void variableNotFound(String variableName,
+		public void variableNotFound(String key,
 				Consumer<Object> setDefault);
 	}
 
@@ -33,9 +35,13 @@ public class Scope {
 	public int depth;
 	public final Type type;
 	public final Scope parent;
-	public final HashMap<String, Object> variables = new HashMap<>();
-	public final HashMap<String, String> variableTypes = new HashMap<>();
+	public int address;
+	public final HashMap<String, Integer> variableAddress = new LinkedHashMap<>();
+	public final HashMap<String, String> variableTypes = new LinkedHashMap<>();
+	public final HashMap<Integer, Object> objectOnMemory = new LinkedHashMap<>();
+	public final HashMap<Integer, String> typeOnMemory = new LinkedHashMap<>();
 	private List<VariableNotFoundListener> listeners = null;
+	private final int tempAddressForListener = -1;
 
 	private static void assertNotUnicoen(Object value) {
 		if (value instanceof UniExpr) {
@@ -49,10 +55,12 @@ public class Scope {
 		if(parent==null){
 			this.depth = 0;
 			this.name = "GLOBAL";
+			address = 0;
 		}
 		else{
 			this.depth = parent.depth + 1;
 			this.name = parent.name;
+			address = parent.address;
 		}
 	}
 
@@ -63,47 +71,39 @@ public class Scope {
 		listeners.add(listener);
 	}
 
-	public Object get(String key) {
-		return getImple(key,name);
+	public Boolean hasValue(String key) {
+		try {
+			getValue(getAddress(key));
+			return true;
+		} catch (UniRuntimeError e) {
+			return false;
+		}
 	}
 
-	private Object getImple(String key, String stackName) {
-		if (variables.containsKey(key)) {
-			Object var = variables.get(key);
-			if(stackName.equals(name) || this.type==Type.GLOBAL)
-				return var;
+	public Object get(String key) {
+		return getValue(getAddress(key));
+	}
 
-			//同じstackNameでなければポインタ渡しの場合のみparentからget可能
-			if(var instanceof String){
-				if(((String)var).startsWith("&")){
-					return var;
-				}
+	public Object getValue(int key) {
+		return getValueImple(key,name);
+	}
+
+	private Object getValueImple(int key, String stackName) {
+		if (objectOnMemory.containsKey(key)) {
+			Object var = objectOnMemory.get(key);
+			if(stackName.equals(name) || this.type==Type.GLOBAL)
+			{
+				if(key == tempAddressForListener)
+					objectOnMemory.remove(tempAddressForListener);
+				return var;
 			}
 		}
 
 		if (parent != null) {
-			return parent.get(key);
+			return parent.getValue(key);
 		} else {
-			if (listeners != null) {
-				ValueSetter setter = new ValueSetter();
-				for (VariableNotFoundListener listener : listeners) {
-					listener.variableNotFound(key, setter);
-					if (setter.hasValue) {
-						return setter.value;
-					}
-				}
-			}
 			throw new UniRuntimeError(
 					String.format("variable '%s' is not defined.", key));
-		}
-	}
-
-	public Boolean hasValue(String key) {
-		try {
-			get(key);
-			return true;
-		} catch (UniRuntimeError e) {
-			return false;
 		}
 	}
 
@@ -114,33 +114,127 @@ public class Scope {
 		else if (parent != null) {
 			return parent.getType(key);
 		}
+
 		throw new UniRuntimeError(
-				String.format("type '%s' is not defined.", key));
+				String.format("variable '%s' is not defined.", key));
 	}
-	
+
+	public int getAddress(String key){
+		if (variableAddress.containsKey(key)){
+			return variableAddress.get(key);
+		}
+		else if (parent != null) {
+			return parent.getAddress(key);
+		}
+		else if (listeners != null) {
+			ValueSetter setter = new ValueSetter();
+			for (VariableNotFoundListener listener : listeners) {
+				listener.variableNotFound(key, setter);
+				if (setter.hasValue) {
+					objectOnMemory.put(tempAddressForListener,setter.value);
+					return -1;
+				}
+			}
+		}
+		throw new UniRuntimeError(
+				String.format("variable '%s' is not defined.", key));
+	}
+
+	public String getType(int key){
+		if (typeOnMemory.containsKey(key)){
+			return typeOnMemory.get(key);
+		}
+		else if (parent != null) {
+			return parent.getType(key);
+		}
+		throw new UniRuntimeError(
+				String.format("variable '%s' is not defined.", key));
+	}
+
 	/** 現在のスコープに新しい変数を定義し、代入します */
-	public void setTop(String key, Object value) {
-		assertNotUnicoen(value);
-		variables.put(key, value);
-	}
-	
 	public void setTop(String key, Object value, String type) {
-		setTop(key,value);
-		variableTypes.put(key, type);
-	}
-		
-	/** 定義済みの変数に対し、代入します */
-	public void set(String key, Object value) {
 		assertNotUnicoen(value);
-		if (variables.containsKey(key)) {
-			variables.put(key, value);
+		if(hasValue(type)){//構造体
+			setPrimitive(key, address+1, type);
+			Map<String, Integer> offsets = (Map<String, Integer>) get(type);
+			List<Object> arr=null;
+			if(value instanceof List){//初期化リストあり
+				arr = (List<Object>) value;
+				for(int i=arr.size(); i < offsets.size(); ++ i){
+					arr.add(0);
+				}
+			}
+			else if(value instanceof Integer){//代入
+				arr = new ArrayList<Object>();
+				for(Map.Entry<String, Integer> offset : offsets.entrySet()) {
+				    int address = (int)value;
+					address += offset.getValue();
+					Object v = getValue(address);
+					arr.add(v);
+				}
+			}
+			else{//宣言のみ
+				arr = new ArrayList<Object>();
+				for(int i=0; i < offsets.size(); ++ i){
+					arr.add(null);
+				}
+			}
+			setArray(arr);
+		}
+		else if(value instanceof List){//配列の場合
+			List<Object> arr = (List<Object>) value;
+			setPrimitive(key, address+1, type+"["+arr.size()+"]");
+			setArray(arr);
+		}
+		else{//組み込み型の場合
+			setPrimitive(key,value,type);
+		}
+	}
+
+	private void setArray(List<Object> value){
+		assertNotUnicoen(value);
+		for(Object var : value){
+			if(var instanceof List){
+				setArray((List<Object>)var);
+			}
+			else{
+				objectOnMemory.put(address++, var);
+			}
+		}
+	}
+
+	private void setPrimitive(String key, Object value, String type){
+		assertNotUnicoen(value);
+		variableTypes.put(key, type);
+		variableAddress.put(key, address);
+		objectOnMemory.put(address, value);
+		typeOnMemory.put(address, type);
+		++address;
+	}
+
+	/** 指定したメモリアドレスに値を書き込みます */
+	public void set(int key, Object value) {
+		assertNotUnicoen(value);
+		if (objectOnMemory.containsKey(key)) {
+			try{
+				String type = getType(key);
+				Map<String, Integer> offsets = (Map<String, Integer>) get(type);
+				for(Map.Entry<String, Integer> offset : offsets.entrySet()) {
+				    int dst = (int)getValue(key) + offset.getValue();
+				    int src = (int)value + offset.getValue();
+				    Object v = this.getValue(src);
+				    objectOnMemory.put(dst, v);
+				}
+			}catch(RuntimeException e){
+				objectOnMemory.put(key, value);
+			}
 			return;
 		}
 		if (parent != null) {
 			parent.set(key, value);
 			return;
 		}
-		throw new RuntimeException("variable " + key + "is not declared.");
+		throw new RuntimeException("address " + key + "is not declared.");
 	}
 
 	public static Scope createGlobal() {
