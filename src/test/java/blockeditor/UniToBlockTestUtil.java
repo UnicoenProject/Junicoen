@@ -80,7 +80,7 @@ public class UniToBlockTestUtil {
 	
 	
 	public static void parseTestToBG2(UniProgram fileDec) throws IOException, ParserConfigurationException, TransformerException{
-		UniClassDec dec = fileDec.classes.get(0);
+		UniClassDec dec = (UniClassDec)fileDec.nodes.get(0);
 		BlockGenerator gen = UniModelMaker.createBlockGenerator2(dec.className);
 		gen.parse(fileDec);
 	}

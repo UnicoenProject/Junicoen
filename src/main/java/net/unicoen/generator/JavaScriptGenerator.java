@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import net.unicoen.node.UniArg;
 import net.unicoen.node.UniClassDec;
+import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniMemberDec;
 import net.unicoen.node.UniMethodDec;
 import net.unicoen.node.UniProgram;
@@ -63,7 +64,13 @@ public class JavaScriptGenerator extends JavaGenerator {
 	public static String generate(UniProgram dec) {
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream();
 			PrintStream printer = new PrintStream(out)) {
-			generate(dec.classes.get(0), printer);
+			for(UniExpr node : dec.nodes){
+				if(node instanceof UniClassDec){
+					generate((UniClassDec)node, printer);
+					break;
+				}
+			}
+			
 			return out.toString();
 		} catch (IOException e) {
 			System.out.println(e.getMessage());

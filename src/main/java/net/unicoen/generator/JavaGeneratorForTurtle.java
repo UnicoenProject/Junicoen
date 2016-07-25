@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 import net.unicoen.node.UniClassDec;
+import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniImport;
 import net.unicoen.node.UniMemberDec;
 import net.unicoen.node.UniProgram;
@@ -54,9 +55,10 @@ public class JavaGeneratorForTurtle extends JavaGenerator {
 		g.newline();
 		g.newline();
 		
-		for(UniClassDec classDec : fileDec.classes){
-			g.traverseClassDec(classDec);
+		for(UniExpr node : fileDec.nodes){
+			if(node instanceof UniClassDec){
+				g.traverseClassDec((UniClassDec)node);
+			}
 		}
-		
 	}
 }

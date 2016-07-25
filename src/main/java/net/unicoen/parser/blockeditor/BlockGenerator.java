@@ -45,6 +45,7 @@ import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniFieldAccess;
 import net.unicoen.node.UniFieldDec;
 import net.unicoen.node.UniFor;
+import net.unicoen.node.UniFunctionDec;
 import net.unicoen.node.UniIdent;
 import net.unicoen.node.UniIf;
 import net.unicoen.node.UniImport;
@@ -1121,12 +1122,14 @@ public class BlockGenerator extends CodeGenerator {
 				}				
 			}
 			
-			if(node.classes != null){
-				for (UniClassDec dec : node.classes) {
-					traverseClassDec(dec);
-					BlockClassModel model = (BlockClassModel) createdBlock.pop();
-					PageModel page = new PageModel(dec, model.createBlockNodes(document), document);
-					pages.add(page);
+			if(node.nodes != null){
+				for (UniExpr dec : node.nodes) {
+					if(dec instanceof UniClassDec){
+						traverseClassDec((UniClassDec)dec);
+						BlockClassModel model = (BlockClassModel) createdBlock.pop();
+						PageModel page = new PageModel((UniClassDec)dec, model.createBlockNodes(document), document);
+						pages.add(page);
+					}
 				}				
 			}
 
@@ -1196,6 +1199,12 @@ public class BlockGenerator extends CodeGenerator {
 
 	@Override
 	public void traverseCharacterLiteral(UniCharacterLiteral node) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void traverseFunctionDec(UniFunctionDec node) {
 		// TODO Auto-generated method stub
 		
 	}

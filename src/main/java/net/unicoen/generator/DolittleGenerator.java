@@ -28,6 +28,7 @@ import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniFieldAccess;
 import net.unicoen.node.UniFieldDec;
 import net.unicoen.node.UniFor;
+import net.unicoen.node.UniFunctionDec;
 import net.unicoen.node.UniIdent;
 import net.unicoen.node.UniIf;
 import net.unicoen.node.UniImport;
@@ -407,6 +408,12 @@ public class DolittleGenerator extends CodeGenerator {
 
 	@Override
 	public void traverseCharacterLiteral(UniCharacterLiteral node) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void traverseFunctionDec(UniFunctionDec node) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -32,7 +32,7 @@ public class CommentTest {
 			
 		start.block.body.add(block);
 		classDec.members.add(start);
-		programModel.classes.add(classDec);
+		programModel.nodes.add(classDec);
 		
 //		UniProgram model = BlockMapper.generate(BlockGenerator.generateBlockSource(programModel));
 		

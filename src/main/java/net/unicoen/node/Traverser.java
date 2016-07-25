@@ -30,13 +30,14 @@ public abstract class Traverser {
 	public abstract void traverseDoWhile(UniDoWhile node);
 	public abstract void traverseSwitch(UniSwitch node);
 	public abstract void traverseSwitchUnit(UniSwitchUnit node);
+	public abstract void traverseFunctionDec(UniFunctionDec node);
 	public abstract void traverseVariableDec(UniVariableDec node);
+	public abstract void traverseClassDec(UniClassDec node);
 	public abstract void traverseEmptyStatement(UniEmptyStatement node);
 	public abstract void traverseFieldDec(UniFieldDec node);
 	public abstract void traverseMethodDec(UniMethodDec node);
 	public abstract void traverseArg(UniArg node);
 	public abstract void traverseEnumConstant(UniEnumConstant node);
-	public abstract void traverseClassDec(UniClassDec node);
 	public abstract void traverseInterfaceDec(UniInterfaceDec node);
 	public abstract void traverseProgram(UniProgram node);
 	public abstract void traverseImport(UniImport node);
@@ -155,8 +156,16 @@ public abstract class Traverser {
 			traverseSwitchUnit((UniSwitchUnit)node);
 			return;
 		}
+		if (node instanceof UniFunctionDec) {
+			traverseFunctionDec((UniFunctionDec)node);
+			return;
+		}
 		if (node instanceof UniVariableDec) {
 			traverseVariableDec((UniVariableDec)node);
+			return;
+		}
+		if (node instanceof UniClassDec) {
+			traverseClassDec((UniClassDec)node);
 			return;
 		}
 		if (node instanceof UniEmptyStatement) {
@@ -181,10 +190,6 @@ public abstract class Traverser {
 		}
 		if (node instanceof UniEnumConstant) {
 			traverseEnumConstant((UniEnumConstant)node);
-			return;
-		}
-		if (node instanceof UniClassDec) {
-			traverseClassDec((UniClassDec)node);
 			return;
 		}
 		throw new RuntimeException("Unknown node: " + node);

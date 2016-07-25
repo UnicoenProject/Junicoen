@@ -25,6 +25,7 @@ import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniFieldAccess;
 import net.unicoen.node.UniFieldDec;
 import net.unicoen.node.UniFor;
+import net.unicoen.node.UniFunctionDec;
 import net.unicoen.node.UniIdent;
 import net.unicoen.node.UniIf;
 import net.unicoen.node.UniImport;
@@ -144,10 +145,12 @@ public class JavaToSwiftTreeConverter extends Traverser {
 				g.traverseImport(importStatement);
 			}			
 		}
-		if(program.classes!=null){
-			for (UniClassDec classDec : program.classes) {
-				className = classDec.className;
-				g.traverseClassDec(classDec);
+		if(program.nodes!=null){
+			for(UniExpr _node : program.nodes){
+				if(node instanceof UniClassDec){
+					className = ((UniClassDec)_node).className;
+					g.traverseClassDec((UniClassDec)_node);
+				}
 			}
 		}
 		if(program.interfaces!=null){
@@ -156,10 +159,13 @@ public class JavaToSwiftTreeConverter extends Traverser {
 			}
 		}
 		if(enumFlag&&(enumType!=null)){//it is enum with value
-			if(program.classes!=null){
-				for (UniClassDec classDec : program.classes) {
-					classDec.className = classDec.className+" : "+enumType;
+			if(program.nodes!=null){
+				for(UniExpr _node : program.nodes){
+					if(node instanceof UniClassDec){
+						((UniClassDec)_node).className = ((UniClassDec)_node).className+" : "+enumType;
+					}
 				}
+				
 			}
 		}
 		return node;
@@ -565,6 +571,12 @@ public class JavaToSwiftTreeConverter extends Traverser {
 
 	@Override
 	public void traverseCharacterLiteral(UniCharacterLiteral node) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void traverseFunctionDec(UniFunctionDec node) {
 		// TODO Auto-generated method stub
 		
 	}

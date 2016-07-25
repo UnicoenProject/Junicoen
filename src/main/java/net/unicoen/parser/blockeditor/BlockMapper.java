@@ -140,7 +140,7 @@ public class BlockMapper {
 					}
 				}
 			} else if (node.getNodeName().equals(PageModel.NODE_NAME)) {
-				fileModel.classes.add(parse(node));
+				fileModel.nodes.add(parse(node));
 			}
 		}
 

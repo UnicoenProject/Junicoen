@@ -90,9 +90,9 @@ class JavaScriptMapper extends ECMAScriptBaseVisitor<Object> {
 			var main = new UniMethodDec("main",Lists.newArrayList("public", "static"), "void", Lists.newArrayList(new UniArg("String[]", "args")),new UniBlock);
 			var startTurtle = new UniMethodCall(new UniIdent("Turtle"), "startTurtle", Lists.newArrayList(new UniNew(className, Lists.newArrayList), new UniIdent("args")));
 			main.block = new UniBlock(Lists.newArrayList(startTurtle), null);
-			
-			program.classes.get(0).className = className;
-			program.classes.get(0).members.add(0,main);
+			var node = program.nodes.get(0) as UniClassDec
+			node.className = className;
+			node.members.add(0,main);
 			
 			program	
 		} finally {
@@ -143,7 +143,7 @@ class JavaScriptMapper extends ECMAScriptBaseVisitor<Object> {
 			}
 		}
 		
-		programModel.classes = Lists.newArrayList(dec)
+		programModel.nodes = Lists.newArrayList(dec)
 		
 		programModel
 	}

@@ -3,7 +3,7 @@ package net.unicoen.node;
 import java.util.List;
 import net.unicoen.node_helper.*;
 
-public class UniClassDec extends UniMemberDec {
+public class UniClassDec extends UniExpr {
 	public String className;
 	public List<String> modifiers;
 	public List<UniMemberDec> members;
@@ -54,6 +54,11 @@ public class UniClassDec extends UniMemberDec {
 			&& (this.innerClasses == null ? that.innerClasses == null : this.innerClasses.equals(that.innerClasses))
 			&& (this.comments == null ? that.comments == null : this.comments.equals(that.comments))
 			&& (this.codeRange == null ? that.codeRange == null : this.codeRange.equals(that.codeRange));
+	}
+
+	@Override
+	public boolean isStatement() {
+		return false;
 	}
 
 	public void merge(UniClassDec that) {

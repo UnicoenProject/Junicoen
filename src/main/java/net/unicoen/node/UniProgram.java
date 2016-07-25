@@ -4,7 +4,7 @@ import java.util.List;
 import net.unicoen.node_helper.*;
 
 public class UniProgram extends UniNode {
-	public List<UniClassDec> classes;
+	public List<UniExpr> nodes;
 	public List<UniImport> imports;
 	public UniNamespace namespace;
 	public List<UniInterfaceDec> interfaces;
@@ -12,8 +12,8 @@ public class UniProgram extends UniNode {
 	public UniProgram() {
 	}
 
-	public UniProgram(List<UniClassDec> classes, List<UniImport> imports, UniNamespace namespace, List<UniInterfaceDec> interfaces) {
-		this.classes = classes;
+	public UniProgram(List<UniExpr> nodes, List<UniImport> imports, UniNamespace namespace, List<UniInterfaceDec> interfaces) {
+		this.nodes = nodes;
 		this.imports = imports;
 		this.namespace = namespace;
 		this.interfaces = interfaces;
@@ -27,7 +27,7 @@ public class UniProgram extends UniNode {
 	@Override
 	public int hashCode() {
 		int result = 17;
-		result = result * 31 + (classes == null ? 0 : classes.hashCode());
+		result = result * 31 + (nodes == null ? 0 : nodes.hashCode());
 		result = result * 31 + (imports == null ? 0 : imports.hashCode());
 		result = result * 31 + (namespace == null ? 0 : namespace.hashCode());
 		result = result * 31 + (interfaces == null ? 0 : interfaces.hashCode());
@@ -40,7 +40,7 @@ public class UniProgram extends UniNode {
 	public boolean equals(Object obj) {
 		if (obj == null || !(obj instanceof UniProgram)) return false;
 		UniProgram that = (UniProgram)obj;
-		return (this.classes == null ? that.classes == null : this.classes.equals(that.classes))
+		return (this.nodes == null ? that.nodes == null : this.nodes.equals(that.nodes))
 			&& (this.imports == null ? that.imports == null : this.imports.equals(that.imports))
 			&& (this.namespace == null ? that.namespace == null : this.namespace.equals(that.namespace))
 			&& (this.interfaces == null ? that.interfaces == null : this.interfaces.equals(that.interfaces))
@@ -49,11 +49,11 @@ public class UniProgram extends UniNode {
 	}
 
 	public void merge(UniProgram that) {
-		if (that.classes != null) {
-			if (this.classes == null) {
-				this.classes = that.classes;
+		if (that.nodes != null) {
+			if (this.nodes == null) {
+				this.nodes = that.nodes;
 			} else {
-				this.classes.addAll(that.classes);
+				this.nodes.addAll(that.nodes);
 			}
 		}
 		if (that.imports != null) {

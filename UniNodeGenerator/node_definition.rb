@@ -127,13 +127,27 @@ Dsl.define_node do |x|
                 d.mem "cond", "Expr"
                 d.mem "statement", "Expr", list: true
             end
+            x.node "FunctionDec" do |d|
+                d.mem "functionName", String
+                d.mem "modifiers", String, list: true
+                d.mem "returnType", String
+                d.mem "args", "Arg", list: true
+                d.mem "block", "Block"
+            end
             x.node "VariableDec", doc: '変数宣言＋代入' do |d|
                 d.mem "modifiers", String, list: true
                 d.mem "type", String
                 d.mem "name", String
                 d.mem "value", "Expr"
             end
-            
+            x.node "ClassDec" do |d|
+                d.mem "className", String
+                d.mem "modifiers", String, list: true
+                d.mem "members", "MemberDec", list: true
+                d.mem "superClass", String, list: true
+                d.mem "interfaces", String, list: true
+                d.mem "innerClasses", "ClassDec", list: true
+            end
             x.node "EmptyStatement"
         end
         
@@ -159,16 +173,7 @@ Dsl.define_node do |x|
                 d.mem "name", String
                 d.mem "args", "Expr", list: true
             end
-            x.node "ClassDec" do |d|
-                d.mem "className", String
-                d.mem "modifiers", String, list: true
-                d.mem "members", "MemberDec", list: true
-                d.mem "superClass", String, list: true
-                d.mem "interfaces", String, list: true
-                d.mem "innerClasses", "ClassDec", list: true
-            end
         end
-        
         x.node "InterfaceDec" do |d|
             d.mem "interfaceName", String
             d.mem "modifiers", String, list: true
@@ -177,7 +182,7 @@ Dsl.define_node do |x|
         end
         
         x.node "Program" do |d|
-            d.mem "classes", "ClassDec", list: true
+            d.mem "nodes", "Expr", list: true
             d.mem "imports", "Import", list: true
             d.mem "namespace", "Namespace"
             d.mem "interfaces", "InterfaceDec", list: true

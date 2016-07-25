@@ -56,7 +56,7 @@ public class SwiftGeneratorTest {
 			}"
 		)
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 
 		val modified = JavaToSwiftTreeConverter.convert(tree)
@@ -82,7 +82,7 @@ public class SwiftGeneratorTest {
 			}"
 			)
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 		val modified = JavaToSwiftTreeConverter.convert(tree)
 		val target = SwiftCodeGenerator.generate(modified)
@@ -105,7 +105,7 @@ public class SwiftGeneratorTest {
 	     }
 		 }")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 
 		val modified = JavaToSwiftTreeConverter.convert(tree)
@@ -123,7 +123,7 @@ public class SwiftGeneratorTest {
 				}
 		}")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 
 		val modified = JavaToSwiftTreeConverter.convert(tree)
@@ -144,7 +144,7 @@ public class SwiftGeneratorTest {
 		  	}
 		 }")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 
 		val modified = JavaToSwiftTreeConverter.convert(tree)
@@ -168,7 +168,7 @@ public class SwiftGeneratorTest {
 			}
 		}")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 
 		val modified = JavaToSwiftTreeConverter.convert(tree)
@@ -204,7 +204,7 @@ public class SwiftGeneratorTest {
    			}
 		}")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 
 		val modified = JavaToSwiftTreeConverter.convert(tree)
@@ -232,7 +232,7 @@ public class SwiftGeneratorTest {
    		}
 		}")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 
 		val modified = JavaToSwiftTreeConverter.convert(tree)
@@ -252,7 +252,7 @@ public class SwiftGeneratorTest {
 //				char a = 'a';
 		+ "}")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 
 		val modified = JavaToSwiftTreeConverter.convert(tree)
@@ -276,7 +276,7 @@ public class SwiftGeneratorTest {
 		}
 		")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 
 		val modified = JavaToSwiftTreeConverter.convert(tree)
@@ -308,7 +308,7 @@ public class SwiftGeneratorTest {
 			}
 		")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 
 		val modified = JavaToSwiftTreeConverter.convert(tree)
@@ -329,7 +329,7 @@ public class SwiftGeneratorTest {
 			}
 		")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 
 		val modified = JavaToSwiftTreeConverter.convert(tree)
@@ -350,7 +350,7 @@ public class SwiftGeneratorTest {
 			}
 		")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 
 		val modified = JavaToSwiftTreeConverter.convert(tree)
@@ -374,7 +374,7 @@ public class SwiftGeneratorTest {
 		}
 		")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 
 		val modified = JavaToSwiftTreeConverter.convert(tree)
@@ -402,7 +402,7 @@ public class SwiftGeneratorTest {
 		}
 		")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 
 		val modified = JavaToSwiftTreeConverter.convert(tree)
@@ -425,7 +425,7 @@ public class SwiftGeneratorTest {
 		}
 		")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 
 		val modified = JavaToSwiftTreeConverter.convert(tree)
@@ -446,7 +446,7 @@ public class SwiftGeneratorTest {
 		}
 		")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 
 		val modified = JavaToSwiftTreeConverter.convert(tree)
@@ -469,7 +469,7 @@ public class SwiftGeneratorTest {
 		}
 		")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 
 		val modified = JavaToSwiftTreeConverter.convert(tree)
@@ -494,7 +494,7 @@ public class SwiftGeneratorTest {
 			}
 		")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 
 		val modified = JavaToSwiftTreeConverter.convert(tree)
@@ -519,7 +519,7 @@ public class SwiftGeneratorTest {
 		}
 		")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 
 		val modified = JavaToSwiftTreeConverter.convert(tree)
@@ -541,7 +541,7 @@ public class SwiftGeneratorTest {
 		}
 		")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 
 		val modified = JavaToSwiftTreeConverter.convert(tree)
@@ -565,7 +565,7 @@ public class SwiftGeneratorTest {
 		}
 		")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 
 		val modified = JavaToSwiftTreeConverter.convert(tree)
@@ -593,7 +593,7 @@ public class SwiftGeneratorTest {
 		}
 		")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 		val modified = JavaToSwiftTreeConverter.convert(tree)
 		val target = SwiftCodeGenerator.generate(modified)
@@ -618,7 +618,7 @@ public class SwiftGeneratorTest {
 		}
 		")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 		val modified = JavaToSwiftTreeConverter.convert(tree)
 		val target = SwiftCodeGenerator.generate(modified)
@@ -655,7 +655,7 @@ public class SwiftGeneratorTest {
 		}
 		")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 		val modified = JavaToSwiftTreeConverter.convert(tree)
 		val target = SwiftCodeGenerator.generate(modified)
@@ -674,7 +674,7 @@ public class SwiftGeneratorTest {
    				}
 		}")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 		val modified = JavaToSwiftTreeConverter.convert(tree)
 		val target = SwiftCodeGenerator.generate(modified)
@@ -713,7 +713,7 @@ public class SwiftGeneratorTest {
    			}
 		}")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 		val modified = JavaToSwiftTreeConverter.convert(tree)
 		val target = SwiftCodeGenerator.generate(modified)
@@ -770,7 +770,7 @@ public class SwiftGeneratorTest {
 		}
 	")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 		val modified = JavaToSwiftTreeConverter.convert(tree)
 		val target = SwiftCodeGenerator.generate(modified)
@@ -799,7 +799,7 @@ public class SwiftGeneratorTest {
 			}
 		")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 		val modified = JavaToSwiftTreeConverter.convert(tree)
 		val target = SwiftCodeGenerator.generate(modified)
@@ -827,7 +827,7 @@ public class SwiftGeneratorTest {
 		}
 		")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 		val modified = JavaToSwiftTreeConverter.convert(tree)
 		val target = SwiftCodeGenerator.generate(modified)
@@ -859,7 +859,7 @@ public class SwiftGeneratorTest {
    			}
 		}")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 		val modified = JavaToSwiftTreeConverter.convert(tree)
 		val target = SwiftCodeGenerator.generate(modified)
@@ -899,7 +899,7 @@ public class SwiftGeneratorTest {
 			}
 		")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 		val modified = JavaToSwiftTreeConverter.convert(tree)
 		val target = SwiftCodeGenerator.generate(modified)
@@ -919,7 +919,7 @@ public class SwiftGeneratorTest {
 		}
 		")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 		val modified = JavaToSwiftTreeConverter.convert(tree)
 		val target = SwiftCodeGenerator.generate(modified)
@@ -943,7 +943,7 @@ public class SwiftGeneratorTest {
 		}
 		")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 		val modified = JavaToSwiftTreeConverter.convert(tree)
 		val target = SwiftCodeGenerator.generate(modified)
@@ -981,7 +981,7 @@ public class SwiftGeneratorTest {
 		}
 		")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 		val modified = JavaToSwiftTreeConverter.convert(tree)
 		val target = SwiftCodeGenerator.generate(modified)
@@ -1010,7 +1010,7 @@ public class SwiftGeneratorTest {
 		}
 		")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 		val modified = JavaToSwiftTreeConverter.convert(tree)
 		val target = SwiftCodeGenerator.generate(modified)
@@ -1039,7 +1039,7 @@ public class SwiftGeneratorTest {
 		}
 		")		
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 		val modified = JavaToSwiftTreeConverter.convert(tree)
 		val target = SwiftCodeGenerator.generate(modified)
@@ -1066,7 +1066,7 @@ public class SwiftGeneratorTest {
 		}
 		")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 		val modified = JavaToSwiftTreeConverter.convert(tree)
 		val target = SwiftCodeGenerator.generate(modified)
@@ -1095,7 +1095,7 @@ public class SwiftGeneratorTest {
 		}
 		")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 		val modified = JavaToSwiftTreeConverter.convert(tree)
 		val target = SwiftCodeGenerator.generate(modified)
@@ -1121,7 +1121,7 @@ public class SwiftGeneratorTest {
 		}
 		")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 		val modified = JavaToSwiftTreeConverter.convert(tree)
 		val target = SwiftCodeGenerator.generate(modified)
@@ -1145,7 +1145,7 @@ public class SwiftGeneratorTest {
 		}
 		")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 		val modified = JavaToSwiftTreeConverter.convert(tree)
 		val target = SwiftCodeGenerator.generate(modified)
@@ -1172,7 +1172,7 @@ public class SwiftGeneratorTest {
 		}
 		")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 		val modified = JavaToSwiftTreeConverter.convert(tree)
 		val target = SwiftCodeGenerator.generate(modified)
@@ -1203,7 +1203,7 @@ public class SwiftGeneratorTest {
 		}
 		")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 		val modified = JavaToSwiftTreeConverter.convert(tree)
 		val target = SwiftCodeGenerator.generate(modified)
@@ -1233,7 +1233,7 @@ public class SwiftGeneratorTest {
 		}
 		")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 		val modified = JavaToSwiftTreeConverter.convert(tree)
 		val target = SwiftCodeGenerator.generate(modified)
@@ -1264,7 +1264,7 @@ public class SwiftGeneratorTest {
 		}
 		")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 		val modified = JavaToSwiftTreeConverter.convert(tree)
 		val target = SwiftCodeGenerator.generate(modified)
@@ -1293,7 +1293,7 @@ public class SwiftGeneratorTest {
 		}
 		")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 		val modified = JavaToSwiftTreeConverter.convert(tree)
 		val target = SwiftCodeGenerator.generate(modified)
@@ -1376,7 +1376,7 @@ public class SwiftGeneratorTest {
 		}
 		")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 		val modified = JavaToSwiftTreeConverter.convert(tree)
 		val target = SwiftCodeGenerator.generate(modified)
@@ -1477,7 +1477,7 @@ public class SwiftGeneratorTest {
 		}
 		")
 		assertThat(tree, instanceOf(UniProgram))
-		val cl = (tree as UniProgram).classes.get(0)
+		val cl = (tree as UniProgram).nodes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
 		val modified = JavaToSwiftTreeConverter.convert(tree)
 		val target = SwiftCodeGenerator.generate(modified)

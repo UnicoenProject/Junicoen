@@ -90,10 +90,10 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		//compilationUnit
 		//	:	packageDeclaration? importDeclaration* typeDeclaration* EOF
 		//	;
-		var model = new UniProgram(new ArrayList<UniClassDec>(), new ArrayList<UniImport>(), new UniNamespace(""), new ArrayList<UniInterfaceDec>())
+		var model = new UniProgram(new ArrayList<UniExpr>(), new ArrayList<UniImport>(), new UniNamespace(""), new ArrayList<UniInterfaceDec>())
 		val nodes = createNodeMap(ctx)
 
-		model.classes.add(nodes.getOneNode(JavaParser.RULE_typeDeclaration))
+		model.nodes.add(nodes.getOneNode(JavaParser.RULE_typeDeclaration))
 
 		val imports = nodes.getOneNodeOrEmpty(JavaParser.RULE_importDeclaration).flattenForBuilding
 		if (!imports.empty) {

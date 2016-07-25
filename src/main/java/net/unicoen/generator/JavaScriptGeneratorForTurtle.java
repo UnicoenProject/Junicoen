@@ -3,6 +3,7 @@ package net.unicoen.generator;
 import java.io.PrintStream;
 
 import net.unicoen.node.UniClassDec;
+import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniMethodDec;
 import net.unicoen.node.UniProgram;
 
@@ -29,8 +30,10 @@ public class JavaScriptGeneratorForTurtle extends JavaScriptGenerator {
 	
 	public static void generate(UniProgram program, PrintStream out) {
 		JavaScriptGeneratorForTurtle g = new JavaScriptGeneratorForTurtle(out);
-		for(UniClassDec dec : program.classes){
-			g.traverseClassDec(dec);
+		for(UniExpr node : program.nodes){
+			if(node instanceof UniClassDec){
+				g.traverseClassDec((UniClassDec)node);
+			}
 		}
 	}
 }
