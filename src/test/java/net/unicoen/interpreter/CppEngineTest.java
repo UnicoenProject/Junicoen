@@ -1,89 +1,196 @@
 package net.unicoen.interpreter;
 
-import static net.unicoen.node_helper.Builder.bin;
-import static net.unicoen.node_helper.Builder.block;
-import static net.unicoen.node_helper.Builder.ident;
-import static net.unicoen.node_helper.Builder.list;
-import static net.unicoen.node_helper.Builder.lit;
-import static org.junit.Assert.assertEquals;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.function.IntUnaryOperator;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
-import net.unicoen.node.UniArg;
-import net.unicoen.node.UniBinOp;
-import net.unicoen.node.UniBlock;
-import net.unicoen.node.UniClassDec;
-import net.unicoen.node.UniDoubleLiteral;
-import net.unicoen.node.UniExpr;
-import net.unicoen.node.UniIdent;
-import net.unicoen.node.UniIf;
-import net.unicoen.node.UniIntLiteral;
-import net.unicoen.node.UniLongLiteral;
-import net.unicoen.node.UniMethodCall;
-import net.unicoen.node.UniMethodDec;
+import net.unicoen.mapper.CPP14Mapper;
 import net.unicoen.node.UniNode;
-import net.unicoen.node.UniUnaryOp;
-import net.unicoen.node.UniVariableDec;
-import net.unicoen.node.UniWhile;
-import net.unicoen.mapper.*;
+
 public class CppEngineTest {
-	@Test
-	public void test(){		
-		Engine engine = new Engine();
+	@Test @Ignore
+	public void test1() {
+		CppEngine engine = new CppEngine();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		engine.out = new PrintStream(baos);
 
-		String text = 
+		String text =
 				"int main()"+
 				"{"+
-				"int a=1;"+
-				"int b=a;"+
-				"int*pa = &b;"+
-				"*pa = *pa;"+
-				"a = b;"+
+					"char ca = 'a';"+
+					"int a=1;"
+					+ "int b=2;"+
+					"int *pa = &b;"+
+					"*pa = *pa;"+
+					"a = b;"+
 					"int arr[5] = {1,2,3};"+
-					"int a = arr[2];"+
+					"a = 2[arr];"+
 					"a=arr[0];"+
 					"arr[4]=6;"+
 					"a = 5;"+
 					"int c=a+b;"+
 				"}";
-		String text2 = 
-				"int main()"+
-				"{"+
-				"int i=1;"+
-				"int sum=0;"+
-				"do{sum+=i;i+=1;}"+
-				"while(i<20);"+
-				"}";
-		String text3 = 
-				"int main()"+
-				"{"+
-					"double x = 1.0, e = 0.0000000005;"+
-					"int i;"+
-					"for(i=0;((x*x-2)<-e) || (e<(x*x-2));i+=1)"+
-					"{"+
-						"int a = 10;"+
-						"x -= ((x*x)-2) / (2*x);"+
-					"}"+
-				"}";
 		CPP14Mapper cppMapper = new CPP14Mapper(true);
-		UniMethodDec node 	= (UniMethodDec) cppMapper.parse(text3);
-		ExecState state = engine.startStepExecution(node);
-		int i=0;
-		for(;engine.isStepExecutionRunning();++i)
+		Object node = cppMapper.parse(text);
+		ExecState  state;
+		if(!(node instanceof ArrayList)){
+			ArrayList<UniNode> nodes = new ArrayList<UniNode>();
+			nodes.add((UniNode) node);
+			engine.startStepExecution(nodes);
+		}
+		else{
+			engine.startStepExecution((ArrayList<UniNode>)node);
+		}
+		//
+		for(int i=0;engine.isStepExecutionRunning();++i)
 		{
 			state = engine.stepExecute();
 		}
 
+		try {
+			String output = baos.toString("UTF8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Test @Ignore
+	public void test2() {
+		CppEngine engine = new CppEngine();
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		engine.out = new PrintStream(baos);
+		String text =
+				"int main()"+
+				"{"+
+					"int i=1;"+
+					"{int i = 100;i+=20;}"+
+					"i+=50;"+
+				"}";
+		CPP14Mapper cppMapper = new CPP14Mapper(true);
+		Object node = cppMapper.parse(text);
+		ExecState  state;
+		if(!(node instanceof ArrayList)){
+			ArrayList<UniNode> nodes = new ArrayList<UniNode>();
+			nodes.add((UniNode) node);
+			engine.startStepExecution(nodes);
+		}
+		else{
+			engine.startStepExecution((ArrayList<UniNode>)node);
+		}
+		//
+		for(int i=0;engine.isStepExecutionRunning();++i)
+		{
+			state = engine.stepExecute();
+		}
+
+		try {
+			String output = baos.toString("UTF8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Test //@Ignore
+	public void test3(){
+		CppEngine engine = new CppEngine();
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		engine.out = new PrintStream(baos);
+
+		String text =
+				"int main()"+
+				"{"+
+					"double x = 1.0;"
+					+ "double e = 0.0000000005;"+
+					"int i;"+
+					"for(i=0;((x*x-2)<-e) || (e<(x*x-2));i+=1)"+
+					"{"+
+						"x -= ((x*x)-2) / (2*x);"+
+						"int a = 10;"+
+						"continue;"+
+					"}"+
+					"return x;"+
+				"}";
+		CPP14Mapper cppMapper = new CPP14Mapper(true);
+		Object node = cppMapper.parse(text);
+		ExecState  state;
+		if(!(node instanceof ArrayList)){
+			ArrayList<UniNode> nodes = new ArrayList<UniNode>();
+			nodes.add((UniNode) node);
+			engine.startStepExecution(nodes);
+		}
+		else{
+			engine.startStepExecution((ArrayList<UniNode>)node);
+		}
+		//
+		for(int i=0;engine.isStepExecutionRunning();++i)
+		{
+			state = engine.stepExecute();
+		}
+
+		try {
+			String output = baos.toString("UTF8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Test @Ignore
+	public void test4(){
+		CppEngine engine = new CppEngine();
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		engine.out = new PrintStream(baos);
+
+		String text =
+//				"struct Str"+
+//				"{"+
+//					"int i;"+
+//					"double d;"+
+//				"};"+
+				"int fibonacci(int n) {"+
+					"if(n<2)"+
+						"return n;"+
+					"else "+
+						"return fibonacci(n-1) + fibonacci(n-2);"+
+				"}"+
+				"int main()"+
+				"{"
+					//"int *buf;"+
+					//"buf = (int *)malloc( 100 );"+
+					//"buf[2] = 2;"+
+					+"int a = fibonacci(10);"
+					+ "return a;"
+//					+ "Str str1 = {123, 2.3};"
+//					+ "str1.i = str1.d;"
+//					+ "Str str2 = str1;"
+//					+ "str2.i = 321;"
+//					+ "Str str3;"
+//					+ "str3 = str2;"
+//					+ "return str3;"
+				+"}";
+		CPP14Mapper cppMapper = new CPP14Mapper(true);
+		Object node = cppMapper.parse(text);
+		ExecState  state;
+		if(!(node instanceof ArrayList)){
+			ArrayList<UniNode> nodes = new ArrayList<UniNode>();
+			nodes.add((UniNode) node);
+			state = engine.startStepExecution(nodes);
+		}
+		else{
+			state = engine.startStepExecution((ArrayList<UniNode>)node);
+		}
+		//
+		for(int i=0;engine.isStepExecutionRunning();++i)
+		{
+			state = engine.stepExecute();
+		}
+		state.toString();
 		try {
 			String output = baos.toString("UTF8");
 		} catch (UnsupportedEncodingException e) {

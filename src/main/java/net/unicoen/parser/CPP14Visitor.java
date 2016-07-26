@@ -109,6 +109,12 @@ public interface CPP14Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitLambdadeclarator(CPP14Parser.LambdadeclaratorContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#idexpressionlapper}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIdexpressionlapper(CPP14Parser.IdexpressionlapperContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link CPP14Parser#postfixexpression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -391,6 +397,24 @@ public interface CPP14Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitJumpstatement(CPP14Parser.JumpstatementContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#breakStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBreakStatement(CPP14Parser.BreakStatementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#continueStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitContinueStatement(CPP14Parser.ContinueStatementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#returnStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitReturnStatement(CPP14Parser.ReturnStatementContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link CPP14Parser#declarationstatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -402,6 +426,24 @@ public interface CPP14Visitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitDeclarationseq(CPP14Parser.DeclarationseqContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#myclassbody}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMyclassbody(CPP14Parser.MyclassbodyContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#myclassspecifier}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMyclassspecifier(CPP14Parser.MyclassspecifierContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#myclasshead}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMyclasshead(CPP14Parser.MyclassheadContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link CPP14Parser#declaration}.
 	 * @param ctx the parse tree
@@ -979,11 +1021,11 @@ public interface CPP14Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitBracedinitlist(CPP14Parser.BracedinitlistContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link CPP14Parser#classname}.
+	 * Visit a parse tree produced by {@link CPP14Parser#myclassname}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitClassname(CPP14Parser.ClassnameContext ctx);
+	T visitMyclassname(CPP14Parser.MyclassnameContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link CPP14Parser#classspecifier}.
 	 * @param ctx the parse tree
@@ -1032,6 +1074,18 @@ public interface CPP14Visitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitMemberdeclaration(CPP14Parser.MemberdeclarationContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#membervariabledeclarationstatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMembervariabledeclarationstatement(CPP14Parser.MembervariabledeclarationstatementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#membervariabledeclaration}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMembervariabledeclaration(CPP14Parser.MembervariabledeclarationContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link CPP14Parser#memberdeclaratorlist}.
 	 * @param ctx the parse tree
@@ -1314,6 +1368,12 @@ public interface CPP14Visitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitIntegerliteral(CPP14Parser.IntegerliteralContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#characterliteral}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCharacterliteral(CPP14Parser.CharacterliteralContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link CPP14Parser#floatingliteral}.
 	 * @param ctx the parse tree

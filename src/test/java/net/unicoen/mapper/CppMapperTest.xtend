@@ -10,12 +10,27 @@ import static org.junit.Assert.*
 class CppMapperTest  extends MapperTest {
 	val mapper = new CPP14Mapper(true)
 
-	@Test
+	@Test @Ignore
 	def CppTest() {
 		val node = mapper.parse("
 		#include <iostream>
+		struct Str
+		{
+			int a;
+			double b;
+		};
+		int add(int x, int y)
+		{
+			int z = z+y;
+			return z;
+		}
 		int main()
 		{
+			if(n<2)
+				return n;
+			else
+				return fibonacci(n-1) + fibonacci(n-2);
+			int a = add(1,2);
 			int b = 3;
 			int c = b;
 			b = 5;
@@ -23,18 +38,18 @@ class CppMapperTest  extends MapperTest {
 		}
 		")
 		val dd = node;
-		//assertThat(node, instanceOf(typeof(UniMethodDec)))
-/*		
-		public class UniMethodDec extends UniMemberDec {
-			public String methodName;
-			public List<String> modifiers;
-			public String returnType;
-			public List<UniArg> args;
-			public UniBlock block;	
-				List<UniExpr> body;
-				String blockLabel;
+	}
+	
+	@Test
+	def CppTest2() {
+		val node = mapper.parse("
+		int main()
+		{
+			char *buf = NULL;
+			buf = (char*) malloc( 100 );
+			free(buf);
 		}
- */
-
+		")
+		val dd = node;
 	}
 }

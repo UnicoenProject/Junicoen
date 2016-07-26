@@ -36,15 +36,15 @@ public class StdLibLoader {
 				engine.out.println(args[0]);
 				return null;
 			}
-		});
+		},"FUNCTION");
 		scope.setTop("print", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				engine.out.println(args[0]);
 				return null;
 			}
-		});
-		global.setTop("MyLib", scope);
+		},"FUNCTION");
+		global.setTop("MyLib", scope,"FUNCTION");
 	}
 
 	private void initTurtle() {
@@ -54,27 +54,27 @@ public class StdLibLoader {
 				engine.out.print("R" + args[0]);
 				return null;
 			}
-		});
+		},"FUNCTION");
 		global.setTop("lt", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				engine.out.print("L" + args[0]);
 				return null;
 			}
-		});
+		},"FUNCTION");
 		global.setTop("fd", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				engine.out.print("F" + args[0]);
 				return null;
 			}
-		});
+		},"FUNCTION");
 		global.setTop("bk", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				engine.out.print("B" + args[0]);
 				return null;
 			}
-		});
+		},"FUNCTION");
 	}
 }

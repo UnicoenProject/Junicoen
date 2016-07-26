@@ -31,7 +31,7 @@ unqualifiedid
 	|	operatorfunctionid 
 	|	conversionfunctionid 
 	|	literaloperatorid 
-	|	'~' classname 
+	|	'~' myclassname 
 	|	'~' decltypespecifier 
 	|	templateid 
 	;
@@ -93,19 +93,23 @@ lambdadeclarator
 	:	'(' parameterdeclarationclause ')' Mutable? exceptionspecification? attributespecifierseq? trailingreturntype? 
 	;
 
+idexpressionlapper
+	:	idexpression 
+	;
+
 postfixexpression
 	:	primaryexpression 
 	|	postfixexpression LeftBracket assignmentexpression RightBracket 
 	|	postfixexpression '[' bracedinitlist ']' 
-	|	postfixexpression '(' expressionlist? ')' 
+	|	postfixexpression LeftParen expressionlist? RightParen 
 	|	simpletypespecifier '(' expressionlist? ')' 
 	|	typenamespecifier '(' expressionlist? ')' 
 	|	simpletypespecifier bracedinitlist 
 	|	typenamespecifier bracedinitlist 
-	|	postfixexpression '.' Template? idexpression 
-	|	postfixexpression '->' Template? idexpression 
-	|	postfixexpression '.' pseudodestructorname 
-	|	postfixexpression '->' pseudodestructorname 
+	|	postfixexpression Dot Template? idexpressionlapper 
+	|	postfixexpression Arrow Template? idexpressionlapper 
+	|	postfixexpression Dot pseudodestructorname 
+	|	postfixexpression Arrow pseudodestructorname 
 	|	postfixexpression '++' 
 	|	postfixexpression '--' 
 	|	Dynamic_cast '<' typeid '>' '(' expression ')' 
@@ -194,7 +198,7 @@ noexceptexpression
 
 castexpression
 	:	binaryexpression 
-	|	LeftBracket typeid RightBracket castexpression 
+	|	LeftParen typeid RightParen castexpression 
 	;
 
 pmexpression
@@ -305,6 +309,9 @@ statement
 	|	attributespecifierseq? whilestatement 
 	|	attributespecifierseq? dowhilestatement 
 	|	attributespecifierseq? jumpstatement 
+	|	attributespecifierseq? breakStatement 
+	|	attributespecifierseq? continueStatement 
+	|	attributespecifierseq? returnStatement 
 	|	variabledeclarationstatement 
 	|	declarationstatement 
 	|	attributespecifierseq? tryblock 
@@ -375,11 +382,20 @@ forrangeinitializer
 	;
 
 jumpstatement
+	:	Goto Identifier ';' 
+	;
+
+breakStatement
 	:	Break ';' 
-	|	Continue ';' 
-	|	Return expression? ';' 
+	;
+
+continueStatement
+	:	Continue ';' 
+	;
+
+returnStatement
+	:	Return expression? ';' 
 	|	Return bracedinitlist ';' 
-	|	Goto Identifier ';' 
 	;
 
 declarationstatement
@@ -392,8 +408,22 @@ declarationseq
 	|	declarationseq declaration 
 	;
 
+myclassbody
+	:	memberspecification? 
+	;
+
+myclassspecifier
+	:	myclasshead '{' myclassbody '}' ';' 
+	;
+
+myclasshead
+	:	classkey attributespecifierseq? nestednamespecifier? classheadname classvirtspecifier? baseclause? 
+	|	classkey attributespecifierseq? baseclause? 
+	;
+
 declaration
 	:	blockdeclaration 
+	|	myclassspecifier 
 	|	functiondefinition 
 	|	templatedeclaration 
 	|	explicitinstantiation 
@@ -428,7 +458,7 @@ variabledeclarationstatement
 	;
 
 variabledeclaration
-	:	attributespecifierseq? declspecifierseqwithouttype? typespecifier ptroperator* variableDeclaratorList? 
+	:	attributespecifierseq? declspecifierseqwithouttype? typespecifier variableDeclaratorList? 
 	;
 
 variableDeclaratorList
@@ -449,9 +479,9 @@ dimExpr
 	;
 
 variableDeclarator
-	:	declaratorid ('=' initializerclause )? 
-	|	declaratorid dims ('=' initializerclause )? 
-	|	declaratorid arrayCreationExpression 
+	:	ptroperator* declaratorid ('=' initializerclause )? 
+	|	ptroperator* declaratorid dims ('=' initializerclause )? 
+	|	ptroperator* declaratorid arrayCreationExpression 
 	;
 
 dims
@@ -518,7 +548,7 @@ typedefname
 
 typespecifier
 	:	trailingtypespecifier 
-	|	classspecifier 
+	|	myclassspecifier 
 	|	enumspecifier 
 	;
 
@@ -560,7 +590,7 @@ simpletypespecifier
 	;
 
 typename
-	:	classname 
+	:	myclassname 
 	|	enumname 
 	|	typedefname 
 	|	simpletemplateid 
@@ -890,7 +920,7 @@ bracedinitlist
 	|	'{' '}' 
 	;
 
-classname
+myclassname
 	:	Identifier 
 	|	simpletemplateid 
 	;
@@ -904,12 +934,12 @@ classbody
 	;
 
 classhead
-	:	classkey attributespecifierseq? classheadname classvirtspecifier? baseclause? 
+	:	classkey attributespecifierseq? nestednamespecifier? classheadname classvirtspecifier? baseclause? 
 	|	classkey attributespecifierseq? baseclause? 
 	;
 
 classheadname
-	:	nestednamespecifier? classname 
+	:	nestednamespecifier? myclassname 
 	;
 
 classvirtspecifier
@@ -928,7 +958,7 @@ memberspecification
 	;
 
 memberdeclaration
-	:	attributespecifierseq? declspecifierseq? memberdeclaratorlist? ';' 
+	:	membervariabledeclarationstatement 
 	|	functiondefinition 
 	|	usingdeclaration 
 	|	static_assertdeclaration 
@@ -937,14 +967,23 @@ memberdeclaration
 	|	emptydeclaration 
 	;
 
+membervariabledeclarationstatement
+	:	membervariabledeclaration ';' 
+	;
+
+membervariabledeclaration
+	:	attributespecifierseq? declspecifierseqwithouttype? typespecifier ptroperator* memberdeclaratorlist? 
+	;
+
 memberdeclaratorlist
 	:	memberdeclarator 
 	|	memberdeclaratorlist ',' memberdeclarator 
 	;
 
 memberdeclarator
-	:	declarator virtspecifierseq? purespecifier? 
-	|	declarator braceorequalinitializer? 
+	:	declaratorid virtspecifierseq? purespecifier? 
+	|	declaratorid ('=' initializerclause )? 
+	|	declaratorid bracedinitlist? 
 	|	Identifier? attributespecifierseq? ':' constantexpression 
 	;
 
@@ -978,7 +1017,7 @@ basespecifier
 	;
 
 classordecltype
-	:	nestednamespecifier? classname 
+	:	nestednamespecifier? myclassname 
 	|	decltypespecifier 
 	;
 
@@ -1718,7 +1757,7 @@ DIGIT
 
 literal
 	:	integerliteral 
-	|	Characterliteral 
+	|	characterliteral 
 	|	floatingliteral 
 	|	stringliteral 
 	|	booleanliteral 
@@ -1802,6 +1841,10 @@ fragment
 Longlongsuffix
 	:	'll' 
 	|	'LL' 
+	;
+
+characterliteral
+	:	Characterliteral 
 	;
 
 Characterliteral
