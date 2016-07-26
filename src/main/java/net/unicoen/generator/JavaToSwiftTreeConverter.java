@@ -2,6 +2,7 @@ package net.unicoen.generator;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import net.unicoen.node.Traverser;
@@ -226,7 +227,7 @@ public class JavaToSwiftTreeConverter extends Traverser {
 	public void traverseFieldAccess(UniFieldAccess node) {
 		// TODO Auto-generated method stub
 		if(node.receiver!=null){
-		parseExpr(node.receiver);
+			parseExpr(node.receiver);
 		}
 		if(node.index!=null){
 			parseExpr(node.index);
@@ -249,14 +250,9 @@ public class JavaToSwiftTreeConverter extends Traverser {
 		receiver.fieldName = "out";
 		
 		String methodName = "println";
-		System.out.println("I am here");
 
 		/////////////////////////////////////
 		/////////////////////////////////////
-		if(node.methodName.equals("HashMap")){
-			node.methodName = "Dictionary";
-			System.out.println("METHODNAME");
-		}
 		
 		if (node.receiver != null) {
 			parseExpr(node.receiver);
@@ -280,7 +276,6 @@ public class JavaToSwiftTreeConverter extends Traverser {
 		if(node.type.equals("HashMap")){
 			node.type = "Dictionary";
 		}
-		
 		for (UniExpr innerExpr : iter(node.args)) {
 			parseExpr(innerExpr);
 		}
@@ -503,6 +498,7 @@ public class JavaToSwiftTreeConverter extends Traverser {
 			node.methodName = "init";
 			node.modifiers = null;
 		}
+		
 //		if(node.returnType!=null){
 //			if(node.returnType.equals("void")){
 //				node.returnType = null;
@@ -524,6 +520,7 @@ public class JavaToSwiftTreeConverter extends Traverser {
 	public void traverseClassDec(UniClassDec node) {
 		// TODO Auto-generated method stub
 		//if it is enum and args are not empty
+		
 		for (UniMemberDec dec : iter(node.members)) {
 			traverseMemberDec(dec);
 		}

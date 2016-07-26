@@ -1595,7 +1595,13 @@ public interface Hockey extends Sports
 	}
 	@Test
 	def void temp(){
-		val tree = mapper.parse("class a{HashMap a = new HashMap(Integer, String);}")
+		val tree = mapper.parse("
+			class a{
+				int testHash(){
+					arr[0] = 1;
+				}
+			}
+		")
 		assertThat(tree, instanceOf(UniProgram))
 		val cl = (tree as UniProgram).classes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))

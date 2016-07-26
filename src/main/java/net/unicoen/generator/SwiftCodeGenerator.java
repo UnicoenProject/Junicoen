@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import net.unicoen.node.Traverser;
@@ -64,6 +66,15 @@ public class SwiftCodeGenerator extends Traverser {
 	private String className;
 	private UniMethodDec mainDec = null;//store main() method
 	private String varType = "";
+	private boolean isPrintMethod = false;
+	private boolean hasInit = false;
+	private boolean isEnhancedFor = false;
+	private int enhancedForStart = -1;
+	private int enhancedForEnd = -1;
+	private boolean isEnhancedForEnd = false;
+	private String enhancedForVar = null;
+	private static HashMap<String, List<String>> initParams = new HashMap<String, List<String>>();
+	
 
 	private final IntStack exprPriority = new IntStack();
 
@@ -262,7 +273,14 @@ public class SwiftCodeGenerator extends Traverser {
 
 	@Override
 	public void traverseIntLiteral(UniIntLiteral node) {
-		print(Integer.toString(node.value));
+		if(isEnhancedFor&&isEnhancedForEnd){
+			enhancedForEnd = node.value;
+			isEnhancedForEnd = false;
+		}else if(isEnhancedFor){
+			enhancedForStart = node.value;
+		}else{
+			print(Integer.toString(node.value));
+		}
 	}
 
 	@Override
@@ -278,11 +296,18 @@ public class SwiftCodeGenerator extends Traverser {
 
 	@Override
 	public void traverseStringLiteral(UniStringLiteral node) {
-		print('"' + node.value.replaceAll("\"", "\\\"") + '"');
+		if(!isPrintMethod){
+			print('"' + node.value.replaceAll("\"", "\\\"") + '"');
+		}else{
+			print(node.value.replaceAll("\"", "\\\""));
+		}
 	}
 
 	@Override
 	public void traverseIdent(UniIdent node) {
+		if(node.name.equals("this")){
+			node.name = "self";
+		}
 		print(node.name);
 	}
 
@@ -303,48 +328,81 @@ public class SwiftCodeGenerator extends Traverser {
 	}
 
 	@Override
-	public void traverseMethodCall(UniMethodCall mCall) {
+	public void traverseMethodCall(UniMethodCall node) {
 		//analyze system.out.println
-		if (mCall.receiver != null) {
-			parseExpr(mCall.receiver);
-			print(".");
+		if(node.methodName.equals("println")||node.methodName.equals("print")){
+			node.receiver = null;
+			node.methodName = "print";
+			print(node.methodName);
+			isPrintMethod = true;
+			print("(");
+			print("\"");
+			for (UniExpr innerExpr : iter(node.args)) {
+				parseExpr(innerExpr);
+			}
+			print("\"");
+			print(")");
+			isPrintMethod = false;
 		}
-		print(mCall.methodName);
-		print("(");
-		String delimiter = "";
-		for (UniExpr innerExpr : iter(mCall.args)) {
-			print(delimiter);
-			delimiter = ", ";
-			parseExpr(innerExpr);
+		else {
+			if (node.receiver != null) {
+				parseExpr(node.receiver);
+			}
+			if (node.methodName.equals("put")) {
+				node.methodName = "";
+				print("[");
+				String delimiter = "";
+				for (UniExpr innerExpr : iter(node.args)) {
+					print(delimiter);
+					delimiter = "] = ";
+					parseExpr(innerExpr);
+				}
+			} else {
+				print(".");
+				print(node.methodName);
+				print("(");
+				String delimiter = "";
+				for (UniExpr innerExpr : iter(node.args)) {
+					print(delimiter);
+					delimiter = ", ";
+					parseExpr(innerExpr);
+				}
+				print(")");
+			}
 		}
-		print(")");
 	}
 
 	@Override
 	public void traverseNew(UniNew node) {
-		if(node.type.equals("Dictionary")){
-			node.type = "";
+		if(node.type.startsWith("HashMap")){
+			String temp = node.type.substring(8, node.type.length()-2);
+			String[] types = temp.split(",");
 			print("[");
-			String delimiter = "";
-			for (UniExpr innerExpr : iter(node.args)) {
-				print(delimiter);
-				delimiter = ": ";
-				parseExpr(innerExpr);
-			}
+			print(types[0]);
+			print(":");
+			print(types[1]);
 			print("]");
 			print("(");
 			print(")");
 			
-		}else{
+		}
+		else{
 			print(node.type);
 			print("(");
+			
 			String delimiter = "";
+			int i=0;
 			for (UniExpr innerExpr : iter(node.args)) {
 				print(delimiter);
 				delimiter = ", ";
+				if(initParams.get(className).size()>i){
+					print(initParams.get(className).get(i));
+					print(" : ");
+				}
 				parseExpr(innerExpr);
 			}
 			print(")");
+			
 		}
 	}
 
@@ -373,22 +431,56 @@ public class SwiftCodeGenerator extends Traverser {
 		if (requireParen) {
 			print("(");
 		}
+		if(isEnhancedFor&&node.right!=null){//i<20
+			isEnhancedForEnd = true;
+			parseExpr(node.right);
+			return;
+			
+		}
 		if((node.left!=null)&&(node.right==null)){
-			parseExpr(node.left, priority);
+			if(isPrintMethod&&!(node.left instanceof UniStringLiteral)){
+				print("\\(");
+				parseExpr(node.left, priority);
+				print(")");
+			}else{
+				parseExpr(node.left, priority);
+			}
 			print(" ");
-			print(node.operator);
+			if(!isPrintMethod){
+				print(node.operator);
+			}
 			print(" ");
-			parseExpr(node.right, priority-1);
+			if(isPrintMethod&&!(node.right instanceof UniStringLiteral)){
+				print("\\(");
+				parseExpr(node.right, priority-1);
+				print(")");
+			}else{
+				parseExpr(node.right, priority-1);
+			}
 			if (requireParen) {
 				print(")");
 			}
 		}
 		else{
-			parseExpr(node.left, priority - 1);
+			if(isPrintMethod&&!(node.left instanceof UniStringLiteral)){
+				print("\\(");
+				parseExpr(node.left, priority - 1);
+				print(")");
+			}else{
+				parseExpr(node.left, priority - 1);
+			}
 			print(" ");
-			print(node.operator);
+			if(!isPrintMethod){
+				print(node.operator);
+			}
 			print(" ");
-			parseExpr(node.right, priority);
+			if(isPrintMethod&&!(node.right instanceof UniStringLiteral)){
+				print("\\(");
+				parseExpr(node.right, priority);
+				print(")");
+			}else{
+				parseExpr(node.right, priority);
+			}
 			if (requireParen) {
 				print(")");
 			}
@@ -485,13 +577,20 @@ public class SwiftCodeGenerator extends Traverser {
 
 	@Override
 	public void traverseFor(UniFor node) {
+		isEnhancedFor = true;
+		parseExpr(node.init);
+		parseExpr(node.cond);
+//		parseExpr(node.step);
 		print("for");
 		print(" ");
-		parseExpr(node.init);
-		print("; ");
-		parseExpr(node.cond);
-		print("; ");
-		parseExpr(node.step);
+		print(enhancedForVar);
+		print(" ");
+		print("in");
+		print(" ");
+		print(String.valueOf(enhancedForStart));
+		print("...");
+		print(String.valueOf(enhancedForEnd));
+		
 		if (node.statement instanceof UniBlock) {
 			print(" ");
 			print("{");
@@ -509,6 +608,7 @@ public class SwiftCodeGenerator extends Traverser {
 			printNewLine();
 			print("}");
 		}
+		isEnhancedFor = false;
 	}
 
 	@Override
@@ -516,6 +616,7 @@ public class SwiftCodeGenerator extends Traverser {
 		print("while");
 		print(" ");
 		parseExpr(node.cond);
+		
 		if (node.statement instanceof UniBlock) {
 			print(" ");
 			print("{");
@@ -560,6 +661,11 @@ public class SwiftCodeGenerator extends Traverser {
 	@Override
 	//variale with value-----need to edit
 	public void traverseVariableDec(UniVariableDec node) {
+		if(isEnhancedFor){
+			enhancedForVar = node.name;
+			parseExpr(node.value);
+			return;
+		}
 		if (node.modifiers != null) {
 			for (String modifier : node.modifiers) {
 				print(modifier);
@@ -567,7 +673,7 @@ public class SwiftCodeGenerator extends Traverser {
 			}
 		}
 		print(node.name);
-		if(node.type!=""){
+		if(!node.type.startsWith("HashMap")){
 			print(" : ");
 			print(toSwiftDataType(node.type));
 		}
@@ -600,6 +706,7 @@ public class SwiftCodeGenerator extends Traverser {
 				for (String temp : iter(node.modifiers)) {
 					if (temp.equals("public")) {
 						modifier = "public";
+						hasInit = true;
 					}
 				}
 			}
@@ -619,6 +726,12 @@ public class SwiftCodeGenerator extends Traverser {
 				}
 			}
 			if(node.methodName=="init"){
+				if(node.args!=null){
+					for(UniArg arg : iter(node.args)){
+						initParams.get(className).add(arg.name);
+					}
+				}
+				hasInit = true;
 				declaration = String.join(" ",node.methodName, argWithParen);
 			} else {
 				declaration = String.join(" ", modifier, "func", node.methodName, argWithParen, returnType);
@@ -653,6 +766,8 @@ public class SwiftCodeGenerator extends Traverser {
 		}else{
 			declaration = String.join(" ", keyword, node.className);
 		}
+		List<String> params = new ArrayList<String>();
+		initParams.put(className, params);
 		print(declaration);
 		
 		if(node.superClass!=null&&node.superClass.size()!=0){
@@ -668,13 +783,20 @@ public class SwiftCodeGenerator extends Traverser {
 				printNewLine();
 			}
 		});
-		printNewLine();
+		if(!hasInit){//has no initializer->print empty initializer
+			withIndent(()->{
+				print("init(){}");
+			});
+			printNewLine();
+		}
+		
 		print("}");
 		if(this.mainDec!=null){
 			//get the inside of main method and append after class declaration
 			traverseBlock(this.mainDec.block);
 		}
 		printNewLine();
+		hasInit = false;
 	}
 
 	@Override
@@ -686,9 +808,11 @@ public class SwiftCodeGenerator extends Traverser {
 			}
 		}
 		print(node.name);
-		if(node.type!=""){
+		if(!node.type.startsWith("HashMap")){//new a hashmap
 			print(" : ");
 			print(toSwiftDataType(node.type));//if multiple array -> print []
+		}else if(node.type.startsWith("Iterator")){//iter the hashmap
+			return;//don't do anything about this statement
 		}
 		if((node.value!=null)&&(!(node.value instanceof UniNewArray))){
 			print(" = ");
