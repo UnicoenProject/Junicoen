@@ -240,7 +240,7 @@ public class SwiftGeneratorTest {
 		println(target)
 		println("---------------------------------------------")
 	}
-	@Test@Ignore
+	@Test
 	def void basicDataTypes() {
 		/*7. Basic Data types and variable types in Java */
 		val tree = mapper.parse("

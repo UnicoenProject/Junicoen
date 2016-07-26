@@ -115,9 +115,13 @@ public class SwiftCodeGenerator extends Traverser {
 		case "String":
 			return "String";
 		case "boolean":
-			return "Boolean";
+			return "Bool";
 		case "Integer":
 			return "Int";
+		case "char":
+			return "Character";
+		case "byte":
+			return "UInt8";
 		}
 		if(type.contains("[")){ //array
 			return toSwiftArrayType(type);
@@ -336,11 +340,15 @@ public class SwiftCodeGenerator extends Traverser {
 			print(node.methodName);
 			isPrintMethod = true;
 			print("(");
-			print("\"");
+			if(!(node.args.size()==1&&node.args.get(0) instanceof UniIdent)){
+				print("\"");
+			}
 			for (UniExpr innerExpr : iter(node.args)) {
 				parseExpr(innerExpr);
 			}
-			print("\"");
+			if(!(node.args.size()==1&&node.args.get(0) instanceof UniIdent)){
+				print("\"");
+			}
 			print(")");
 			isPrintMethod = false;
 		}
@@ -431,14 +439,14 @@ public class SwiftCodeGenerator extends Traverser {
 		if (requireParen) {
 			print("(");
 		}
-		if(isEnhancedFor&&node.right!=null){//i<20
+		if(isEnhancedFor&&node.right!=null&&!isPrintMethod){//i<20
 			isEnhancedForEnd = true;
 			parseExpr(node.right);
 			return;
 			
 		}
 		if((node.left!=null)&&(node.right==null)){
-			if(isPrintMethod&&!(node.left instanceof UniStringLiteral)){
+			if(isPrintMethod&&!(node.left instanceof UniStringLiteral)&&!(node.left instanceof UniBinOp)){
 				print("\\(");
 				parseExpr(node.left, priority);
 				print(")");
@@ -448,9 +456,9 @@ public class SwiftCodeGenerator extends Traverser {
 			print(" ");
 			if(!isPrintMethod){
 				print(node.operator);
+				print(" ");
 			}
-			print(" ");
-			if(isPrintMethod&&!(node.right instanceof UniStringLiteral)){
+			if(isPrintMethod&&!(node.right instanceof UniStringLiteral)&&!(node.right instanceof UniBinOp)){
 				print("\\(");
 				parseExpr(node.right, priority-1);
 				print(")");
@@ -462,7 +470,7 @@ public class SwiftCodeGenerator extends Traverser {
 			}
 		}
 		else{
-			if(isPrintMethod&&!(node.left instanceof UniStringLiteral)){
+			if(isPrintMethod&&!(node.left instanceof UniStringLiteral)&&!(node.left instanceof UniBinOp)){
 				print("\\(");
 				parseExpr(node.left, priority - 1);
 				print(")");
@@ -472,9 +480,10 @@ public class SwiftCodeGenerator extends Traverser {
 			print(" ");
 			if(!isPrintMethod){
 				print(node.operator);
+				print(" ");
 			}
-			print(" ");
-			if(isPrintMethod&&!(node.right instanceof UniStringLiteral)){
+			
+			if(isPrintMethod&&!(node.right instanceof UniStringLiteral)&&!(node.right instanceof UniBinOp)){
 				print("\\(");
 				parseExpr(node.right, priority);
 				print(")");
@@ -1047,7 +1056,9 @@ public class SwiftCodeGenerator extends Traverser {
 	@Override
 	public void traverseCharacterLiteral(UniCharacterLiteral node) {
 		// TODO Auto-generated method stub
-		
+		print("\"");
+		print(String.valueOf(node.value));
+		print("\"");
 	}
 
 
