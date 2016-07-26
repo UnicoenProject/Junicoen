@@ -240,17 +240,17 @@ public class SwiftGeneratorTest {
 		println(target)
 		println("---------------------------------------------")
 	}
-	@Test
+	@Test@Ignore
 	def void basicDataTypes() {
 		/*7. Basic Data types and variable types in Java */
 		val tree = mapper.parse("
 			class BasicDataTypes{
 				int a, b, c;
-				int a = 10, b = 10;" 
-//				byte B = 22;
-				+ "double pi = 3.14159;" 
-//				char a = 'a';
-		+ "}")
+				int a = 10, b = 10;
+				byte B = 22;
+				double pi = 3.14159; 
+				char a = 'a';
+		}")
 		assertThat(tree, instanceOf(UniProgram))
 		val cl = (tree as UniProgram).classes.get(0)
 		assertThat(cl, instanceOf(UniClassDec))
