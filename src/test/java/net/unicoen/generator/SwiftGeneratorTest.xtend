@@ -630,9 +630,8 @@ public class SwiftGeneratorTest {
 	def void switchStatement(){
 		val tree = mapper.parse("
 			public class Test {
-   				public static void main(String args[]){"
-//      			char grade = 'C';
-      			+"String grade = \"C\";
+   				public static void main(String args[]){
+      			char grade = 'C';
 				switch(grade)
       			{
          			case \"A\" :
@@ -763,7 +762,7 @@ public class SwiftGeneratorTest {
   			+"int[] result = new int[list.length];"
 			//FOR LOOP ONLY FOR ONE STEPPER
 //  			for (int i = 0, j = result.length - 1; i < list.length; i++, j--) {
-    			+"result[j] = list[i];"
+//    			result[j] = list[i];
 //  			}
   			+"return result;
 		}

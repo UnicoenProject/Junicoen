@@ -69,8 +69,8 @@ public class SwiftCodeGenerator extends Traverser {
 	private boolean isPrintMethod = false;
 	private boolean hasInit = false;
 	private boolean isEnhancedFor = false;
-	private int enhancedForStart = -1;
-	private int enhancedForEnd = -1;
+	private UniExpr enhancedForStart = null;
+	private UniExpr enhancedForEnd = null;
 	private boolean isEnhancedForEnd = false;
 	private String enhancedForVar = null;
 	private static HashMap<String, List<String>> initParams = new HashMap<String, List<String>>();
@@ -148,6 +148,10 @@ public class SwiftCodeGenerator extends Traverser {
 			return "[String"+temp[1];
 		case "boolean":
 			return "[Boolean"+temp[1];
+		case "char":
+			return "[Character"+temp[1];
+		case "byte":
+			return "[UInt8"+temp[1];
 		}
 		return null;
 	}
@@ -277,14 +281,7 @@ public class SwiftCodeGenerator extends Traverser {
 
 	@Override
 	public void traverseIntLiteral(UniIntLiteral node) {
-		if(isEnhancedFor&&isEnhancedForEnd){
-			enhancedForEnd = node.value;
-			isEnhancedForEnd = false;
-		}else if(isEnhancedFor){
-			enhancedForStart = node.value;
-		}else{
-			print(Integer.toString(node.value));
-		}
+		print(Integer.toString(node.value));
 	}
 
 	@Override
@@ -334,7 +331,10 @@ public class SwiftCodeGenerator extends Traverser {
 	@Override
 	public void traverseMethodCall(UniMethodCall node) {
 		//analyze system.out.println
-		if(node.methodName.equals("println")||node.methodName.equals("print")){
+		if(node.methodName=="length"){
+			node.methodName = "count";
+		}
+		if(node.methodName.equals("println")||node.methodName.equals("print")||node.methodName.equals("printf")){
 			node.receiver = null;
 			node.methodName = "print";
 			print(node.methodName);
@@ -366,7 +366,9 @@ public class SwiftCodeGenerator extends Traverser {
 					parseExpr(innerExpr);
 				}
 			} else {
-				print(".");
+				if(node.receiver!=null){
+					print(".");
+				}
 				print(node.methodName);
 				print("(");
 				String delimiter = "";
@@ -439,9 +441,12 @@ public class SwiftCodeGenerator extends Traverser {
 		if (requireParen) {
 			print("(");
 		}
+		if(isEnhancedFor&&node.operator=="="&&node.right!=null&&!isPrintMethod){
+			enhancedForStart = node.right;
+			
+		}
 		if(isEnhancedFor&&node.right!=null&&!isPrintMethod){//i<20
-			isEnhancedForEnd = true;
-			parseExpr(node.right);
+			enhancedForEnd = node.right;
 			return;
 			
 		}
@@ -596,9 +601,10 @@ public class SwiftCodeGenerator extends Traverser {
 		print(" ");
 		print("in");
 		print(" ");
-		print(String.valueOf(enhancedForStart));
+		parseExpr(enhancedForStart);
 		print("...");
-		print(String.valueOf(enhancedForEnd));
+		parseExpr(enhancedForEnd);
+		isEnhancedFor = false;
 		
 		if (node.statement instanceof UniBlock) {
 			print(" ");
@@ -617,7 +623,7 @@ public class SwiftCodeGenerator extends Traverser {
 			printNewLine();
 			print("}");
 		}
-		isEnhancedFor = false;
+		
 	}
 
 	@Override
@@ -672,7 +678,7 @@ public class SwiftCodeGenerator extends Traverser {
 	public void traverseVariableDec(UniVariableDec node) {
 		if(isEnhancedFor){
 			enhancedForVar = node.name;
-			parseExpr(node.value);
+			enhancedForStart = node.value;
 			return;
 		}
 		if (node.modifiers != null) {
@@ -686,7 +692,7 @@ public class SwiftCodeGenerator extends Traverser {
 			print(" : ");
 			print(toSwiftDataType(node.type));
 		}
-		if((node.value!=null)&&(!(node.value instanceof UniNewArray))){
+		if(node.value!=null){
 			print(" = ");
 			parseExpr(node.value);
 		}
@@ -705,11 +711,11 @@ public class SwiftCodeGenerator extends Traverser {
 	@Override
 	public void traverseMethodDec(UniMethodDec node) {
 		//if it is main method
-		if(node.methodName.equals("main")){
-			if(node.block==null||node.block.body.size()==0)	return;
-			//if not empty-> store into mainDec temporary
-			this.mainDec = node;
-		}else{
+//		if(node.methodName.equals("main")){
+//			if(node.block==null||node.block.body.size()==0)	return;
+//			//if not empty-> store into mainDec temporary
+//			this.mainDec = node;
+//		}else{
 			String modifier = "";
 			if(node.methodName!="init"){
 				for (String temp : iter(node.modifiers)) {
@@ -752,7 +758,7 @@ public class SwiftCodeGenerator extends Traverser {
 			});
 			print("}");
 			
-		}
+//		}
 	}
 
 	@Override
@@ -879,7 +885,7 @@ public class SwiftCodeGenerator extends Traverser {
 	public void traverseNewArray(UniNewArray node) {
 //		throw new RuntimeException("Not Implemented");
 		//arr[1]? -- elementsNum
-		if(node.value!=null){
+		if(node.value!=null&&node.elementsNum==null){
 			print("[");
 			if (node.value.items != null) {
 				int num = node.value.items.size();
@@ -895,6 +901,19 @@ public class SwiftCodeGenerator extends Traverser {
 				});
 			}
 			print("]");
+		}else if(node.value!=null&&node.elementsNum!=null){
+			//create a fix-ed size array
+			print("[");
+			print(toSwiftDataType(node.type));
+			print("]");
+			print("(");
+			print("count:");
+			parseExpr(node.elementsNum.get(0));
+			print(",");
+			print("repeatedValue:");
+			print("nil");
+			print(")");
+			
 		}
 		
 	}
