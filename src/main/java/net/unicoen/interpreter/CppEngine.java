@@ -7,8 +7,20 @@ public class CppEngine extends Engine {
 		global.setTop("printf", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
-				engine.out.println(args[0]);
-				return args[0].toString().length();
+				if(args.length<1)
+					return 0;
+				String text = (String)args[0];
+				String s="";
+				if(args.length==1)
+					s = String.format(text);
+				else if(args.length==2)
+					s = String.format(text,args[1]);
+				else if(args.length==3)
+					s = String.format(text,args[1],args[2]);
+				else if(args.length==4)
+					s = String.format(text,args[1],args[2],args[3]);
+				engine.out.print(s);
+				return s.length();
 			}
 		},"FUNCTION");
 		global.setTop("sizeof", new FunctionWithEngine() {

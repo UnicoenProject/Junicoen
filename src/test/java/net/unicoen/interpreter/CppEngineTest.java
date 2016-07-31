@@ -12,7 +12,7 @@ import net.unicoen.mapper.CPP14Mapper;
 import net.unicoen.node.UniNode;
 
 public class CppEngineTest {
-	@Test @Ignore
+	@Test //@Ignore
 	public void test1() {
 		CppEngine engine = new CppEngine();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -20,8 +20,9 @@ public class CppEngineTest {
 
 		String text =
 				"int main()"+
-				"{"+
-					"char ca = 'a';"+
+				"{"
+				+ "printf(\"値1=%d 値2=%d\", 123, 456);"
+					+"char ca = 'a';"+
 					"int a=1;"
 					+ "int b=2;"+
 					"int *pa = &b;"+
