@@ -4,6 +4,18 @@ public class CppEngine extends Engine {
 
 	@Override
 	protected void loadLibarary(Scope global){
+		includeStdio(global);
+		includeStdlib(global);
+		includeMath(global);
+		global.setTop("sizeof", new FunctionWithEngine() {
+			@Override
+			public Object invoke(Engine engine, Object[] args) {
+				return CppEngine.sizeof((String) args[0]);
+			}
+		},"FUNCTION");
+	}
+	
+	protected void includeStdio(Scope global){
 		global.setTop("printf", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
@@ -23,142 +35,219 @@ public class CppEngine extends Engine {
 				return s.length();
 			}
 		},"FUNCTION");
-		global.setTop("sizeof", new FunctionWithEngine() {
-			@Override
-			public Object invoke(Engine engine, Object[] args) {
-				return CppEngine.sizeof((String) args[0]);
-			}
-		},"FUNCTION");
+	}
+	protected void includeStdlib(Scope global){
 		global.setTop("malloc", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				return new Variable("void","malloc",args[0],-1,-1);
 			}
 		},"FUNCTION");
+		global.setTop("abs", new FunctionWithEngine() {
+			@Override
+			public Object invoke(Engine engine, Object[] args) {
+				return Math.abs((int) args[0]);
+			}
+		},"FUNCTION");
+		global.setTop("rand", new FunctionWithEngine() {
+			@Override
+			public Object invoke(Engine engine, Object[] args) {
+				return Math.random();
+			}
+		},"FUNCTION");
 	}
+	protected void includeMath(Scope global){
+		//逆三角関数
+		global.setTop("acos", new FunctionWithEngine() {
+			@Override
+			public Object invoke(Engine engine, Object[] args) {
+				return Math.acos((double) args[0]);
+			}
+		},"FUNCTION");
+		global.setTop("asin", new FunctionWithEngine() {
+			@Override
+			public Object invoke(Engine engine, Object[] args) {
+				return Math.asin((double) args[0]);
+			}
+		},"FUNCTION");
+		global.setTop("atan", new FunctionWithEngine() {
+			@Override
+			public Object invoke(Engine engine, Object[] args) {
+				return Math.atan((double) args[0]);
+			}
+		},"FUNCTION");
+		
+		//三角関数
+		global.setTop("cos", new FunctionWithEngine() {
+			@Override
+			public Object invoke(Engine engine, Object[] args) {
+				return Math.cos((double) args[0]);
+			}
+		},"FUNCTION");
+		global.setTop("sin", new FunctionWithEngine() {
+			@Override
+			public Object invoke(Engine engine, Object[] args) {
+				return Math.sin((double) args[0]);
+			}
+		},"FUNCTION");
+		global.setTop("tan", new FunctionWithEngine() {
+			@Override
+			public Object invoke(Engine engine, Object[] args) {
+				return Math.tan((double) args[0]);
+			}
+		},"FUNCTION");
+		
+		//双曲線関数
+		global.setTop("cosh", new FunctionWithEngine() {
+			@Override
+			public Object invoke(Engine engine, Object[] args) {
+				return Math.cosh((double) args[0]);
+			}
+		},"FUNCTION");
+		global.setTop("sinh", new FunctionWithEngine() {
+			@Override
+			public Object invoke(Engine engine, Object[] args) {
+				return Math.sinh((double) args[0]);
+			}
+		},"FUNCTION");
+		global.setTop("tanh", new FunctionWithEngine() {
+			@Override
+			public Object invoke(Engine engine, Object[] args) {
+				return Math.tanh((double) args[0]);
+			}
+		},"FUNCTION");
+		
+		
+		
+		
+		global.setTop("exp", new FunctionWithEngine() {
+			@Override
+			public Object invoke(Engine engine, Object[] args) {
+				return Math.exp((double) args[0]);
+			}
+		},"FUNCTION");
+		global.setTop("exp2", new FunctionWithEngine() {//C99
+			@Override
+			public Object invoke(Engine engine, Object[] args) {
+				return Math.pow(2.0,(double) args[0]);
+			}
+		},"FUNCTION");
+		global.setTop("expm1", new FunctionWithEngine() {//C99
+			@Override
+			public Object invoke(Engine engine, Object[] args) {
+				return Math.expm1((double) args[0]);
+			}
+		},"FUNCTION");
+		
+		//frexp
+		//ldexp
+		
+		global.setTop("log", new FunctionWithEngine() {
+			@Override
+			public Object invoke(Engine engine, Object[] args) {
+				return Math.log((double) args[0]);
+			}
+		},"FUNCTION");
+		global.setTop("log10", new FunctionWithEngine() {
+			@Override
+			public Object invoke(Engine engine, Object[] args) {
+				return Math.log10((double) args[0]);
+			}
+		},"FUNCTION");
+		global.setTop("log1p", new FunctionWithEngine() {//C99
+			@Override
+			public Object invoke(Engine engine, Object[] args) {
+				return Math.log1p((double) args[0]);
+			}
+		},"FUNCTION");
+		
+		//modf(double,double*)
+		
+		global.setTop("cbrt", new FunctionWithEngine() {//C99
+			@Override
+			public Object invoke(Engine engine, Object[] args) {
+				return Math.cbrt((double) args[0]);
+			}
+		},"FUNCTION");
+		global.setTop("fabs", new FunctionWithEngine() {
+			@Override
+			public Object invoke(Engine engine, Object[] args) {
+				return Math.abs((double) args[0]);
+			}
+		},"FUNCTION");
+		global.setTop("hypot", new FunctionWithEngine() {
+			@Override
+			public Object invoke(Engine engine, Object[] args) {
+				return Math.hypot((double) args[0],(double) args[1]);
+			}
+		},"FUNCTION");
 
-//
-//	protected Object aexecAssign(UniIdent left, Object value, Scope scope) {
-//		if(value instanceof ArrayList){//構造体の場合のみ
-//			ArrayList<String> values = (ArrayList<String>)value;
-//			Object last=null;
-//			for(String s : values){
-//				String fieldname = left.name + s.substring(s.indexOf("."));
-//				execAssign(new UniIdent(fieldname),scope.get(s),scope);
-//			}
-//			return last;
-//		}
-//		if(value instanceof Variable){
-//			Variable var = (Variable)value;
-//			if(var.name.equals("malloc")){
-//				String type = scope.getType(left.name);
-//				type = type.replace("*", "");
-//				int typesize = sizeof(type);
-//				int bytesize = (int)var.getValue();
-//				int length = bytesize/typesize;
-//				scope.setTop(left.name, "&"+left.name+"[0]", type+"*");
-//				List<Object> varArray = new ArrayList<Object>();
-//				for(int i=0;i<length;++i){
-//					String fieldname = left.name+"["+i+"]";
-//					scope.setTop(fieldname, null,type);
-//					varArray.add(null);
-//				}
-//
-//				state.addVariable(scope.name,new UniVariableDec(null,type,left.name,new UniIntLiteral(0)), varArray, scope.depth);
-//				return varArray;
-//			}
-//		}
-//		return super.execAssign(left, value, scope);
-//	}
-//
-//
-//	protected Object aexecVariableDec(UniVariableDec decVar, Scope scope){
-//
-//		if(decVar.name.startsWith("*")){
-//			decVar.name = decVar.name.substring(1);
-//			decVar.type+="*";
-//		}
-//		else if(decVar.name.startsWith("&")){
-//			decVar.name = decVar.name.substring(1);
-//			decVar.type+="&";
-//		}
-//
-//		Object value = null;
-//		if(decVar.value!=null)
-//			value = execExpr(decVar.value, scope);
-//		if(scope.hasValue(decVar.type)){
-//			ArrayList<Object> varArray = (ArrayList<Object>)value;//評価した初期化リスト|フィールド名の配列
-//			ArrayList<UniFieldDec> ufds = (ArrayList<UniFieldDec>)scope.get(decVar.type);//structのメンバ構造
-//			if(varArray == null){
-//				varArray = new ArrayList<Object>();
-//				for(UniFieldDec ufd : ufds){
-//					varArray.add(null);
-//				}
-//			}
-//			else{
-//				ArrayList<Object> newVarArray = new ArrayList<Object>();
-//				for(Object var :varArray){
-//					if(var instanceof String){
-//						if(scope.hasValue((String)var)){
-//							newVarArray.add(scope.get((String)var));
-//						}
-//						else
-//							break;
-//					}
-//					else
-//						break;
-//				}
-//				if(varArray.size() == newVarArray.size()){
-//					varArray = newVarArray;
-//				}
-//			}
-//
-//			//メンバの型と名前を一緒に渡すためVariable型にする。
-//			ArrayList<Variable> varsAsVariable = new ArrayList<Variable>();
-//			ArrayList<String> memberNames = new ArrayList<String>();
-//
-//			for(int i=0;i<ufds.size();++i){
-//				UniFieldDec ufd = ufds.get(i);
-//				String name = decVar.name+"."+ufd.name;
-//				memberNames.add(name);
-//				scope.setTop(name, varArray.get(i),ufd.type);
-//				varsAsVariable.add(new Variable(ufd.type,ufd.name,varArray.get(i),-1,-1));
-//			}
-//			scope.setTop(decVar.name, memberNames,decVar.type);//str1 = str2の場合は展開してフィールド毎に代入
-//			state.addVariable(scope.name, decVar, varsAsVariable, scope.depth);
-//		}
-//		else if(value instanceof List){
-//			List<?> varArray = (List)value;
-//			scope.setTop(decVar.name, "&"+decVar.name+"[0]",decVar.type+"*");
-//			for(int i=0;i<varArray.size();++i){
-//				scope.setTop(decVar.name+"["+i+"]", varArray.get(i),decVar.type);
-//			}
-//			state.addVariable(scope.name, decVar, varArray,scope.depth);
-//		}
-//		else if(value instanceof Variable){
-//			Variable var = (Variable)value;
-//			if(var.name.equals("malloc")){
-//				decVar.type = decVar.type.replace("*", "");
-//				int typesize = sizeof(decVar.type);
-//				int bytesize = (int)var.getValue();
-//				int length = bytesize/typesize;
-//				scope.setTop(decVar.name, "&"+decVar.name+"[0]",decVar.type+"*");
-//				List<Object> varArray = new ArrayList<Object>();
-//				for(int i=0;i<length;++i){
-//					varArray.add(null);
-//					scope.setTop(decVar.name+"["+i+"]", null,decVar.type);
-//				}
-//				state.addVariable(scope.name, decVar, varArray, scope.depth);
-//			}
-//		}
-//		else
-//		{
-//			scope.setTop(decVar.name, value,decVar.type);
-//			state.addVariable(scope.name, decVar, value, scope.depth);
-//		}
-//		return value;
-//	}
+		global.setTop("pow", new FunctionWithEngine() {
+			@Override
+			public Object invoke(Engine engine, Object[] args) {
+				return Math.pow((double) args[0],(double) args[1]);
+			}
+		},"FUNCTION");
+		global.setTop("sqrt", new FunctionWithEngine() {
+			@Override
+			public Object invoke(Engine engine, Object[] args) {
+				return Math.sqrt((double) args[0]);
+			}
+		},"FUNCTION");
+		
+		global.setTop("ceil", new FunctionWithEngine() {
+			@Override
+			public Object invoke(Engine engine, Object[] args) {
+				return Math.ceil((double) args[0]);
+			}
+		},"FUNCTION");
+		global.setTop("floor", new FunctionWithEngine() {
+			@Override
+			public Object invoke(Engine engine, Object[] args) {
+				return Math.floor((double) args[0]);
+			}
+		},"FUNCTION");
+		global.setTop("rint", new FunctionWithEngine() {//C99
+			@Override
+			public Object invoke(Engine engine, Object[] args) {
+				return Math.rint((double) args[0]);
+			}
+		},"FUNCTION");
+		global.setTop("round", new FunctionWithEngine() {//C99
+			@Override
+			public Object invoke(Engine engine, Object[] args) {
+				return Math.round((double) args[0]);
+			}
+		},"FUNCTION");
 
+		global.setTop("fdim", new FunctionWithEngine() {//C99
+			@Override
+			public Object invoke(Engine engine, Object[] args) {
+				double a = Math.abs((double) args[0]);
+				double b = Math.abs((double) args[1]);
+				return Math.abs(Math.max(a, b)-Math.min(a, b));
+			}
+		},"FUNCTION");
+		global.setTop("fmax", new FunctionWithEngine() {//C99
+			@Override
+			public Object invoke(Engine engine, Object[] args) {
+				return Math.max((double) args[0],(double) args[1]);
+			}
+		},"FUNCTION");
+		global.setTop("fmin", new FunctionWithEngine() {//C99
+			@Override
+			public Object invoke(Engine engine, Object[] args) {
+				return Math.min((double) args[0],(double) args[1]);
+			}
+		},"FUNCTION");
+		
+		global.setTop("fmod", new FunctionWithEngine() {
+			@Override
+			public Object invoke(Engine engine, Object[] args) {
+				return (double)args[0] % (double)args[1];
+			}
+		},"FUNCTION");
+	}
 	public static int sizeof(String type){
 		if(type.contains("char")){
 			return 1;

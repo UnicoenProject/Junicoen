@@ -52,12 +52,12 @@ public class CppEngineTest {
 					"double x = 1.0;"
 					+ "double e = 0.0000000005;"+
 					"int i;"+
-					"for(i=0;((x*x-2)<-e) || (e<(x*x-2));i+=1)"+
+					"for(i=0;e<fabs(x*x-2);i+=1)"+
 					"{"+
 						"x -= ((x*x)-2) / (2*x);"+
-						"int a = 10;"+
-						"continue;"+
-					"}"+
+					"}"
+					+ "printf(\"sqrt(2)=%f\\n\", x);"+
+						
 					"return x;"+
 				"}";
 		exec(text);
@@ -95,7 +95,7 @@ public class CppEngineTest {
 		exec(text);
 	}
 
-	@Test //@Ignore
+	@Test @Ignore
 	public void test5() {
 		String text =
 				"int main()"
