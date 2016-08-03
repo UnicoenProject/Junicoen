@@ -1595,11 +1595,12 @@ public interface Hockey extends Sports
 	@Test
 	def void temp(){
 		val tree = mapper.parse("
-			class a{
-				int testHash(){
-					arr[0] = 1;
-				}
-			}
+			class temp{
+    int a = 1;
+    void temp(int a){
+        System.out.println(a);
+    }
+}
 		")
 		assertThat(tree, instanceOf(UniProgram))
 		val cl = (tree as UniProgram).classes.get(0)
