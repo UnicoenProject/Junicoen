@@ -349,11 +349,13 @@ public class Engine {
 		}
 		if (expr instanceof UniIf) {
 			UniIf ui = (UniIf) expr;
-			if (toBool(execExpr(ui.cond, scope))) {
+			Boolean cond = toBool(execExpr(ui.cond, scope));
+			if (cond) {
 				return execExpr(ui.trueStatement, scope);
-			} else {
+			} else if(ui.falseStatement!=null) {
 				return execExpr(ui.falseStatement, scope);
 			}
+			return cond;
 		}
 		if (expr instanceof UniFor) {
 			UniFor uniFor = (UniFor) expr;

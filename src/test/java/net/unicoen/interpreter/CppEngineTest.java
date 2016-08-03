@@ -2,7 +2,6 @@ package net.unicoen.interpreter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import org.junit.Ignore;
@@ -14,10 +13,6 @@ import net.unicoen.node.UniNode;
 public class CppEngineTest {
 	@Test @Ignore
 	public void test1() {
-		CppEngine engine = new CppEngine();
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		engine.out = new PrintStream(baos);
-
 		String text =
 				"int main()"+
 				"{"+
@@ -34,36 +29,11 @@ public class CppEngineTest {
 					"a = 5;"+
 					"int c=a+b;"+
 				"}";
-		CPP14Mapper cppMapper = new CPP14Mapper(true);
-		Object node = cppMapper.parse(text);
-		ExecState  state;
-		if(!(node instanceof ArrayList)){
-			ArrayList<UniNode> nodes = new ArrayList<UniNode>();
-			nodes.add((UniNode) node);
-			engine.startStepExecution(nodes);
-		}
-		else{
-			engine.startStepExecution((ArrayList<UniNode>)node);
-		}
-		//
-		for(int i=0;engine.isStepExecutionRunning();++i)
-		{
-			state = engine.stepExecute();
-		}
-
-		try {
-			String output = baos.toString("UTF8");
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		exec(text);
 	}
 
 	@Test @Ignore
 	public void test2() {
-		CppEngine engine = new CppEngine();
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		engine.out = new PrintStream(baos);
 		String text =
 				"int main()"+
 				"{"+
@@ -71,82 +41,30 @@ public class CppEngineTest {
 					"{int i = 100;i+=20;}"+
 					"i+=50;"+
 				"}";
-		CPP14Mapper cppMapper = new CPP14Mapper(true);
-		Object node = cppMapper.parse(text);
-		ExecState  state;
-		if(!(node instanceof ArrayList)){
-			ArrayList<UniNode> nodes = new ArrayList<UniNode>();
-			nodes.add((UniNode) node);
-			engine.startStepExecution(nodes);
-		}
-		else{
-			engine.startStepExecution((ArrayList<UniNode>)node);
-		}
-		//
-		for(int i=0;engine.isStepExecutionRunning();++i)
-		{
-			state = engine.stepExecute();
-		}
-
-		try {
-			String output = baos.toString("UTF8");
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		exec(text);
 	}
 
-	@Test //@Ignore
+	@Test @Ignore
 	public void test3(){
-		CppEngine engine = new CppEngine();
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		engine.out = new PrintStream(baos);
-
 		String text =
 				"int main()"+
 				"{"+
 					"double x = 1.0;"
 					+ "double e = 0.0000000005;"+
 					"int i;"+
-					"for(i=0;((x*x-2)<-e) || (e<(x*x-2));i+=1)"+
+					"for(i=0;e<fabs(x*x-2);i+=1)"+
 					"{"+
 						"x -= ((x*x)-2) / (2*x);"+
-						"int a = 10;"+
-						"continue;"+
-					"}"+
+					"}"
+					+ "printf(\"sqrt(2)=%f\\n\", x);"+
+						
 					"return x;"+
 				"}";
-		CPP14Mapper cppMapper = new CPP14Mapper(true);
-		Object node = cppMapper.parse(text);
-		ExecState  state;
-		if(!(node instanceof ArrayList)){
-			ArrayList<UniNode> nodes = new ArrayList<UniNode>();
-			nodes.add((UniNode) node);
-			engine.startStepExecution(nodes);
-		}
-		else{
-			engine.startStepExecution((ArrayList<UniNode>)node);
-		}
-		//
-		for(int i=0;engine.isStepExecutionRunning();++i)
-		{
-			state = engine.stepExecute();
-		}
-
-		try {
-			String output = baos.toString("UTF8");
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		exec(text);
 	}
 
 	@Test @Ignore
 	public void test4(){
-		CppEngine engine = new CppEngine();
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		engine.out = new PrintStream(baos);
-
 		String text =
 //				"struct Str"+
 //				"{"+
@@ -174,28 +92,43 @@ public class CppEngineTest {
 //					+ "str3 = str2;"
 //					+ "return str3;"
 				+"}";
+		exec(text);
+	}
+
+	@Test @Ignore
+	public void test5() {
+		String text =
+				"int main()"
+				+ "{"
+				+ "	int var = 10;"
+				+ "	printf(\"値1=%d 値2=%d\\n\", 123, var);"
+				+ "	printf(\"値1=%d 値2=%d\\n\", 123, var);"
+				+ "	printf(\"値1=%d 値2=%d\\n\", 123, var);"
+				+"}";
+		exec(text);
+	}
+
+	private ExecState exec(String text){
+		CppEngine engine = new CppEngine();
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		engine.out = new PrintStream(baos);
 		CPP14Mapper cppMapper = new CPP14Mapper(true);
 		Object node = cppMapper.parse(text);
-		ExecState  state;
+		ExecState  state = null;
 		if(!(node instanceof ArrayList)){
 			ArrayList<UniNode> nodes = new ArrayList<UniNode>();
 			nodes.add((UniNode) node);
-			state = engine.startStepExecution(nodes);
+			engine.startStepExecution(nodes);
 		}
 		else{
-			state = engine.startStepExecution((ArrayList<UniNode>)node);
+			engine.startStepExecution((ArrayList<UniNode>)node);
 		}
-		//
+
 		for(int i=0;engine.isStepExecutionRunning();++i)
 		{
 			state = engine.stepExecute();
+			String output = baos.toString();
 		}
-		state.toString();
-		try {
-			String output = baos.toString("UTF8");
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		return state;
 	}
 }

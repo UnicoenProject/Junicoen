@@ -39,15 +39,13 @@ class CppMapperTest  extends MapperTest {
 		")
 		val dd = node;
 	}
-	
+
 	@Test
 	def CppTest2() {
 		val node = mapper.parse("
 		int main()
 		{
-			char *buf = NULL;
-			buf = (char*) malloc( 100 );
-			free(buf);
+			printf(\"Year %d\n\", 2015);
 		}
 		")
 		val dd = node;
