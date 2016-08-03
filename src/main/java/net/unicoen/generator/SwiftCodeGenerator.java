@@ -442,13 +442,15 @@ public class SwiftCodeGenerator extends Traverser {
 			print("(");
 		}
 		if(isEnhancedFor&&node.operator=="="&&node.right!=null&&!isPrintMethod){
-			enhancedForStart = node.right;
-			
+			if(enhancedForStart==null){
+				enhancedForStart = node.right;
+			}
 		}
 		if(isEnhancedFor&&node.right!=null&&!isPrintMethod){//i<20
-			enhancedForEnd = node.right;
-			return;
-			
+			if (enhancedForEnd == null) {
+				enhancedForEnd = node.right;
+				return;
+			}
 		}
 		if((node.left!=null)&&(node.right==null)){
 			if(isPrintMethod&&!(node.left instanceof UniStringLiteral)&&!(node.left instanceof UniBinOp)){

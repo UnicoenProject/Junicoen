@@ -1595,10 +1595,13 @@ public interface Hockey extends Sports
 	@Test
 	def void temp(){
 		val tree = mapper.parse("
-			class temp{
-    int a = 1;
-    void temp(int a){
-        System.out.println(a);
+class temp{
+    String isP(){
+        for(int i=0;i<(length+1)/2;i++){
+            if(array[i]!=array[length-i-1]){
+                return \"No\";
+            }
+        }
     }
 }
 		")
