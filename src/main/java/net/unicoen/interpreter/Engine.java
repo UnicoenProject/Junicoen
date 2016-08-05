@@ -601,6 +601,15 @@ public class Engine {
 			}
 		case "()":
 			return execExpr(uniOp.expr,scope);
+		case "sizeof":{
+			List l = new ArrayList<UniExpr>();
+			if(uniOp.expr instanceof UniIdent)
+				l.add(new UniStringLiteral(((UniIdent)uniOp.expr).name));
+			else
+				l.add(uniOp.expr);
+			UniMethodCall umc = new UniMethodCall(null,"sizeof",l);
+			return execExpr(umc,scope);
+		}
 		}
 		throw new RuntimeException("Unkown binary operator: " + uniOp.operator);
 	}
@@ -776,9 +785,36 @@ public class Engine {
 		}
 		throw new RuntimeException("Unkown binary operator: " + op);
 	}
-
+	
+	public static int sizeof(String type){
+		if(type.contains("char")){
+			return 1;
+		}
+		else if(type.contains("short")){
+			return 2;
+		}
+		else if(type.contains("double")){
+			return 8;
+		}
+		return 4;
+	}
+	
 	protected Object execAssign(int address, Object value, Scope scope) {
-		scope.set(address, value);
+		if(value instanceof Variable){
+			Variable var = (Variable)value;
+			String type = scope.getType(address);
+			String typeRemPtr = type.replace("*", "");
+			int typeSize = sizeof(typeRemPtr);
+			int num = (int)var.getValue()/typeSize;
+			int heapAddress = scope.setHeap((int)Math.random(),typeRemPtr);
+			for(int i=1;i<num;++i){
+				scope.setHeap((int)Math.random(),typeRemPtr);
+			}
+			scope.set(address, heapAddress);			
+		}
+		else{
+			scope.set(address, value);			
+		}
 		return value;
 	}
 

@@ -31,17 +31,24 @@ public class Scope {
 		}
 	}
 
+	private class Int{
+		public Int(int i) {
+			v=i;
+		}
+		int v;
+	}
 	public String name;
 	public int depth;
-	public int address;
+	public Int address;
+	public Int heapAddress;
 	public final Type type;
 	public final Scope parent;
 	public final Scope global;
 	public List<Scope> children = new ArrayList<Scope>();
 	public final HashMap<String, Integer> variableAddress = new LinkedHashMap<>();
 	public final HashMap<String, String> variableTypes = new LinkedHashMap<>();
-	public final HashMap<Integer, Object> objectOnMemory = new LinkedHashMap<>();
-	public final HashMap<Integer, String> typeOnMemory = new LinkedHashMap<>();
+	public final HashMap<Integer, Object> objectOnMemory;
+	public final HashMap<Integer, String> typeOnMemory;
 	private List<VariableNotFoundListener> listeners = null;
 	private final int tempAddressForListener = -1;
 
@@ -58,14 +65,21 @@ public class Scope {
 			this.depth = 0;
 			this.name = "GLOBAL";
 			this.global = this;
-			address = 0;
+			address = new Int(0);
+			heapAddress= new Int(10000);
+			objectOnMemory = new LinkedHashMap<>();
+			typeOnMemory = new LinkedHashMap<>();
 		}
 		else{
 			parent.children.add(this);
 			this.depth = parent.depth + 1;
 			this.name = parent.name;
 			this.global = parent.global;
-			address = parent.address;
+			this.address = parent.address;
+			this.address.v++;
+			this.heapAddress = parent.heapAddress;
+			this.objectOnMemory = parent.objectOnMemory;
+			this.typeOnMemory = parent.typeOnMemory;
 		}
 	}
 
@@ -155,12 +169,19 @@ public class Scope {
 		throw new UniRuntimeError(
 				String.format("variable '%s' is not defined.", key));
 	}
+	
+	public int setHeap(Object value,String type){
+		assertNotUnicoen(value);
+		objectOnMemory.put(heapAddress.v, value);
+		typeOnMemory.put(heapAddress.v, type);
+		return heapAddress.v++;
+	}
 
 	/** 現在のスコープに新しい変数を定義し、代入します */
 	public void setTop(String key, Object value, String type) {
 		assertNotUnicoen(value);
 		if(hasValue(type)){//構造体
-			setPrimitive(key, address+1, type);
+			setPrimitive(key, address.v+1, type);
 			Map<String, Integer> offsets = (Map<String, Integer>) get(type);
 			List<Object> arr=null;
 			if(value instanceof List){//初期化リストあり
@@ -169,12 +190,12 @@ public class Scope {
 					arr.add(0);
 				}
 			}
-			else if(value instanceof Integer){//代入
+			else if(value instanceof Integer){//コピー
 				arr = new ArrayList<Object>();
 				for(Map.Entry<String, Integer> offset : offsets.entrySet()) {
-				    int address = (int)value;
-					address += offset.getValue();
-					Object v = getValue(address);
+				    int addr = (int)value;
+					addr += offset.getValue();
+					Object v = getValue(addr);
 					arr.add(v);
 				}
 			}
@@ -188,7 +209,7 @@ public class Scope {
 		}
 		else if(value instanceof List){//配列の場合
 			List<Object> arr = (List<Object>) value;
-			setPrimitive(key, address+1, type+"["+arr.size()+"]");
+			setPrimitive(key, address.v+1, type+"["+arr.size()+"]");
 			setArray(arr);
 		}
 		else{//組み込み型の場合
@@ -203,7 +224,7 @@ public class Scope {
 				setArray((List<Object>)var);
 			}
 			else{
-				objectOnMemory.put(address++, var);
+				objectOnMemory.put(address.v++, var);
 			}
 		}
 	}
@@ -211,10 +232,10 @@ public class Scope {
 	private void setPrimitive(String key, Object value, String type){
 		assertNotUnicoen(value);
 		variableTypes.put(key, type);
-		variableAddress.put(key, address);
-		objectOnMemory.put(address, value);
-		typeOnMemory.put(address, type);
-		++address;
+		variableAddress.put(key, address.v);
+		objectOnMemory.put(address.v, value);
+		typeOnMemory.put(address.v, type);
+		++address.v;
 	}
 
 	/** 指定したメモリアドレスに値を書き込みます */

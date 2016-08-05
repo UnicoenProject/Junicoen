@@ -95,15 +95,19 @@ public class CppEngineTest {
 		exec(text);
 	}
 
-	@Test @Ignore
+	@Test //@Ignore
 	public void test5() {
 		String text =
 				"int main()"
 				+ "{"
-				+ "	int var = 10;"
-				+ "	printf(\"値1=%d 値2=%d\\n\", 123, var);"
-				+ "	printf(\"値1=%d 値2=%d\\n\", 123, var);"
-				+ "	printf(\"値1=%d 値2=%d\\n\", 123, var);"
+				+ " int i;"
+				+ "	int* p;"
+				+ "	p = malloc(sizeof(int)*10);"
+				+ "	for(i=0;i<10;i+=1){"
+				+ "		p[i]=i*i;"
+				+ "		printf(\"p[i]=%d\\n\", p[i]);"
+				+ " }"
+				+ "	return i;"
 				+"}";
 		exec(text);
 	}

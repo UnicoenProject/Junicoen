@@ -31,16 +31,26 @@ public class ExecState {
 	private ExecState makeImple(Scope scope){
 		if(!hasStack(scope.name)){
 			addStack(scope.name);
+			if(scope.name.equals("GLOBAL")){
+				for(int i=10000;i<20000;++i){
+					if(scope.typeOnMemory.containsKey(i)){
+						String type = scope.typeOnMemory.get(i);
+						Object value = scope.objectOnMemory.get(i);
+						Variable variable = new Variable(type, "Heap:"+i, value, i, scope.depth);
+						addVariable(scope.name, variable);
+					}
+				}
+			}
 		}
 		List<String> varList = new ArrayList<String>();
 		for(Map.Entry<String, Integer> vars : scope.variableAddress.entrySet()) {
 			varList.add(vars.getKey());
 		}
 		for(String varName : varList){
-			int address = scope.variableAddress.get(varName);
 			String type = scope.variableTypes.get(varName);
 			if(type.equals("FUNCTION"))
 				continue;
+			int address = scope.variableAddress.get(varName);
 			Object value = scope.objectOnMemory.get(address);
 			if(type.contains("[") && type.contains("]")){
 				int length = Integer.parseInt(type.substring(type.lastIndexOf("[")+1, type.length()-1));
@@ -49,14 +59,10 @@ public class ExecState {
 					Object arrValue = scope.objectOnMemory.get((int)value+i);
 					list.add(arrValue);
 				}
-				Variable variable = new Variable(type, varName, list, address, scope.depth);
-				addVariable(scope.name, variable);
+				value = list;
 			}
-			else{
-				Variable variable = new Variable(type, varName, value, address, scope.depth);
-				addVariable(scope.name, variable);
-			}
-
+			Variable variable = new Variable(type, varName, value, address, scope.depth);
+			addVariable(scope.name, variable);
 		}
 		if(!scope.children.isEmpty()){
 			for(Scope child : scope.children){

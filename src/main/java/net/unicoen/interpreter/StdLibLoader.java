@@ -29,6 +29,7 @@ public class StdLibLoader {
 	}
 
 	private void initMyLib() {
+		global.setTop("MyLib", null,"FUNCTION");
 		Scope scope = Scope.createObject(global);
 		scope.setTop("printInt", new FunctionWithEngine() {
 			@Override
@@ -44,7 +45,7 @@ public class StdLibLoader {
 				return null;
 			}
 		},"FUNCTION");
-		global.setTop("MyLib", scope,"FUNCTION");
+		global.set(global.getAddress("MyLib"), scope);
 	}
 
 	private void initTurtle() {

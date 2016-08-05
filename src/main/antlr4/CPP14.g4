@@ -11,7 +11,7 @@ translationunit
 primaryexpression
 	:	literal 
 	|	This 
-	|	LeftParen expression RightParen 
+	|	'(' expression ')' 
 	|	identexpression 
 	|	lambdaexpression 
 	;
@@ -143,10 +143,15 @@ unaryexpression
 	|	MinusMinus castexpression 
 	|	unaryoperator castexpression 
 	|	Sizeof binaryexpression 
+	|	Sizeof '(' typeidlapper ')' 
 	|	Sizeof '(' typeid ')' 
 	|	Sizeof '...' '(' Identifier ')' 
 	|	Alignof '(' typeid ')' 
 	|	noexceptexpression 
+	;
+
+typeidlapper
+	:	typeid 
 	;
 
 unaryoperator
