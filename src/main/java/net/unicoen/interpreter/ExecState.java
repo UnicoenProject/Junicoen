@@ -52,6 +52,8 @@ public class ExecState {
 				continue;
 			int address = scope.variableAddress.get(varName);
 			Object value = scope.objectOnMemory.get(address);
+			if(value instanceof UniNode)
+				continue;
 			if(type.contains("[") && type.contains("]")){
 				int length = Integer.parseInt(type.substring(type.lastIndexOf("[")+1, type.length()-1));
 				List<Object> list = new ArrayList<Object>();
