@@ -96,7 +96,7 @@ public class CppEngineTest {
 		exec(text);
 	}
 
-	@Test //@Ignore
+	@Test @Ignore
 	public void test5() {
 		String text =
 				"int f1(){}"
@@ -117,6 +117,23 @@ public class CppEngineTest {
 		exec(text);
 	}
 
+	@Test //@Ignore
+	public void test6() {
+		String text = ""
+				//+ "#include <stdio.h>"
+				+ "int add(int x,int y)"
+				+ "{"
+				+ "	return x+y;"
+				+ "}"
+				+ "int b=3;"
+				+ "int main()"
+				+ "{"
+				+ "	int *p=&b;"
+				+ "	int ps[5];"
+				+ "	int a = 0;"
+				+ "}";
+		exec(text);
+	}
 	private List<UniNode> flatten(List<Object> list){
 		List<UniNode> nodes = new ArrayList<UniNode>();
 		for(Object element : list){

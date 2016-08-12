@@ -61,6 +61,7 @@ public class ExecState {
 					Object arrValue = scope.objectOnMemory.get((int)value+i);
 					list.add(arrValue);
 				}
+				address = (int) value;
 				value = list;
 			}
 			Variable variable = new Variable(type, varName, value, address, scope.depth);

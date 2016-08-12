@@ -169,7 +169,7 @@ public class Scope {
 		throw new UniRuntimeError(
 				String.format("variable '%s' is not defined.", key));
 	}
-	
+
 	public int setHeap(Object value,String type){
 		assertNotUnicoen(value);
 		objectOnMemory.put(heapAddress.v, value);
@@ -209,7 +209,7 @@ public class Scope {
 		}
 		else if(value instanceof List){//配列の場合
 			List<Object> arr = (List<Object>) value;
-			setPrimitive(key, address.v+1, type+"["+arr.size()+"]");
+			setPrimitiveOnHeap(key, address.v, type+"["+arr.size()+"]");
 			setArray(arr);
 		}
 		else{//組み込み型の場合
@@ -236,6 +236,15 @@ public class Scope {
 		objectOnMemory.put(address.v, value);
 		typeOnMemory.put(address.v, type);
 		++address.v;
+	}
+
+	private void setPrimitiveOnHeap(String key, Object value, String type){
+		assertNotUnicoen(value);
+		variableTypes.put(key, type);
+		variableAddress.put(key, heapAddress.v);
+		objectOnMemory.put(heapAddress.v, value);
+		typeOnMemory.put(heapAddress.v, type);
+		++heapAddress.v;
 	}
 
 	/** 指定したメモリアドレスに値を書き込みます */
