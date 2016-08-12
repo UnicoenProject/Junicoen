@@ -427,7 +427,8 @@ myclasshead
 	;
 
 declaration
-	:	blockdeclaration 
+	:	variabledeclarationstatement 
+	|	blockdeclaration 
 	|	myclassspecifier 
 	|	functiondefinition 
 	|	templatedeclaration 

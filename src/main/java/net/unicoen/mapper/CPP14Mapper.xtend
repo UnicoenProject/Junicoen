@@ -1766,7 +1766,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 1352: {
+						case 1353: {
 							ret += it.visit
 						}
 						default: {
@@ -1801,13 +1801,13 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 1358: {
+						case 1359: {
 							modifiers += it.visit
 						}
-						case 1361: {
+						case 1362: {
 							type += it.visit
 						}
-						case 1362: {
+						case 1363: {
 							merge += it.visit
 						}
 						default: {
@@ -1841,10 +1841,10 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1366: {
+					case 1367: {
 						add += it.visit
 					}
-					case 1368: {
+					case 1369: {
 						add += it.visit
 					}
 					default: {
@@ -1874,19 +1874,19 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1376: {
+					case 1377: {
 						merge += it.visit
 					}
-					case 1377: {
+					case 1378: {
 						type += it.visit
 					}
-					case 1381: {
+					case 1382: {
 						value += it.visit
 					}
-					case 1384: {
+					case 1385: {
 						type += it.visit
 					}
-					case 1385: {
+					case 1386: {
 						value += it.visit
 					}
 					default: {
@@ -1914,10 +1914,10 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1389: {
+					case 1390: {
 						merge += it.visit
 					}
-					case 1390: {
+					case 1391: {
 						merge += it.visit
 					}
 					default: {
@@ -1946,7 +1946,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1397: {
+					case 1398: {
 						elementsNum += it.visit
 					}
 					default: {
@@ -1975,31 +1975,31 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1400: {
+					case 1401: {
 						name += it.visit
 					}
-					case 1406: {
+					case 1407: {
 						name += it.visit
 					}
-					case 1408: {
+					case 1409: {
 						value += it.visit
 					}
-					case 1411: {
+					case 1412: {
 						name += it.visit
 					}
-					case 1417: {
+					case 1418: {
 						name += it.visit
 					}
-					case 1420: {
+					case 1421: {
 						value += it.visit
 					}
-					case 1423: {
-						name += it.visit
-					}
-					case 1429: {
+					case 1424: {
 						name += it.visit
 					}
 					case 1430: {
+						name += it.visit
+					}
+					case 1431: {
 						value += it.visit
 					}
 					default: {
@@ -2078,10 +2078,10 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 1886: {
+					case 1887: {
 						add += it.visit
 					}
-					case 1888: {
+					case 1889: {
 						add += it.visit
 					}
 					default: {
@@ -2131,10 +2131,10 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 2076: {
+						case 2077: {
 							add += it.visit
 						}
-						case 2082: {
+						case 2083: {
 							add += it.visit
 						}
 						default: {
@@ -2163,13 +2163,13 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 2089: {
+						case 2090: {
 							add += it.visit
 						}
 						case 316: {
 							add += it.visit
 						}
-						case 2093: {
+						case 2094: {
 							add += it.visit
 						}
 						default: {
@@ -2199,28 +2199,28 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2102: {
-						type += it.visit
-					}
 					case 2103: {
-						name += it.visit
-					}
-					case 2108: {
 						type += it.visit
+					}
+					case 2104: {
+						name += it.visit
 					}
 					case 2109: {
-						name += it.visit
-					}
-					case 2116: {
 						type += it.visit
+					}
+					case 2110: {
+						name += it.visit
 					}
 					case 2117: {
-						name += it.visit
-					}
-					case 2123: {
 						type += it.visit
 					}
+					case 2118: {
+						name += it.visit
+					}
 					case 2124: {
+						type += it.visit
+					}
+					case 2125: {
 						name += it.visit
 					}
 					default: {
@@ -2250,13 +2250,13 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2135: {
+					case 2136: {
 						modifiers += it.visit
 					}
-					case 2138: {
+					case 2139: {
 						merge += it.visit
 					}
-					case 2142: {
+					case 2143: {
 						block += it.visit
 					}
 					default: {
@@ -2286,10 +2286,10 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2144: {
+					case 2145: {
 						returnType += it.visit
 					}
-					case 2147: {
+					case 2148: {
 						merge += it.visit
 					}
 					default: {
@@ -2320,10 +2320,10 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2149: {
+					case 2150: {
 						methodName += it.visit
 					}
-					case 2151: {
+					case 2152: {
 						args += it.visit
 					}
 					default: {
@@ -2349,7 +2349,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2157: {
+					case 2158: {
 						merge += it.visit
 					}
 					default: {
@@ -2379,10 +2379,10 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 2183: {
+						case 2184: {
 							add += it.visit
 						}
-						case 2185: {
+						case 2186: {
 							add += it.visit
 						}
 						default: {
@@ -2410,7 +2410,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2192: {
+					case 2193: {
 						items += it.visit
 					}
 					default: {
@@ -2549,16 +2549,16 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 2247: {
-							add += it.visit
-						}
 						case 2248: {
 							add += it.visit
 						}
-						case 2251: {
+						case 2249: {
 							add += it.visit
 						}
-						case 2253: {
+						case 2252: {
+							add += it.visit
+						}
+						case 2254: {
 							add += it.visit
 						}
 						default: {
@@ -2586,7 +2586,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 2267: {
+						case 2268: {
 							ret += it.visit
 						}
 						default: {
@@ -2621,16 +2621,16 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 			ctx.children.forEach [
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
-						case 2273: {
+						case 2274: {
 							modifiers += it.visit
-						}
-						case 2276: {
-							type += it.visit
 						}
 						case 2277: {
 							type += it.visit
 						}
-						case 2283: {
+						case 2278: {
+							type += it.visit
+						}
+						case 2284: {
 							merge += it.visit
 						}
 						default: {
@@ -2664,13 +2664,13 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2287: {
+					case 2288: {
 						add += it.visit
 					}
 					case 360: {
 						add += it.visit
 					}
-					case 2291: {
+					case 2292: {
 						add += it.visit
 					}
 					default: {
@@ -2701,25 +2701,25 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		ctx.children.forEach [
 			if (it instanceof RuleContext) {
 				switch it.invokingState {
-					case 2297: {
+					case 2298: {
 						name += it.visit
 					}
-					case 2298: {
+					case 2299: {
 						modifiers += it.visit
 					}
-					case 2304: {
+					case 2305: {
 						name += it.visit
 					}
-					case 2306: {
+					case 2307: {
 						value += it.visit
-					}
-					case 2309: {
-						name += it.visit
 					}
 					case 2310: {
+						name += it.visit
+					}
+					case 2311: {
 						value += it.visit
 					}
-					case 2320: {
+					case 2321: {
 						value += it.visit
 					}
 					default: {

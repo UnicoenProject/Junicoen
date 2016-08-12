@@ -102,7 +102,7 @@ public class CppEngineTest {
 				"int f1(){}"
 				+ "int f2(){}"
 				+ "int f3(){}"
-				+ "int a = 3;"
+				+ "int a = 3,b=5;"
 				+ "int main()"
 				+ "{"
 				+ " int i;"
@@ -112,7 +112,7 @@ public class CppEngineTest {
 				+ "		p[i]=i*i;"
 				+ "		printf(\"p[i]=%d\\n\", p[i]);"
 				+ " }"
-				+ "	return i;"
+				+ "	return a;"
 				+"}";
 		exec(text);
 	}
