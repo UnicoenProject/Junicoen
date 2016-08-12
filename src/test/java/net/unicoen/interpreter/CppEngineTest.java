@@ -3,6 +3,7 @@ package net.unicoen.interpreter;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -57,7 +58,7 @@ public class CppEngineTest {
 						"x -= ((x*x)-2) / (2*x);"+
 					"}"
 					+ "printf(\"sqrt(2)=%f\\n\", x);"+
-						
+
 					"return x;"+
 				"}";
 		exec(text);
@@ -98,12 +99,16 @@ public class CppEngineTest {
 	@Test //@Ignore
 	public void test5() {
 		String text =
-				"int main()"
+				"int f1(){}"
+				+ "int f2(){}"
+				+ "int f3(){}"
+				+ "int a = 3;"
+				+ "int main()"
 				+ "{"
 				+ " int i;"
 				+ "	int* p;"
 				+ "	p = malloc(sizeof(int)*10);"
-				+ "	for(i=0;i<10;i+=1){"
+				+ "	for(i=a;i<10;i+=1){"
 				+ "		p[i]=i*i;"
 				+ "		printf(\"p[i]=%d\\n\", p[i]);"
 				+ " }"
@@ -112,6 +117,21 @@ public class CppEngineTest {
 		exec(text);
 	}
 
+	private List<UniNode> flatten(List<Object> list){
+		List<UniNode> nodes = new ArrayList<UniNode>();
+		for(Object element : list){
+			if(element instanceof UniNode){
+				nodes.add((UniNode)element);
+			}
+			else{
+				List<UniNode> l = flatten((List<Object>) element);
+				for(UniNode node : l){
+					nodes.add(node);
+				}
+			}
+		}
+		return nodes;
+	}
 	private ExecState exec(String text){
 		CppEngine engine = new CppEngine();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -119,15 +139,15 @@ public class CppEngineTest {
 		CPP14Mapper cppMapper = new CPP14Mapper(true);
 		Object node = cppMapper.parse(text);
 		ExecState  state = null;
-		if(!(node instanceof ArrayList)){
-			ArrayList<UniNode> nodes = new ArrayList<UniNode>();
-			nodes.add((UniNode) node);
-			engine.startStepExecution(nodes);
+		List<UniNode> nodes = null;
+		if(node instanceof List){
+			nodes = flatten((List<Object>) node);
 		}
 		else{
-			engine.startStepExecution((ArrayList<UniNode>)node);
+			nodes = new ArrayList<UniNode>();
+			nodes.add((UniNode) node);
 		}
-
+		engine.startStepExecution((ArrayList<UniNode>) nodes);
 		for(int i=0;engine.isStepExecutionRunning();++i)
 		{
 			state = engine.stepExecute();
