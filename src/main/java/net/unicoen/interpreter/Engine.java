@@ -254,7 +254,7 @@ public class Engine {
 			}
 			for(int i=0;i<arguments.size();++i){
 				UniArg param = parameters.get(i);
-				scope.setTop(param.name,args.get(i),param.type);
+				funcScope.setTop(param.name,args.get(i),param.type);
 			}
 		}
 		//ToDo再起の場合のチェック(連番など?
