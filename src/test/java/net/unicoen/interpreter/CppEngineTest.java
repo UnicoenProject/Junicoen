@@ -117,7 +117,7 @@ public class CppEngineTest {
 		exec(text);
 	}
 
-	@Test //@Ignore
+	@Test @Ignore
 	public void test6() {
 		String text = ""
 				//+ "#include <stdio.h>"
@@ -131,6 +131,23 @@ public class CppEngineTest {
 				+ "	int *p=&b;"
 				+ "	int ps[5];"
 				+ "	int a = 0;"
+				+ "}";
+		exec(text);
+	}
+	@Test @Ignore
+	public void test7() {
+		String text = ""
+				//+ "#include <stdio.h>"
+				+ "void F(int n,int a,int b,int c)"
+				+ "{"
+				+ "	if(n>=2) F(n-1,a,b,c);"
+				+ "	printf(\"%dを%dから%dに\\n\", n,a,b);"
+				+ "	if(n>=2) F(n-1,c,a,b);"
+				+ "}"
+				+ "int main()"
+				+ "{"
+				+ "int x,b,c,d;"
+				+ "	F(4,1,2,3);"
 				+ "}";
 		exec(text);
 	}
@@ -168,8 +185,10 @@ public class CppEngineTest {
 		for(int i=0;engine.isStepExecutionRunning();++i)
 		{
 			state = engine.stepExecute();
-			String output = baos.toString();
 		}
+		String output = baos.toString();
+		if(!output.isEmpty())
+			System.out.println(output);
 		return state;
 	}
 }
