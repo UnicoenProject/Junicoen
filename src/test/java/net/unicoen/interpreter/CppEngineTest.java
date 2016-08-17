@@ -138,16 +138,15 @@ public class CppEngineTest {
 	public void test7() {
 		String text = ""
 				//+ "#include <stdio.h>"
-				+ "void F(int n,int a,int b,int c)"
+				+ "void Hanoi(int n,char from,char work,char dest)"
 				+ "{"
-				+ "	if(n>=2) F(n-1,a,b,c);"
-				+ "	printf(\"%dを%dから%dに\\n\", n,a,b);"
-				+ "	if(n>=2) F(n-1,c,a,b);"
+				+ "	if(n>=2) Hanoi(n-1,from,dest,work);"
+				+ "	printf(\"%d を %c から %c へ\\n\",n,from,dest);"
+				+ "	if(n>=2) Hanoi(n-1,work,from,dest);"
 				+ "}"
 				+ "int main()"
 				+ "{"
-				+ "int x,b,c,d;"
-				+ "	F(4,1,2,3);"
+				+ "	Hanoi(4,'A','B','C');"
 				+ "}";
 		exec(text);
 	}
