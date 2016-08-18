@@ -441,6 +441,9 @@ public class SwiftGeneratorTest {
 		public static void main(String args[]) {
       	for(int x = 10; x < 20; x = x+1) {
 			System.out.print(\"value of x : \" + x );
+		for(int i=length-1;i>=0;i--){
+		   result.append(operand.charAt(i));
+		  }
       	}
    		}
 		}
@@ -1597,12 +1600,41 @@ public interface Hockey extends Sports
 		val tree = mapper.parse("
 class temp{
     String isP(){
+		if((length==1)&&(symbol != \"+\")&&(symbol != \"-\")){
+			return \"YES\";
+		}
         for(int i=0;i<(length+1)/2;i++){
             if(array[i]!=array[length-i-1]){
                 return \"No\";
             }
-        }
+        }return \"YES\";
+		for(int i=0; i<src.size();++i){
+			boolean isMatch = true;
+			for(int j=0; j<subStr.size(); ++j){
+				if(src[i] != subStr[j])
+					isMatch = false;
+			}
+			if(isMatch)	return i;
+		}
+		if(src.length()==1)	return \"YES\";
+		for(int i = 1; i<src.size(); ++i) {
+			if(!isdigit(src[i]))	return \"NO\";
+		}
+		if(!check(src[0]))	return \"NO\";
+		dst = reverse(src);
+		if(src==dst)
+			return \"YES\";
+		else
+			return \"NO\";
+		for(int i = from; i<src.size();++i){
+			dst[src.length()-i-1+from] = src[i];
+		}return dst;
+		for(int i=0;i<10;++i){
+			if(c-'0'==i)	return true;
+		}return false;
+
     }
+	
 }
 		")
 		assertThat(tree, instanceOf(UniProgram))
