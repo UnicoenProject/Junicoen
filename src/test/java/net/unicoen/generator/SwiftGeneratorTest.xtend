@@ -439,11 +439,11 @@ public class SwiftGeneratorTest {
 		val tree = mapper.parse("
 		public class Test {
 		public static void main(String args[]) {
+		for(i=1;i>=0;i--){
+		}
       	for(int x = 10; x < 20; x = x+1) {
 			System.out.print(\"value of x : \" + x );
-		for(int i=length-1;i>=0;i--){
-		   result.append(operand.charAt(i));
-		  }
+		
       	}
    		}
 		}

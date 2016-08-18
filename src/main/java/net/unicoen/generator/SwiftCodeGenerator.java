@@ -295,16 +295,20 @@ public class SwiftCodeGenerator extends Traverser {
 
 	@Override
 	public void traverseStringLiteral(UniStringLiteral node) {
-		if(!isPrintMethod){
+		if (!isPrintMethod) {
 			print('"' + node.value.replaceAll("\"", "\\\"") + '"');
-		}else{
+		} else {
 			print(node.value.replaceAll("\"", "\\\""));
 		}
+		
 	}
 
 	@Override
 	public void traverseIdent(UniIdent node) {
-		if(node.name.equals("this")){
+		if(isEnhancedFor){
+			enhancedForVar = node.name;
+			return;
+		} else if(node.name.equals("this")){
 			node.name = "self";
 		}
 		print(node.name);
@@ -445,7 +449,11 @@ public class SwiftCodeGenerator extends Traverser {
 			}
 		}
 		if(isEnhancedFor&&node.right!=null&&!isPrintMethod){//i<20
-			if (enhancedForEnd == null) {
+			if (enhancedForEnd == null && enhancedForStart == null) {
+				enhancedForStart = node.right;
+				parseExpr(node.left);
+				return;
+			}else if(enhancedForEnd == null && enhancedForStart !=null){
 				enhancedForEnd = node.right;
 				return;
 			}
