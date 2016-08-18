@@ -464,9 +464,22 @@ public class Engine {
 		Object value = null;
 		if(decVar.value!=null)
 			value = execExpr(decVar.value, scope);
+
+		if(value instanceof Variable){
+			Variable var = (Variable)value;
+			String type = decVar.type;
+			String typeRemPtr = type.replace("*", "");
+			int typeSize = sizeof(typeRemPtr);
+			int num = (int)var.getValue()/typeSize;
+			int heapAddress = scope.setHeap((int)Math.random(),typeRemPtr);
+			for(int i=1;i<num;++i){
+				scope.setHeap((int)(Math.random()*100000),typeRemPtr);
+			}
+			value = heapAddress;
+		}
 		return value;
 	}
-	
+
 
 	private List<Object> execArray(UniArray uniArray, Scope scope) {
 		List<UniExpr> elements = uniArray.items;
@@ -797,7 +810,7 @@ public class Engine {
 		}
 		throw new RuntimeException("Unkown binary operator: " + op);
 	}
-	
+
 	public static int sizeof(String type){
 		if(type.contains("char")){
 			return 1;
@@ -810,7 +823,7 @@ public class Engine {
 		}
 		return 4;
 	}
-	
+
 	protected Object execAssign(int address, Object value, Scope scope) {
 		if(value instanceof Variable){
 			Variable var = (Variable)value;
@@ -822,10 +835,10 @@ public class Engine {
 			for(int i=1;i<num;++i){
 				scope.setHeap((int)Math.random(),typeRemPtr);
 			}
-			scope.set(address, heapAddress);			
+			scope.set(address, heapAddress);
 		}
 		else{
-			scope.set(address, value);			
+			scope.set(address, value);
 		}
 		return value;
 	}

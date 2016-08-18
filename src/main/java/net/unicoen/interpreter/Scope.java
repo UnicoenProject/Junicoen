@@ -41,6 +41,7 @@ public class Scope {
 	public int depth;
 	public Int address;
 	public Int heapAddress;
+	public Int codeAddress;
 	public final Type type;
 	public final Scope parent;
 	public final Scope global;
@@ -67,6 +68,7 @@ public class Scope {
 			this.global = this;
 			address = new Int(0);
 			heapAddress= new Int(10000);
+			codeAddress = new Int(20000);
 			objectOnMemory = new LinkedHashMap<>();
 			typeOnMemory = new LinkedHashMap<>();
 		}
@@ -78,6 +80,7 @@ public class Scope {
 			this.address = parent.address;
 			this.address.v++;
 			this.heapAddress = parent.heapAddress;
+			this.codeAddress = parent.codeAddress;
 			this.objectOnMemory = parent.objectOnMemory;
 			this.typeOnMemory = parent.typeOnMemory;
 		}
@@ -177,6 +180,13 @@ public class Scope {
 		return heapAddress.v++;
 	}
 
+	public int setCode(Object value,String type){
+		assertNotUnicoen(value);
+		objectOnMemory.put(codeAddress.v, value);
+		typeOnMemory.put(codeAddress.v, type);
+		return codeAddress.v++;
+	}
+
 	/** 現在のスコープに新しい変数を定義し、代入します */
 	public void setTop(String key, Object value, String type) {
 		assertNotUnicoen(value);
@@ -209,7 +219,7 @@ public class Scope {
 		}
 		else if(value instanceof List){//配列の場合
 			List<Object> arr = (List<Object>) value;
-			setPrimitiveOnHeap(key, address.v, type+"["+arr.size()+"]");
+			setPrimitiveOnCode(key, address.v, type+"["+arr.size()+"]");
 			setArray(arr);
 		}
 		else{//組み込み型の場合
@@ -236,6 +246,15 @@ public class Scope {
 		objectOnMemory.put(address.v, value);
 		typeOnMemory.put(address.v, type);
 		++address.v;
+	}
+
+	private void setPrimitiveOnCode(String key, Object value, String type){
+		assertNotUnicoen(value);
+		variableTypes.put(key, type);
+		variableAddress.put(key, codeAddress.v);
+		objectOnMemory.put(codeAddress.v, value);
+		typeOnMemory.put(codeAddress.v, type);
+		++codeAddress.v;
 	}
 
 	private void setPrimitiveOnHeap(String key, Object value, String type){
