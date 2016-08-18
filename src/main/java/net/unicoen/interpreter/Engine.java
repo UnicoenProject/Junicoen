@@ -241,20 +241,23 @@ public class Engine {
 		funcScope.name = funcScope.getNextName(fdec.methodName);
 
 		List<UniArg> parameters = fdec.args;
-		List<Object> args = new ArrayList<Object>();
+
 		if(parameters!=null && arguments!=null)
 		{
-			assert parameters.size() == arguments.size() ;
+			assert parameters.size() == arguments.size();
+			List<Object> args = new ArrayList<Object>();
+			List<UniVariableDec> uvds = new ArrayList<UniVariableDec>();
 			for(int i=0;i<arguments.size();++i){
 				UniArg param = parameters.get(i);
 				UniExpr arg = arguments.get(i);
 				UniVariableDec uvd = new UniVariableDec(null, param.type, param.name, arg);
 				Object value = execVariableDec(uvd,scope);
 				args.add(value);
+				uvds.add(uvd);
 			}
 			for(int i=0;i<arguments.size();++i){
 				UniArg param = parameters.get(i);
-				funcScope.setTop(param.name,args.get(i),param.type);
+				funcScope.setTop(uvds.get(i).name,args.get(i),uvds.get(i).type);
 			}
 		}
 		//ToDo再起の場合のチェック(連番など?
