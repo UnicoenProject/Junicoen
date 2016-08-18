@@ -1,5 +1,11 @@
 package net.unicoen.interpreter;
 
+import net.unicoen.node.UniCast;
+import net.unicoen.node.UniCharacterLiteral;
+import net.unicoen.node.UniDoubleLiteral;
+import net.unicoen.node.UniIntLiteral;
+import net.unicoen.node.UniLongLiteral;
+
 public class CppEngine extends Engine {
 
 	@Override
@@ -248,6 +254,29 @@ public class CppEngine extends Engine {
 			}
 		},"FUNCTION");
 	}
+	
+	@Override
+	protected Object execCast(UniCast expr, Scope scope){
+		Object value = execExpr(expr.value, scope);
+		return _execCast(expr.type,value);
+	}
+	
+	protected Object _execCast(String type, Object value){
+		if(type.equals("int")){
+			return new UniIntLiteral((int)value);
+		}
+		else if(type.equals("double")){
+			return new UniDoubleLiteral((double)value);
+		}
+		else if(type.equals("long")){
+			return new UniLongLiteral((long)value);
+		}
+		else if(type.equals("char")){
+			return new UniCharacterLiteral((char)value);
+		}
+		return value;
+	}
+	
 	public static int sizeof(String type){
 		if(type.contains("char")){
 			return 1;

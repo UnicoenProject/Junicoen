@@ -241,6 +241,7 @@ public class Engine {
 		funcScope.name = funcScope.getNextName(fdec.methodName);
 
 		List<UniArg> parameters = fdec.args;
+		List<Object> args = new ArrayList<Object>();
 		if(parameters!=null && arguments!=null)
 		{
 			assert parameters.size() == arguments.size() ;
@@ -248,7 +249,12 @@ public class Engine {
 				UniArg param = parameters.get(i);
 				UniExpr arg = arguments.get(i);
 				UniVariableDec uvd = new UniVariableDec(null, param.type, param.name, arg);
-				execExpr(uvd,funcScope);
+				Object value = execVariableDec(uvd,scope);
+				args.add(value);
+			}
+			for(int i=0;i<arguments.size();++i){
+				UniArg param = parameters.get(i);
+				funcScope.setTop(param.name,args.get(i),param.type);
 			}
 		}
 		//ToDo再起の場合のチェック(連番など?
@@ -342,7 +348,10 @@ public class Engine {
 			throw new Return(retValue);
 		}
 		if (expr instanceof UniVariableDec) {
-			return execVariableDec((UniVariableDec)expr,scope);
+			UniVariableDec uvd = (UniVariableDec)expr;
+			Object value = execVariableDec(uvd,scope);
+			scope.setTop(uvd.name,value,uvd.type);
+			return value;
 		}
 		if (expr instanceof UniBlock) {
 			return execBlock((UniBlock) expr, scope);
@@ -452,9 +461,9 @@ public class Engine {
 		Object value = null;
 		if(decVar.value!=null)
 			value = execExpr(decVar.value, scope);
-		scope.setTop(decVar.name,value,decVar.type);
 		return value;
 	}
+	
 
 	private List<Object> execArray(UniArray uniArray, Scope scope) {
 		List<UniExpr> elements = uniArray.items;
@@ -601,6 +610,15 @@ public class Engine {
 			}
 		case "()":
 			return execExpr(uniOp.expr,scope);
+		case "sizeof":{
+			List l = new ArrayList<UniExpr>();
+			if(uniOp.expr instanceof UniIdent)
+				l.add(new UniStringLiteral(((UniIdent)uniOp.expr).name));
+			else
+				l.add(uniOp.expr);
+			UniMethodCall umc = new UniMethodCall(null,"sizeof",l);
+			return execExpr(umc,scope);
+		}
 		}
 		throw new RuntimeException("Unkown binary operator: " + uniOp.operator);
 	}
@@ -776,9 +794,36 @@ public class Engine {
 		}
 		throw new RuntimeException("Unkown binary operator: " + op);
 	}
-
+	
+	public static int sizeof(String type){
+		if(type.contains("char")){
+			return 1;
+		}
+		else if(type.contains("short")){
+			return 2;
+		}
+		else if(type.contains("double")){
+			return 8;
+		}
+		return 4;
+	}
+	
 	protected Object execAssign(int address, Object value, Scope scope) {
-		scope.set(address, value);
+		if(value instanceof Variable){
+			Variable var = (Variable)value;
+			String type = scope.getType(address);
+			String typeRemPtr = type.replace("*", "");
+			int typeSize = sizeof(typeRemPtr);
+			int num = (int)var.getValue()/typeSize;
+			int heapAddress = scope.setHeap((int)Math.random(),typeRemPtr);
+			for(int i=1;i<num;++i){
+				scope.setHeap((int)Math.random(),typeRemPtr);
+			}
+			scope.set(address, heapAddress);			
+		}
+		else{
+			scope.set(address, value);			
+		}
 		return value;
 	}
 

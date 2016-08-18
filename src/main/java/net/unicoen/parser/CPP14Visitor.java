@@ -145,6 +145,12 @@ public interface CPP14Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitUnaryexpression(CPP14Parser.UnaryexpressionContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link CPP14Parser#typeidlapper}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypeidlapper(CPP14Parser.TypeidlapperContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link CPP14Parser#unaryoperator}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

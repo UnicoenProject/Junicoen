@@ -3,6 +3,7 @@ package net.unicoen.interpreter;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -57,7 +58,7 @@ public class CppEngineTest {
 						"x -= ((x*x)-2) / (2*x);"+
 					"}"
 					+ "printf(\"sqrt(2)=%f\\n\", x);"+
-						
+
 					"return x;"+
 				"}";
 		exec(text);
@@ -98,16 +99,72 @@ public class CppEngineTest {
 	@Test @Ignore
 	public void test5() {
 		String text =
-				"int main()"
+				"int f1(){}"
+				+ "int f2(){}"
+				+ "int f3(){}"
+				+ "int a = 3,b=5;"
+				+ "int main()"
 				+ "{"
-				+ "	int var = 10;"
-				+ "	printf(\"値1=%d 値2=%d\\n\", 123, var);"
-				+ "	printf(\"値1=%d 値2=%d\\n\", 123, var);"
-				+ "	printf(\"値1=%d 値2=%d\\n\", 123, var);"
+				+ " int i;"
+				+ "	int* p;"
+				+ "	p = malloc(sizeof(int)*10);"
+				+ "	for(i=a;i<10;i+=1){"
+				+ "		p[i]=i*i;"
+				+ "		printf(\"p[i]=%d\\n\", p[i]);"
+				+ " }"
+				+ "	return a;"
 				+"}";
 		exec(text);
 	}
 
+	@Test @Ignore
+	public void test6() {
+		String text = ""
+				//+ "#include <stdio.h>"
+				+ "int add(int x,int y)"
+				+ "{"
+				+ "	return x+y;"
+				+ "}"
+				+ "int b=3;"
+				+ "int main()"
+				+ "{"
+				+ "	int *p=&b;"
+				+ "	int ps[5];"
+				+ "	int a = 0;"
+				+ "}";
+		exec(text);
+	}
+	@Test @Ignore
+	public void test7() {
+		String text = ""
+				//+ "#include <stdio.h>"
+				+ "void Hanoi(int n,char from,char work,char dest)"
+				+ "{"
+				+ "	if(n>=2) Hanoi(n-1,from,dest,work);"
+				+ "	printf(\"%d を %c から %c へ\\n\",n,from,dest);"
+				+ "	if(n>=2) Hanoi(n-1,work,from,dest);"
+				+ "}"
+				+ "int main()"
+				+ "{"
+				+ "	Hanoi(4,'A','B','C');"
+				+ "}";
+		exec(text);
+	}
+	private List<UniNode> flatten(List<Object> list){
+		List<UniNode> nodes = new ArrayList<UniNode>();
+		for(Object element : list){
+			if(element instanceof UniNode){
+				nodes.add((UniNode)element);
+			}
+			else{
+				List<UniNode> l = flatten((List<Object>) element);
+				for(UniNode node : l){
+					nodes.add(node);
+				}
+			}
+		}
+		return nodes;
+	}
 	private ExecState exec(String text){
 		CppEngine engine = new CppEngine();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -115,20 +172,22 @@ public class CppEngineTest {
 		CPP14Mapper cppMapper = new CPP14Mapper(true);
 		Object node = cppMapper.parse(text);
 		ExecState  state = null;
-		if(!(node instanceof ArrayList)){
-			ArrayList<UniNode> nodes = new ArrayList<UniNode>();
-			nodes.add((UniNode) node);
-			engine.startStepExecution(nodes);
+		List<UniNode> nodes = null;
+		if(node instanceof List){
+			nodes = flatten((List<Object>) node);
 		}
 		else{
-			engine.startStepExecution((ArrayList<UniNode>)node);
+			nodes = new ArrayList<UniNode>();
+			nodes.add((UniNode) node);
 		}
-
+		engine.startStepExecution((ArrayList<UniNode>) nodes);
 		for(int i=0;engine.isStepExecutionRunning();++i)
 		{
 			state = engine.stepExecute();
-			String output = baos.toString();
 		}
+		String output = baos.toString();
+		if(!output.isEmpty())
+			System.out.println(output);
 		return state;
 	}
 }
