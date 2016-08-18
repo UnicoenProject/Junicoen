@@ -351,6 +351,7 @@ public class Engine {
 			UniVariableDec uvd = (UniVariableDec)expr;
 			Object value = execVariableDec(uvd,scope);
 			scope.setTop(uvd.name,value,uvd.type);
+			return value;
 		}
 		if (expr instanceof UniBlock) {
 			return execBlock((UniBlock) expr, scope);
