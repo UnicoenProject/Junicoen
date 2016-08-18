@@ -54,11 +54,9 @@ import net.unicoen.node.UniWhile;
 
 public class SwiftCodeGenerator extends Traverser {
 	private final String NEW_LINE = System.getProperty("line.separator");
-
 	//variable declaration
 	//"final" declaration without value -> var
 	//"final" declaration with value -> let
-	
 	//value of variable including UniIdent -> cast
 	private final PrintStream printOut;
 	private int indent = 0;
@@ -593,6 +591,7 @@ public class SwiftCodeGenerator extends Traverser {
 
 	@Override
 	public void traverseFor(UniFor node) {
+		
 		isEnhancedFor = true;
 		parseExpr(node.init);
 		parseExpr(node.cond);
@@ -607,6 +606,10 @@ public class SwiftCodeGenerator extends Traverser {
 		print("...");
 		parseExpr(enhancedForEnd);
 		isEnhancedFor = false;
+		isEnhancedForEnd = false;
+		enhancedForStart = null;
+		enhancedForEnd = null;
+		enhancedForVar = null;
 		
 		if (node.statement instanceof UniBlock) {
 			print(" ");
