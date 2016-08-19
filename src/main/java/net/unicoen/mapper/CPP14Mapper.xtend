@@ -476,6 +476,12 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 					case CPP14Parser.Arrow: {
 						operator += it.visit.flatten
 					}
+					case CPP14Parser.PlusPlus: {
+						operator += it.visit.flatten
+					}
+					case CPP14Parser.MinusMinus: {
+						operator += it.visit.flatten
+					}
 					default: {
 						none += it.visit
 					}
@@ -1386,22 +1392,10 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
 						case 1154: {
-							val results = it.visit.flatten
-							if(results instanceof ArrayList<?>){
-								for (result: results)
-									add += result
-							}
-							else
-								add += it.visit
+							add += it.visit
 						}
 						case 1155: {
-							val results = it.visit.flatten
-							if(results instanceof ArrayList<?>){
-								for (result: results)
-									add += result
-							}
-							else
-								add += it.visit
+							add += it.visit
 						}
 						default: {
 							none += it.visit
@@ -1691,13 +1685,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
 						case 1286: {
-							val results = it.visit.flatten
-							if(results instanceof ArrayList<?>){
-								for (result: results)
-									add += result
-							}
-							else
-								add += it.visit
+							add += it.visit
 						}
 						default: {
 							none += it.visit
@@ -2150,22 +2138,10 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
 						case 2077: {
-							val results = it.visit.flatten
-							if(results instanceof ArrayList<?>){
-								for (result: results)
-									add += result
-							}
-							else
-								add += it.visit
+							add += it.visit
 						}
 						case 2083: {
-							val results = it.visit.flatten
-							if(results instanceof ArrayList<?>){
-								for (result: results)
-									add += result
-							}
-							else
-								add += it.visit
+							add += it.visit
 						}
 						default: {
 							none += it.visit
@@ -2194,31 +2170,13 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
 						case 2090: {
-							val results = it.visit.flatten
-							if(results instanceof ArrayList<?>){
-								for (result: results)
-									add += result
-							}
-							else
-								add += it.visit
+							add += it.visit
 						}
 						case 316: {
-							val results = it.visit.flatten
-							if(results instanceof ArrayList<?>){
-								for (result: results)
-									add += result
-							}
-							else
-								add += it.visit
+							add += it.visit
 						}
 						case 2094: {
-							val results = it.visit.flatten
-							if(results instanceof ArrayList<?>){
-								for (result: results)
-									add += result
-							}
-							else
-								add += it.visit
+							add += it.visit
 						}
 						default: {
 							none += it.visit
@@ -2428,22 +2386,10 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
 						case 2184: {
-							val results = it.visit.flatten
-							if(results instanceof ArrayList<?>){
-								for (result: results)
-									add += result
-							}
-							else
-								add += it.visit
+							add += it.visit
 						}
 						case 2186: {
-							val results = it.visit.flatten
-							if(results instanceof ArrayList<?>){
-								for (result: results)
-									add += result
-							}
-							else
-								add += it.visit
+							add += it.visit
 						}
 						default: {
 							none += it.visit
@@ -2554,13 +2500,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
 						case 1286: {
-							val results = it.visit.flatten
-							if(results instanceof ArrayList<?>){
-								for (result: results)
-									add += result
-							}
-							else
-								add += it.visit
+							add += it.visit
 						}
 						default: {
 							none += it.visit
@@ -2616,40 +2556,16 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 				if (it instanceof RuleContext) {
 					switch it.invokingState {
 						case 2248: {
-							val results = it.visit.flatten
-							if(results instanceof ArrayList<?>){
-								for (result: results)
-									add += result
-							}
-							else
-								add += it.visit
+							add += it.visit
 						}
 						case 2249: {
-							val results = it.visit.flatten
-							if(results instanceof ArrayList<?>){
-								for (result: results)
-									add += result
-							}
-							else
-								add += it.visit
+							add += it.visit
 						}
 						case 2252: {
-							val results = it.visit.flatten
-							if(results instanceof ArrayList<?>){
-								for (result: results)
-									add += result
-							}
-							else
-								add += it.visit
+							add += it.visit
 						}
 						case 2254: {
-							val results = it.visit.flatten
-							if(results instanceof ArrayList<?>){
-								for (result: results)
-									add += result
-							}
-							else
-								add += it.visit
+							add += it.visit
 						}
 						default: {
 							none += it.visit

@@ -117,7 +117,7 @@ public class CppEngineTest {
 		exec(text);
 	}
 
-	@Test @Ignore
+	@Test //@Ignore
 	public void test6() {
 		String text = ""
 				//+ "#include <stdio.h>"
@@ -127,7 +127,7 @@ public class CppEngineTest {
 				+ "	p=malloc(sizeof(int)*3);"
 				+ "	int i;"
 				+ "	int* arr[3];"
-				+ "	for(i=0;i<3;i+=1){"
+				+ "	for(i=0;i<3;i++){"
 				+ "		arr[i]=malloc(sizeof(int)*3);"
 				+ "	}"
 				+ "}";

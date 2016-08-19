@@ -1,6 +1,8 @@
 package net.unicoen.interpreter;
 
 import net.unicoen.node.UniCast;
+import net.unicoen.node.UniExpr;
+import net.unicoen.node.UniUnaryOp;
 
 public class CppEngine extends Engine {
 
@@ -275,6 +277,23 @@ public class CppEngine extends Engine {
 				return (double)args[0] % (double)args[1];
 			}
 		},"FUNCTION");
+	}
+
+	@Override
+	protected Object execBinOp(String op, UniExpr left, UniExpr right,Scope scope) {
+		if(op.equals("++") || op.equals("--")){
+			op = "_" + op;
+			return execUnaryOp(new UniUnaryOp(op,left),scope);
+		}
+		return super.execBinOp(op, left,right,scope);
+	}
+
+	@Override
+	protected Object execUnaryOp(UniUnaryOp uniOp, Scope scope) {
+		if(uniOp.operator.equals("++") || uniOp.operator.equals("--")){
+			uniOp.operator = uniOp.operator + "_";
+		}
+		return super.execUnaryOp(uniOp,scope);
 	}
 
 	@Override

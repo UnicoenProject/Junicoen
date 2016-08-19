@@ -572,7 +572,7 @@ public class Engine {
 		throw new RuntimeException("Not support function type: " + func);
 	}
 
-	private Object execUnaryOp(UniUnaryOp uniOp, Scope scope) {
+	protected Object execUnaryOp(UniUnaryOp uniOp, Scope scope) {
 		switch (uniOp.operator) {
 		case "!":
 			return !toBool(execExpr(uniOp.expr, scope));
@@ -715,7 +715,7 @@ public class Engine {
 		target += "[" + (Integer.parseInt(index) + (Integer)idxObj) + "]";
 		return target;
 	}
-	private Object execBinOp(String op, UniExpr left, UniExpr right,
+	protected Object execBinOp(String op, UniExpr left, UniExpr right,
 			Scope scope) {
 
 		switch (op) {

@@ -1461,6 +1461,8 @@ public class CPP14Parser extends Parser {
 		public PseudodestructornameContext pseudodestructorname() {
 			return getRuleContext(PseudodestructornameContext.class,0);
 		}
+		public TerminalNode PlusPlus() { return getToken(CPP14Parser.PlusPlus, 0); }
+		public TerminalNode MinusMinus() { return getToken(CPP14Parser.MinusMinus, 0); }
 		public PostfixexpressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}

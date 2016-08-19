@@ -110,8 +110,8 @@ postfixexpression
 	|	postfixexpression Arrow Template? idexpressionlapper 
 	|	postfixexpression Dot pseudodestructorname 
 	|	postfixexpression Arrow pseudodestructorname 
-	|	postfixexpression '++' 
-	|	postfixexpression '--' 
+	|	postfixexpression PlusPlus 
+	|	postfixexpression MinusMinus 
 	|	Dynamic_cast '<' typeid '>' '(' expression ')' 
 	|	Static_cast '<' typeid '>' '(' expression ')' 
 	|	Reinterpret_cast '<' typeid '>' '(' expression ')' 
