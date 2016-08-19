@@ -1,10 +1,6 @@
 package net.unicoen.interpreter;
 
 import net.unicoen.node.UniCast;
-import net.unicoen.node.UniCharacterLiteral;
-import net.unicoen.node.UniDoubleLiteral;
-import net.unicoen.node.UniIntLiteral;
-import net.unicoen.node.UniLongLiteral;
 
 public class CppEngine extends Engine {
 
@@ -20,7 +16,7 @@ public class CppEngine extends Engine {
 			}
 		},"FUNCTION");
 	}
-	
+
 	protected void includeStdio(Scope global){
 		global.setTop("printf", new FunctionWithEngine() {
 			@Override
@@ -37,6 +33,14 @@ public class CppEngine extends Engine {
 					s = String.format(text,args[1],args[2]);
 				else if(args.length==4)
 					s = String.format(text,args[1],args[2],args[3]);
+				else if(args.length==5)
+					s = String.format(text,args[1],args[2],args[3],args[4]);
+				else if(args.length==6)
+					s = String.format(text,args[1],args[2],args[3],args[4],args[5]);
+				else if(args.length==7)
+					s = String.format(text,args[1],args[2],args[3],args[4],args[5],args[6]);
+				else if(args.length==8)
+					s = String.format(text,args[1],args[2],args[3],args[4],args[5],args[6],args[7]);
 				engine.out.print(s);
 				return s.length();
 			}
@@ -46,7 +50,25 @@ public class CppEngine extends Engine {
 		global.setTop("malloc", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
-				return new Variable("void","malloc",args[0],-1,-1);
+				//args[0]:int-num, (args[1]:String-type,1固定)
+				//String type = (String)args[0];
+				//int typeSize = sizeof(type);
+				//int byteSize = 1;//(int)args[1];
+				int num = (int)args[0];//byteSize/typeSize;
+				int heapAddress = global.setHeap((int)(Math.random()*Integer.MAX_VALUE),"?");
+				for(int i=1;i<num;++i){
+					global.setHeap((int)(Math.random()*Integer.MAX_VALUE),"?");
+				}
+				global.setMallocSize(heapAddress, num);
+				return heapAddress;
+			}
+		},"FUNCTION");
+		global.setTop("free", new FunctionWithEngine() {
+			@Override
+			public Object invoke(Engine engine, Object[] args) {
+				int address = (int)args[0];
+				int size = global.getMallocSize(address);
+				return global.removeOnMemory(address, size);
 			}
 		},"FUNCTION");
 		global.setTop("abs", new FunctionWithEngine() {
@@ -82,7 +104,7 @@ public class CppEngine extends Engine {
 				return Math.atan((double) args[0]);
 			}
 		},"FUNCTION");
-		
+
 		//三角関数
 		global.setTop("cos", new FunctionWithEngine() {
 			@Override
@@ -102,7 +124,7 @@ public class CppEngine extends Engine {
 				return Math.tan((double) args[0]);
 			}
 		},"FUNCTION");
-		
+
 		//双曲線関数
 		global.setTop("cosh", new FunctionWithEngine() {
 			@Override
@@ -122,10 +144,10 @@ public class CppEngine extends Engine {
 				return Math.tanh((double) args[0]);
 			}
 		},"FUNCTION");
-		
-		
-		
-		
+
+
+
+
 		global.setTop("exp", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
@@ -144,10 +166,10 @@ public class CppEngine extends Engine {
 				return Math.expm1((double) args[0]);
 			}
 		},"FUNCTION");
-		
+
 		//frexp
 		//ldexp
-		
+
 		global.setTop("log", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
@@ -166,9 +188,9 @@ public class CppEngine extends Engine {
 				return Math.log1p((double) args[0]);
 			}
 		},"FUNCTION");
-		
+
 		//modf(double,double*)
-		
+
 		global.setTop("cbrt", new FunctionWithEngine() {//C99
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
@@ -200,7 +222,7 @@ public class CppEngine extends Engine {
 				return Math.sqrt((double) args[0]);
 			}
 		},"FUNCTION");
-		
+
 		global.setTop("ceil", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
@@ -246,7 +268,7 @@ public class CppEngine extends Engine {
 				return Math.min((double) args[0],(double) args[1]);
 			}
 		},"FUNCTION");
-		
+
 		global.setTop("fmod", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
@@ -254,31 +276,33 @@ public class CppEngine extends Engine {
 			}
 		},"FUNCTION");
 	}
-	
+
 	@Override
 	protected Object execCast(UniCast expr, Scope scope){
 		Object value = execExpr(expr.value, scope);
 		return _execCast(expr.type,value);
 	}
-	
+
+	@Override
 	protected Object _execCast(String type, Object value){
 		if(type.equals("int")){
-			return new UniIntLiteral((int)value);
+			return (int)value;
 		}
 		else if(type.equals("double")){
-			return new UniDoubleLiteral((double)value);
+			return (double)value;
 		}
 		else if(type.equals("long")){
-			return new UniLongLiteral((long)value);
+			return (long)value;
 		}
 		else if(type.equals("char")){
-			return new UniCharacterLiteral((char)value);
+			return (char)value;
 		}
 		return value;
 	}
-	
+
 	public static int sizeof(String type){
-		if(type.contains("char")){
+		return 1;
+/*		if(type.contains("char")){
 			return 1;
 		}
 		else if(type.contains("short")){
@@ -287,6 +311,6 @@ public class CppEngine extends Engine {
 		else if(type.contains("double")){
 			return 8;
 		}
-		return 4;
+		return 4;*/
 	}
 }

@@ -1,11 +1,7 @@
 package net.unicoen.interpreter;
 
-import static net.unicoen.node_helper.Builder.bin;
-import static net.unicoen.node_helper.Builder.block;
-import static net.unicoen.node_helper.Builder.ident;
-import static net.unicoen.node_helper.Builder.list;
-import static net.unicoen.node_helper.Builder.lit;
-import static org.junit.Assert.assertEquals;
+import static net.unicoen.node_helper.Builder.*;
+import static org.junit.Assert.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;

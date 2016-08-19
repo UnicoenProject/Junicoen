@@ -48,6 +48,7 @@ public class Scope {
 	public List<Scope> children = new ArrayList<Scope>();
 	public final HashMap<String, Integer> variableAddress = new LinkedHashMap<>();
 	public final HashMap<String, String> variableTypes = new LinkedHashMap<>();
+	public final HashMap<Integer, Integer> mallocData;
 	public final HashMap<Integer, Object> objectOnMemory;
 	public final HashMap<Integer, String> typeOnMemory;
 	private List<VariableNotFoundListener> listeners = null;
@@ -69,6 +70,7 @@ public class Scope {
 			address = new Int(0);
 			heapAddress= new Int(10000);
 			codeAddress = new Int(20000);
+			mallocData = new LinkedHashMap<>();
 			objectOnMemory = new LinkedHashMap<>();
 			typeOnMemory = new LinkedHashMap<>();
 		}
@@ -81,6 +83,7 @@ public class Scope {
 			this.address.v++;
 			this.heapAddress = parent.heapAddress;
 			this.codeAddress = parent.codeAddress;
+			this.mallocData = parent.mallocData;
 			this.objectOnMemory = parent.objectOnMemory;
 			this.typeOnMemory = parent.typeOnMemory;
 		}
@@ -173,6 +176,25 @@ public class Scope {
 				String.format("variable '%s' is not defined.", key));
 	}
 
+
+	public void setMallocSize(int address,int size){
+		mallocData.put(address, size);
+	}
+	public boolean isMallocArea(int address){
+		return mallocData.containsKey(address);
+	}
+	public int getMallocSize(int address){
+		return mallocData.get(address);
+	}
+	public boolean removeOnMemory(int address,int size){
+		boolean result = true;
+		for(int i=0;i<size;++i){
+			result = (objectOnMemory.remove(address+i)!=null);
+			result = (typeOnMemory.remove(address+i)!=null);
+		}
+		return result;
+	}
+
 	public int setHeap(Object value,String type){
 		assertNotUnicoen(value);
 		objectOnMemory.put(heapAddress.v, value);
@@ -215,55 +237,49 @@ public class Scope {
 					arr.add(null);
 				}
 			}
-			setArray(arr);
+			setArray(arr,type);
 		}
 		else if(value instanceof List){//配列の場合
 			List<Object> arr = (List<Object>) value;
 			setPrimitiveOnCode(key, address.v, type+"["+arr.size()+"]");
-			setArray(arr);
+			setArray(arr,type);
 		}
 		else{//組み込み型の場合
 			setPrimitive(key,value,type);
 		}
 	}
 
-	private void setArray(List<Object> value){
+	private void setArray(List<Object> value, String type){
 		assertNotUnicoen(value);
 		for(Object var : value){
 			if(var instanceof List){
-				setArray((List<Object>)var);
+				setArray((List<Object>)var,type);
 			}
 			else{
+				typeOnMemory.put(address.v, type);
 				objectOnMemory.put(address.v++, var);
 			}
 		}
 	}
 
-	private void setPrimitive(String key, Object value, String type){
+	private void setImple(String key, Object value, String type,Int _address){
 		assertNotUnicoen(value);
 		variableTypes.put(key, type);
-		variableAddress.put(key, address.v);
-		objectOnMemory.put(address.v, value);
-		typeOnMemory.put(address.v, type);
-		++address.v;
+		variableAddress.put(key, _address.v);
+		objectOnMemory.put(_address.v, value);
+		typeOnMemory.put(_address.v, type);
+		++_address.v;
+	}
+	private void setPrimitive(String key, Object value, String type){
+		setImple(key,value,type,address);
 	}
 
 	private void setPrimitiveOnCode(String key, Object value, String type){
-		assertNotUnicoen(value);
-		variableTypes.put(key, type);
-		variableAddress.put(key, codeAddress.v);
-		objectOnMemory.put(codeAddress.v, value);
-		typeOnMemory.put(codeAddress.v, type);
-		++codeAddress.v;
+		setImple(key,value,type,codeAddress);
 	}
 
 	private void setPrimitiveOnHeap(String key, Object value, String type){
-		assertNotUnicoen(value);
-		variableTypes.put(key, type);
-		variableAddress.put(key, heapAddress.v);
-		objectOnMemory.put(heapAddress.v, value);
-		typeOnMemory.put(heapAddress.v, type);
-		++heapAddress.v;
+		setImple(key,value,type,heapAddress);
 	}
 
 	/** 指定したメモリアドレスに値を書き込みます */

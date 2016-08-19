@@ -251,7 +251,7 @@ public class Engine {
 				UniArg param = parameters.get(i);
 				UniExpr arg = arguments.get(i);
 				UniVariableDec uvd = new UniVariableDec(null, param.type, param.name, arg);
-				Object value = execVariableDec(uvd,scope);
+				Object value = _execVariableDec(uvd,scope);
 				args.add(value);
 				uvds.add(uvd);
 			}
@@ -352,9 +352,7 @@ public class Engine {
 		}
 		if (expr instanceof UniVariableDec) {
 			UniVariableDec uvd = (UniVariableDec)expr;
-			Object value = execVariableDec(uvd,scope);
-			scope.setTop(uvd.name,value,uvd.type);
-			return value;
+			return execVariableDec(uvd,scope);
 		}
 		if (expr instanceof UniBlock) {
 			return execBlock((UniBlock) expr, scope);
@@ -450,33 +448,37 @@ public class Engine {
 		return execExpr(expr.value, scope);
 	}
 
+	protected Object _execVariableDec(UniVariableDec decVar, Scope scope){
+		if(decVar.value!=null){
+			if(decVar.name.startsWith("*")){
+				decVar.name = decVar.name.substring(1);
+				decVar.type+="*";
+			}
+			else if(decVar.name.startsWith("&")){
+				decVar.name = decVar.name.substring(1);
+				decVar.type+="&";
+			}
+
+			Object value = execExpr(decVar.value, scope);
+			value = _execCast(decVar.type,value);
+			if(decVar.type.endsWith("*") && !(value instanceof List)){
+				int address = (int)value;
+				if(scope.isMallocArea(address)){
+					int size = scope.getMallocSize(address);
+					for(int i=0;i<size;++i){
+						scope.typeOnMemory.put(address+i, decVar.type.substring(0,decVar.type.length()-1));
+					}
+				}
+			}
+			return value;
+		}
+
+		return null;
+	}
 
 	protected Object execVariableDec(UniVariableDec decVar, Scope scope){
-		if(decVar.name.startsWith("*")){
-			decVar.name = decVar.name.substring(1);
-			decVar.type+="*";
-		}
-		else if(decVar.name.startsWith("&")){
-			decVar.name = decVar.name.substring(1);
-			decVar.type+="&";
-		}
-
-		Object value = null;
-		if(decVar.value!=null)
-			value = execExpr(decVar.value, scope);
-
-		if(value instanceof Variable){
-			Variable var = (Variable)value;
-			String type = decVar.type;
-			String typeRemPtr = type.replace("*", "");
-			int typeSize = sizeof(typeRemPtr);
-			int num = (int)var.getValue()/typeSize;
-			int heapAddress = scope.setHeap((int)Math.random(),typeRemPtr);
-			for(int i=1;i<num;++i){
-				scope.setHeap((int)(Math.random()*100000),typeRemPtr);
-			}
-			value = heapAddress;
-		}
+		Object value = _execVariableDec(decVar,scope);
+		scope.setTop(decVar.name,value,decVar.type);
 		return value;
 	}
 
@@ -824,21 +826,22 @@ public class Engine {
 		return 4;
 	}
 
+	protected Object _execCast(String type, Object value){
+		return value;
+	}
+
 	protected Object execAssign(int address, Object value, Scope scope) {
-		if(value instanceof Variable){
-			Variable var = (Variable)value;
-			String type = scope.getType(address);
-			String typeRemPtr = type.replace("*", "");
-			int typeSize = sizeof(typeRemPtr);
-			int num = (int)var.getValue()/typeSize;
-			int heapAddress = scope.setHeap((int)Math.random(),typeRemPtr);
-			for(int i=1;i<num;++i){
-				scope.setHeap((int)Math.random(),typeRemPtr);
+		String type = scope.getType(address);
+		value = _execCast(type,value);
+		scope.set(address, value);
+		if(type.endsWith("*")){
+			int taddress = (int)value;
+			if(scope.isMallocArea(taddress)){
+				int size = scope.getMallocSize(taddress);
+				for(int i=0;i<size;++i){
+					scope.typeOnMemory.put(taddress+i, type.substring(0,type.length()-1));
+				}
 			}
-			scope.set(address, heapAddress);
-		}
-		else{
-			scope.set(address, value);
 		}
 		return value;
 	}

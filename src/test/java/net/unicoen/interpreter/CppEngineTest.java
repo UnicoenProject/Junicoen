@@ -121,15 +121,15 @@ public class CppEngineTest {
 	public void test6() {
 		String text = ""
 				//+ "#include <stdio.h>"
-				+ "void add(int *x,int *y)"
-				+ "{"
-				+ "}"
 				+ "int main()"
 				+ "{"
+				+ "	int* p=malloc(sizeof(int)*3);"
+				+ "	p=malloc(sizeof(int)*3);"
+				+ "	int i;"
 				+ "	int* arr[3];"
-				+ "	int adfsdfa[2];"
-				+ "	int a=1,b=2;"
-				+ "	add(&a,&b);"
+				+ "	for(i=0;i<3;i+=1){"
+				+ "		arr[i]=malloc(sizeof(int)*3);"
+				+ "	}"
 				+ "}";
 		exec(text);
 	}
