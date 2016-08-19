@@ -121,16 +121,15 @@ public class CppEngineTest {
 	public void test6() {
 		String text = ""
 				//+ "#include <stdio.h>"
-				+ "int add(int x,int y)"
+				+ "void add(int *x,int *y)"
 				+ "{"
-				+ "	return x+y;"
 				+ "}"
-				+ "int b=3;"
 				+ "int main()"
 				+ "{"
-				+ "	int *p=&b;"
-				+ "	int ps[5];"
-				+ "	int a = 0;"
+				+ "	int* arr[3];"
+				+ "	int adfsdfa[2];"
+				+ "	int a=1,b=2;"
+				+ "	add(&a,&b);"
 				+ "}";
 		exec(text);
 	}

@@ -54,7 +54,8 @@ public class Variable{
 					vars.add(var);
 				}
 				else{//配列の場合
-					Variable var = new Variable(type,name+"["+i+"]",element,lastAddress,this.depth);
+					String baseType = type.substring(0,type.lastIndexOf("["));
+					Variable var = new Variable(baseType,name+"["+i+"]",element,lastAddress,this.depth);
 					vars.add(var);
 				}
 			}
