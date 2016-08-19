@@ -1,5 +1,7 @@
 package net.unicoen.interpreter;
 
+import java.util.List;
+
 import net.unicoen.node.UniCast;
 import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniUnaryOp;
@@ -304,6 +306,12 @@ public class CppEngine extends Engine {
 
 	@Override
 	protected Object _execCast(String type, Object value){
+
+		if(value == null || value instanceof List){
+			return value;
+		}
+
+
 		if(type.equals("int")){
 			return (int)value;
 		}
