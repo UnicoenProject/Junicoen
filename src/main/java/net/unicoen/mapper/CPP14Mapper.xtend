@@ -2848,8 +2848,22 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 		return new UniIntLiteral(Integer.parseInt(text))
 	}
 
+	def String toEscapeChar(String original)
+	{
+		var result = original
+
+        result = result.replaceAll("\\\\r\\\\n", "\\\\n").replaceAll("\\\\n", "\n")
+        result = result.replaceAll("\\\\t", "\t")
+        result = result.replaceAll("\\\\0", "0");
+        result = result.replaceAll("\\\\''", "\''")
+        result = result.replaceAll("\\\\", "\\")
+        result = result.replaceAll("\\\\b", "\b")
+        result = result.replaceAll("\\\\r", "\r")
+		return result
+	}
+
 	override public visitCharacterliteral(CPP14Parser.CharacterliteralContext ctx) {
-		val text = ctx.children.findFirst [
+		var text = ctx.children.findFirst [
 			if (it instanceof TerminalNodeImpl) {
 				if (it.symbol.type == CPP14Parser.Characterliteral) {
 					return true
@@ -2857,6 +2871,7 @@ class CPP14Mapper extends CPP14BaseVisitor<Object> {
 			}
 			return false
 		].visit as String
+		text = toEscapeChar(text)
 		return new UniCharacterLiteral(text.substring(1, text.length - 1).charAt(0))
 	}
 
