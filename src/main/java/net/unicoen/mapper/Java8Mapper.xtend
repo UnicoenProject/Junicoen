@@ -3508,6 +3508,9 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					case 2323: {
 						index += it.visit
 					}
+					case 2325: {
+						receiver += it.visit
+					}
 					case 2327: {
 						index += it.visit
 					}
@@ -3587,7 +3590,7 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 					case 2323: {
 						index += it.visit
 					}
-					case 2361: {
+					case 2362: {
 						receiver += it.visit
 					}
 					case 2364: {
@@ -4570,6 +4573,8 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val none = newArrayList
 		map.put("none", none)
 		val operator = newArrayList
+		val Object symbol = "_"
+  		operator.add(symbol)
 		map.put("operator", operator)
 		val expr = newArrayList
 		map.put("expr", expr)
@@ -4602,6 +4607,8 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		val none = newArrayList
 		map.put("none", none)
 		val operator = newArrayList
+		val Object symbol = "_"
+  		operator.add(symbol)
 		map.put("operator", operator)
 		val expr = newArrayList
 		map.put("expr", expr)
@@ -4635,6 +4642,8 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 		map.put("none", none)
 		val ret = newArrayList
 		val operator = newArrayList
+		val Object symbol = "_"
+  		operator.add(symbol)
 		map.put("operator", operator)
 		val expr = newArrayList
 		map.put("expr", expr)
@@ -4735,6 +4744,8 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				}
 			}
 		]
+		val Object symbol = "_"
+  		operator.add(symbol)
 		map.castTo(UniUnaryOp)
 	}
 
@@ -4767,6 +4778,8 @@ class Java8Mapper extends Java8BaseVisitor<Object> {
 				}
 			}
 		]
+		val Object symbol = "_"
+  		operator.add(symbol)
 		map.castTo(UniUnaryOp)
 	}
 
