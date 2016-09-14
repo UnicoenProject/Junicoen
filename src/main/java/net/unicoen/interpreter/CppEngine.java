@@ -303,33 +303,76 @@ public class CppEngine extends Engine {
 		Object value = execExpr(expr.value, scope);
 		return _execCast(expr.type,value);
 	}
-
+	
 	@Override
 	protected Object _execCast(String type, Object value){
-
+		//Uniはbyte,int,long,double,char(文字),String,
 		if(value == null || value instanceof List){
 			return value;
 		}
 
-
 		if(type.equals("int")){
-			return (int)value;
+			if(value instanceof Byte){
+				byte v = (byte)value;
+				return v & 0xFFFFFFFF;
+			}
+			else if(value instanceof Integer){
+				int v = (int)value;
+				return v & 0xFFFFFFFF;
+			}
+			else if(value instanceof Long){
+				long v = (long)value;
+				return v & 0xFFFFFFFF;
+			}
+			else if(value instanceof Double){
+				double v = (double)value;
+				return (int)v;
+			}
 		}
 		else if(type.equals("double")){
-			return (double)value;
+			if(value instanceof Byte){
+				byte v = (byte)value;
+				return (double)v;
+			}
+			else if(value instanceof Integer){
+				int v = (int)value;
+				return (double)v;
+			}
+			else if(value instanceof Long){
+				long v = (long)value;
+				return (double)v;
+			}
+			else if(value instanceof Double){
+				double v = (double)value;
+				return v;
+			}
 		}
 		else if(type.equals("long")){
 			return (long)value;
 		}
 		else if(type.equals("char")){
-			return (char)value;
+			if(value instanceof Byte){
+				byte v = (byte)value;
+				return v & 0xFF;
+			}
+			else if(value instanceof Integer){
+				int v = (int)value;
+				return v & 0xFF;
+			}
+			else if(value instanceof Long){
+				long v = (long)value;
+				return v & 0xFF;
+			}
+			else if(value instanceof Double){
+				double v = (double)value;
+				return (byte)v;
+			}
 		}
 		return value;
 	}
 
 	public static int sizeof(String type){
-		return 1;
-/*		if(type.contains("char")){
+		if(type.contains("char")){
 			return 1;
 		}
 		else if(type.contains("short")){
@@ -338,6 +381,6 @@ public class CppEngine extends Engine {
 		else if(type.contains("double")){
 			return 8;
 		}
-		return 4;*/
+		return 4;
 	}
 }

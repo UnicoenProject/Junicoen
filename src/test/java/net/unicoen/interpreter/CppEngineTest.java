@@ -149,8 +149,8 @@ public class CppEngineTest {
 				+ "}";
 		exec(text);
 	}
-
-	@Test //@Ignore
+	
+	@Test @Ignore
 	public void test8() {
 		String text = ""
 				//+ "#include <stdio.h>"
@@ -167,6 +167,22 @@ public class CppEngineTest {
 				+ "}";
 		exec(text);
 	}
+
+	@Test //@Ignore
+	public void test9() {
+		String text = ""
+				+ "int main()"
+				+ "{"
+				+ "	char c = 1000;"
+				+ "	short s = 20000;"
+				+ "	int i=3;"
+				+ "	float f = 1.5;"
+				+ "	double d=2;"
+				+ "	return 1;"
+				+ "}";
+		exec(text);
+	}
+	
 
 	private List<UniNode> flatten(List<Object> list){
 		List<UniNode> nodes = new ArrayList<UniNode>();
