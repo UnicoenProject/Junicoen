@@ -1,6 +1,8 @@
 package net.unicoen.interpreter;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -106,11 +108,25 @@ public class Scope {
 	}
 
 	public Object get(String key) {
-		return getValue(getAddress(key));
+		int address = getAddress(key);
+		if(typeOnMemory.containsKey(address)){
+			String type = typeOnMemory.get(address);
+			int byteSize = CppEngine.sizeof(type);
+			List<Byte> bytes = getValue(address,byteSize);
+			Object value = CppEngine.fromByteArray(type, bytes);
+			return value;
+		}
+		else{
+			return getValue(address);
+		}
 	}
 
 	public Object getValue(int key) {
 		return getValueImple(key,name);
+	}
+	public List<Byte> getValue(int key, int byteSize) {
+		List<Byte> bytes = new ArrayList<Byte>();
+		return getValueImple(key,name,byteSize,bytes);
 	}
 
 	private Object getValueImple(int key, String stackName) {
@@ -126,6 +142,27 @@ public class Scope {
 
 		if (parent != null) {
 			return parent.getValue(key);
+		} else {
+			throw new UniRuntimeError(
+					String.format("variable '%s' is not defined.", key));
+		}
+	}
+	private List<Byte> getValueImple(int key, String stackName, int byteSize, List<Byte> bytes) {
+
+		if (objectOnMemory.containsKey(key)) {
+			for(int i=0;i<byteSize;++i){
+				Object var = objectOnMemory.get(key+i);
+				if(stackName.equals(name) || this.type==Type.GLOBAL){
+					if(var instanceof Byte){
+						bytes.add((Byte) var);
+					}
+				}
+			}
+			return bytes;
+		}
+
+		if (parent != null) {
+			return parent.getValueImple(key,stackName,byteSize,bytes);
 		} else {
 			throw new UniRuntimeError(
 					String.format("variable '%s' is not defined.", key));
@@ -266,10 +303,43 @@ public class Scope {
 		assertNotUnicoen(value);
 		variableTypes.put(key, type);
 		variableAddress.put(key, _address.v);
-		objectOnMemory.put(_address.v, value);
 		typeOnMemory.put(_address.v, type);
-		++_address.v;
+		int byteSize = CppEngine.sizeof(type);
+		byte[] bytes = null;
+		if(value instanceof Byte){
+			bytes = ByteBuffer.allocate(Byte.BYTES).put(Byte.parseByte(value.toString())).array();
+		}
+		else if(value instanceof Short){
+			bytes = ByteBuffer.allocate(Short.BYTES).putShort(Short.parseShort(value.toString())).array();
+		}
+		else if(value instanceof Integer){
+			bytes = ByteBuffer.allocate(Integer.BYTES).putInt(Integer.parseInt(value.toString())).array();
+		}
+		else if(value instanceof Long){
+			bytes = ByteBuffer.allocate(Long.BYTES).putLong(Long.parseLong(value.toString())).array();
+		}
+		else if(value instanceof Float){
+			bytes = ByteBuffer.allocate(Float.BYTES).putFloat(Float.parseFloat(value.toString())).array();
+		}
+		else if(value instanceof Double){
+			bytes = ByteBuffer.allocate(Double.BYTES).putDouble(Double.parseDouble(value.toString())).array();
+		}
+//		else if(value instanceof Boolean){
+//
+//		}
+		else{
+			objectOnMemory.put(_address.v, value);
+			++_address.v;
+		}
+		
+		if(bytes != null){
+			for(int i=0; i<byteSize; ++i){
+				objectOnMemory.put(_address.v, bytes[bytes.length-1-i]);//リトルエンディアン
+				++_address.v;
+			}
+		}
 	}
+	
 	private void setPrimitive(String key, Object value, String type){
 		setImple(key,value,type,address);
 	}

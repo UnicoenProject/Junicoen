@@ -51,7 +51,8 @@ public class ExecState {
 			if(type.equals("FUNCTION"))
 				continue;
 			int address = scope.variableAddress.get(varName);
-			Object value = scope.objectOnMemory.get(address);
+			//Object value = scope.objectOnMemory.get(address);
+			Object value = scope.get(varName);
 			if(value instanceof UniNode)
 				continue;
 			if(type.contains("[") && type.contains("]")){

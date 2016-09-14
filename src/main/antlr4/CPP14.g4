@@ -587,7 +587,7 @@ simpletypespecifier
 	|	Int 
 	|	Long 
 	|	Signed 
-	|	Unsigned 
+	|	Unsigned simpletypespecifier? 
 	|	Float 
 	|	Double 
 	|	Void 

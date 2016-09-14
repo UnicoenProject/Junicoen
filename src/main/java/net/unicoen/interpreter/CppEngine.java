@@ -1,5 +1,7 @@
 package net.unicoen.interpreter;
 
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.List;
 
 import net.unicoen.node.UniCast;
@@ -304,6 +306,24 @@ public class CppEngine extends Engine {
 		return _execCast(expr.type,value);
 	}
 	
+//	private <ReturnType> ReturnType castImple(Object value) {
+//		if(value instanceof Byte){
+//			byte v = (byte)value;
+//			return v;
+//		}
+//		else if(value instanceof Integer){
+//			int v = (int)value;
+//			return (ReturnType)v;
+//		}
+//		else if(value instanceof Long){
+//			long v = (long)value;
+//			return (ReturnType)v;
+//		}
+//		else if(value instanceof Double){
+//			double v = (double)value;
+//			return (ReturnType)v;
+//		}
+//	}
 	@Override
 	protected Object _execCast(String type, Object value){
 		//Uniはbyte,int,long,double,char(文字),String,
@@ -350,27 +370,144 @@ public class CppEngine extends Engine {
 		else if(type.equals("long")){
 			return (long)value;
 		}
-		else if(type.equals("char")){
+		else if(type.contains("char")){
+			if(type.contains("unsigned")){
+				if(value instanceof Byte){
+					byte v = (byte)value;
+					return (int)(v & 0xFF);
+				}
+				if(value instanceof Integer){
+					int v = (int)value;
+					return (int)(v & 0xFF);
+				}
+				else if(value instanceof Long){
+					long v = (long)value;
+					return (int)(v & 0xFF);
+				}
+				else if(value instanceof Double){
+					double v = (double)value;
+					int iv = (int)v;
+					return iv & 0xFF;
+				}
+			}
+			else{
+				if(value instanceof Byte){
+					byte v = (byte)value;
+					return v & 0xFF;
+				}
+				else if(value instanceof Integer){
+					int v = (int)value;
+					return (byte)(v & 0xFF);
+				}
+				else if(value instanceof Long){
+					long v = (long)value;
+					return (byte)(v & 0xFF);
+				}
+				else if(value instanceof Double){
+					double v = (double)value;
+					int iv = (int)v;
+					return (byte)(iv & 0xFF);
+				}
+			}			
+		}
+		else if(type.contains("float")){
 			if(value instanceof Byte){
 				byte v = (byte)value;
-				return v & 0xFF;
+				return (float)v;
 			}
 			else if(value instanceof Integer){
 				int v = (int)value;
-				return v & 0xFF;
+				return (float)v;
 			}
 			else if(value instanceof Long){
 				long v = (long)value;
-				return v & 0xFF;
+				return (float)v;
 			}
 			else if(value instanceof Double){
 				double v = (double)value;
-				return (byte)v;
+				return (float)v;
 			}
+			
 		}
 		return value;
 	}
 
+	public abstract class BaseType{
+		public boolean unsigned;
+		public Long decimalValue;
+		public double fractionalValue;
+		public int byteSize;
+		abstract byte[] asBytes();
+	}
+	public class Cchar extends BaseType{
+		Cchar(long value){
+			decimalValue = value;
+			unsigned = false;
+			byteSize = 1;
+		}
+		Cchar(byte[] bytes,boolean isUnsigned){
+			decimalValue = ByteBuffer.wrap(bytes).getLong();
+			unsigned = isUnsigned;
+			byteSize = 1;
+			if(bytes[0] < 0){//負の数の場合
+				long mask = -1;
+				mask &= 0x00000000;
+				decimalValue |= mask;
+			}
+		}
+		@Override
+		byte[] asBytes(){
+			return ByteBuffer.allocate(byteSize).putLong(Long.parseLong(decimalValue.toString())).array();
+		}
+	}
+	
+	public class Cint extends BaseType{
+		Cint(long value){
+			decimalValue = value;
+			unsigned = false;
+			byteSize = 4;
+		}
+		Cint(byte[] bytes,boolean isUnsigned){
+			decimalValue = ByteBuffer.wrap(bytes).getLong();
+			unsigned = isUnsigned;
+			byteSize = 4;
+		}
+		@Override
+		byte[] asBytes(){
+			return ByteBuffer.allocate(byteSize).putLong(Long.parseLong(decimalValue.toString())).array();
+		}
+	}
+	public static Object fromByteArray(String type, List<Byte> byteArray){
+		int byteSize = sizeof(type);
+		
+		if(type.contains("long") || type.contains("int") || type.contains("short") || type.contains("char")){
+			long value = 0;
+			for(int i=0;i<byteSize;++i){
+				byte b = byteArray.get(i);
+				value |= (b << i*8);
+			}
+			if(type.contains("unsigned")){
+				if(byteArray.get(byteSize-1) < 0){//負の数の場合
+					long mask = 1;
+					int upperBytes = Long.BYTES - byteSize;
+					int upperBits = upperBytes * 8;
+					value = ((value << upperBits) >>> upperBits);
+				}
+			}
+			return value;
+		}
+		else if(type.contains("float") || type.contains("double")){
+			byte[] bytes = new byte[sizeof(type)];
+			for(int i=0;i<bytes.length;++i){
+				bytes[i] = byteArray.get(bytes.length-1-i);
+			}
+			if(type.contains("float"))
+				return ByteBuffer.wrap(bytes).getFloat();
+			else if(type.contains("double"))
+				return ByteBuffer.wrap(bytes).getDouble();
+		}
+		throw new RuntimeException("Not support type: " + type);
+	}
 	public static int sizeof(String type){
 		if(type.contains("char")){
 			return 1;
