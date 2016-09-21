@@ -156,19 +156,15 @@ public class CppEngineTest {
 				//+ "#include <stdio.h>"
 				+ "int main()"
 				+ "{"
-				+ "	char s1[7] = {'H', 'e', 'l', 'o', 'o', '\\n', '\\0'};"
-				/*+ "	char s2[7] = \"Hello\\n\";"
-				+ "	char s3[] = \"Hello\\n\";"
-				+ "	char s[10] = \"Hello\\n\";"
-				+ "	char *p = \"ABC\";"
-				+ "	s1[0] = 'F';"
-				+ " *p = 'X';"
-				+ "	printf(\"%c,%s,\\n\", s1[0],s2);"*/
+				+ "	char moji;"
+				+ "	moji = 'B';"
+				+ "	printf(\"%c\\n\", moji);"
+				+ "	return 0;"
 				+ "}";
 		exec(text);
 	}
 
-	@Test //@Ignore
+	@Test @Ignore
 	public void test9() {
 		String text = ""
 				+ "int main()"
@@ -195,7 +191,64 @@ public class CppEngineTest {
 		exec(text);
 	}
 	
+	@Test @Ignore
+	public void test10(){
+		String text = ""
+				//+ "#include <stdio.h>"
+				+ "int main() {"
+				+ "int a = 8;"
+				+ "int b = 7;"
+				+ "int c = a + b;"
+				+ "printf(\"a + b = %d\\n\", c);"
+				+ "c=a*b;"
+				+ "printf(\"a * b = %d\\n\", c);"
+				+ "float x, y, z;"
+				+ "x = 7.1;"
+				+ "y = 3.6;"
+				+ "z = x * y;"
+				+ "printf(\"x * y = %f\\n\", z);"
+				+ "z = x / y;"
+				+ "printf(\"x / y = %f\\n\", z);"
+				+ "return 0;"
+				+ "}";
+		/*
+		 *  a + b = 15
+		 *  a * b = 56
+		 *  x * y = 25.560000
+		 *  x / y = 1.972222
+		 */
+		exec(text);
+	}
 
+	@Test @Ignore
+	public void test11(){
+		String text = ""
+				//+ "#include <stdio.h>"
+				+ "int main() {"
+				+ "int a, b;"
+				+ "a = 1;"
+				+ "b = 2;"
+				+ "a += b;"
+				+ "printf(\"a = %d\\n\", a);"
+				+ "a -= b;"
+				+ "printf(\"a = %d\\n\", a);"
+				+ "float x, y;"
+				+ "x = 3.3;"
+				+ "y = 5.4;"
+				+ "x *= y;"
+				+ "printf(\"x = %f\\n\", x);"
+				+ "x /= y;"
+				+ "printf(\"x = %f\\n\", x);"
+				+ "return 0;"
+				+ "}";
+		/*
+		 *  a  = 3
+		 *  a  = 1
+		 *  x = 17.82
+		 *  x = 3.3
+		 */
+		exec(text);
+	}
 	private List<UniNode> flatten(List<Object> list){
 		List<UniNode> nodes = new ArrayList<UniNode>();
 		for(Object element : list){

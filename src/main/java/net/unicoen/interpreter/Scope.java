@@ -111,6 +111,9 @@ public class Scope {
 		int address = getAddress(key);
 		if(typeOnMemory.containsKey(address)){
 			String type = typeOnMemory.get(address);
+			if(type.equals("FUNCTION")){
+				return getValue(address);
+			}
 			int byteSize = CppEngine.sizeof(type);
 			List<Byte> bytes = getValue(address,byteSize);
 			Object value = CppEngine.fromByteArray(type, bytes);
@@ -299,14 +302,13 @@ public class Scope {
 		}
 	}
 
-	private void setImple(String key, Object value, String type,Int _address){
-		assertNotUnicoen(value);
-		variableTypes.put(key, type);
-		variableAddress.put(key, _address.v);
-		typeOnMemory.put(_address.v, type);
+	private void writeOnMemory(Object value, String type,Int _address){
 		int byteSize = CppEngine.sizeof(type);
 		byte[] bytes = null;
-		if(value instanceof Byte){
+		if(value instanceof Character){
+			bytes = ByteBuffer.allocate(Character.BYTES).putChar((char)value).array();
+		}
+		else if(value instanceof Byte){
 			bytes = ByteBuffer.allocate(Byte.BYTES).put(Byte.parseByte(value.toString())).array();
 		}
 		else if(value instanceof Short){
@@ -333,11 +335,25 @@ public class Scope {
 		}
 		
 		if(bytes != null){
+			int dest = _address.v+(4-byteSize%4);
 			for(int i=0; i<byteSize; ++i){
-				objectOnMemory.put(_address.v, bytes[bytes.length-1-i]);//リトルエンディアン
-				++_address.v;
+				objectOnMemory.put(_address.v++, bytes[bytes.length-1-i]);//リトルエンディアン
+			}
+			if(byteSize%4 != 0){
+				while(_address.v <= dest)
+				{
+					objectOnMemory.put(_address.v++, 0x00);//リトルエンディアン
+				}
 			}
 		}
+	}
+	
+	private void setImple(String key, Object value, String type,Int _address){
+		assertNotUnicoen(value);
+		variableTypes.put(key, type);
+		variableAddress.put(key, _address.v);
+		typeOnMemory.put(_address.v, type);
+		writeOnMemory(value,type,_address);
 	}
 	
 	private void setPrimitive(String key, Object value, String type){
@@ -356,17 +372,18 @@ public class Scope {
 	public void set(int key, Object value) {
 		assertNotUnicoen(value);
 		if (objectOnMemory.containsKey(key)) {
+			String type = getType(key);
 			try{
-				String type = getType(key);
 				Map<String, Integer> offsets = (Map<String, Integer>) get(type);
-				for(Map.Entry<String, Integer> offset : offsets.entrySet()) {
+				for(Map.Entry<String, Integer> offset : offsets.entrySet()) {//構造体
 				    int dst = (int)getValue(key) + offset.getValue();
 				    int src = (int)value + offset.getValue();
 				    Object v = this.getValue(src);
 				    objectOnMemory.put(dst, v);
 				}
 			}catch(RuntimeException e){
-				objectOnMemory.put(key, value);
+				writeOnMemory(value,type,new Int(key));
+				//objectOnMemory.put(key, value);
 			}
 			return;
 		}

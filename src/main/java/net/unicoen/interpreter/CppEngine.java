@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.unicoen.node.UniCast;
+import net.unicoen.node.UniCharacterLiteral;
 import net.unicoen.node.UniExpr;
 import net.unicoen.node.UniUnaryOp;
 
@@ -30,6 +31,7 @@ public class CppEngine extends Engine {
 				if(args.length<1)
 					return 0;
 				String text = (String)args[0];
+				text = text.replace("\\n", "\n");
 				String s="";
 				if(args.length==1)
 					s = String.format(text);
@@ -284,6 +286,15 @@ public class CppEngine extends Engine {
 	}
 
 	@Override
+	protected Object execUniCharacterLiteral(UniCharacterLiteral expr, Scope scope){
+		byte[] bytes = ByteBuffer.allocate(Character.BYTES).putChar((char)expr.value).array();
+		if(bytes[0]<0)
+			return bytes;
+		else 
+			return bytes[1];
+	}
+	
+	@Override
 	protected Object execBinOp(String op, UniExpr left, UniExpr right,Scope scope) {
 		if(op.equals("++") || op.equals("--")){
 			op = "_" + op;
@@ -372,7 +383,10 @@ public class CppEngine extends Engine {
 		}
 		else if(type.contains("char")){
 			if(type.contains("unsigned")){
-				if(value instanceof Byte){
+				if(value instanceof Character){
+					
+				}
+				else if(value instanceof Byte){
 					byte v = (byte)value;
 					return (int)(v & 0xFF);
 				}
@@ -391,9 +405,13 @@ public class CppEngine extends Engine {
 				}
 			}
 			else{
-				if(value instanceof Byte){
-					byte v = (byte)value;
+				if(value instanceof Character){
+					char v = (char)value;
+					//2byte文字は未対応
 					return v & 0xFF;
+				}
+				else if(value instanceof Byte){
+					return value;
 				}
 				else if(value instanceof Integer){
 					int v = (int)value;
@@ -492,6 +510,20 @@ public class CppEngine extends Engine {
 					int upperBytes = Long.BYTES - byteSize;
 					int upperBits = upperBytes * 8;
 					value = ((value << upperBits) >>> upperBits);
+				}
+			}
+			else{
+				if(type.contains("char")){
+					return (byte) value;
+				}
+				else if(type.contains("short")){
+					return (short)value;
+				}
+				else if(type.contains("int")){
+					return (int)value;
+				}
+				else if(type.contains("long")){
+					return (long)value;
 				}
 			}
 			return value;

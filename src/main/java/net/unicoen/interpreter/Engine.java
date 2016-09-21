@@ -319,7 +319,7 @@ public class Engine {
 			return ((UniLongLiteral) expr).value;
 		}
 		if (expr instanceof UniCharacterLiteral) {
-			return ((UniCharacterLiteral) expr).value;
+			return execUniCharacterLiteral((UniCharacterLiteral)expr,scope);
 		}
 		if (expr instanceof UniDoubleLiteral) {
 			return ((UniDoubleLiteral) expr).value;
@@ -449,7 +449,6 @@ public class Engine {
 	}
 
 	protected Object _execVariableDec(UniVariableDec decVar, Scope scope){
-		if(decVar.value!=null){
 			if(decVar.name.startsWith("*")){
 				decVar.name = decVar.name.substring(1);
 				decVar.type+="*";
@@ -459,7 +458,10 @@ public class Engine {
 				decVar.type+="&";
 			}
 
-			Object value = execExpr(decVar.value, scope);
+			Object value = Math.random()*Integer.MAX_VALUE;//未初期化は乱数
+			if(decVar.value!=null){
+				value = execExpr(decVar.value, scope);
+			}
 			value = _execCast(decVar.type,value);
 			if(decVar.type.endsWith("*") && !(value instanceof List)){
 				int address = (int)value;
@@ -471,9 +473,6 @@ public class Engine {
 				}
 			}
 			return value;
-		}
-
-		return null;
 	}
 
 	protected Object execVariableDec(UniVariableDec decVar, Scope scope){
@@ -571,7 +570,11 @@ public class Engine {
 		}
 		throw new RuntimeException("Not support function type: " + func);
 	}
-
+	
+	protected Object execUniCharacterLiteral(UniCharacterLiteral expr, Scope scope){
+		return ((UniCharacterLiteral) expr).value;
+	}
+	
 	protected Object execUnaryOp(UniUnaryOp uniOp, Scope scope) {
 		switch (uniOp.operator) {
 		case "!":
@@ -771,7 +774,7 @@ public class Engine {
 					calculater = Calc.doubleOperation;
 				}
 				else if (numL instanceof Float || numR instanceof Float) {
-					calculater = Calc.longOperation;
+					calculater = Calc.floatOperation;
 				}
 				else if (numL instanceof Long || numR instanceof Long) {
 					calculater = Calc.longOperation;
