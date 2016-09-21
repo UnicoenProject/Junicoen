@@ -427,7 +427,7 @@ public class Engine {
 			List<Object> array = new ArrayList<Object>();
 			if(value.items==null){
 				for(int i=0;i<length;++i){
-					array.add(null);
+					array.add(Math.random()*Integer.MAX_VALUE);//未初期化は乱数
 				}
 			}
 			else{
