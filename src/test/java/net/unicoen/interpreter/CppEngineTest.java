@@ -150,15 +150,14 @@ public class CppEngineTest {
 		exec(text);
 	}
 	
-	@Test //@Ignore
+	@Test @Ignore
 	public void test8() {
 		String text = ""
 				//+ "#include <stdio.h>"
 				+ "int main()"
 				+ "{"
-				+ "	char moji,moji2;"
+				+ "	char moji;"
 				+ "	moji = 'B';"
-				+ "	moji2 = 'c';"
 				+ "	printf(\"%c\\n\", moji);"
 				+ "	return 0;"
 				+ "}";
@@ -252,6 +251,20 @@ public class CppEngineTest {
 	}
 	
 	@Test @Ignore
+	public void test112() {
+		String text = ""
+				//+ "#include <stdio.h>"
+				+ "int main()"
+				+ "{"
+				+ "	char moji;"
+				+ "	moji = 'B';"
+				+ "	printf(\"%c\\n\", moji);"
+				+ "	return 0;"
+				+ "}";
+		exec(text);
+	}
+	
+	@Test @Ignore
 	public void test12(){
 		String text = ""
 				//+ "#include <stdio.h>"
@@ -260,12 +273,18 @@ public class CppEngineTest {
 				+ "	printf(\"%s\\n\", mojiretu);"
 				+ "	return 0;"
 				+ "}";
-		/*
-		 *  a + b = 15
-		 *  a * b = 56
-		 *  x * y = 25.560000
-		 *  x / y = 1.972222
-		 */
+		exec(text);
+	}
+	
+	@Test @Ignore
+	public void test13(){
+		String text = ""
+				//+ "#include <stdio.h>"
+				+ "int main() {"
+				+ "	char mojiretu[] = \"ABCD\";"
+				+ "	printf(\"%s\\n\", mojiretu);"
+				+ "	return 0;"
+				+ "}";
 		exec(text);
 	}
 	

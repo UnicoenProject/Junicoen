@@ -325,7 +325,7 @@ public class Engine {
 			return ((UniDoubleLiteral) expr).value;
 		}
 		if (expr instanceof UniStringLiteral) {
-			return ((UniStringLiteral) expr).value;
+			return execUniStringLiteral((UniStringLiteral)expr,scope);			
 		}
 		if (expr instanceof UniUnaryOp) {
 			return execUnaryOp((UniUnaryOp) expr, scope);
@@ -573,6 +573,9 @@ public class Engine {
 	
 	protected Object execUniCharacterLiteral(UniCharacterLiteral expr, Scope scope){
 		return ((UniCharacterLiteral) expr).value;
+	}
+	protected Object execUniStringLiteral(UniStringLiteral expr, Scope scope){
+		return ((UniStringLiteral) expr).value;
 	}
 	
 	protected Object execUnaryOp(UniUnaryOp uniOp, Scope scope) {

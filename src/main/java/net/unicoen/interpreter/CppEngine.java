@@ -2,12 +2,14 @@ package net.unicoen.interpreter;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 import net.unicoen.node.UniCast;
 import net.unicoen.node.UniCharacterLiteral;
 import net.unicoen.node.UniExpr;
+import net.unicoen.node.UniStringLiteral;
 import net.unicoen.node.UniUnaryOp;
 
 public class CppEngine extends Engine {
@@ -31,7 +33,7 @@ public class CppEngine extends Engine {
 			public Object invoke(Engine engine, Object[] args) {
 				if(args.length<1)
 					return 0;
-				String text = (String)args[0];
+				String text = BytesToStr((List<Byte>) args[0]);
 				text = text.replace("\\n", "\n");
 				String s="";
 				for(int i=1;i<args.length;++i){
@@ -301,6 +303,29 @@ public class CppEngine extends Engine {
 			return bytes;
 		else 
 			return bytes[1];
+	}
+	
+	@Override
+	protected Object execUniStringLiteral(UniStringLiteral expr, Scope scope){
+		return StrToBytes(((UniStringLiteral) expr).value);
+	}
+	
+	public List<Byte> StrToBytes(String str){
+		byte [] data = str.getBytes();
+		List<Byte> bytes = new ArrayList<Byte>();
+		for(byte b :data){
+			bytes.add(b);
+		}
+		bytes.add((byte)0);
+		return bytes;
+	}
+	
+	public String BytesToStr(List<Byte> bytes){
+		byte[] data = new byte[bytes.size()];
+		for(int i=0;i<bytes.size();++i){
+			data[i] = bytes.get(i);
+		}
+		return new String(data);
 	}
 	
 	@Override
