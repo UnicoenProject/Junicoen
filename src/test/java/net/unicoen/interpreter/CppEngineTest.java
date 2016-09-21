@@ -288,6 +288,30 @@ public class CppEngineTest {
 		exec(text);
 	}
 	
+	@Test @Ignore
+	public void test14(){
+		String text = ""
+				//+ "#include <stdio.h>"
+				+ "int main() {"
+				+ "	char mojiretu[5] = \"ABCD\";"//UniVariableDecにArrayLengthが実装されないと不可能
+				+ "	printf(\"%s\\n\", mojiretu);"
+				+ "	return 0;"
+				+ "}";
+		exec(text);
+	}
+	
+	@Test //@Ignore
+	public void test15(){
+		String text = ""
+				//+ "#include <stdio.h>"
+				+ "int main() {"
+				+ "	char mojiretu[] = \"日本語のテストだよ\";"//UniVariableDecにArrayLengthが実装されないと不可能
+				+ "	printf(\"%s\\n\", mojiretu);"
+				+ "	return 0;"
+				+ "}";
+		exec(text);
+	}
+	
 	private List<UniNode> flatten(List<Object> list){
 		List<UniNode> nodes = new ArrayList<UniNode>();
 		for(Object element : list){

@@ -310,7 +310,7 @@ public class CppEngine extends Engine {
 		return StrToBytes(((UniStringLiteral) expr).value);
 	}
 	
-	public List<Byte> StrToBytes(String str){
+	public static List<Byte> StrToBytes(String str){
 		byte [] data = str.getBytes();
 		List<Byte> bytes = new ArrayList<Byte>();
 		for(byte b :data){
@@ -320,7 +320,7 @@ public class CppEngine extends Engine {
 		return bytes;
 	}
 	
-	public String BytesToStr(List<Byte> bytes){
+	public static String BytesToStr(List<Byte> bytes){
 		byte[] data = new byte[bytes.size()];
 		for(int i=0;i<bytes.size();++i){
 			data[i] = bytes.get(i);
@@ -604,10 +604,10 @@ public class CppEngine extends Engine {
 	}
 	
 	public static String charArrToStr(HashMap<Integer, Object> objectOnMemory, int begin){
-		String str = "";
+		List<Byte> bytes = new ArrayList<Byte>();
 		for(byte v = (byte)objectOnMemory.get(begin); v != 0; v = (byte)objectOnMemory.get(++begin)){
-			 str += String.format("%c",v);
+			bytes.add(v);
 		}
-		return str;
+		return BytesToStr(bytes);
 	}
 }
