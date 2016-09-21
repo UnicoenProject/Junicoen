@@ -114,8 +114,14 @@ public class Scope {
 			if(type.equals("FUNCTION")){
 				return getValue(address);
 			}
-			int byteSize = CppEngine.sizeof(type);
-			List<Byte> bytes = getValue(address,byteSize);
+			int sizeofElement = CppEngine.sizeofElement(type);
+			int sizeof = CppEngine.sizeof(type);
+			if(sizeof != sizeofElement){
+				type = type.substring(0, type.lastIndexOf("["))+"*";
+				sizeofElement = CppEngine.sizeofElement(type);
+				sizeof = sizeofElement;
+			}
+			List<Byte> bytes = getValue(address,sizeofElement);
 			Object value = CppEngine.fromByteArray(type, bytes);
 			return value;
 		}
@@ -253,7 +259,7 @@ public class Scope {
 	public void setTop(String key, Object value, String type) {
 		assertNotUnicoen(value);
 		if(hasValue(type)){//構造体
-			setPrimitive(key, address.v+1, type);
+			setPrimitiveOnStack(key, address.v+1, type);
 			Map<String, Integer> offsets = (Map<String, Integer>) get(type);
 			List<Object> arr=null;
 			if(value instanceof List){//初期化リストあり
@@ -285,7 +291,7 @@ public class Scope {
 			setArray(arr,type);
 		}
 		else{//組み込み型の場合
-			setPrimitive(key,value,type);
+			setPrimitiveOnStack(key,value,type);
 		}
 	}
 
@@ -297,13 +303,16 @@ public class Scope {
 			}
 			else{
 				typeOnMemory.put(address.v, type);
-				objectOnMemory.put(address.v++, var);
+				writeOnMemory(var,type,address);
 			}
+		}
+		while(address.v%4!=0){
+			objectOnMemory.put(address.v++, 0x00);//リトルエンディアン
 		}
 	}
 
-	private void writeOnMemory(Object value, String type,Int _address){
-		int byteSize = CppEngine.sizeof(type);
+	private void writeOnMemory(Object value, String type, Int _address){
+		int byteSize = CppEngine.sizeofElement(type);//ここではプリミティブ型の値一つの書き込みしかありえない。
 		byte[] bytes = null;
 		if(value instanceof Character){
 			bytes = ByteBuffer.allocate(Character.BYTES).putChar((char)value).array();
@@ -335,15 +344,8 @@ public class Scope {
 		}
 		
 		if(bytes != null){
-			int dest = _address.v+(4-byteSize%4);
 			for(int i=0; i<byteSize; ++i){
 				objectOnMemory.put(_address.v++, bytes[bytes.length-1-i]);//リトルエンディアン
-			}
-			if(byteSize%4 != 0){
-				while(_address.v <= dest)
-				{
-					objectOnMemory.put(_address.v++, 0x00);//リトルエンディアン
-				}
 			}
 		}
 	}
@@ -354,10 +356,14 @@ public class Scope {
 		variableAddress.put(key, _address.v);
 		typeOnMemory.put(_address.v, type);
 		writeOnMemory(value,type,_address);
+		while(_address.v%4!=0){
+			objectOnMemory.put(_address.v++, (byte)0x00);//リトルエンディアン
+		}
 	}
 	
-	private void setPrimitive(String key, Object value, String type){
+	private void setPrimitiveOnStack(String key, Object value, String type){
 		setImple(key,value,type,address);
+
 	}
 
 	private void setPrimitiveOnCode(String key, Object value, String type){

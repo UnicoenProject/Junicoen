@@ -62,7 +62,7 @@ public class Variable{
 			this.value = vars;
 		}
 		else
-			this.value = value;
+			this.value = value;//char型は　value=65('a') のようにしたい
 	}
 
 	public void setValue(String name, Object value) {

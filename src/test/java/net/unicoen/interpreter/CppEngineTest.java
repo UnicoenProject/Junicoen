@@ -150,14 +150,15 @@ public class CppEngineTest {
 		exec(text);
 	}
 	
-	@Test @Ignore
+	@Test //@Ignore
 	public void test8() {
 		String text = ""
 				//+ "#include <stdio.h>"
 				+ "int main()"
 				+ "{"
-				+ "	char moji;"
+				+ "	char moji,moji2;"
 				+ "	moji = 'B';"
+				+ "	moji2 = 'c';"
 				+ "	printf(\"%c\\n\", moji);"
 				+ "	return 0;"
 				+ "}";
@@ -249,6 +250,25 @@ public class CppEngineTest {
 		 */
 		exec(text);
 	}
+	
+	@Test @Ignore
+	public void test12(){
+		String text = ""
+				//+ "#include <stdio.h>"
+				+ "int main() {"
+				+ "	char mojiretu[5] = {'A','B','C','0'};"
+				+ "	printf(\"%s\\n\", mojiretu);"
+				+ "	return 0;"
+				+ "}";
+		/*
+		 *  a + b = 15
+		 *  a * b = 56
+		 *  x * y = 25.560000
+		 *  x / y = 1.972222
+		 */
+		exec(text);
+	}
+	
 	private List<UniNode> flatten(List<Object> list){
 		List<UniNode> nodes = new ArrayList<UniNode>();
 		for(Object element : list){

@@ -2,6 +2,7 @@ package net.unicoen.interpreter;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import net.unicoen.node.UniCast;
@@ -33,6 +34,14 @@ public class CppEngine extends Engine {
 				String text = (String)args[0];
 				text = text.replace("\\n", "\n");
 				String s="";
+				for(int i=1;i<args.length;++i){
+					if(global.typeOnMemory.containsKey(args[i])){
+						String type = global.typeOnMemory.get(args[i]);
+						if(type.contains("char")){
+							args[i] = charArrToStr(global.objectOnMemory,(int)args[i]);
+						}
+					}
+				}
 				if(args.length==1)
 					s = String.format(text);
 				else if(args.length==2)
@@ -496,24 +505,28 @@ public class CppEngine extends Engine {
 		}
 	}
 	public static Object fromByteArray(String type, List<Byte> byteArray){
-		int byteSize = sizeof(type);
-		
-		if(type.contains("long") || type.contains("int") || type.contains("short") || type.contains("char")){
+		final int byteSize = sizeofElement(type);
+
+		if(type.contains("*") || type.contains("long") || type.contains("int") || type.contains("short") || type.contains("char")){
 			long value = 0;
+			
 			for(int i=0;i<byteSize;++i){
 				byte b = byteArray.get(i);
-				value |= (b << i*8);
+				value |= (b << i*8)&0xFF;
 			}
+			
 			if(type.contains("unsigned")){
 				if(byteArray.get(byteSize-1) < 0){//負の数の場合
-					long mask = 1;
 					int upperBytes = Long.BYTES - byteSize;
 					int upperBits = upperBytes * 8;
 					value = ((value << upperBits) >>> upperBits);
 				}
 			}
 			else{
-				if(type.contains("char")){
+				if(type.contains("*")){
+					return (int) value;
+				}
+				else if(type.contains("char")){
 					return (byte) value;
 				}
 				else if(type.contains("short")){
@@ -540,8 +553,12 @@ public class CppEngine extends Engine {
 		}
 		throw new RuntimeException("Not support type: " + type);
 	}
-	public static int sizeof(String type){
-		if(type.contains("char")){
+	
+	public static int sizeofElement(String type){
+		if(type.contains("*")){
+			return 4;
+		}
+		else if(type.contains("char")){
 			return 1;
 		}
 		else if(type.contains("short")){
@@ -551,5 +568,21 @@ public class CppEngine extends Engine {
 			return 8;
 		}
 		return 4;
+	}
+	public static int sizeof(String type){
+		int length = 1;
+		if(type.contains("[") && type.contains("]")){
+			length = Integer.parseInt(type.substring(type.lastIndexOf("[")+1, type.length()-1));			
+		}
+		int typeSize = sizeofElement(type);
+		return typeSize * length;
+	}
+	
+	public static String charArrToStr(HashMap<Integer, Object> objectOnMemory, int begin){
+		String str = "";
+		for(byte v = (byte)objectOnMemory.get(begin); v != 0; v = (byte)objectOnMemory.get(++begin)){
+			 str += String.format("%c",v);
+		}
+		return str;
 	}
 }
