@@ -283,23 +283,31 @@ public class Scope {
 					arr.add(null);
 				}
 			}
-			setArray(arr,type);
+			setArray(key, arr,type);
 		}
 		else if(value instanceof List){//配列の場合
-			List<Object> arr = (List<Object>) value;
-			setPrimitiveOnCode(key, address.v, type+"["+arr.size()+"]");
-			setArray(arr,type);
+			setArray(key,(List<Object>) value,type);
 		}
 		else{//組み込み型の場合
 			setPrimitiveOnStack(key,value,type);
 		}
 	}
 
-	private void setArray(List<Object> value, String type){
+	private void setArray(String key, List<Object> value, String type){
 		assertNotUnicoen(value);
+		{
+			String _type = "" + type;
+			for(Object child = value;child instanceof List<?>;child = ((List<?>)child).get(0)){
+			_type += "["+((List<?>)child).size()+"]";
+			}
+			setPrimitiveOnCode(key, address.v, _type);
+		}
+		int index=0;
 		for(Object var : value){
 			if(var instanceof List){
-				setArray((List<Object>)var,type);
+				@SuppressWarnings("unchecked")
+				List<Object> arrVar = (List<Object>)var;
+				setArray(key+"["+ index++ +"]", arrVar, type);
 			}
 			else{
 				typeOnMemory.put(address.v, type);

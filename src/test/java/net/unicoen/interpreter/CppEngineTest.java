@@ -312,7 +312,7 @@ public class CppEngineTest {
 		exec(text);
 	}
 	
-	@Test //@Ignore
+	@Test @Ignore
 	public void test16(){
 		String text = ""
 				//+ "#include <stdio.h>"
@@ -321,6 +321,42 @@ public class CppEngineTest {
 				+ "	printf(\"%d, %d, %d, %d\\n\", arr[0], arr[1], arr[2], arr[3]);"
 				+ "	return 0;"
 				+ "}";
+		exec(text);
+	}
+	
+	@Test @Ignore
+	public void test17(){
+		String text = "int main(){"
+			+"int data[10];"
+			+"int arr5[5] = {1};"
+			+"int arr3[] = {19, 20, 21};"
+			+"char str6[6] = \"aiueo\";"
+			+"int data104[10][4];"
+			+"	int arr53[5][3] = {{1},{3}};"
+			+"	int array35[3][5] = {"
+	   		+" {  1,  2,  3,  4,  5, },"
+	    	+ "{  2,  4,  6,  8, 10, },"
+	   		+" {  3,  6,  9, 12, 15, },"
+			+"};"
+//	+"int array[][] = {"//駄目
+//	  +"  {  1,  2,  3,  4,  5, },"
+//	    +"{  2,  4,  6,  8, 10, },"
+//+"		    {  3,  6,  9, 12, 15, },"
+//+"	};"
++"int a[][2][3] ={{{ 0, 1 },{ 2, 3 }},{{ 4, 5 },{ 6, 7 }}};"
++"	int arrayn5[][5] = {"
++"    {  1,  2,  3,  4,  5, },"
++"  {  2,  4,  6,  8, 10, },"
++"{  3,  6,  9, 12, 15, },"
++"		};"
++"		int arraynn5[][5] = {"
++"	    {  1,  2,  3,  4,  5, },"
++"    {  2,  4,  6,  8, 10, },"
++"  {  3,  6,  9, 12, 15, },"
++"{  4,  8, 12, 16, 20, },"
++"		};"
+		    + "return 0;"
+		    + "}";
 		exec(text);
 	}
 	

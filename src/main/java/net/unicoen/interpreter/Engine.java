@@ -448,20 +448,96 @@ public class Engine {
 		return execExpr(expr.value, scope);
 	}
 
+	protected List<Object> createMultiArray(List<UniExpr> arrayLength, String type, Scope scope, boolean setZero){
+		List<Object> array = new ArrayList<Object>();
+		List<List<Object>> bottomArrays = new ArrayList<List<Object>>();
+		for(int i=0, depth = arrayLength.size(); i<depth; ++i){
+			UniExpr expr = arrayLength.get(i);
+			int size = (int)execExpr(expr,scope);
+			if(i == depth-1){//最後
+				if(i == 0){
+					bottomArrays.add(array);
+				}
+				for(List<Object> list : bottomArrays){
+					for(int j=0; j<size; ++j){
+						list.add(_execCast(type,setZero ? 0 : Math.random()*Integer.MAX_VALUE));
+					}
+				}
+			}
+			else if(i == 0){
+				for(int j=0; j<size; ++j){
+					List<Object> temp = new ArrayList<Object>();
+					array.add(temp);
+					bottomArrays.add(temp);
+				}
+			}
+			else{
+				int numOfBottom = bottomArrays.size();
+				List<List<Object>> bottomArraysBuf = new ArrayList<List<Object>>();
+				for(int j=0;j<numOfBottom;++j){
+					List<Object> bottomArray = bottomArrays.get(j);
+					for(int k=0; k<size; ++k){
+						List<Object> temp = new ArrayList<Object>();
+						bottomArray.add(temp);
+						bottomArraysBuf.add(temp);
+					}
+				}
+				bottomArrays = bottomArraysBuf;
+			}
+		}
+		return array;
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected void copyArray(final List<Object> src, List<Object> dest){
+		for(int i=0; i<src.size();++i){
+			if(src.get(i) instanceof List<?> && dest.get(i) instanceof List<?>){
+				copyArray((List<Object>)src.get(i), (List<Object>) dest.get(i));
+			}
+			else{
+				dest.set(i, src.get(i));
+			}
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
 	protected Object _execVariableDec(UniVariableDec decVar, Scope scope){
-			if(decVar.name.startsWith("*")){
+
+			while(decVar.name.startsWith("*")){
 				decVar.name = decVar.name.substring(1);
 				decVar.type+="*";
 			}
-			else if(decVar.name.startsWith("&")){
+			while(decVar.name.startsWith("&")){
 				decVar.name = decVar.name.substring(1);
 				decVar.type+="&";
 			}
+			for(int i=1; decVar.name.contains("["); ++i){
+				int leftPos = decVar.name.lastIndexOf("[");
+				decVar.name = decVar.name.substring(0, leftPos);
+				//decVar.type+="[]";
+				if(decVar.arrayLength.size()<i){
+					decVar.arrayLength.add(0,null);
+				}
+			}
 
 			Object value = Math.random()*Integer.MAX_VALUE;//未初期化は乱数
-			if(decVar.value!=null){
+
+			if(decVar.value!=null){//初期化されている場合
 				value = execExpr(decVar.value, scope);
+				if(!decVar.arrayLength.isEmpty()){
+					if(decVar.arrayLength.get(0) == null){//int arr[]
+						int size = (int)((List<Object>)value).size();
+						decVar.arrayLength.set(0,new UniIntLiteral(size));
+					}
+					List<Object> array = createMultiArray(decVar.arrayLength,decVar.type,scope,true);
+					copyArray((List<Object>)value,array);
+					value = array;
+				}
 			}
+			else if(!decVar.arrayLength.isEmpty()){//未初期化だが配列の場合(要素数は当然確定)
+				value = createMultiArray(decVar.arrayLength,decVar.type,scope,false);
+			}
+			
 			value = _execCast(decVar.type,value);
 			if(decVar.type.endsWith("*") && !(value instanceof List)){
 				int address = (int)value;

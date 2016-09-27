@@ -376,7 +376,7 @@ public class CppEngine extends Engine {
 			return value;
 		}
 
-		if(type.equals("int")){
+		if(type.contains("int")){
 			if(value instanceof Byte){
 				byte v = (byte)value;
 				return v & 0xFFFFFFFF;
@@ -394,7 +394,7 @@ public class CppEngine extends Engine {
 				return (int)v;
 			}
 		}
-		else if(type.equals("double")){
+		else if(type.contains("double")){
 			if(value instanceof Byte){
 				byte v = (byte)value;
 				return (double)v;
@@ -412,7 +412,7 @@ public class CppEngine extends Engine {
 				return v;
 			}
 		}
-		else if(type.equals("long")){
+		else if(type.contains("long")){
 			return (long)value;
 		}
 		else if(type.contains("char")){
