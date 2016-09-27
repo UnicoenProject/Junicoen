@@ -471,27 +471,12 @@ variableDeclaratorList
 	:|	variableDeclarator (',' variableDeclarator )* 
 	;
 
-arrayCreationExpression
-	:	dimExprs dims? ('=' bracedinitlist )? 
-	|	dims bracedinitlist 
-	;
-
-dimExprs
-	:	dimExpr dimExpr* 
-	;
-
-dimExpr
-	:	'[' expression ']' 
-	;
-
 variableDeclarator
-	:	ptroperator* declaratorid ('=' initializerclause )? 
-	|	ptroperator* declaratorid dims ('=' initializerclause )? 
-	|	ptroperator* declaratorid arrayCreationExpression 
+	:	ptroperator* declaratorid (LeftBracket expression? RightBracket )* ('=' initializerclause )? 
 	;
 
 dims
-	:	LeftBracket RightBracket (LeftBracket RightBracket )* 
+	:	LeftBracket RightBracket 
 	;
 
 simpledeclaration
