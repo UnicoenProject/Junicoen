@@ -362,7 +362,7 @@ public class CppEngineTest {
 		exec(text);
 	}
 	
-	@Test @Ignore
+	@Test //@Ignore
 	public void test17(){
 		String text = "int main(){"
 			+"int data[10];"
