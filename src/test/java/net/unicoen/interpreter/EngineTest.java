@@ -117,8 +117,8 @@ public class EngineTest {
 	@Test
 	public void testScope() {
 		// { int i = 1; { int i = 100; }; i += 1; i }
-		UniExpr exp1 = new UniVariableDec(null, "int", "i", lit(1));
-		UniExpr exp2 = new UniVariableDec(null, "int", "i", lit(100));
+		UniExpr exp1 = new UniVariableDec(null, "int", "i", lit(1), null);
+		UniExpr exp2 = new UniVariableDec(null, "int", "i", lit(100), null);
 		UniExpr exp3 = new UniBinOp("+=", ident("i"), lit(1));
 		UniExpr exp4 = ident("i");
 		UniBlock program = block(exp1, block(exp2), exp3, exp4);
@@ -130,28 +130,28 @@ public class EngineTest {
 	@Test
 	public void testIncrement() {
 		// { int i = 0; ???; j; }
-		UniExpr exp1 = new UniVariableDec(null, "int", "i", lit(0));
+		UniExpr exp1 = new UniVariableDec(null, "int", "i", lit(0), null);
 		UniExpr exp2;
 		UniExpr exp3 = ident("j");
 
 		// int j = i++;
 		exp2 = new UniVariableDec(null, "int", "j",
-				new UniUnaryOp("_++", ident("i")));
+				new UniUnaryOp("_++", ident("i")), null);
 		assertEquals(0, Engine.executeSimple(block(exp1, exp2, exp3)));
 
 		// int j = ++i;
 		exp2 = new UniVariableDec(null, "int", "j",
-				new UniUnaryOp("++_", ident("i")));
+				new UniUnaryOp("++_", ident("i")), null);
 		assertEquals(1, Engine.executeSimple(block(exp1, exp2, exp3)));
 
 		// int j = i--;
 		exp2 = new UniVariableDec(null, "int", "j",
-				new UniUnaryOp("_--", ident("i")));
+				new UniUnaryOp("_--", ident("i")), null);
 		assertEquals(0, Engine.executeSimple(block(exp1, exp2, exp3)));
 
 		// int j = --i;
 		exp2 = new UniVariableDec(null, "int", "j",
-				new UniUnaryOp("--_", ident("i")));
+				new UniUnaryOp("--_", ident("i")), null);
 		assertEquals(-1, Engine.executeSimple(block(exp1, exp2, exp3)));
 	}
 

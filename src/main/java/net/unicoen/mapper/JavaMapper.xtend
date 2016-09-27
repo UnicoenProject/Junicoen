@@ -524,7 +524,7 @@ class JavaMapper extends JavaBaseVisitor<UniNode> {
 		val varDecList = (nodes.getOneNode(JavaParser.RULE_variableDeclaratorList) as DummyNode<List<DummyNode<Pair<DummyNode<Pair<String, String>>, UniExpr>>>>).
 			item.map [
 				val nameAndTypeSuffix = it.item.key.item
-				new UniVariableDec(modifiers, type + nameAndTypeSuffix.value, nameAndTypeSuffix.key, it.item.value)
+				new UniVariableDec(modifiers, type + nameAndTypeSuffix.value, nameAndTypeSuffix.key, it.item.value, null)
 			]
 		new ListNode(varDecList)
 	}

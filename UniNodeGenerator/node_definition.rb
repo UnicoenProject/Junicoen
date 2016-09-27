@@ -132,6 +132,7 @@ Dsl.define_node do |x|
                 d.mem "type", String
                 d.mem "name", String
                 d.mem "value", "Expr"
+                d.mem "arrayLength", "Expr", list: true
             end
             
             x.node "EmptyStatement"

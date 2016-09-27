@@ -192,7 +192,7 @@ public class JavaGeneratorTest {
 
 	// @Test
 	public void test_For() {
-		UniExpr init = new UniVariableDec(null, "int", "i", lit(0));
+		UniExpr init = new UniVariableDec(null, "int", "i", lit(0), null);
 		UniExpr cond = new UniBinOp("<", ident("i"), lit(10));
 		UniExpr step = new UniUnaryOp("_++", ident("i"));
 		UniExpr body = new UniFor(init, cond, step, block(new UniContinue()));
@@ -217,7 +217,7 @@ public class JavaGeneratorTest {
 
 	@Test
 	public void test_DecVarWithValue() {
-		UniExpr body = new UniVariableDec(list("final"), "int", "a", lit(1));
+		UniExpr body = new UniVariableDec(list("final"), "int", "a", lit(1), null);
 		String code = "final int a = 1;";
 		assertGen(code, body);
 	}

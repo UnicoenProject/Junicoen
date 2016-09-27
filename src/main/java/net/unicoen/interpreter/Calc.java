@@ -69,6 +69,40 @@ public class Calc {
 
 	};
 
+	public static final Operation<Float> floatOperation = new Operation<Float>() {
+
+		@Override
+		protected Float toValue(Number num) {
+			return num.floatValue();
+		}
+
+		@Override
+		protected Float addT(Float left, Float right) {
+			return left + right;
+		}
+
+		@Override
+		protected Float subT(Float left, Float right) {
+			return left - right;
+		}
+
+		@Override
+		protected Float mulT(Float left, Float right) {
+			return left * right;
+		}
+
+		@Override
+		protected Float divT(Float left, Float right) {
+			return left / right;
+		}
+
+		@Override
+		protected Float modT(Float left, Float right) {
+			return left % right;
+		}
+
+	};
+	
 	public static final Operation<Long> longOperation = new Operation<Long>() {
 
 		@Override

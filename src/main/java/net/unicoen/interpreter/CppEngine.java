@@ -1,9 +1,15 @@
 package net.unicoen.interpreter;
 
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import net.unicoen.node.UniCast;
+import net.unicoen.node.UniCharacterLiteral;
 import net.unicoen.node.UniExpr;
+import net.unicoen.node.UniStringLiteral;
 import net.unicoen.node.UniUnaryOp;
 
 public class CppEngine extends Engine {
@@ -27,8 +33,17 @@ public class CppEngine extends Engine {
 			public Object invoke(Engine engine, Object[] args) {
 				if(args.length<1)
 					return 0;
-				String text = (String)args[0];
+				String text = BytesToStr((List<Byte>) args[0]);
+				text = text.replace("\\n", "\n");
 				String s="";
+				for(int i=1;i<args.length;++i){
+					if(global.typeOnMemory.containsKey(args[i])){
+						String type = global.typeOnMemory.get(args[i]);
+						if(type.contains("char")){
+							args[i] = charArrToStr(global.objectOnMemory,(int)args[i]);
+						}
+					}
+				}
 				if(args.length==1)
 					s = String.format(text);
 				else if(args.length==2)
@@ -282,6 +297,38 @@ public class CppEngine extends Engine {
 	}
 
 	@Override
+	protected Object execUniCharacterLiteral(UniCharacterLiteral expr, Scope scope){
+		byte[] bytes = ByteBuffer.allocate(Character.BYTES).putChar((char)expr.value).array();
+		if(bytes[0]<0)
+			return bytes;
+		else 
+			return bytes[1];
+	}
+	
+	@Override
+	protected Object execUniStringLiteral(UniStringLiteral expr, Scope scope){
+		return StrToBytes(((UniStringLiteral) expr).value);
+	}
+	
+	public static List<Byte> StrToBytes(String str){
+		byte [] data = str.getBytes();
+		List<Byte> bytes = new ArrayList<Byte>();
+		for(byte b :data){
+			bytes.add(b);
+		}
+		bytes.add((byte)0);
+		return bytes;
+	}
+	
+	public static String BytesToStr(List<Byte> bytes){
+		byte[] data = new byte[bytes.size()];
+		for(int i=0;i<bytes.size();++i){
+			data[i] = bytes.get(i);
+		}
+		return new String(data);
+	}
+	
+	@Override
 	protected Object execBinOp(String op, UniExpr left, UniExpr right,Scope scope) {
 		if(op.equals("++") || op.equals("--")){
 			op = "_" + op;
@@ -303,33 +350,240 @@ public class CppEngine extends Engine {
 		Object value = execExpr(expr.value, scope);
 		return _execCast(expr.type,value);
 	}
-
+	
+//	private <ReturnType> ReturnType castImple(Object value) {
+//		if(value instanceof Byte){
+//			byte v = (byte)value;
+//			return v;
+//		}
+//		else if(value instanceof Integer){
+//			int v = (int)value;
+//			return (ReturnType)v;
+//		}
+//		else if(value instanceof Long){
+//			long v = (long)value;
+//			return (ReturnType)v;
+//		}
+//		else if(value instanceof Double){
+//			double v = (double)value;
+//			return (ReturnType)v;
+//		}
+//	}
 	@Override
 	protected Object _execCast(String type, Object value){
-
+		//Uniはbyte,int,long,double,char(文字),String,
 		if(value == null || value instanceof List){
 			return value;
 		}
 
-
-		if(type.equals("int")){
-			return (int)value;
+		if(type.contains("int")){
+			if(value instanceof Byte){
+				byte v = (byte)value;
+				return v & 0xFFFFFFFF;
+			}
+			else if(value instanceof Integer){
+				int v = (int)value;
+				return v & 0xFFFFFFFF;
+			}
+			else if(value instanceof Long){
+				long v = (long)value;
+				return v & 0xFFFFFFFF;
+			}
+			else if(value instanceof Double){
+				double v = (double)value;
+				return (int)v;
+			}
 		}
-		else if(type.equals("double")){
-			return (double)value;
+		else if(type.contains("double")){
+			if(value instanceof Byte){
+				byte v = (byte)value;
+				return (double)v;
+			}
+			else if(value instanceof Integer){
+				int v = (int)value;
+				return (double)v;
+			}
+			else if(value instanceof Long){
+				long v = (long)value;
+				return (double)v;
+			}
+			else if(value instanceof Double){
+				double v = (double)value;
+				return v;
+			}
 		}
-		else if(type.equals("long")){
+		else if(type.contains("long")){
 			return (long)value;
 		}
-		else if(type.equals("char")){
-			return (char)value;
+		else if(type.contains("char")){
+			if(type.contains("unsigned")){
+				if(value instanceof Character){
+					
+				}
+				else if(value instanceof Byte){
+					byte v = (byte)value;
+					return (int)(v & 0xFF);
+				}
+				if(value instanceof Integer){
+					int v = (int)value;
+					return (int)(v & 0xFF);
+				}
+				else if(value instanceof Long){
+					long v = (long)value;
+					return (int)(v & 0xFF);
+				}
+				else if(value instanceof Double){
+					double v = (double)value;
+					int iv = (int)v;
+					return iv & 0xFF;
+				}
+			}
+			else{
+				if(value instanceof Character){
+					char v = (char)value;
+					//2byte文字は未対応
+					return v & 0xFF;
+				}
+				else if(value instanceof Byte){
+					return value;
+				}
+				else if(value instanceof Integer){
+					int v = (int)value;
+					return (byte)(v & 0xFF);
+				}
+				else if(value instanceof Long){
+					long v = (long)value;
+					return (byte)(v & 0xFF);
+				}
+				else if(value instanceof Double){
+					double v = (double)value;
+					int iv = (int)v;
+					return (byte)(iv & 0xFF);
+				}
+			}			
+		}
+		else if(type.contains("float")){
+			if(value instanceof Byte){
+				byte v = (byte)value;
+				return (float)v;
+			}
+			else if(value instanceof Integer){
+				int v = (int)value;
+				return (float)v;
+			}
+			else if(value instanceof Long){
+				long v = (long)value;
+				return (float)v;
+			}
+			else if(value instanceof Double){
+				double v = (double)value;
+				return (float)v;
+			}
+			
 		}
 		return value;
 	}
 
-	public static int sizeof(String type){
-		return 1;
-/*		if(type.contains("char")){
+	public abstract class BaseType{
+		public boolean unsigned;
+		public Long decimalValue;
+		public double fractionalValue;
+		public int byteSize;
+		abstract byte[] asBytes();
+	}
+	public class Cchar extends BaseType{
+		Cchar(long value){
+			decimalValue = value;
+			unsigned = false;
+			byteSize = 1;
+		}
+		Cchar(byte[] bytes,boolean isUnsigned){
+			decimalValue = ByteBuffer.wrap(bytes).getLong();
+			unsigned = isUnsigned;
+			byteSize = 1;
+			if(bytes[0] < 0){//負の数の場合
+				long mask = -1;
+				mask &= 0x00000000;
+				decimalValue |= mask;
+			}
+		}
+		@Override
+		byte[] asBytes(){
+			return ByteBuffer.allocate(byteSize).putLong(Long.parseLong(decimalValue.toString())).array();
+		}
+	}
+	
+	public class Cint extends BaseType{
+		Cint(long value){
+			decimalValue = value;
+			unsigned = false;
+			byteSize = 4;
+		}
+		Cint(byte[] bytes,boolean isUnsigned){
+			decimalValue = ByteBuffer.wrap(bytes).getLong();
+			unsigned = isUnsigned;
+			byteSize = 4;
+		}
+		@Override
+		byte[] asBytes(){
+			return ByteBuffer.allocate(byteSize).putLong(Long.parseLong(decimalValue.toString())).array();
+		}
+	}
+	public static Object fromByteArray(String type, List<Byte> byteArray){
+		final int byteSize = sizeofElement(type);
+
+		if(type.contains("*") || type.contains("long") || type.contains("int") || type.contains("short") || type.contains("char")){
+			long value = 0;
+			
+			for(int i=0;i<byteSize;++i){
+				byte b = byteArray.get(i);
+				value |= (b << i*8)&0xFF;
+			}
+			
+			if(type.contains("unsigned")){
+				if(byteArray.get(byteSize-1) < 0){//負の数の場合
+					int upperBytes = Long.BYTES - byteSize;
+					int upperBits = upperBytes * 8;
+					value = ((value << upperBits) >>> upperBits);
+				}
+			}
+			else{
+				if(type.contains("*")){
+					return (int) value;
+				}
+				else if(type.contains("char")){
+					return (byte) value;
+				}
+				else if(type.contains("short")){
+					return (short)value;
+				}
+				else if(type.contains("int")){
+					return (int)value;
+				}
+				else if(type.contains("long")){
+					return (long)value;
+				}
+			}
+			return value;
+		}
+		else if(type.contains("float") || type.contains("double")){
+			byte[] bytes = new byte[sizeof(type)];
+			for(int i=0;i<bytes.length;++i){
+				bytes[i] = byteArray.get(bytes.length-1-i);
+			}
+			if(type.contains("float"))
+				return ByteBuffer.wrap(bytes).getFloat();
+			else if(type.contains("double"))
+				return ByteBuffer.wrap(bytes).getDouble();
+		}
+		throw new RuntimeException("Not support type: " + type);
+	}
+	
+	public static int sizeofElement(String type){
+		if(type.contains("*")){
+			return 4;
+		}
+		else if(type.contains("char")){
 			return 1;
 		}
 		else if(type.contains("short")){
@@ -338,6 +592,22 @@ public class CppEngine extends Engine {
 		else if(type.contains("double")){
 			return 8;
 		}
-		return 4;*/
+		return 4;
+	}
+	public static int sizeof(String type){
+		int length = 1;
+		if(type.contains("[") && type.contains("]")){
+			length = Integer.parseInt(type.substring(type.lastIndexOf("[")+1, type.length()-1));			
+		}
+		int typeSize = sizeofElement(type);
+		return typeSize * length;
+	}
+	
+	public static String charArrToStr(HashMap<Integer, Object> objectOnMemory, int begin){
+		List<Byte> bytes = new ArrayList<Byte>();
+		for(byte v = (byte)objectOnMemory.get(begin); v != 0; v = (byte)objectOnMemory.get(++begin)){
+			bytes.add(v);
+		}
+		return BytesToStr(bytes);
 	}
 }

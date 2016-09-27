@@ -493,24 +493,6 @@ public interface CPP14Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitVariableDeclaratorList(CPP14Parser.VariableDeclaratorListContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link CPP14Parser#arrayCreationExpression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitArrayCreationExpression(CPP14Parser.ArrayCreationExpressionContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link CPP14Parser#dimExprs}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDimExprs(CPP14Parser.DimExprsContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link CPP14Parser#dimExpr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDimExpr(CPP14Parser.DimExprContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link CPP14Parser#variableDeclarator}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

@@ -60,7 +60,7 @@ public class UniModelMaker {
 	}
 
 	public static UniVariableDec createLocalVariable(String variableName, String type){
-		return new UniVariableDec(new ArrayList<String>(), type, variableName, null);
+		return new UniVariableDec(new ArrayList<String>(), type, variableName, null, null);
 	}
 
 	public static BlockGenerator createBlockGenerator(String fileName) throws IOException{
@@ -136,7 +136,7 @@ public class UniModelMaker {
 	 * @return
 	 */
 	public static UniVariableDec createLocalObjectVariableBlockModel(String variableName, String type){
-		return new UniVariableDec(new ArrayList<>(), type, variableName, new UniNew(type, new ArrayList<>()));
+		return new UniVariableDec(new ArrayList<>(), type, variableName, new UniNew(type, new ArrayList<>()), null);
 	}
 	
 	

@@ -80,7 +80,7 @@ public class DolittleGenerator extends CodeGenerator {
 			if(classDec.members.get(i)instanceof UniMethodDec){
 				UniMethodDec dec = (UniMethodDec)classDec.members.get(i);
 				if(dec.methodName.equals("start")){
-					UniVariableDec kameta = new UniVariableDec(Lists.newArrayList(), "Type", "かめた", new UniMethodCall(null, "createTurtle", Lists.newArrayList()));
+					UniVariableDec kameta = new UniVariableDec(Lists.newArrayList(), "Type", "かめた", new UniMethodCall(null, "createTurtle", Lists.newArrayList()),null);
 					dec.block.body.add(0,kameta);
 				}
 			}

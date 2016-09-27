@@ -399,9 +399,9 @@ public class BlockMapper {
 
 		if (!initValues.isEmpty() && initValues.get(0) != null && initValues.size() > 0) {
 			// 初期値あり
-			return new UniVariableDec(null, type, name, initValues.get(0));
+			return new UniVariableDec(null, type, name, initValues.get(0), null);
 		} else {
-			return new UniVariableDec(null, type, name, null);
+			return new UniVariableDec(null, type, name, null, null);
 		}
 	}
 
@@ -551,7 +551,7 @@ public class BlockMapper {
 			return parseDoWhile(node, map);
 		} else if ("special-variable".equals(blockGenusName)) {
 			args.add(null);
-			return new UniVariableDec(new ArrayList<>(), MyDOMUtil.getChildText(node, BlockElementModel.TYPE_NODE), MyDOMUtil.getChildText(node, BlockElementModel.NAME_NODE), args.get(0));
+			return new UniVariableDec(new ArrayList<>(), MyDOMUtil.getChildText(node, BlockElementModel.TYPE_NODE), MyDOMUtil.getChildText(node, BlockElementModel.NAME_NODE), args.get(0), null);
 		} else if ("continue".equals(blockGenusName)) {
 			return new UniContinue();
 		} else if ("break".equals(blockGenusName)) {

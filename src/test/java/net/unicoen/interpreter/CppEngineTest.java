@@ -13,6 +13,44 @@ import net.unicoen.node.UniNode;
 
 public class CppEngineTest {
 	@Test @Ignore
+	public void test() {
+		String text =
+				""
+//+				"#include<stdio.h>"
++"		int recursiveToThree(int n){"
++"		    printf(\"%d回目\\n\", n + 1);"
++"		    if(n < 3){"
++"		        int r = recursiveToThree(n + 1);"
+		+"		        n = r;"
+		+"   }"
+		+"    return n;"
+		+"}"
+		+"int main(){"
+		  +"  int n = 0;"
+
++"		    n = recursiveToThree(0);//再帰関数呼び出しの例"
++"		    int arr[5] = {1, 2, 3};//配列変数の例"
+
++"		    int* ptr = &arr[2];//ポインタ変数の例"
++"		    *ptr = 5;"
+
++"		    //メモリの動的確保の例"
++"		    int* d_arry = malloc(sizeof(int) * 3);"
+
++"		    //動的な2次元配列の例"
++"		    int* pd_arr[2];"
++"		    pd_arr[0] = malloc(sizeof(int) * 2);"
++"		    pd_arr[1] = malloc(sizeof(int) * 2);"
+
++"		    printf(\"Hello,world!\\n\");//標準出力の例"
+
+		    //メモリリークの例
++"		    free(pd_arr[0]);"
++"		    return 0;"
++"		}";
+		exec(text);
+	}
+	@Test @Ignore
 	public void test1() {
 		String text =
 				"int main()"+
@@ -117,7 +155,7 @@ public class CppEngineTest {
 		exec(text);
 	}
 
-	@Test //@Ignore
+	@Test @Ignore
 	public void test6() {
 		String text = ""
 				//+ "#include <stdio.h>"
@@ -149,6 +187,217 @@ public class CppEngineTest {
 				+ "}";
 		exec(text);
 	}
+	
+	@Test @Ignore
+	public void test8() {
+		String text = ""
+				//+ "#include <stdio.h>"
+				+ "int main()"
+				+ "{"
+				+ "	char moji;"
+				+ "	moji = 'B';"
+				+ "	printf(\"%c\\n\", moji);"
+				+ "	return 0;"
+				+ "}";
+		exec(text);
+	}
+
+	@Test @Ignore
+	public void test9() {
+		String text = ""
+				+ "int main()"
+				+ "{"
+//				+ " char c1 = 300;"
+//				+ " char c2 = 150;"
+//				+ " char c3 = 120;"
+//				+ " char c4 = -120;"
+//				+ " char c5 = -150;"
+//				+ " char c6 = -300;"
+//				+ "	unsigned char uc1 = 300;"
+//				+ "	unsigned char uc1 = 150;"
+//				+ "	unsigned char uc2 = 120;"
+//				+ "	unsigned char uc3 = -120;"
+//				+ "	unsigned char uc4 = -150;"
+				+ "	unsigned char uc1 = -300;"
+				+ "	short s = 20000;"
+				+ "	int i = s;"
+				+ "	float f = 1.5;"
+				+ "	double d=2;"
+				+ "	double fd = f + d;"
+				+ "	return 1;"
+				+ "}";
+		exec(text);
+	}
+	
+	@Test @Ignore
+	public void test10(){
+		String text = ""
+				//+ "#include <stdio.h>"
+				+ "int main() {"
+				+ "int a = 8;"
+				+ "int b = 7;"
+				+ "int c = a + b;"
+				+ "printf(\"a + b = %d\\n\", c);"
+				+ "c=a*b;"
+				+ "printf(\"a * b = %d\\n\", c);"
+				+ "float x, y, z;"
+				+ "x = 7.1;"
+				+ "y = 3.6;"
+				+ "z = x * y;"
+				+ "printf(\"x * y = %f\\n\", z);"
+				+ "z = x / y;"
+				+ "printf(\"x / y = %f\\n\", z);"
+				+ "return 0;"
+				+ "}";
+		/*
+		 *  a + b = 15
+		 *  a * b = 56
+		 *  x * y = 25.560000
+		 *  x / y = 1.972222
+		 */
+		exec(text);
+	}
+
+	@Test @Ignore
+	public void test11(){
+		String text = ""
+				//+ "#include <stdio.h>"
+				+ "int main() {"
+				+ "int a, b;"
+				+ "a = 1;"
+				+ "b = 2;"
+				+ "a += b;"
+				+ "printf(\"a = %d\\n\", a);"
+				+ "a -= b;"
+				+ "printf(\"a = %d\\n\", a);"
+				+ "float x, y;"
+				+ "x = 3.3;"
+				+ "y = 5.4;"
+				+ "x *= y;"
+				+ "printf(\"x = %f\\n\", x);"
+				+ "x /= y;"
+				+ "printf(\"x = %f\\n\", x);"
+				+ "return 0;"
+				+ "}";
+		/*
+		 *  a  = 3
+		 *  a  = 1
+		 *  x = 17.82
+		 *  x = 3.3
+		 */
+		exec(text);
+	}
+	
+	@Test @Ignore
+	public void test112() {
+		String text = ""
+				//+ "#include <stdio.h>"
+				+ "int main()"
+				+ "{"
+				+ "	char moji;"
+				+ "	moji = 'B';"
+				+ "	printf(\"%c\\n\", moji);"
+				+ "	return 0;"
+				+ "}";
+		exec(text);
+	}
+	
+	@Test @Ignore
+	public void test12(){
+		String text = ""
+				//+ "#include <stdio.h>"
+				+ "int main() {"
+				+ "	char mojiretu[5] = {'A','B','C','0'};"
+				+ "	printf(\"%s\\n\", mojiretu);"
+				+ "	return 0;"
+				+ "}";
+		exec(text);
+	}
+	
+	@Test @Ignore
+	public void test13(){
+		String text = ""
+				//+ "#include <stdio.h>"
+				+ "int main() {"
+				+ "	char mojiretu[] = \"ABCD\";"
+				+ "	printf(\"%s\\n\", mojiretu);"
+				+ "	return 0;"
+				+ "}";
+		exec(text);
+	}
+	
+	@Test @Ignore
+	public void test14(){
+		String text = ""
+				//+ "#include <stdio.h>"
+				+ "int main() {"
+				+ "	char mojiretu[5] = \"ABCD\";"//UniVariableDecにArrayLengthが実装されないと不可能
+				+ "	printf(\"%s\\n\", mojiretu);"
+				+ "	return 0;"
+				+ "}";
+		exec(text);
+	}
+	
+	@Test @Ignore
+	public void test15(){
+		String text = ""
+				//+ "#include <stdio.h>"
+				+ "int main() {"
+				+ "	char mojiretu[] = \"日本語のテストだよ\";"//UniVariableDecにArrayLengthが実装されないと不可能
+				+ "	printf(\"%s\\n\", mojiretu);"
+				+ "	return 0;"
+				+ "}";
+		exec(text);
+	}
+	
+	@Test @Ignore
+	public void test16(){
+		String text = ""
+				//+ "#include <stdio.h>"
+				+ "int main() {"
+				+ "	int arr[4];"
+				+ "	printf(\"%d, %d, %d, %d\\n\", arr[0], arr[1], arr[2], arr[3]);"
+				+ "	return 0;"
+				+ "}";
+		exec(text);
+	}
+	
+	@Test //@Ignore
+	public void test17(){
+		String text = "int main(){"
+			+"int data[10];"
+			+"int arr5[5] = {1};"
+			+"int arr3[] = {19, 20, 21};"
+			+"char str6[6] = \"aiueo\";"
+			+"int data104[10][4];"
+			+"	int arr53[5][3] = {{1},{3}};"
+			+"	int array35[3][5] = {"
+	   		+" {  1,  2,  3,  4,  5, },"
+	    	+ "{  2,  4,  6,  8, 10, },"
+	   		+" {  3,  6,  9, 12, 15, },"
+			+"};"
+//	+"int array[][] = {"//駄目
+//	  +"  {  1,  2,  3,  4,  5, },"
+//	    +"{  2,  4,  6,  8, 10, },"
+//+"		    {  3,  6,  9, 12, 15, },"
+//+"	};"
++"int a[][2][3] ={{{ 0, 1 },{ 2, 3 }},{{ 4, 5 },{ 6, 7 }}};"
++"	int arrayn5[][5] = {"
++"    {  1,  2,  3,  4,  5, },"
++"  {  2,  4,  6,  8, 10, },"
++"{  3,  6,  9, 12, 15, },"
++"		};"
++"		int arraynn5[][5] = {"
++"	    {  1,  2,  3,  4,  5, },"
++"    {  2,  4,  6,  8, 10, },"
++"  {  3,  6,  9, 12, 15, },"
++"{  4,  8, 12, 16, 20, },"
++"		};"
+		    + "return 0;"
+		    + "}";
+		exec(text);
+	}
+	
 	private List<UniNode> flatten(List<Object> list){
 		List<UniNode> nodes = new ArrayList<UniNode>();
 		for(Object element : list){
