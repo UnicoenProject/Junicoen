@@ -524,7 +524,7 @@ public class Engine {
 
 			if(decVar.value!=null){//初期化されている場合
 				value = execExpr(decVar.value, scope);
-				if(!decVar.arrayLength.isEmpty()){
+				if(decVar.arrayLength != null && !decVar.arrayLength.isEmpty()){
 					if(decVar.arrayLength.get(0) == null){//int arr[]
 						int size = (int)((List<Object>)value).size();
 						decVar.arrayLength.set(0,new UniIntLiteral(size));
@@ -534,7 +534,7 @@ public class Engine {
 					value = array;
 				}
 			}
-			else if(!decVar.arrayLength.isEmpty()){//未初期化だが配列の場合(要素数は当然確定)
+			else if(decVar.arrayLength != null && !decVar.arrayLength.isEmpty()){//未初期化だが配列の場合(要素数は当然確定)
 				value = createMultiArray(decVar.arrayLength,decVar.type,scope,false);
 			}
 			

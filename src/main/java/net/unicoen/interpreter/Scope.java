@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import net.unicoen.node.UniExpr;
+import net.unicoen.node.UniMethodDec;
 
 public class Scope {
 	public enum Type {
@@ -111,7 +112,8 @@ public class Scope {
 		int address = getAddress(key);
 		if(typeOnMemory.containsKey(address)){
 			String type = typeOnMemory.get(address);
-			if(type.equals("FUNCTION")){
+			if(type.equals("FUNCTION") || (objectOnMemory.containsKey(address) 
+					&& objectOnMemory.get(address) instanceof UniMethodDec)){
 				return getValue(address);
 			}
 			int sizeofElement = CppEngine.sizeofElement(type);
