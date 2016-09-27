@@ -250,7 +250,7 @@ public class Engine {
 			for(int i=0;i<arguments.size();++i){
 				UniArg param = parameters.get(i);
 				UniExpr arg = arguments.get(i);
-				UniVariableDec uvd = new UniVariableDec(null, param.type, param.name, arg);
+				UniVariableDec uvd = new UniVariableDec(null, param.type, param.name, arg, null);
 				Object value = _execVariableDec(uvd,scope);
 				args.add(value);
 				uvds.add(uvd);
