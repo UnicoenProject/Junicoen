@@ -124,7 +124,7 @@ public class Scope {
 				sizeof = sizeofElement;
 			}
 			List<Byte> bytes = getValue(address,sizeofElement);
-			Object value = CppEngine.fromByteArray(type, bytes);
+			Number value = CppEngine.fromByteArray(type, bytes);
 			return value;
 		}
 		else{
@@ -136,7 +136,7 @@ public class Scope {
 		return getValueImple(key,name);
 	}
 	public List<Byte> getValue(int key, int byteSize) {
-		List<Byte> bytes = new ArrayList<Byte>();
+		List<Byte> bytes = new ArrayList<>();
 		return getValueImple(key,name,byteSize,bytes);
 	}
 
@@ -312,16 +312,14 @@ public class Scope {
 				setArray(key+"["+ index++ +"]", arrVar, type);
 			}
 			else{
-				typeOnMemory.put(address.v, type);
-				writeOnMemory(var,type,address);
+				int addr = writeOnMemory(var,type,address);
+				typeOnMemory.put(addr, type);
 			}
-		}
-		while(address.v%4!=0){
-			objectOnMemory.put(address.v++, 0x00);//リトルエンディアン
 		}
 	}
 
-	private void writeOnMemory(Object value, String type, Int _address){
+	private int writeOnMemory(Object value, String type, Int _address){
+		int add = _address.v;
 		int byteSize = CppEngine.sizeofElement(type);//ここではプリミティブ型の値一つの書き込みしかありえない。
 		byte[] bytes = null;
 		if(value instanceof Character){
@@ -354,26 +352,30 @@ public class Scope {
 		}
 		
 		if(bytes != null){
+			if(_address.v/4 != (_address.v+(byteSize-1))/4)
+			{
+				while(_address.v%4!=0){
+					objectOnMemory.put(_address.v++, (byte)0x00);//リトルエンディアン
+				}
+			}
+			add = _address.v;
 			for(int i=0; i<byteSize; ++i){
 				objectOnMemory.put(_address.v++, bytes[bytes.length-1-i]);//リトルエンディアン
 			}
 		}
+		return add;
 	}
 	
 	private void setImple(String key, Object value, String type,Int _address){
 		assertNotUnicoen(value);
+		int addr = writeOnMemory(value,type,_address);
 		variableTypes.put(key, type);
-		variableAddress.put(key, _address.v);
-		typeOnMemory.put(_address.v, type);
-		writeOnMemory(value,type,_address);
-		while(_address.v%4!=0){
-			objectOnMemory.put(_address.v++, (byte)0x00);//リトルエンディアン
-		}
+		variableAddress.put(key, addr);
+		typeOnMemory.put(addr, type);
 	}
 	
 	private void setPrimitiveOnStack(String key, Object value, String type){
 		setImple(key,value,type,address);
-
 	}
 
 	private void setPrimitiveOnCode(String key, Object value, String type){

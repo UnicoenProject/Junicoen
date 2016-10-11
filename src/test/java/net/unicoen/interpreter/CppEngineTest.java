@@ -361,9 +361,23 @@ public class CppEngineTest {
 				+ "}";
 		exec(text);
 	}
-	
-	@Test //@Ignore
+	@Test @Ignore
 	public void test17(){
+		String text = ""
+				//+ "#include <stdio.h>"
+				+ "int main() {"
+				+ "	int i=1;"
+				+ " char c = 48;"
+				+ " short s = 1000;"
+				+ " long l = 10000;"
+				+ " float f = 1.5;"
+				+ " double d = 3.6;"
+				+ "	return 0;"
+				+ "}";
+		exec(text);
+	}
+	@Test @Ignore
+	public void test18(){
 		String text = "int main(){"
 			+"int data[10];"
 			+"int arr5[5] = {1};"

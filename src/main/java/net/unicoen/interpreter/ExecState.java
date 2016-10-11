@@ -25,7 +25,6 @@ public class ExecState {
 	public ExecState make(){
 		stacks.clear();
 		return makeImple(global);
-
 	}
 
 	private ExecState makeImple(Scope scope){
