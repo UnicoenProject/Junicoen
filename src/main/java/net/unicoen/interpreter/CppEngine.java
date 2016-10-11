@@ -376,14 +376,13 @@ public class CppEngine extends Engine {
 			return value;
 		}
 
-		if(type.contains("int")){
+		if(type.contains("int") || type.contains("long")){
 			if(value instanceof Byte){
 				byte v = (byte)value;
 				return v & 0xFFFFFFFF;
 			}
 			else if(value instanceof Integer){
-				int v = (int)value;
-				return v & 0xFFFFFFFF;
+				return value;
 			}
 			else if(value instanceof Long){
 				long v = (long)value;
@@ -394,26 +393,23 @@ public class CppEngine extends Engine {
 				return (int)v;
 			}
 		}
-		else if(type.contains("double")){
+		else if(type.contains("short")){
 			if(value instanceof Byte){
 				byte v = (byte)value;
-				return (double)v;
+				return (short)v;
 			}
 			else if(value instanceof Integer){
 				int v = (int)value;
-				return (double)v;
+				return (short)v;
 			}
 			else if(value instanceof Long){
 				long v = (long)value;
-				return (double)v;
+				return (short)v;
 			}
 			else if(value instanceof Double){
 				double v = (double)value;
-				return v;
+				return (short)v;
 			}
-		}
-		else if(type.contains("long")){
-			return (long)value;
 		}
 		else if(type.contains("char")){
 			if(type.contains("unsigned")){
@@ -481,6 +477,24 @@ public class CppEngine extends Engine {
 			}
 			
 		}
+		else if(type.contains("double")){
+			if(value instanceof Byte){
+				byte v = (byte)value;
+				return (double)v;
+			}
+			else if(value instanceof Integer){
+				int v = (int)value;
+				return (double)v;
+			}
+			else if(value instanceof Long){
+				long v = (long)value;
+				return (double)v;
+			}
+			else if(value instanceof Double){
+				double v = (double)value;
+				return v;
+			}
+		}
 		return value;
 	}
 
@@ -529,42 +543,40 @@ public class CppEngine extends Engine {
 			return ByteBuffer.allocate(byteSize).putLong(Long.parseLong(decimalValue.toString())).array();
 		}
 	}
-	public static Object fromByteArray(String type, List<Byte> byteArray){
+	public static Number fromByteArray(String type, List<Byte> byteArray){
 		final int byteSize = sizeofElement(type);
 
 		if(type.contains("*") || type.contains("long") || type.contains("int") || type.contains("short") || type.contains("char")){
-			long value = 0;
-			
-			for(int i=0;i<byteSize;++i){
-				byte b = byteArray.get(i);
-				value |= (b << i*8)&0xFF;
+			byte[] bytes = new byte[sizeof(type)];
+			for(int i=0;i<bytes.length;++i){
+				bytes[i] = byteArray.get(bytes.length-1-i);
 			}
 			
 			if(type.contains("unsigned")){
-				if(byteArray.get(byteSize-1) < 0){//負の数の場合
-					int upperBytes = Long.BYTES - byteSize;
-					int upperBits = upperBytes * 8;
-					value = ((value << upperBits) >>> upperBits);
+				long value = 0;
+				
+				for(int i=0;i<byteSize;++i){
+					byte b = byteArray.get(i);
+					value |= (b << i*8)&0xFF;
 				}
+				
+				if(type.contains("unsigned")){
+					if(byteArray.get(byteSize-1) < 0){//負の数の場合
+						int upperBytes = Long.BYTES - byteSize;
+						int upperBits = upperBytes * 8;
+						value = ((value << upperBits) >>> upperBits);
+					}
+				}
+				return value;
 			}
 			else{
-				if(type.contains("*")){
-					return (int) value;
-				}
-				else if(type.contains("char")){
-					return (byte) value;
-				}
-				else if(type.contains("short")){
-					return (short)value;
-				}
-				else if(type.contains("int")){
-					return (int)value;
-				}
-				else if(type.contains("long")){
-					return (long)value;
-				}
+				if(type.contains("char"))
+					return bytes[0];
+				else if(type.contains("short"))
+					return ByteBuffer.wrap(bytes).getShort();
+				else if(type.contains("*") || type.contains("int") || type.contains("long"))
+					return ByteBuffer.wrap(bytes).getInt();
 			}
-			return value;
 		}
 		else if(type.contains("float") || type.contains("double")){
 			byte[] bytes = new byte[sizeof(type)];
