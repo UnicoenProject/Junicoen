@@ -760,6 +760,8 @@ public class Engine {
 				return startAddress + offset;
 			}
 		}
+		else
+			return -1;
 		throw new RuntimeException("Assignment failure: " + expr);
 	}
 
@@ -864,6 +866,20 @@ public class Engine {
 				if (calculater != null) {
 					switch (op) {
 					case "+":
+						int leftaddredd = getAddress(left,scope);
+						int rightaddredd = getAddress(right,scope);
+						if(scope.codeAddressStart <= leftaddredd)
+						{
+							String type = scope.getType(leftaddredd);
+							int typeSize = sizeof(type);
+							numR = (Number) calculater.mul(numR, typeSize);
+						}
+						else if(scope.codeAddressStart <= rightaddredd)
+						{
+							String type = scope.getType(rightaddredd);
+							int typeSize = sizeof(type);
+							numL = (Number) calculater.mul(numL, typeSize);
+						}
 						return calculater.add(numL, numR);
 					case "-":
 						return calculater.sub(numL, numR);

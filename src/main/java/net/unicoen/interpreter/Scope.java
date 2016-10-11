@@ -45,6 +45,8 @@ public class Scope {
 	public Int address;
 	public Int heapAddress;
 	public Int codeAddress;
+	public final int heapAddressStart = 10000;
+	public final int codeAddressStart = 20000;
 	public final Type type;
 	public final Scope parent;
 	public final Scope global;
@@ -71,8 +73,8 @@ public class Scope {
 			this.name = "GLOBAL";
 			this.global = this;
 			address = new Int(0);
-			heapAddress= new Int(10000);
-			codeAddress = new Int(20000);
+			heapAddress= new Int(heapAddressStart);
+			codeAddress = new Int(codeAddressStart);
 			mallocData = new LinkedHashMap<>();
 			objectOnMemory = new LinkedHashMap<>();
 			typeOnMemory = new LinkedHashMap<>();

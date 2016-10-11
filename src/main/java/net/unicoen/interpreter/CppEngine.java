@@ -44,22 +44,7 @@ public class CppEngine extends Engine {
 						}
 					}
 				}
-				if(args.length==1)
-					s = String.format(text);
-				else if(args.length==2)
-					s = String.format(text,args[1]);
-				else if(args.length==3)
-					s = String.format(text,args[1],args[2]);
-				else if(args.length==4)
-					s = String.format(text,args[1],args[2],args[3]);
-				else if(args.length==5)
-					s = String.format(text,args[1],args[2],args[3],args[4]);
-				else if(args.length==6)
-					s = String.format(text,args[1],args[2],args[3],args[4],args[5]);
-				else if(args.length==7)
-					s = String.format(text,args[1],args[2],args[3],args[4],args[5],args[6]);
-				else if(args.length==8)
-					s = String.format(text,args[1],args[2],args[3],args[4],args[5],args[6],args[7]);
+				s = String.format(text,Arrays.copyOfRange(args,1,args.length));
 				engine.out.print(s);
 				return s.length();
 			}
@@ -606,6 +591,7 @@ public class CppEngine extends Engine {
 		}
 		return 4;
 	}
+	
 	public static int sizeof(String type){
 		int length = 1;
 		if(type.contains("[") && type.contains("]")){

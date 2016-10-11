@@ -379,9 +379,11 @@ public class CppEngineTest {
 	@Test @Ignore
 	public void test18(){
 		String text = "int main(){"
+				+ "printf(\"aaa\");"
+			+"int arr3[] = {19, 20, 21};"
+			+"int* ptr = &arr3[1];"
 			+"int data[10];"
 			+"int arr5[5] = {1};"
-			+"int arr3[] = {19, 20, 21};"
 			+"char str6[6] = \"aiueo\";"
 			+"int data104[10][4];"
 			+"	int arr53[5][3] = {{1},{3}};"
