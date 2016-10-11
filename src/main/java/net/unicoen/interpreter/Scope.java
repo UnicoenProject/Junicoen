@@ -53,9 +53,11 @@ public class Scope {
 	public List<Scope> children = new ArrayList<Scope>();
 	public final HashMap<String, Integer> variableAddress = new LinkedHashMap<>();
 	public final HashMap<String, String> variableTypes = new LinkedHashMap<>();
+	public final HashMap<String, Integer> functionAddress;
 	public final HashMap<Integer, Integer> mallocData;
 	public final HashMap<Integer, Object> objectOnMemory;
 	public final HashMap<Integer, String> typeOnMemory;
+
 	private List<VariableNotFoundListener> listeners = null;
 	private final int tempAddressForListener = -1;
 
@@ -78,6 +80,7 @@ public class Scope {
 			mallocData = new LinkedHashMap<>();
 			objectOnMemory = new LinkedHashMap<>();
 			typeOnMemory = new LinkedHashMap<>();
+			functionAddress = new LinkedHashMap<>();
 		}
 		else{
 			parent.children.add(this);
@@ -91,6 +94,7 @@ public class Scope {
 			this.mallocData = parent.mallocData;
 			this.objectOnMemory = parent.objectOnMemory;
 			this.typeOnMemory = parent.typeOnMemory;
+			this.functionAddress = parent.functionAddress;
 		}
 	}
 
@@ -110,14 +114,13 @@ public class Scope {
 		}
 	}
 
-	public Object get(String key) {
-		int address = getAddress(key);
-		if(typeOnMemory.containsKey(address)){
-			String type = typeOnMemory.get(address);
-			if(type.equals("FUNCTION") || (objectOnMemory.containsKey(address) 
-					&& objectOnMemory.get(address) instanceof UniMethodDec)){
-				return getValue(address);
+	public Object getFromAddress(int addr){
+		if(typeOnMemory.containsKey(addr)){
+			if(isFunc(addr)){
+				return objectOnMemory.get(addr);
 			}
+			
+			String type = typeOnMemory.get(addr);
 			int sizeofElement = CppEngine.sizeofElement(type);
 			int sizeof = CppEngine.sizeof(type);
 			if(sizeof != sizeofElement){
@@ -125,41 +128,27 @@ public class Scope {
 				sizeofElement = CppEngine.sizeofElement(type);
 				sizeof = sizeofElement;
 			}
-			List<Byte> bytes = getValue(address,sizeofElement);
+			List<Byte> bytes = getValue(addr,sizeofElement);
 			Number value = CppEngine.fromByteArray(type, bytes);
 			return value;
 		}
-		else{
-			return getValue(address);
-		}
+		throw new UniRuntimeError(
+				String.format("variable '%s' is not defined.", addr));
+	}
+	public Object get(String key) {
+		int addr = getAddress(key);
+		Object value = getFromAddress(addr);
+		return value;
 	}
 
 	public Object getValue(int key) {
-		return getValueImple(key,name);
+		return getFromAddress(key);
 	}
 	public List<Byte> getValue(int key, int byteSize) {
 		List<Byte> bytes = new ArrayList<>();
 		return getValueImple(key,name,byteSize,bytes);
 	}
 
-	private Object getValueImple(int key, String stackName) {
-		if (objectOnMemory.containsKey(key)) {
-			Object var = objectOnMemory.get(key);
-			if(stackName.equals(name) || this.type==Type.GLOBAL)
-			{
-				if(key == tempAddressForListener)
-					objectOnMemory.remove(tempAddressForListener);
-				return var;
-			}
-		}
-
-		if (parent != null) {
-			return parent.getValue(key);
-		} else {
-			throw new UniRuntimeError(
-					String.format("variable '%s' is not defined.", key));
-		}
-	}
 	private List<Byte> getValueImple(int key, String stackName, int byteSize, List<Byte> bytes) {
 
 		if (objectOnMemory.containsKey(key)) {
@@ -178,7 +167,7 @@ public class Scope {
 			return parent.getValueImple(key,stackName,byteSize,bytes);
 		} else {
 			throw new UniRuntimeError(
-					String.format("variable '%s' is not defined.", key));
+				String.format("variable '%s' is not defined.", key));
 		}
 	}
 
@@ -226,12 +215,12 @@ public class Scope {
 				String.format("variable '%s' is not defined.", key));
 	}
 
-	public int malloc(int num){
+	public int malloc(int byteSize){
 		int addr = heapAddress.v;
-		for(int i=0;i<num;++i){
+		for(int i=0;i<byteSize;++i){
 			objectOnMemory.put(heapAddress.v++, (byte)(Math.random()*255));
 		}
-		mallocData.put(addr, num);
+		mallocData.put(addr, byteSize);
 		return addr;
 	}
 	public void setMallocSize(int address,int size){
@@ -266,8 +255,20 @@ public class Scope {
 		return codeAddress.v++;
 	}
 
+	//関数を登録
+	public void setFunc(String key, Object value, String type){
+		int addr = setTop(key,value,type);
+		functionAddress.put(key,addr);
+	}
+	public boolean isFunc(String funcName){
+		return functionAddress.containsKey(funcName);
+	}
+	public boolean isFunc(int addr){
+		return functionAddress.containsValue(addr);
+	}
+	
 	/** 現在のスコープに新しい変数を定義し、代入します */
-	public void setTop(String key, Object value, String type) {
+	public int setTop(String key, Object value, String type) {
 		assertNotUnicoen(value);
 		if(hasValue(type)){//構造体
 			setPrimitiveOnStack(key, address.v+1, type);
@@ -294,24 +295,28 @@ public class Scope {
 					arr.add(null);
 				}
 			}
-			setArray(key, arr,type);
+			return setArray(key, arr,type);
 		}
 		else if(value instanceof List){//配列の場合
-			setArray(key,(List<Object>) value,type);
+			return setArray(key,(List<Object>) value,type);
 		}
 		else{//組み込み型の場合
-			setPrimitiveOnStack(key,value,type);
+			return setPrimitiveOnStack(key,value,type);
 		}
 	}
 
-	private void setArray(String key, List<Object> value, String type){
+	private int setArray(String key, List<Object> value, String type){
 		assertNotUnicoen(value);
+		int startAddr = -1;
 		{
 			String _type = "" + type;
 			for(Object child = value;child instanceof List<?>;child = ((List<?>)child).get(0)){
 			_type += "["+((List<?>)child).size()+"]";
 			}
-			setPrimitiveOnCode(key, address.v, _type);
+			while(address.v%4!=0){
+				objectOnMemory.put(address.v++, (byte)0x00);//リトルエンディアン
+			}
+			startAddr = setPrimitiveOnCode(key, address.v, _type);
 		}
 		int index=0;
 		for(Object var : value){
@@ -325,6 +330,7 @@ public class Scope {
 				typeOnMemory.put(addr, type);
 			}
 		}
+		return startAddr;
 	}
 
 	private int writeOnMemory(Object value, String type, Int _address){
@@ -375,24 +381,25 @@ public class Scope {
 		return add;
 	}
 	
-	private void setImple(String key, Object value, String type,Int _address){
+	private int setImple(String key, Object value, String type,Int _address){
 		assertNotUnicoen(value);
 		int addr = writeOnMemory(value,type,_address);
 		variableTypes.put(key, type);
 		variableAddress.put(key, addr);
 		typeOnMemory.put(addr, type);
+		return addr;
 	}
 	
-	private void setPrimitiveOnStack(String key, Object value, String type){
-		setImple(key,value,type,address);
+	private int setPrimitiveOnStack(String key, Object value, String type){
+		return setImple(key,value,type,address);
 	}
 
-	private void setPrimitiveOnCode(String key, Object value, String type){
-		setImple(key,value,type,codeAddress);
+	private int setPrimitiveOnCode(String key, Object value, String type){
+		return setImple(key,value,type,codeAddress);
 	}
 
-	private void setPrimitiveOnHeap(String key, Object value, String type){
-		setImple(key,value,type,heapAddress);
+	private int setPrimitiveOnHeap(String key, Object value, String type){
+		return setImple(key,value,type,heapAddress);
 	}
 
 	/** 指定したメモリアドレスに値を書き込みます */

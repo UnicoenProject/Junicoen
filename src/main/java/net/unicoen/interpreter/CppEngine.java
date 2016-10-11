@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Stream;
 
 import net.unicoen.node.UniCast;
 import net.unicoen.node.UniCharacterLiteral;
@@ -19,7 +20,7 @@ public class CppEngine extends Engine {
 		includeStdio(global);
 		includeStdlib(global);
 		includeMath(global);
-		global.setTop("sizeof", new FunctionWithEngine() {
+		global.setFunc("sizeof", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				if(args[0] instanceof String){
@@ -30,253 +31,252 @@ public class CppEngine extends Engine {
 				}
 				
 			}
-		},"FUNCTION");
+		},"int");
 	}
 
 	protected void includeStdio(Scope global){
-		global.setTop("printf", new FunctionWithEngine() {
+		global.setFunc("printf", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				if(args.length<1)
 					return 0;
 				String text = BytesToStr((List<Byte>) args[0]);
 				text = text.replace("\\n", "\n");
-				String s="";
 				for(int i=1;i<args.length;++i){
 					if(global.typeOnMemory.containsKey(args[i])){
-						String type = global.typeOnMemory.get(args[i]);
+						final String type = global.typeOnMemory.get(args[i]);
 						if(type.contains("char")){
 							args[i] = charArrToStr(global.objectOnMemory,(int)args[i]);
 						}
 					}
 				}
-				s = String.format(text,Arrays.copyOfRange(args,1,args.length));
+				final String s = String.format(text,Arrays.copyOfRange(args,1,args.length));
 				engine.out.print(s);
 				return s.length();
 			}
-		},"FUNCTION");
+		},"int");
 	}
 	protected void includeStdlib(Scope global){
-		global.setTop("malloc", new FunctionWithEngine() {
+		global.setFunc("malloc", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
-				int num = (int)args[0];
-				int heapAddress = global.malloc(num);
+				int byteSize = (int)args[0];
+				int heapAddress = global.malloc(byteSize);
 				return heapAddress;
 			}
-		},"FUNCTION");
-		global.setTop("free", new FunctionWithEngine() {
+		},"void*");
+		global.setFunc("free", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				int address = (int)args[0];
 				int size = global.getMallocSize(address);
 				return global.removeOnMemory(address, size);
 			}
-		},"FUNCTION");
-		global.setTop("abs", new FunctionWithEngine() {
+		},"void");
+		global.setFunc("abs", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				return Math.abs((int) args[0]);
 			}
-		},"FUNCTION");
-		global.setTop("rand", new FunctionWithEngine() {
+		},"int");
+		global.setFunc("rand", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
-				return Math.random();
+				return (int)(Math.random()*Integer.MAX_VALUE);
 			}
-		},"FUNCTION");
+		},"int");
 	}
 	protected void includeMath(Scope global){
 		//逆三角関数
-		global.setTop("acos", new FunctionWithEngine() {
+		global.setFunc("acos", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				return Math.acos((double) args[0]);
 			}
-		},"FUNCTION");
-		global.setTop("asin", new FunctionWithEngine() {
+		},"double");
+		global.setFunc("asin", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				return Math.asin((double) args[0]);
 			}
-		},"FUNCTION");
-		global.setTop("atan", new FunctionWithEngine() {
+		},"double");
+		global.setFunc("atan", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				return Math.atan((double) args[0]);
 			}
-		},"FUNCTION");
+		},"double");
 
 		//三角関数
-		global.setTop("cos", new FunctionWithEngine() {
+		global.setFunc("cos", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				return Math.cos((double) args[0]);
 			}
-		},"FUNCTION");
-		global.setTop("sin", new FunctionWithEngine() {
+		},"double");
+		global.setFunc("sin", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				return Math.sin((double) args[0]);
 			}
-		},"FUNCTION");
-		global.setTop("tan", new FunctionWithEngine() {
+		},"double");
+		global.setFunc("tan", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				return Math.tan((double) args[0]);
 			}
-		},"FUNCTION");
+		},"double");
 
 		//双曲線関数
-		global.setTop("cosh", new FunctionWithEngine() {
+		global.setFunc("cosh", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				return Math.cosh((double) args[0]);
 			}
-		},"FUNCTION");
-		global.setTop("sinh", new FunctionWithEngine() {
+		},"double");
+		global.setFunc("sinh", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				return Math.sinh((double) args[0]);
 			}
-		},"FUNCTION");
-		global.setTop("tanh", new FunctionWithEngine() {
+		},"double");
+		global.setFunc("tanh", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				return Math.tanh((double) args[0]);
 			}
-		},"FUNCTION");
+		},"double");
 
 
 
 
-		global.setTop("exp", new FunctionWithEngine() {
+		global.setFunc("exp", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				return Math.exp((double) args[0]);
 			}
-		},"FUNCTION");
-		global.setTop("exp2", new FunctionWithEngine() {//C99
+		},"double");
+		global.setFunc("exp2", new FunctionWithEngine() {//C99
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				return Math.pow(2.0,(double) args[0]);
 			}
-		},"FUNCTION");
-		global.setTop("expm1", new FunctionWithEngine() {//C99
+		},"double");
+		global.setFunc("expm1", new FunctionWithEngine() {//C99
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				return Math.expm1((double) args[0]);
 			}
-		},"FUNCTION");
+		},"double");
 
 		//frexp
 		//ldexp
 
-		global.setTop("log", new FunctionWithEngine() {
+		global.setFunc("log", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				return Math.log((double) args[0]);
 			}
-		},"FUNCTION");
-		global.setTop("log10", new FunctionWithEngine() {
+		},"double");
+		global.setFunc("log10", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				return Math.log10((double) args[0]);
 			}
-		},"FUNCTION");
-		global.setTop("log1p", new FunctionWithEngine() {//C99
+		},"double");
+		global.setFunc("log1p", new FunctionWithEngine() {//C99
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				return Math.log1p((double) args[0]);
 			}
-		},"FUNCTION");
+		},"double");
 
 		//modf(double,double*)
 
-		global.setTop("cbrt", new FunctionWithEngine() {//C99
+		global.setFunc("cbrt", new FunctionWithEngine() {//C99
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				return Math.cbrt((double) args[0]);
 			}
-		},"FUNCTION");
-		global.setTop("fabs", new FunctionWithEngine() {
+		},"double");
+		global.setFunc("fabs", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				return Math.abs((double) args[0]);
 			}
-		},"FUNCTION");
-		global.setTop("hypot", new FunctionWithEngine() {
+		},"double");
+		global.setFunc("hypot", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				return Math.hypot((double) args[0],(double) args[1]);
 			}
-		},"FUNCTION");
+		},"double");
 
-		global.setTop("pow", new FunctionWithEngine() {
+		global.setFunc("pow", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				return Math.pow((double) args[0],(double) args[1]);
 			}
-		},"FUNCTION");
-		global.setTop("sqrt", new FunctionWithEngine() {
+		},"double");
+		global.setFunc("sqrt", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				return Math.sqrt((double) args[0]);
 			}
-		},"FUNCTION");
+		},"double");
 
-		global.setTop("ceil", new FunctionWithEngine() {
+		global.setFunc("ceil", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				return Math.ceil((double) args[0]);
 			}
-		},"FUNCTION");
-		global.setTop("floor", new FunctionWithEngine() {
+		},"double");
+		global.setFunc("floor", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				return Math.floor((double) args[0]);
 			}
-		},"FUNCTION");
-		global.setTop("rint", new FunctionWithEngine() {//C99
+		},"double");
+		global.setFunc("rint", new FunctionWithEngine() {//C99
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				return Math.rint((double) args[0]);
 			}
-		},"FUNCTION");
-		global.setTop("round", new FunctionWithEngine() {//C99
+		},"double");
+		global.setFunc("round", new FunctionWithEngine() {//C99
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				return Math.round((double) args[0]);
 			}
-		},"FUNCTION");
+		},"double");
 
-		global.setTop("fdim", new FunctionWithEngine() {//C99
+		global.setFunc("fdim", new FunctionWithEngine() {//C99
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				double a = Math.abs((double) args[0]);
 				double b = Math.abs((double) args[1]);
 				return Math.abs(Math.max(a, b)-Math.min(a, b));
 			}
-		},"FUNCTION");
-		global.setTop("fmax", new FunctionWithEngine() {//C99
+		},"double");
+		global.setFunc("fmax", new FunctionWithEngine() {//C99
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				return Math.max((double) args[0],(double) args[1]);
 			}
-		},"FUNCTION");
-		global.setTop("fmin", new FunctionWithEngine() {//C99
+		},"double");
+		global.setFunc("fmin", new FunctionWithEngine() {//C99
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				return Math.min((double) args[0],(double) args[1]);
 			}
-		},"FUNCTION");
+		},"double");
 
-		global.setTop("fmod", new FunctionWithEngine() {
+		global.setFunc("fmod", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				return (double)args[0] % (double)args[1];
 			}
-		},"FUNCTION");
+		},"double");
 	}
 
 	@Override
@@ -295,8 +295,8 @@ public class CppEngine extends Engine {
 	
 	public static List<Byte> StrToBytes(String str){
 		byte [] data = str.getBytes();
-		List<Byte> bytes = new ArrayList<Byte>();
-		for(byte b :data){
+		List<Byte> bytes = new ArrayList<>();
+		for(byte b : data){
 			bytes.add(b);
 		}
 		bytes.add((byte)0);
@@ -304,8 +304,8 @@ public class CppEngine extends Engine {
 	}
 	
 	public static String BytesToStr(List<Byte> bytes){
-		byte[] data = new byte[bytes.size()];
-		for(int i=0;i<bytes.size();++i){
+		byte[] data = new byte[bytes.indexOf((byte)0)];
+		for(int i=0;i<data.length;++i){
 			data[i] = bytes.get(i);
 		}
 		return new String(data);

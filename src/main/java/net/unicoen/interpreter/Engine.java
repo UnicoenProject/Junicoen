@@ -171,7 +171,7 @@ public class Engine {
 	    		    			break;
 	    					}
 	    					else{//他の関数定義ならセット
-	    						global.setTop(fdec.methodName, fdec, fdec.returnType);
+	    						global.setFunc(fdec.methodName, fdec, fdec.returnType);
 	    					}
 	    				}
 	    				else if(node instanceof UniVariableDec){//グローバル変数のセット
@@ -938,8 +938,10 @@ public class Engine {
 			int taddress = (int)value;
 			if(scope.isMallocArea(taddress)){
 				int size = scope.getMallocSize(taddress);
-				for(int i=0;i<size;++i){
-					scope.typeOnMemory.put(taddress+i, type.substring(0,type.length()-1));
+				String elementType = type.substring(0,type.length()-1);
+				int typeSize = CppEngine.sizeof(elementType);
+				for(int i=0; i<size; i+=typeSize){
+					scope.typeOnMemory.put(taddress+i, elementType);
 				}
 			}
 		}

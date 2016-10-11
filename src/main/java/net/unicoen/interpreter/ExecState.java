@@ -46,19 +46,19 @@ public class ExecState {
 			varList.add(vars.getKey());
 		}
 		for(String varName : varList){
-			String type = scope.variableTypes.get(varName);
-			if(type.equals("FUNCTION"))
+			if(scope.isFunc(varName))
 				continue;
-			int address = scope.variableAddress.get(varName);
-			//Object value = scope.objectOnMemory.get(address);
 			Object value = scope.get(varName);
 			if(value instanceof UniNode)
 				continue;
+			final String type = scope.variableTypes.get(varName);
+			int address = scope.variableAddress.get(varName);
 			if(type.contains("[") && type.contains("]")){
 				int length = Integer.parseInt(type.substring(type.lastIndexOf("[")+1, type.length()-1));
-				List<Object> list = new ArrayList<Object>();
+				List<Object> list = new ArrayList<>();
+				int typeSize = CppEngine.sizeofElement(type);
 				for(int i=0;i<length;++i){
-					Object arrValue = scope.objectOnMemory.get((int)value+i);
+					Object arrValue = scope.getFromAddress((int)value + i*typeSize);
 					list.add(arrValue);
 				}
 				address = (int) value;

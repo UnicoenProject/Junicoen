@@ -31,46 +31,46 @@ public class StdLibLoader {
 	private void initMyLib() {
 		global.setTop("MyLib", null,"FUNCTION");
 		Scope scope = Scope.createObject(global);
-		scope.setTop("printInt", new FunctionWithEngine() {
+		scope.setFunc("printInt", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				engine.out.println(args[0]);
 				return null;
 			}
-		},"FUNCTION");
-		scope.setTop("print", new FunctionWithEngine() {
+		},"void");
+		scope.setFunc("print", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				engine.out.println(args[0]);
 				return null;
 			}
-		},"FUNCTION");
+		},"void");
 		global.set(global.getAddress("MyLib"), scope);
 	}
 
 	private void initTurtle() {
-		global.setTop("rt", new FunctionWithEngine() {
+		global.setFunc("rt", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				engine.out.print("R" + args[0]);
 				return null;
 			}
 		},"FUNCTION");
-		global.setTop("lt", new FunctionWithEngine() {
+		global.setFunc("lt", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				engine.out.print("L" + args[0]);
 				return null;
 			}
 		},"FUNCTION");
-		global.setTop("fd", new FunctionWithEngine() {
+		global.setFunc("fd", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				engine.out.print("F" + args[0]);
 				return null;
 			}
 		},"FUNCTION");
-		global.setTop("bk", new FunctionWithEngine() {
+		global.setFunc("bk", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
 				engine.out.print("B" + args[0]);
