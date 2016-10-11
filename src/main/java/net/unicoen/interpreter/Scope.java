@@ -226,7 +226,14 @@ public class Scope {
 				String.format("variable '%s' is not defined.", key));
 	}
 
-
+	public int malloc(int num){
+		int addr = heapAddress.v;
+		for(int i=0;i<num;++i){
+			objectOnMemory.put(heapAddress.v++, (byte)(Math.random()*255));
+		}
+		mallocData.put(addr, num);
+		return addr;
+	}
 	public void setMallocSize(int address,int size){
 		mallocData.put(address, size);
 	}
@@ -245,12 +252,12 @@ public class Scope {
 		return result;
 	}
 
-	public int setHeap(Object value,String type){
-		assertNotUnicoen(value);
-		objectOnMemory.put(heapAddress.v, value);
-		typeOnMemory.put(heapAddress.v, type);
-		return heapAddress.v++;
-	}
+//	public int setHeap(Object value,String type){
+//		assertNotUnicoen(value);
+//		objectOnMemory.put(heapAddress.v, value);
+//		typeOnMemory.put(heapAddress.v, type);
+//		return heapAddress.v++;
+//	}
 
 	public int setCode(Object value,String type){
 		assertNotUnicoen(value);

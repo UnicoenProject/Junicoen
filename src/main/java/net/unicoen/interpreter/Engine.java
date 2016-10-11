@@ -543,8 +543,10 @@ public class Engine {
 				int address = (int)value;
 				if(scope.isMallocArea(address)){
 					int size = scope.getMallocSize(address);
-					for(int i=0;i<size;++i){
-						scope.typeOnMemory.put(address+i, decVar.type.substring(0,decVar.type.length()-1));
+					String type = decVar.type.substring(0,decVar.type.length()-1);
+					int typeSize = sizeof(type);
+					for(int i=0;i<size;i+=typeSize){
+						scope.typeOnMemory.put(address+i, type);
 					}
 				}
 			}

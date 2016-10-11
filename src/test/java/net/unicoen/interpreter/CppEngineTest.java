@@ -28,13 +28,13 @@ public class CppEngineTest {
 		+"int main(){"
 		  +"  int n = 0;"
 
-+"		    n = recursiveToThree(0);//再帰関数呼び出しの例"
-+"		    int arr[5] = {1, 2, 3};//配列変数の例"
+//+"		    n = recursiveToThree(0);//再帰関数呼び出しの例"
++"		    int arr[5] = {1, 2, 3};"//配列変数の例
 
-+"		    int* ptr = &arr[2];//ポインタ変数の例"
++"		    int* ptr = &arr[2];"//ポインタ変数の例
 +"		    *ptr = 5;"
 
-+"		    //メモリの動的確保の例"
+//+"		    //メモリの動的確保の例"
 +"		    int* d_arry = malloc(sizeof(int) * 3);"
 
 +"		    //動的な2次元配列の例"
@@ -379,9 +379,9 @@ public class CppEngineTest {
 	@Test @Ignore
 	public void test18(){
 		String text = "int main(){"
-				+ "printf(\"aaa\");"
 			+"int arr3[] = {19, 20, 21};"
 			+"int* ptr = &arr3[1];"
+			+ "*ptr = 5;"
 			+"int data[10];"
 			+"int arr5[5] = {1};"
 			+"char str6[6] = \"aiueo\";"

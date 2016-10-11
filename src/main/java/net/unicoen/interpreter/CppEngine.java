@@ -22,7 +22,13 @@ public class CppEngine extends Engine {
 		global.setTop("sizeof", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
-				return CppEngine.sizeof((String) args[0]);
+				if(args[0] instanceof String){
+					return CppEngine.sizeof((String) args[0]);
+				}
+				else{
+					return CppEngine.sizeof(BytesToStr((List<Byte>) args[0]));
+				}
+				
 			}
 		},"FUNCTION");
 	}
@@ -54,16 +60,8 @@ public class CppEngine extends Engine {
 		global.setTop("malloc", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
-				//args[0]:int-num, (args[1]:String-type,1固定)
-				//String type = (String)args[0];
-				//int typeSize = sizeof(type);
-				//int byteSize = 1;//(int)args[1];
-				int num = (int)args[0];//byteSize/typeSize;
-				int heapAddress = global.setHeap((int)(Math.random()*Integer.MAX_VALUE),"?");
-				for(int i=1;i<num;++i){
-					global.setHeap((int)(Math.random()*Integer.MAX_VALUE),"?");
-				}
-				global.setMallocSize(heapAddress, num);
+				int num = (int)args[0];
+				int heapAddress = global.malloc(num);
 				return heapAddress;
 			}
 		},"FUNCTION");
