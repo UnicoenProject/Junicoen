@@ -26,7 +26,8 @@ public class Variable{
 				byte[] asciiCodes = new byte[list.size()];
 				for (int i=0; i<list.size(); ++i) {
 					if(list.get(i) instanceof Byte){
-						asciiCodes[i] = (byte)list.get(i);
+						Byte b = (Byte)list.get(i);
+						asciiCodes[i] = (byte)b;
 					}
 					else{
 						allOfByte = false;
