@@ -1,11 +1,14 @@
 package net.unicoen.interpreter;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Variable{
 	public final String type;
 	public final String name;
 	private Object value;//配列などはArrayList<Variable>として持つ。
+	public final String valueAsStr;//char型配列の場合
 	public final int address;
 	public final int depth;
 
@@ -14,7 +17,33 @@ public class Variable{
 		this.name = name;
 		this.address = address;
 		this.depth = depth;
+		String valueAsStr = null;
 		setValue(value);
+		if(this.type.contains("char[")){
+			if(value instanceof List<?>){
+				boolean allOfByte = true;
+				List<?> list = (List<?>)value;
+				byte[] asciiCodes = new byte[list.size()];
+				for (int i=0; i<list.size(); ++i) {
+					if(list.get(i) instanceof Byte){
+						asciiCodes[i] = (byte)list.get(i);
+					}
+					else{
+						allOfByte = false;
+						break;
+					}
+	            }
+				if(allOfByte){
+					try {
+						valueAsStr = new String(asciiCodes, "US-ASCII");
+					} catch (UnsupportedEncodingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		this.valueAsStr = valueAsStr;
 	}
 
 	//構造体や配列の場合はvalueそのままでなくArrayList<Variable> valuesなど

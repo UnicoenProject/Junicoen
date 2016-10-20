@@ -553,12 +553,12 @@ public class CppEngine extends Engine {
 				return value;
 			}
 			else{
-				if(type.contains("char"))
+				if(type.contains("*") || type.contains("int") || type.contains("long"))
+					return ByteBuffer.wrap(bytes).getInt();
+				else if(type.contains("char"))
 					return bytes[0];
 				else if(type.contains("short"))
 					return ByteBuffer.wrap(bytes).getShort();
-				else if(type.contains("*") || type.contains("int") || type.contains("long"))
-					return ByteBuffer.wrap(bytes).getInt();
 			}
 		}
 		else if(type.contains("float") || type.contains("double")){
@@ -574,6 +574,7 @@ public class CppEngine extends Engine {
 		throw new RuntimeException("Not support type: " + type);
 	}
 	
+	//配列でもその要素のbyteサイズ
 	public static int sizeofElement(String type){
 		if(type.contains("*")){
 			return 4;
@@ -590,6 +591,7 @@ public class CppEngine extends Engine {
 		return 4;
 	}
 	
+	//配列なら全体のbyteサイズ
 	public static int sizeof(String type){
 		int length = 1;
 		if(type.contains("[") && type.contains("]")){

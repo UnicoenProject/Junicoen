@@ -335,7 +335,8 @@ public class Scope {
 
 	private int writeOnMemory(Object value, String type, Int _address){
 		int add = _address.v;
-		int byteSize = CppEngine.sizeofElement(type);//ここではプリミティブ型の値一つの書き込みしかありえない。
+		//ここではプリミティブ型の値一つの書き込みしかありえない。
+		int byteSize = type.contains("[") ? 4 : CppEngine.sizeofElement(type);
 		byte[] bytes = null;
 		if(value instanceof Character){
 			bytes = ByteBuffer.allocate(Character.BYTES).putChar((char)value).array();
