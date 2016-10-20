@@ -42,6 +42,7 @@ public class Variable{
 				if(allOfByte){
 					try {
 						valueAsStr = new String(asciiCodes, "US-ASCII");
+						valueAsStr = toEscapeString(valueAsStr);
 					} catch (UnsupportedEncodingException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -132,4 +133,69 @@ public class Variable{
 		return "Variable [type=" + type + ", name=" + name + ", value=" + value + ", "
 				+ "address=" + address + ", depth=" + depth + "]";
 	}
+	// '\n'　などを　// n にした文字列を返す。
+		static public String toEscapeString(String original)
+		{
+			String result = "";
+
+			for(int i=0; i < original.length(); i++)
+			{
+				switch(original.charAt(i))
+				{
+					case '\b':
+						result += "\\b";break;
+					case '\t':
+						result += "\\t";break;
+					case '\n':
+						result += "\\n";break;
+					case '\f':
+						result += "\\f";break;
+					case '\r':
+						result += "\\r";break;
+					case '\"':
+						result += "\\\"";break;
+					case '\'':
+						result += "\\\'";break;
+					case '\\':
+						result += "\\\\";break;
+					default:
+						result += original.charAt(i);
+				}
+			}
+
+			return result;
+		}
+		
+		// // n などを'\n'にした文字列を返す。
+		static public String fromEscapeString(String original)
+		{
+			String result = "";
+
+			for(int i=0; i < original.length(); ++i)
+			{
+				if(original.charAt(i) == '\\')
+				{
+					++i;
+					switch(original.charAt(i))
+					{
+						case 'b':
+							result += "\b";break;
+						case 't':
+							result += "\t";break;
+						case 'n':
+							result += "\n";break;
+						case 'f':
+							result += "\f";break;
+						case 'r':
+							result += "\r";break;
+						default:
+							result += original.charAt(i);
+					}
+				}
+				else
+					result += original.charAt(i);
+			}
+
+			return result;
+		}
 }

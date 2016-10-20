@@ -41,7 +41,6 @@ public class CppEngine extends Engine {
 				if(args.length<1)
 					return 0;
 				String text = BytesToStr((List<Byte>) args[0]);
-				text = text.replace("\\n", "\n");
 				for(int i=1;i<args.length;++i){
 					if(global.typeOnMemory.containsKey(args[i])){
 						final String type = global.typeOnMemory.get(args[i]);
@@ -294,11 +293,13 @@ public class CppEngine extends Engine {
 	}
 	
 	public static List<Byte> StrToBytes(String str){
-		byte [] data = str.getBytes();
+		String excapedStr = Variable.fromEscapeString(str);
+		byte [] data = excapedStr.getBytes();
 		List<Byte> bytes = new ArrayList<>();
 		for(byte b : data){
 			bytes.add(b);
 		}
+		
 		bytes.add((byte)0);
 		return bytes;
 	}
