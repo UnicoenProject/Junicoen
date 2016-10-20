@@ -388,8 +388,6 @@ public class BlockGenerator extends CodeGenerator {
 	/**
 	 * 継承メソッド，ライブラリメソッドコールモデルを作成する
 	 * 
-	 * @param identifier
-	 *            呼び出し元のクラスまたはライブラリの識別子
 	 * @param methodName
 	 * @param sockets
 	 * @param document
@@ -397,6 +395,7 @@ public class BlockGenerator extends CodeGenerator {
 	 * @param parent
 	 * @return
 	 */
+	
 	public BlockElementModel createMethodCallModel(String methodName, List<BlockElementModel> sockets, Document document, Long callerId, String parent) {
 		// メソッドコールモデルを作成する
 		List<String> socketTypes = Lists.transform(sockets, new Function<BlockElementModel, String>() {

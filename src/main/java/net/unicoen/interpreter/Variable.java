@@ -2,6 +2,7 @@ package net.unicoen.interpreter;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Variable{
@@ -28,6 +29,10 @@ public class Variable{
 					if(list.get(i) instanceof Byte){
 						Byte b = (Byte)list.get(i);
 						asciiCodes[i] = (byte)b;
+						if(asciiCodes[i] == 0){
+							asciiCodes = Arrays.copyOf(asciiCodes, i);
+							break;
+						}						
 					}
 					else{
 						allOfByte = false;
