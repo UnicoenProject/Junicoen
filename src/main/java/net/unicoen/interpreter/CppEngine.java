@@ -139,7 +139,6 @@ public class CppEngine extends Engine {
 			}
 		},"FILE*");
 		global.setFunc("fgetc", new FunctionWithEngine() {
-			@SuppressWarnings("unchecked")
 			@Override
 			public Object invoke(Engine engine, Object[] args) {//args[0]:ファイル名, args[1]:モード
 				BufferedReader br = (BufferedReader)args[0];
@@ -440,8 +439,15 @@ public class CppEngine extends Engine {
 		if(value == null || value instanceof List){
 			return value;
 		}
-
-		if(type.contains("int") || type.contains("long") || type.contains("*")){
+        if(type.contains("FILE*")){
+            if(value instanceof BufferedReader)
+                return value;
+            else {
+                BufferedReader br = null;
+                return br;
+            }
+        }
+        else if(type.contains("int") || type.contains("long") || type.contains("*")){
 			if(value instanceof Byte){
 				byte v = (byte)value;
 				return v & 0xFFFFFFFF;

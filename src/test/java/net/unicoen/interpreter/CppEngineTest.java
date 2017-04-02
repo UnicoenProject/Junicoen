@@ -45,6 +45,8 @@ public class CppEngineTest {
 +"		    return 0;"
 +"		}";
 		exec(text);
+		String path = System.getProperty("user.dir");
+        System.out.println(path);
 	}
 	@Test @Ignore
 	public void test1() {
@@ -183,7 +185,7 @@ public class CppEngineTest {
 				+ "}";
 		exec(text);
 	}
-	
+
 	@Test @Ignore
 	public void test8() {
 		String text = ""
@@ -224,7 +226,7 @@ public class CppEngineTest {
 				+ "}";
 		exec(text);
 	}
-	
+
 	@Test @Ignore
 	public void test10(){
 		String text = ""
@@ -283,7 +285,7 @@ public class CppEngineTest {
 		 */
 		exec(text);
 	}
-	
+
 	@Test @Ignore
 	public void test112() {
 		String text = ""
@@ -297,7 +299,7 @@ public class CppEngineTest {
 				+ "}";
 		exec(text);
 	}
-	
+
 	@Test @Ignore
 	public void test12(){
 		String text = ""
@@ -309,7 +311,7 @@ public class CppEngineTest {
 				+ "}";
 		exec(text);
 	}
-	
+
 	@Test @Ignore
 	public void test13(){
 		String text = ""
@@ -321,7 +323,7 @@ public class CppEngineTest {
 				+ "}";
 		exec(text);
 	}
-	
+
 	@Test @Ignore
 	public void test14(){
 		String text = ""
@@ -333,7 +335,7 @@ public class CppEngineTest {
 				+ "}";
 		exec(text);
 	}
-	
+
 	@Test @Ignore
 	public void test15(){
 		String text = ""
@@ -345,14 +347,16 @@ public class CppEngineTest {
 				+ "}";
 		exec(text);
 	}
-	
-	@Test @Ignore
+
+	@Test// @Ignore
 	public void test16(){
 		String text = ""
 				//+ "#include <stdio.h>"
 				+ "int main() {"
-				+ "	int arr[4];"
-				+ "	printf(\"%d, %d, %d, %d\\n\", arr[0], arr[1], arr[2], arr[3]);"
+				+ " FILE* fp;"
+				+ " fp = fopen(\"sample.txt\", \"r\");"//配列変数の例"
+				+ " while( (c = fgetc( fp )) != -1 )"
+				+ "		printf( \"%c\", c );"
 				+ "	return 0;"
 				+ "}";
 		exec(text);
@@ -409,7 +413,7 @@ public class CppEngineTest {
 		    + "}";
 		exec(text);
 	}
-	
+
 	private List<UniNode> flatten(List<Object> list){
 		List<UniNode> nodes = new ArrayList<UniNode>();
 		for(Object element : list){

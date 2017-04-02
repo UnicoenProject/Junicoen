@@ -546,6 +546,9 @@ public class Engine {
 
 			value = _execCast(decVar.type,value);
 			if(decVar.type.endsWith("*") && !(value instanceof List)){
+				if(value == null){
+					return value;
+				}
 				int address = (int)value;
 				if(scope.isMallocArea(address)){
 					int size = scope.getMallocSize(address);
