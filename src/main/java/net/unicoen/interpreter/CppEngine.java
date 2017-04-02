@@ -3,6 +3,7 @@ package net.unicoen.interpreter;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -137,6 +138,21 @@ public class CppEngine extends Engine {
 			return br;
 			}
 		},"FILE*");
+		global.setFunc("fgetc", new FunctionWithEngine() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public Object invoke(Engine engine, Object[] args) {//args[0]:ファイル名, args[1]:モード
+				BufferedReader br = (BufferedReader)args[0];
+				int ch = -1;
+				try {
+					ch = br.read();
+				} catch (IOException e) {
+					// TODO 自動生成された catch ブロック
+					e.printStackTrace();
+				}
+				return ch;
+			}
+		},"int");
 	}
 	protected void includeMath(Scope global){
 		//逆三角関数
