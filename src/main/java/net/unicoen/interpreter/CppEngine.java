@@ -1,11 +1,13 @@
 package net.unicoen.interpreter;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Stream;
 
 import net.unicoen.node.UniCast;
 import net.unicoen.node.UniCharacterLiteral;
@@ -29,7 +31,7 @@ public class CppEngine extends Engine {
 				else{
 					return CppEngine.sizeof(BytesToStr((List<Byte>) args[0]));
 				}
-				
+
 			}
 		},"int");
 	}
@@ -85,6 +87,56 @@ public class CppEngine extends Engine {
 				return (int)(Math.random()*Integer.MAX_VALUE);
 			}
 		},"int");
+		global.setFunc("fopen", new FunctionWithEngine() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public Object invoke(Engine engine, Object[] args) {//args[0]:ファイル名, args[1]:モード
+				String filename = isBytes(args[0]) ? BytesToStr((List<Byte>) args[0]) : (String) args[0];
+				String filepath = fileDir + '\\' + filename;
+				String mode = isBytes(args[1]) ? BytesToStr((List<Byte>) args[1]) : (String) args[1];
+				BufferedReader br = null;
+				switch(mode){
+					//テキスト
+				case "r":
+					try {
+						br = new BufferedReader(new FileReader(filepath));
+					} catch (FileNotFoundException e) {
+						// TODO 自動生成された catch ブロック
+						e.printStackTrace();
+					}
+					break;
+				case "w":
+					break;
+				case "a":
+					break;
+				case "rb":
+					break;
+				case "r+":
+					break;
+				case "w+":
+					break;
+				case "a+":
+					break;
+					//バイナリ
+				case "wb":
+					break;
+				case "ab":
+					break;
+				case "r+b":
+				case "rb+":
+					break;
+				case "w+b":
+				case "wb+":
+					break;
+				case "a+b":
+				case "ab+":
+					break;
+				default:
+					break;
+				}
+			return br;
+			}
+		},"FILE*");
 	}
 	protected void includeMath(Scope global){
 		//逆三角関数
@@ -284,15 +336,29 @@ public class CppEngine extends Engine {
 		byte[] bytes = ByteBuffer.allocate(Character.BYTES).putChar((char)expr.value).array();
 		if(bytes[0]<0)
 			return bytes;
-		else 
+		else
 			return bytes[1];
 	}
-	
+
 	@Override
 	protected Object execUniStringLiteral(UniStringLiteral expr, Scope scope){
 		return StrToBytes(((UniStringLiteral) expr).value);
 	}
-	
+
+	public static <T> boolean isBytes(Object obj) {
+		if (obj instanceof List<?>) {
+            List<?> list = (List<?>)obj;
+            for (Object o : list) {
+                if (o instanceof Byte) {
+                }
+                else{
+                	return false;
+                }
+            }
+        }
+		return true;
+	}
+
 	public static List<Byte> StrToBytes(String str){
 		byte [] data = str.getBytes();
 		List<Byte> bytes = new ArrayList<>();
@@ -302,7 +368,7 @@ public class CppEngine extends Engine {
 		bytes.add((byte)0);
 		return bytes;
 	}
-	
+
 	public static String BytesToStr(List<Byte> bytes){
 		byte[] data = new byte[bytes.indexOf((byte)0)];
 		for(int i=0;i<data.length;++i){
@@ -310,7 +376,7 @@ public class CppEngine extends Engine {
 		}
 		return new String(data);
 	}
-	
+
 	@Override
 	protected Object execBinOp(String op, UniExpr left, UniExpr right,Scope scope) {
 		if(op.equals("++") || op.equals("--")){
@@ -333,7 +399,7 @@ public class CppEngine extends Engine {
 		Object value = execExpr(expr.value, scope);
 		return _execCast(expr.type,value);
 	}
-	
+
 //	private <ReturnType> ReturnType castImple(Object value) {
 //		if(value instanceof Byte){
 //			byte v = (byte)value;
@@ -359,7 +425,7 @@ public class CppEngine extends Engine {
 			return value;
 		}
 
-		if(type.contains("int") || type.contains("long")){
+		if(type.contains("int") || type.contains("long") || type.contains("*")){
 			if(value instanceof Byte){
 				byte v = (byte)value;
 				return v & 0xFFFFFFFF;
@@ -397,7 +463,7 @@ public class CppEngine extends Engine {
 		else if(type.contains("char")){
 			if(type.contains("unsigned")){
 				if(value instanceof Character){
-					
+
 				}
 				else if(value instanceof Byte){
 					byte v = (byte)value;
@@ -439,7 +505,7 @@ public class CppEngine extends Engine {
 					int iv = (int)v;
 					return (byte)(iv & 0xFF);
 				}
-			}			
+			}
 		}
 		else if(type.contains("float")){
 			if(value instanceof Byte){
@@ -458,7 +524,7 @@ public class CppEngine extends Engine {
 				double v = (double)value;
 				return (float)v;
 			}
-			
+
 		}
 		else if(type.contains("double")){
 			if(value instanceof Byte){
@@ -478,6 +544,7 @@ public class CppEngine extends Engine {
 				return v;
 			}
 		}
+
 		return value;
 	}
 
@@ -509,7 +576,7 @@ public class CppEngine extends Engine {
 			return ByteBuffer.allocate(byteSize).putLong(Long.parseLong(decimalValue.toString())).array();
 		}
 	}
-	
+
 	public class Cint extends BaseType{
 		Cint(long value){
 			decimalValue = value;
@@ -534,15 +601,15 @@ public class CppEngine extends Engine {
 			for(int i=0;i<bytes.length;++i){
 				bytes[i] = byteArray.get(bytes.length-1-i);
 			}
-			
+
 			if(type.contains("unsigned")){
 				long value = 0;
-				
+
 				for(int i=0;i<byteSize;++i){
 					byte b = byteArray.get(i);
 					value |= (b << i*8)&0xFF;
 				}
-				
+
 				if(type.contains("unsigned")){
 					if(byteArray.get(byteSize-1) < 0){//負の数の場合
 						int upperBytes = Long.BYTES - byteSize;
@@ -573,7 +640,7 @@ public class CppEngine extends Engine {
 		}
 		throw new RuntimeException("Not support type: " + type);
 	}
-	
+
 	public static int sizeofElement(String type){
 		if(type.contains("*")){
 			return 4;
@@ -589,16 +656,16 @@ public class CppEngine extends Engine {
 		}
 		return 4;
 	}
-	
+
 	public static int sizeof(String type){
 		int length = 1;
 		if(type.contains("[") && type.contains("]")){
-			length = Integer.parseInt(type.substring(type.lastIndexOf("[")+1, type.length()-1));			
+			length = Integer.parseInt(type.substring(type.lastIndexOf("[")+1, type.length()-1));
 		}
 		int typeSize = sizeofElement(type);
 		return typeSize * length;
 	}
-	
+
 	public static String charArrToStr(HashMap<Integer, Object> objectOnMemory, int begin){
 		List<Byte> bytes = new ArrayList<Byte>();
 		for(byte v = (byte)objectOnMemory.get(begin); v != 0; v = (byte)objectOnMemory.get(++begin)){

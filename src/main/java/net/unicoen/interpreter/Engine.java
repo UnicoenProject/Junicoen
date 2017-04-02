@@ -72,7 +72,13 @@ public class Engine {
 
 	private AtomicBoolean isStepExecutionRunning = new AtomicBoolean(false);
 	private AtomicBoolean isExecutionThreadWaiting = new AtomicBoolean(false);
+	protected String fileDir = System.getProperty("user.dir");
 	protected ExecState state = new ExecState();
+
+	public void setFileDir(String dir){
+		fileDir = dir;
+	}
+
 	public boolean isStepExecutionRunning() {
 		return isStepExecutionRunning.get();
 	}
@@ -325,7 +331,7 @@ public class Engine {
 			return ((UniDoubleLiteral) expr).value;
 		}
 		if (expr instanceof UniStringLiteral) {
-			return execUniStringLiteral((UniStringLiteral)expr,scope);			
+			return execUniStringLiteral((UniStringLiteral)expr,scope);
 		}
 		if (expr instanceof UniUnaryOp) {
 			return execUnaryOp((UniUnaryOp) expr, scope);
@@ -487,7 +493,7 @@ public class Engine {
 		}
 		return array;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	protected void copyArray(final List<Object> src, List<Object> dest){
 		for(int i=0; i<src.size();++i){
@@ -499,7 +505,7 @@ public class Engine {
 			}
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	protected Object _execVariableDec(UniVariableDec decVar, Scope scope){
 
@@ -537,7 +543,7 @@ public class Engine {
 			else if(decVar.arrayLength != null && !decVar.arrayLength.isEmpty()){//未初期化だが配列の場合(要素数は当然確定)
 				value = createMultiArray(decVar.arrayLength,decVar.type,scope,false);
 			}
-			
+
 			value = _execCast(decVar.type,value);
 			if(decVar.type.endsWith("*") && !(value instanceof List)){
 				int address = (int)value;
@@ -648,14 +654,14 @@ public class Engine {
 		}
 		throw new RuntimeException("Not support function type: " + func);
 	}
-	
+
 	protected Object execUniCharacterLiteral(UniCharacterLiteral expr, Scope scope){
 		return ((UniCharacterLiteral) expr).value;
 	}
 	protected Object execUniStringLiteral(UniStringLiteral expr, Scope scope){
 		return ((UniStringLiteral) expr).value;
 	}
-	
+
 	protected Object execUnaryOp(UniUnaryOp uniOp, Scope scope) {
 		switch (uniOp.operator) {
 		case "!":

@@ -4261,6 +4261,9 @@ public class CPP14Parser extends Parser {
 		public LabeledstatementContext labeledstatement() {
 			return getRuleContext(LabeledstatementContext.class,0);
 		}
+		public VariabledeclarationstatementContext variabledeclarationstatement() {
+			return getRuleContext(VariabledeclarationstatementContext.class,0);
+		}
 		public ExpressionstatementContext expressionstatement() {
 			return getRuleContext(ExpressionstatementContext.class,0);
 		}
@@ -4297,9 +4300,6 @@ public class CPP14Parser extends Parser {
 		public ReturnStatementContext returnStatement() {
 			return getRuleContext(ReturnStatementContext.class,0);
 		}
-		public VariabledeclarationstatementContext variabledeclarationstatement() {
-			return getRuleContext(VariabledeclarationstatementContext.class,0);
-		}
 		public DeclarationstatementContext declarationstatement() {
 			return getRuleContext(DeclarationstatementContext.class,0);
 		}
@@ -4335,185 +4335,185 @@ public class CPP14Parser extends Parser {
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(1064);
-				_errHandler.sync(this);
-				switch ( getInterpreter().adaptivePredict(_input,76,_ctx) ) {
-				case 1:
-					{
-					setState(1063);
-					attributespecifierseq(0);
-					}
-					break;
-				}
-				setState(1066);
-				expressionstatement();
+				setState(1063);
+				variabledeclarationstatement();
 				}
 				break;
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(1068);
-				_la = _input.LA(1);
-				if (_la==Alignas || _la==LeftBracket) {
+				setState(1065);
+				_errHandler.sync(this);
+				switch ( getInterpreter().adaptivePredict(_input,76,_ctx) ) {
+				case 1:
 					{
-					setState(1067);
+					setState(1064);
 					attributespecifierseq(0);
 					}
+					break;
 				}
-
-				setState(1070);
-				compoundstatement();
+				setState(1067);
+				expressionstatement();
 				}
 				break;
 			case 4:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(1072);
+				setState(1069);
 				_la = _input.LA(1);
 				if (_la==Alignas || _la==LeftBracket) {
 					{
-					setState(1071);
+					setState(1068);
 					attributespecifierseq(0);
 					}
 				}
 
-				setState(1074);
-				selectionstatement();
+				setState(1071);
+				compoundstatement();
 				}
 				break;
 			case 5:
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(1076);
+				setState(1073);
 				_la = _input.LA(1);
 				if (_la==Alignas || _la==LeftBracket) {
 					{
-					setState(1075);
+					setState(1072);
 					attributespecifierseq(0);
 					}
 				}
 
-				setState(1078);
-				switchstatement();
+				setState(1075);
+				selectionstatement();
 				}
 				break;
 			case 6:
 				enterOuterAlt(_localctx, 6);
 				{
-				setState(1080);
+				setState(1077);
 				_la = _input.LA(1);
 				if (_la==Alignas || _la==LeftBracket) {
 					{
-					setState(1079);
+					setState(1076);
 					attributespecifierseq(0);
 					}
 				}
 
-				setState(1082);
-				iterationstatement();
+				setState(1079);
+				switchstatement();
 				}
 				break;
 			case 7:
 				enterOuterAlt(_localctx, 7);
 				{
-				setState(1084);
+				setState(1081);
 				_la = _input.LA(1);
 				if (_la==Alignas || _la==LeftBracket) {
 					{
-					setState(1083);
+					setState(1080);
 					attributespecifierseq(0);
 					}
 				}
 
-				setState(1086);
-				whilestatement();
+				setState(1083);
+				iterationstatement();
 				}
 				break;
 			case 8:
 				enterOuterAlt(_localctx, 8);
 				{
-				setState(1088);
+				setState(1085);
 				_la = _input.LA(1);
 				if (_la==Alignas || _la==LeftBracket) {
 					{
-					setState(1087);
+					setState(1084);
 					attributespecifierseq(0);
 					}
 				}
 
-				setState(1090);
-				dowhilestatement();
+				setState(1087);
+				whilestatement();
 				}
 				break;
 			case 9:
 				enterOuterAlt(_localctx, 9);
 				{
-				setState(1092);
+				setState(1089);
 				_la = _input.LA(1);
 				if (_la==Alignas || _la==LeftBracket) {
 					{
-					setState(1091);
+					setState(1088);
 					attributespecifierseq(0);
 					}
 				}
 
-				setState(1094);
-				jumpstatement();
+				setState(1091);
+				dowhilestatement();
 				}
 				break;
 			case 10:
 				enterOuterAlt(_localctx, 10);
 				{
-				setState(1096);
+				setState(1093);
 				_la = _input.LA(1);
 				if (_la==Alignas || _la==LeftBracket) {
 					{
-					setState(1095);
+					setState(1092);
 					attributespecifierseq(0);
 					}
 				}
 
-				setState(1098);
-				breakStatement();
+				setState(1095);
+				jumpstatement();
 				}
 				break;
 			case 11:
 				enterOuterAlt(_localctx, 11);
 				{
-				setState(1100);
+				setState(1097);
 				_la = _input.LA(1);
 				if (_la==Alignas || _la==LeftBracket) {
 					{
-					setState(1099);
+					setState(1096);
 					attributespecifierseq(0);
 					}
 				}
 
-				setState(1102);
-				continueStatement();
+				setState(1099);
+				breakStatement();
 				}
 				break;
 			case 12:
 				enterOuterAlt(_localctx, 12);
 				{
-				setState(1104);
+				setState(1101);
 				_la = _input.LA(1);
 				if (_la==Alignas || _la==LeftBracket) {
 					{
-					setState(1103);
+					setState(1100);
 					attributespecifierseq(0);
 					}
 				}
 
-				setState(1106);
-				returnStatement();
+				setState(1103);
+				continueStatement();
 				}
 				break;
 			case 13:
 				enterOuterAlt(_localctx, 13);
 				{
+				setState(1105);
+				_la = _input.LA(1);
+				if (_la==Alignas || _la==LeftBracket) {
+					{
+					setState(1104);
+					attributespecifierseq(0);
+					}
+				}
+
 				setState(1107);
-				variabledeclarationstatement();
+				returnStatement();
 				}
 				break;
 			case 14:
@@ -17079,13 +17079,13 @@ public class CPP14Parser extends Parser {
 		".\3.\3.\3.\3.\3.\3.\5.\u0405\n.\3/\3/\3/\3/\3/\3/\5/\u040d\n/\3\60\3\60"+
 		"\3\60\3\60\3\60\3\60\3\60\3\60\3\60\3\60\3\60\5\60\u041a\n\60\3\61\3\61"+
 		"\3\61\3\61\3\61\3\61\7\61\u0422\n\61\f\61\16\61\u0425\13\61\3\62\3\62"+
-		"\3\63\3\63\5\63\u042b\n\63\3\63\3\63\5\63\u042f\n\63\3\63\3\63\5\63\u0433"+
-		"\n\63\3\63\3\63\5\63\u0437\n\63\3\63\3\63\5\63\u043b\n\63\3\63\3\63\5"+
-		"\63\u043f\n\63\3\63\3\63\5\63\u0443\n\63\3\63\3\63\5\63\u0447\n\63\3\63"+
-		"\3\63\5\63\u044b\n\63\3\63\3\63\5\63\u044f\n\63\3\63\3\63\5\63\u0453\n"+
-		"\63\3\63\3\63\3\63\3\63\5\63\u0459\n\63\3\63\5\63\u045c\n\63\3\64\5\64"+
-		"\u045f\n\64\3\64\3\64\3\64\3\64\5\64\u0465\n\64\3\64\3\64\3\64\3\64\3"+
-		"\64\3\64\5\64\u046d\n\64\3\64\3\64\3\64\5\64\u0472\n\64\3\65\5\65\u0475"+
+		"\3\63\3\63\3\63\5\63\u042c\n\63\3\63\3\63\5\63\u0430\n\63\3\63\3\63\5"+
+		"\63\u0434\n\63\3\63\3\63\5\63\u0438\n\63\3\63\3\63\5\63\u043c\n\63\3\63"+
+		"\3\63\5\63\u0440\n\63\3\63\3\63\5\63\u0444\n\63\3\63\3\63\5\63\u0448\n"+
+		"\63\3\63\3\63\5\63\u044c\n\63\3\63\3\63\5\63\u0450\n\63\3\63\3\63\5\63"+
+		"\u0454\n\63\3\63\3\63\3\63\5\63\u0459\n\63\3\63\5\63\u045c\n\63\3\64\5"+
+		"\64\u045f\n\64\3\64\3\64\3\64\3\64\5\64\u0465\n\64\3\64\3\64\3\64\3\64"+
+		"\3\64\3\64\5\64\u046d\n\64\3\64\3\64\3\64\5\64\u0472\n\64\3\65\5\65\u0475"+
 		"\n\65\3\65\3\65\3\66\3\66\5\66\u047b\n\66\3\66\3\66\3\67\3\67\7\67\u0481"+
 		"\n\67\f\67\16\67\u0484\13\67\38\38\38\38\38\38\38\38\38\38\38\38\38\3"+
 		"8\58\u0494\n8\39\39\39\39\39\39\3:\3:\5:\u049e\n:\3:\3:\3:\3:\3:\3:\5"+
@@ -17530,40 +17530,40 @@ public class CPP14Parser extends Parser {
 		"\3\2\2\2\u041e\u041f\f\3\2\2\u041f\u0420\7t\2\2\u0420\u0422\5\\/\2\u0421"+
 		"\u041e\3\2\2\2\u0422\u0425\3\2\2\2\u0423\u0421\3\2\2\2\u0423\u0424\3\2"+
 		"\2\2\u0424a\3\2\2\2\u0425\u0423\3\2\2\2\u0426\u0427\5Z.\2\u0427c\3\2\2"+
-		"\2\u0428\u045c\5f\64\2\u0429\u042b\5\u00fc\177\2\u042a\u0429\3\2\2\2\u042a"+
-		"\u042b\3\2\2\2\u042b\u042c\3\2\2\2\u042c\u045c\5h\65\2\u042d\u042f\5\u00fc"+
-		"\177\2\u042e\u042d\3\2\2\2\u042e\u042f\3\2\2\2\u042f\u0430\3\2\2\2\u0430"+
-		"\u045c\5j\66\2\u0431\u0433\5\u00fc\177\2\u0432\u0431\3\2\2\2\u0432\u0433"+
-		"\3\2\2\2\u0433\u0434\3\2\2\2\u0434\u045c\5n8\2\u0435\u0437\5\u00fc\177"+
-		"\2\u0436\u0435\3\2\2\2\u0436\u0437\3\2\2\2\u0437\u0438\3\2\2\2\u0438\u045c"+
-		"\5p9\2\u0439\u043b\5\u00fc\177\2\u043a\u0439\3\2\2\2\u043a\u043b\3\2\2"+
-		"\2\u043b\u043c\3\2\2\2\u043c\u045c\5x=\2\u043d\u043f\5\u00fc\177\2\u043e"+
-		"\u043d\3\2\2\2\u043e\u043f\3\2\2\2\u043f\u0440\3\2\2\2\u0440\u045c\5t"+
-		";\2\u0441\u0443\5\u00fc\177\2\u0442\u0441\3\2\2\2\u0442\u0443\3\2\2\2"+
-		"\u0443\u0444\3\2\2\2\u0444\u045c\5v<\2\u0445\u0447\5\u00fc\177\2\u0446"+
-		"\u0445\3\2\2\2\u0446\u0447\3\2\2\2\u0447\u0448\3\2\2\2\u0448\u045c\5\u0082"+
-		"B\2\u0449\u044b\5\u00fc\177\2\u044a\u0449\3\2\2\2\u044a\u044b\3\2\2\2"+
-		"\u044b\u044c\3\2\2\2\u044c\u045c\5\u0084C\2\u044d\u044f\5\u00fc\177\2"+
-		"\u044e\u044d\3\2\2\2\u044e\u044f\3\2\2\2\u044f\u0450\3\2\2\2\u0450\u045c"+
-		"\5\u0086D\2\u0451\u0453\5\u00fc\177\2\u0452\u0451\3\2\2\2\u0452\u0453"+
-		"\3\2\2\2\u0453\u0454\3\2\2\2\u0454\u045c\5\u0088E\2\u0455\u045c\5\u009c"+
-		"O\2\u0456\u045c\5\u008aF\2\u0457\u0459\5\u00fc\177\2\u0458\u0457\3\2\2"+
-		"\2\u0458\u0459\3\2\2\2\u0459\u045a\3\2\2\2\u045a\u045c\5\u01a4\u00d3\2"+
-		"\u045b\u0428\3\2\2\2\u045b\u042a\3\2\2\2\u045b\u042e\3\2\2\2\u045b\u0432"+
-		"\3\2\2\2\u045b\u0436\3\2\2\2\u045b\u043a\3\2\2\2\u045b\u043e\3\2\2\2\u045b"+
-		"\u0442\3\2\2\2\u045b\u0446\3\2\2\2\u045b\u044a\3\2\2\2\u045b\u044e\3\2"+
-		"\2\2\u045b\u0452\3\2\2\2\u045b\u0455\3\2\2\2\u045b\u0456\3\2\2\2\u045b"+
-		"\u0458\3\2\2\2\u045ce\3\2\2\2\u045d\u045f\5\u00fc\177\2\u045e\u045d\3"+
-		"\2\2\2\u045e\u045f\3\2\2\2\u045f\u0460\3\2\2\2\u0460\u0461\7~\2\2\u0461"+
-		"\u0462\7x\2\2\u0462\u0472\5d\63\2\u0463\u0465\5\u00fc\177\2\u0464\u0463"+
-		"\3\2\2\2\u0464\u0465\3\2\2\2\u0465\u0466\3\2\2\2\u0466\u0467\7\n\2\2\u0467"+
-		"\u0468\5b\62\2\u0468\u0469\7x\2\2\u0469\u046a\5d\63\2\u046a\u0472\3\2"+
-		"\2\2\u046b\u046d\5\u00fc\177\2\u046c\u046b\3\2\2\2\u046c\u046d\3\2\2\2"+
-		"\u046d\u046e\3\2\2\2\u046e\u046f\7\25\2\2\u046f\u0470\7x\2\2\u0470\u0472"+
-		"\5d\63\2\u0471\u045e\3\2\2\2\u0471\u0464\3\2\2\2\u0471\u046c\3\2\2\2\u0472"+
-		"g\3\2\2\2\u0473\u0475\5`\61\2\u0474\u0473\3\2\2\2\u0474\u0475\3\2\2\2"+
-		"\u0475\u0476\3\2\2\2\u0476\u0477\7z\2\2\u0477i\3\2\2\2\u0478\u047a\7S"+
-		"\2\2\u0479\u047b\5l\67\2\u047a\u0479\3\2\2\2\u047a\u047b\3\2\2\2\u047b"+
+		"\2\u0428\u045c\5f\64\2\u0429\u045c\5\u009cO\2\u042a\u042c\5\u00fc\177"+
+		"\2\u042b\u042a\3\2\2\2\u042b\u042c\3\2\2\2\u042c\u042d\3\2\2\2\u042d\u045c"+
+		"\5h\65\2\u042e\u0430\5\u00fc\177\2\u042f\u042e\3\2\2\2\u042f\u0430\3\2"+
+		"\2\2\u0430\u0431\3\2\2\2\u0431\u045c\5j\66\2\u0432\u0434\5\u00fc\177\2"+
+		"\u0433\u0432\3\2\2\2\u0433\u0434\3\2\2\2\u0434\u0435\3\2\2\2\u0435\u045c"+
+		"\5n8\2\u0436\u0438\5\u00fc\177\2\u0437\u0436\3\2\2\2\u0437\u0438\3\2\2"+
+		"\2\u0438\u0439\3\2\2\2\u0439\u045c\5p9\2\u043a\u043c\5\u00fc\177\2\u043b"+
+		"\u043a\3\2\2\2\u043b\u043c\3\2\2\2\u043c\u043d\3\2\2\2\u043d\u045c\5x"+
+		"=\2\u043e\u0440\5\u00fc\177\2\u043f\u043e\3\2\2\2\u043f\u0440\3\2\2\2"+
+		"\u0440\u0441\3\2\2\2\u0441\u045c\5t;\2\u0442\u0444\5\u00fc\177\2\u0443"+
+		"\u0442\3\2\2\2\u0443\u0444\3\2\2\2\u0444\u0445\3\2\2\2\u0445\u045c\5v"+
+		"<\2\u0446\u0448\5\u00fc\177\2\u0447\u0446\3\2\2\2\u0447\u0448\3\2\2\2"+
+		"\u0448\u0449\3\2\2\2\u0449\u045c\5\u0082B\2\u044a\u044c\5\u00fc\177\2"+
+		"\u044b\u044a\3\2\2\2\u044b\u044c\3\2\2\2\u044c\u044d\3\2\2\2\u044d\u045c"+
+		"\5\u0084C\2\u044e\u0450\5\u00fc\177\2\u044f\u044e\3\2\2\2\u044f\u0450"+
+		"\3\2\2\2\u0450\u0451\3\2\2\2\u0451\u045c\5\u0086D\2\u0452\u0454\5\u00fc"+
+		"\177\2\u0453\u0452\3\2\2\2\u0453\u0454\3\2\2\2\u0454\u0455\3\2\2\2\u0455"+
+		"\u045c\5\u0088E\2\u0456\u045c\5\u008aF\2\u0457\u0459\5\u00fc\177\2\u0458"+
+		"\u0457\3\2\2\2\u0458\u0459\3\2\2\2\u0459\u045a\3\2\2\2\u045a\u045c\5\u01a4"+
+		"\u00d3\2\u045b\u0428\3\2\2\2\u045b\u0429\3\2\2\2\u045b\u042b\3\2\2\2\u045b"+
+		"\u042f\3\2\2\2\u045b\u0433\3\2\2\2\u045b\u0437\3\2\2\2\u045b\u043b\3\2"+
+		"\2\2\u045b\u043f\3\2\2\2\u045b\u0443\3\2\2\2\u045b\u0447\3\2\2\2\u045b"+
+		"\u044b\3\2\2\2\u045b\u044f\3\2\2\2\u045b\u0453\3\2\2\2\u045b\u0456\3\2"+
+		"\2\2\u045b\u0458\3\2\2\2\u045ce\3\2\2\2\u045d\u045f\5\u00fc\177\2\u045e"+
+		"\u045d\3\2\2\2\u045e\u045f\3\2\2\2\u045f\u0460\3\2\2\2\u0460\u0461\7~"+
+		"\2\2\u0461\u0462\7x\2\2\u0462\u0472\5d\63\2\u0463\u0465\5\u00fc\177\2"+
+		"\u0464\u0463\3\2\2\2\u0464\u0465\3\2\2\2\u0465\u0466\3\2\2\2\u0466\u0467"+
+		"\7\n\2\2\u0467\u0468\5b\62\2\u0468\u0469\7x\2\2\u0469\u046a\5d\63\2\u046a"+
+		"\u0472\3\2\2\2\u046b\u046d\5\u00fc\177\2\u046c\u046b\3\2\2\2\u046c\u046d"+
+		"\3\2\2\2\u046d\u046e\3\2\2\2\u046e\u046f\7\25\2\2\u046f\u0470\7x\2\2\u0470"+
+		"\u0472\5d\63\2\u0471\u045e\3\2\2\2\u0471\u0464\3\2\2\2\u0471\u046c\3\2"+
+		"\2\2\u0472g\3\2\2\2\u0473\u0475\5`\61\2\u0474\u0473\3\2\2\2\u0474\u0475"+
+		"\3\2\2\2\u0475\u0476\3\2\2\2\u0476\u0477\7z\2\2\u0477i\3\2\2\2\u0478\u047a"+
+		"\7S\2\2\u0479\u047b\5l\67\2\u047a\u0479\3\2\2\2\u047a\u047b\3\2\2\2\u047b"+
 		"\u047c\3\2\2\2\u047c\u047d\7T\2\2\u047dk\3\2\2\2\u047e\u0482\5d\63\2\u047f"+
 		"\u0481\5d\63\2\u0480\u047f\3\2\2\2\u0481\u0484\3\2\2\2\u0482\u0480\3\2"+
 		"\2\2\u0482\u0483\3\2\2\2\u0483m\3\2\2\2\u0484\u0482\3\2\2\2\u0485\u0486"+
@@ -18138,8 +18138,8 @@ public class CPP14Parser extends Parser {
 		"\u02e3\u0303\u030a\u030e\u0312\u0315\u0319\u031f\u0321\u0329\u032d\u0330"+
 		"\u0337\u033e\u0342\u0347\u034b\u034e\u0353\u0359\u0366\u0371\u0373\u0382"+
 		"\u0384\u0390\u0392\u039f\u03a1\u03b3\u03b5\u03c1\u03c3\u03ce\u03d9\u03e4"+
-		"\u03ef\u03fa\u0404\u040c\u0419\u0423\u042a\u042e\u0432\u0436\u043a\u043e"+
-		"\u0442\u0446\u044a\u044e\u0452\u0458\u045b\u045e\u0464\u046c\u0471\u0474"+
+		"\u03ef\u03fa\u0404\u040c\u0419\u0423\u042b\u042f\u0433\u0437\u043b\u043f"+
+		"\u0443\u0447\u044b\u044f\u0453\u0458\u045b\u045e\u0464\u046c\u0471\u0474"+
 		"\u047a\u0482\u0493\u049d\u04a5\u04ab\u04bf\u04c3\u04d3\u04d6\u04dd\u04eb"+
 		"\u04f2\u04f6\u04ff\u0503\u050d\u0510\u0514\u0517\u051b\u051e\u0520\u052d"+
 		"\u0536\u053a\u053f\u0549\u054c\u0550\u0558\u055b\u0560\u0566\u056b\u0570"+

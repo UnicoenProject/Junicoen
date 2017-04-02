@@ -306,6 +306,7 @@ constantexpression
 
 statement
 	:	labeledstatement 
+	|	variabledeclarationstatement 
 	|	attributespecifierseq? expressionstatement 
 	|	attributespecifierseq? compoundstatement 
 	|	attributespecifierseq? selectionstatement 
@@ -317,7 +318,6 @@ statement
 	|	attributespecifierseq? breakStatement 
 	|	attributespecifierseq? continueStatement 
 	|	attributespecifierseq? returnStatement 
-	|	variabledeclarationstatement 
 	|	declarationstatement 
 	|	attributespecifierseq? tryblock 
 	;
