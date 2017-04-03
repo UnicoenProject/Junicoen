@@ -306,7 +306,6 @@ constantexpression
 
 statement
 	:	labeledstatement 
-	|	variabledeclarationstatement 
 	|	attributespecifierseq? expressionstatement 
 	|	attributespecifierseq? compoundstatement 
 	|	attributespecifierseq? selectionstatement 
@@ -318,6 +317,7 @@ statement
 	|	attributespecifierseq? breakStatement 
 	|	attributespecifierseq? continueStatement 
 	|	attributespecifierseq? returnStatement 
+	|	variabledeclarationstatement 
 	|	declarationstatement 
 	|	attributespecifierseq? tryblock 
 	;
@@ -578,6 +578,7 @@ simpletypespecifier
 	|	Void 
 	|	Auto 
 	|	decltypespecifier 
+	|	File 
 	;
 
 typename
@@ -1254,6 +1255,10 @@ Do
 
 Double
 	:	'double' 
+	;
+
+File
+	:	'FILE' 
 	;
 
 Dynamic_cast

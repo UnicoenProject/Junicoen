@@ -116,11 +116,12 @@ public class Scope {
 
 	public Object getFromAddress(int addr){
 		if(typeOnMemory.containsKey(addr)){
-			if(isFunc(addr)){
+			String type = typeOnMemory.get(addr);
+			if(isFunc(addr) || (type.equals("FILE*"))){
 				return objectOnMemory.get(addr);
 			}
 			
-			String type = typeOnMemory.get(addr);
+			
 			int sizeofElement = CppEngine.sizeofElement(type);
 			int sizeof = CppEngine.sizeof(type);
 			if(sizeof != sizeofElement){
@@ -266,6 +267,7 @@ public class Scope {
 	public boolean isFunc(int addr){
 		return functionAddress.containsValue(addr);
 	}
+
 	
 	/** 現在のスコープに新しい変数を定義し、代入します */
 	public int setTop(String key, Object value, String type) {

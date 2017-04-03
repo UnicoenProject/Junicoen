@@ -103,7 +103,8 @@ public class CppEngine extends Engine {
 						br = new BufferedReader(new FileReader(filepath));
 					} catch (FileNotFoundException e) {
 						// TODO 自動生成された catch ブロック
-						e.printStackTrace();
+						//e.printStackTrace();
+						return 0;
 					}
 					break;
 				case "w":
@@ -141,13 +142,16 @@ public class CppEngine extends Engine {
 		global.setFunc("fgetc", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {//args[0]:ファイル名, args[1]:モード
-				BufferedReader br = (BufferedReader)args[0];
 				int ch = -1;
 				try {
+					BufferedReader br = (BufferedReader)args[0];	
 					ch = br.read();
 				} catch (IOException e) {
 					// TODO 自動生成された catch ブロック
 					e.printStackTrace();
+					return ch;
+				} catch (ClassCastException e){
+					return ch;
 				}
 				return ch;
 			}
@@ -443,8 +447,7 @@ public class CppEngine extends Engine {
             if(value instanceof BufferedReader)
                 return value;
             else {
-                BufferedReader br = null;
-                return br;
+                return 0;
             }
         }
         else if(type.contains("int") || type.contains("long") || type.contains("*")){

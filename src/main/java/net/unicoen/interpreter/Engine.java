@@ -943,7 +943,7 @@ public class Engine {
 		String type = scope.getType(address);
 		value = _execCast(type,value);
 		scope.set(address, value);
-		if(type.endsWith("*")){
+		if(type.endsWith("*") && value instanceof Number){
 			int taddress = (int)value;
 			if(scope.isMallocArea(taddress)){
 				int size = scope.getMallocSize(taddress);

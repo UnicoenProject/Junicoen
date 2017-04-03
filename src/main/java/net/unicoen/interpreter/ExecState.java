@@ -51,6 +51,9 @@ public class ExecState {
 			Object value = scope.get(varName);
 			if(value instanceof UniNode)
 				continue;
+			else if(value == null){
+				value = Math.random();
+			}
 			final String type = scope.variableTypes.get(varName);
 			int address = scope.variableAddress.get(varName);
 			if(type.contains("[") && type.contains("]")){
