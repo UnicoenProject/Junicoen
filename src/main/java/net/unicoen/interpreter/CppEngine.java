@@ -160,6 +160,41 @@ public class CppEngine extends Engine {
                 return ch;
             }
         },"int");
+        global.setTop("fgets", new FunctionWithEngine() {
+            @Override
+            public Object invoke(Engine engine, Object[] args) {//char *str, int num, FILE *fp
+                int len = (int)args[1];
+                byte[] buf = new byte[len];
+                try {
+                	int addr = (int)args[2];
+                    BufferedReader br = (BufferedReader)global.getValue(addr);
+                    for(int i=0; i<len-1; ++i){
+                        int v = br.read();
+                        if(v == -1){
+                        	return 0;
+                        }
+                        char c = (char)v;
+                        buf[i] = (byte)v;
+                        if(c == '\n'){
+                            ++i;
+                            break;
+                        }
+                    }
+                } catch (IOException e) {
+                    // TODO 自動生成された catch ブロック
+                    e.printStackTrace();
+                    return 0;
+                } catch (ClassCastException e){
+                    return 0;
+                }
+                int addr = (int)args[0];
+                for(int i=0; i<buf.length; ++i){
+                	global.set(addr+i, buf[i]);
+                	if(buf[i] == 0)break;
+                }
+                return args[2];
+            }
+        },"char*");//読み込んだ文字列のポインタ
 
 
 	}

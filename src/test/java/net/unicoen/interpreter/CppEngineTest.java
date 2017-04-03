@@ -149,7 +149,7 @@ public class CppEngineTest {
 				+ "}";
 		exec(text);
 	}
-	@Test
+	@Test @Ignore
 	public void fgetc() {
 		String text = ""
 				//+ "#include <stdio.h>"
@@ -160,6 +160,21 @@ public class CppEngineTest {
                 + " fp = fopen(\"sample.txt\", \"r\");"//配列変数の例"
                 + " while( (c = fgetc( fp )) != -1 )"
                 + "        printf( \"%c\", c );"
+				+ "}";
+		exec(text);
+	}
+
+	@Test
+	public void fgets() {
+		String text = ""
+				//+ "#include <stdio.h>"
+				+ "int main()"
+				+ "{"
+                + " FILE* fp;"
+                + " char buf[256]={0};"
+                + " fp = fopen(\"sample.txt\", \"r\");"//配列変数の例"
+                + " while( fgets(buf,256,fp) != NULL )"
+                + "        printf(\"%s\",buf);"
 				+ "}";
 		exec(text);
 	}

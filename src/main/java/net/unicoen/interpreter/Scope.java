@@ -1,5 +1,6 @@
 package net.unicoen.interpreter;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -111,6 +112,26 @@ public class Scope {
 
 	public Object getValue(int key) {
 		return getValueImple(key,name);
+	}
+
+	public String getStr(String name) throws UnsupportedEncodingException{
+		int addr = getAddress(name);
+		List<Byte> buf = new ArrayList<Byte>();
+		int i=0;
+		for(  ;i<10000;++i){
+			byte b = (byte) getValue(addr+i);
+			if(b==0){
+				break;
+			}
+			buf.add(b);
+		}
+		byte[] array = new byte[i];
+		for(int k = 0; k < i; ++k){
+			array[k] = buf.get(k);
+		}
+		String result = new String(array,"UTF-8");
+		return result;
+
 	}
 
 	private Object getValueImple(int key, String stackName) {

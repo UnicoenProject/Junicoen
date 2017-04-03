@@ -397,9 +397,23 @@ public class Engine {
 			UniWhile uniWhile = (UniWhile) expr;
 			try {
 				Object lastEval = null;
-				while (toBool(execExpr(uniWhile.cond, scope))) {
+				Scope blockScope = Scope.createLocal(scope);
+				while (toBool(execExpr(uniWhile.cond, blockScope))) {
 					try {
-						lastEval = execExpr(uniWhile.statement, scope);
+						if(isStepExecutionRunning.get())
+						{
+							state.setCurrentExpr(expr);
+							isExecutionThreadWaiting.set(true);
+							notifyAllThread();
+							waitForWaitingFlagIs(true);
+						}
+						try{
+							lastEval = execExpr(uniWhile.statement, blockScope);
+						}
+						catch (ControlException e){
+							scope.removeChild(blockScope);
+							throw e;
+						}
 					} catch (Continue e) { /* do nothing */
 					}
 				}
