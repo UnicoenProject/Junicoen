@@ -209,6 +209,15 @@ public class Scope {
 		return codeAddress.v++;
 	}
 
+	public int setSystemVariable(String type, String name, Object value){
+		assertNotUnicoen(value);
+		variableTypes.put(name, type);
+		variableAddress.put(name, codeAddress.v);
+		objectOnMemory.put(codeAddress.v, value);
+		typeOnMemory.put(codeAddress.v, type);
+		return codeAddress.v++;
+	}
+
 	/** 現在のスコープに新しい変数を定義し、代入します */
 	public void setTop(String key, Object value, String type) {
 		assertNotUnicoen(value);

@@ -70,12 +70,19 @@ public class Engine {
 	public PrintStream out = System.out;
 	public List<ExecutionListener> listeners;
 
-	private AtomicBoolean isStepExecutionRunning = new AtomicBoolean(false);
-	private AtomicBoolean isExecutionThreadWaiting = new AtomicBoolean(false);
-	protected ExecState state = new ExecState();
-	public boolean isStepExecutionRunning() {
-		return isStepExecutionRunning.get();
-	}
+    private AtomicBoolean isStepExecutionRunning = new AtomicBoolean(false);
+    private AtomicBoolean isExecutionThreadWaiting = new AtomicBoolean(false);
+    protected String fileDir = System.getProperty("user.dir");
+    protected ExecState state = new ExecState();
+
+    public void setFileDir(String dir){
+        fileDir = dir;
+    }
+
+    public boolean isStepExecutionRunning() {
+        return isStepExecutionRunning.get();
+    }
+
 
 	private synchronized void notifyAllThread(){
 		notifyAll();
@@ -449,16 +456,15 @@ public class Engine {
 	}
 
 	protected Object _execVariableDec(UniVariableDec decVar, Scope scope){
+		if(decVar.name.startsWith("*")){
+			decVar.name = decVar.name.substring(1);
+			decVar.type+="*";
+		}
+		else if(decVar.name.startsWith("&")){
+			decVar.name = decVar.name.substring(1);
+			decVar.type+="&";
+		}
 		if(decVar.value!=null){
-			if(decVar.name.startsWith("*")){
-				decVar.name = decVar.name.substring(1);
-				decVar.type+="*";
-			}
-			else if(decVar.name.startsWith("&")){
-				decVar.name = decVar.name.substring(1);
-				decVar.type+="&";
-			}
-
 			Object value = execExpr(decVar.value, scope);
 			value = _execCast(decVar.type,value);
 			if(decVar.type.endsWith("*") && !(value instanceof List)){

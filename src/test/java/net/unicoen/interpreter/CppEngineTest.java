@@ -117,7 +117,7 @@ public class CppEngineTest {
 		exec(text);
 	}
 
-	@Test //@Ignore
+	@Test @Ignore
 	public void test6() {
 		String text = ""
 				//+ "#include <stdio.h>"
@@ -146,6 +146,20 @@ public class CppEngineTest {
 				+ "int main()"
 				+ "{"
 				+ "	Hanoi(4,'A','B','C');"
+				+ "}";
+		exec(text);
+	}
+	@Test
+	public void fgetc() {
+		String text = ""
+				//+ "#include <stdio.h>"
+				+ "int main()"
+				+ "{"
+                + " FILE* fp;"
+                + " char c;"
+                + " fp = fopen(\"sample.txt\", \"r\");"//配列変数の例"
+                + " while( (c = fgetc( fp )) != -1 )"
+                + "        printf( \"%c\", c );"
 				+ "}";
 		exec(text);
 	}

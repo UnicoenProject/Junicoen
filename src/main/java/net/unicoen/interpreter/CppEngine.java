@@ -1,5 +1,9 @@
 package net.unicoen.interpreter;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.List;
 
 import net.unicoen.node.UniCast;
@@ -49,6 +53,10 @@ public class CppEngine extends Engine {
 				return s.length();
 			}
 		},"FUNCTION");
+
+
+		global.setSystemVariable("int","NULL", 0);
+		global.setSystemVariable("int","EOF", -1);
 	}
 	protected void includeStdlib(Scope global){
 		global.setTop("malloc", new FunctionWithEngine() {
@@ -87,6 +95,73 @@ public class CppEngine extends Engine {
 				return Math.random();
 			}
 		},"FUNCTION");
+        global.setTop("fopen", new FunctionWithEngine() {
+            @Override
+            public Object invoke(Engine engine, Object[] args) {//args[0]:ファイル名, args[1]:モード
+                String filename = (String) args[0];
+                String filepath = fileDir + '\\' + filename;
+                String mode = (String) args[1];
+                int ret = 0;
+                switch(mode){
+                    //テキスト
+                case "r":
+                    try {
+                        BufferedReader br = new BufferedReader(new FileReader(filepath));
+                        ret = global.setCode(br, "FILE");
+                    } catch (FileNotFoundException e) {
+                        // TODO 自動生成された catch ブロック
+                        return ret;
+                    }
+                    break;
+                case "w":
+                    break;
+                case "a":
+                    break;
+                case "rb":
+                    break;
+                case "r+":
+                    break;
+                case "w+":
+                    break;
+                case "a+":
+                    break;
+                    //バイナリ
+                case "wb":
+                    break;
+                case "ab":
+                    break;
+                case "r+b":
+                case "rb+":
+                    break;
+                case "w+b":
+                case "wb+":
+                    break;
+                case "a+b":
+                case "ab+":
+                    break;
+                default:
+                    break;
+                }
+            return ret;
+            }
+        },"FILE*");
+        global.setTop("fgetc", new FunctionWithEngine() {
+            @Override
+            public Object invoke(Engine engine, Object[] args) {//args[0]:ファイル名, args[1]:モード
+                int ch = -1;
+                try {
+                    int addr = (int)args[0];
+                    BufferedReader br = (BufferedReader)global.getValue(addr);
+                    ch = br.read();
+                } catch (IOException e) {
+                    // TODO 自動生成された catch ブロック
+                    e.printStackTrace();
+                }
+                return ch;
+            }
+        },"int");
+
+
 	}
 	protected void includeMath(Scope global){
 		//逆三角関数
@@ -322,7 +397,7 @@ public class CppEngine extends Engine {
 			return (long)value;
 		}
 		else if(type.equals("char")){
-			return (char)value;
+			return (byte)((int)value);
 		}
 		return value;
 	}

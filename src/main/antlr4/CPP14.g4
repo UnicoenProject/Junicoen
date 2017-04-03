@@ -590,6 +590,7 @@ simpletypespecifier
 	|	Unsigned 
 	|	Float 
 	|	Double 
+	|	File 
 	|	Void 
 	|	Auto 
 	|	decltypespecifier 
@@ -1269,6 +1270,10 @@ Do
 
 Double
 	:	'double' 
+	;
+
+File
+	:	'FILE' 
 	;
 
 Dynamic_cast
