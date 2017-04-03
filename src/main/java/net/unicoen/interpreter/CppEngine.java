@@ -1,6 +1,7 @@
 package net.unicoen.interpreter;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -51,8 +52,8 @@ public class CppEngine extends Engine {
 		},"FUNCTION");
 
 
-		global.setSystemVariable("int","NULL", 0);
-		global.setSystemVariable("int","EOF", -1);
+		global.setSystemVariable("FUNCTION","NULL", 0);
+		global.setSystemVariable("FUNCTION","EOF", -1);
 	}
 	protected void includeStdlib(Scope global){
 		global.setTop("malloc", new FunctionWithEngine() {
@@ -95,7 +96,7 @@ public class CppEngine extends Engine {
             @Override
             public Object invoke(Engine engine, Object[] args) {//args[0]:ファイル名, args[1]:モード
                 String filename = (String) args[0];
-                String filepath = fileDir + '\\' + filename;
+                String filepath = new File(fileDir, filename).getPath();
                 String mode = (String) args[1];
                 int ret = 0;
                 switch(mode){
@@ -140,7 +141,7 @@ public class CppEngine extends Engine {
                 }
             return ret;
             }
-        },"FILE*");
+        },"FUNCTION");
         global.setTop("fgetc", new FunctionWithEngine() {
             @Override
             public Object invoke(Engine engine, Object[] args) {//args[0]:ファイル名, args[1]:モード
@@ -155,7 +156,7 @@ public class CppEngine extends Engine {
                 }
                 return ch;
             }
-        },"int");
+        },"FUNCTION");
         global.setTop("fgets", new FunctionWithEngine() {
             @Override
             public Object invoke(Engine engine, Object[] args) {//char *str, int num, FILE *fp
@@ -190,7 +191,7 @@ public class CppEngine extends Engine {
                 }
                 return args[2];
             }
-        },"char*");//読み込んだ文字列のポインタ
+        },"FUNCTION");//読み込んだ文字列のポインタ
 
 
 	}
