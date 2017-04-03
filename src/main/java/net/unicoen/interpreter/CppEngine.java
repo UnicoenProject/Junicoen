@@ -1,9 +1,10 @@
 package net.unicoen.interpreter;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -99,18 +100,16 @@ public class CppEngine extends Engine {
                 String filepath = new File(fileDir, filename).getPath();
                 String mode = (String) args[1];
                 int ret = 0;
-                switch(mode){
+            	try {
+            		switch(mode){
                     //テキスト
                 case "r":
-                    try {
-                        BufferedReader br = new BufferedReader(new FileReader(filepath));
-                        ret = global.setCode(br, "FILE");
-                    } catch (FileNotFoundException e) {
-                        // TODO 自動生成された catch ブロック
-                        return ret;
-                    }
+                	BufferedReader br = new BufferedReader(new FileReader(filepath));
+                    ret = global.setCode(br, "FILE");
                     break;
                 case "w":
+                	BufferedWriter bw = new BufferedWriter(new FileWriter(filepath));
+                	ret = global.setCode(bw, "FILE");
                     break;
                 case "a":
                     break;
@@ -139,12 +138,19 @@ public class CppEngine extends Engine {
                 default:
                     break;
                 }
+
+				} catch (IOException e) {
+					// TODO 自動生成された catch ブロック
+					e.printStackTrace();
+				}
+
+
             return ret;
             }
         },"FUNCTION");
         global.setTop("fgetc", new FunctionWithEngine() {
             @Override
-            public Object invoke(Engine engine, Object[] args) {//args[0]:ファイル名, args[1]:モード
+            public Object invoke(Engine engine, Object[] args) {//args[0]:FILE*
                 int ch = -1;
                 try {
                     int addr = (int)args[0];
@@ -192,7 +198,22 @@ public class CppEngine extends Engine {
                 return args[2];
             }
         },"FUNCTION");//読み込んだ文字列のポインタ
-
+        global.setTop("fputc", new FunctionWithEngine() {
+            @Override
+            public Object invoke(Engine engine, Object[] args) {//args[0]:int, args[1]:FILE*
+            	int ret = -1;
+            	try {
+            		ret = (int)args[0];
+                    int addr = (int)args[1];
+                    BufferedWriter bw = (BufferedWriter)global.getValue(addr);
+                    bw.write(ret);
+                } catch (IOException e) {
+                    // TODO 自動生成された catch ブロック
+                    e.printStackTrace();
+                }
+                return ret;
+            }
+        },"FUNCTION");
 
 	}
 	protected void includeMath(Scope global){
