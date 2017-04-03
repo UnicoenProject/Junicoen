@@ -95,16 +95,17 @@ public class CppEngine extends Engine {
 				String filename = isBytes(args[0]) ? BytesToStr((List<Byte>) args[0]) : (String) args[0];
 				String filepath = fileDir + '\\' + filename;
 				String mode = isBytes(args[1]) ? BytesToStr((List<Byte>) args[1]) : (String) args[1];
-				BufferedReader br = null;
+				int ret = 0;
 				switch(mode){
 					//テキスト
 				case "r":
 					try {
-						br = new BufferedReader(new FileReader(filepath));
+						BufferedReader br = new BufferedReader(new FileReader(filepath));
+						ret = global.setCode(br, "FILE");
 					} catch (FileNotFoundException e) {
 						// TODO 自動生成された catch ブロック
 						//e.printStackTrace();
-						return 0;
+						return ret;
 					}
 					break;
 				case "w":
@@ -136,15 +137,16 @@ public class CppEngine extends Engine {
 				default:
 					break;
 				}
-			return br;
+			return ret;
 			}
 		},"FILE*");
 		global.setFunc("fgetc", new FunctionWithEngine() {
 			@Override
-			public Object invoke(Engine engine, Object[] args) {//args[0]:ファイル名, args[1]:モード
+			public Object invoke(Engine engine, Object[] args) {//args[0]:FILE* fp
 				int ch = -1;
 				try {
-					BufferedReader br = (BufferedReader)args[0];	
+					int addr = (int)args[0];
+					BufferedReader br = (BufferedReader)global.getValue(addr);
 					ch = br.read();
 				} catch (IOException e) {
 					// TODO 自動生成された catch ブロック
@@ -156,6 +158,35 @@ public class CppEngine extends Engine {
 				return ch;
 			}
 		},"int");
+
+		global.setFunc("fgets", new FunctionWithEngine() {
+			@Override
+			public Object invoke(Engine engine, Object[] args) {//char *str, int num, FILE *fp
+				int len = (int)args[1];
+				byte[] buf = new byte[len];
+				try {
+					BufferedReader br = (BufferedReader)args[2];
+					int i=0;
+					for(  ; i<len-1; ++i){
+						int v = br.read();
+						char c = (char)v;
+						buf[i] = (byte)v;
+						if(c == '\n'){
+							++i;
+							break;
+						}
+					}
+					buf[i] = 0;
+				} catch (IOException e) {
+					// TODO 自動生成された catch ブロック
+					e.printStackTrace();
+					return 0;
+				} catch (ClassCastException e){
+					return 0;
+				}
+				return args[2];
+			}
+		},"char*");//読み込んだ文字列のポインタ
 	}
 	protected void includeMath(Scope global){
 		//逆三角関数
@@ -443,13 +474,13 @@ public class CppEngine extends Engine {
 		if(value == null || value instanceof List){
 			return value;
 		}
-        if(type.contains("FILE*")){
-            if(value instanceof BufferedReader)
-                return value;
-            else {
-                return 0;
-            }
-        }
+//        if(type.contains("FILE*")){
+//            if(value instanceof BufferedReader)
+//                return value;
+//            else {
+//                return 0;
+//            }
+//        }
         else if(type.contains("int") || type.contains("long") || type.contains("*")){
 			if(value instanceof Byte){
 				byte v = (byte)value;

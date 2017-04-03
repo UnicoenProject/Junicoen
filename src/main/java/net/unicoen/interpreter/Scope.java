@@ -2,7 +2,6 @@ package net.unicoen.interpreter;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -10,7 +9,6 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import net.unicoen.node.UniExpr;
-import net.unicoen.node.UniMethodDec;
 
 public class Scope {
 	public enum Type {
@@ -117,11 +115,11 @@ public class Scope {
 	public Object getFromAddress(int addr){
 		if(typeOnMemory.containsKey(addr)){
 			String type = typeOnMemory.get(addr);
-			if(isFunc(addr) || (type.equals("FILE*"))){
+			if(isFunc(addr) || type.equals("FILE")){
 				return objectOnMemory.get(addr);
 			}
-			
-			
+
+
 			int sizeofElement = CppEngine.sizeofElement(type);
 			int sizeof = CppEngine.sizeof(type);
 			if(sizeof != sizeofElement){
@@ -268,7 +266,7 @@ public class Scope {
 		return functionAddress.containsValue(addr);
 	}
 
-	
+
 	/** 現在のスコープに新しい変数を定義し、代入します */
 	public int setTop(String key, Object value, String type) {
 		assertNotUnicoen(value);
@@ -367,7 +365,7 @@ public class Scope {
 			objectOnMemory.put(_address.v, value);
 			++_address.v;
 		}
-		
+
 		if(bytes != null){
 			if(_address.v/4 != (_address.v+(byteSize-1))/4)
 			{
@@ -382,7 +380,7 @@ public class Scope {
 		}
 		return add;
 	}
-	
+
 	private int setImple(String key, Object value, String type,Int _address){
 		assertNotUnicoen(value);
 		int addr = writeOnMemory(value,type,_address);
@@ -391,7 +389,7 @@ public class Scope {
 		typeOnMemory.put(addr, type);
 		return addr;
 	}
-	
+
 	private int setPrimitiveOnStack(String key, Object value, String type){
 		return setImple(key,value,type,address);
 	}
