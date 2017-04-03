@@ -5,14 +5,13 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import net.unicoen.mapper.CPP14Mapper;
 import net.unicoen.node.UniNode;
 
 public class CppEngineTest {
-	@Test @Ignore
+	@Test //@Ignore
 	public void test1() {
 		String text =
 				"int main()"+
@@ -33,7 +32,7 @@ public class CppEngineTest {
 		exec(text);
 	}
 
-	@Test @Ignore
+	@Test //@Ignore
 	public void test2() {
 		String text =
 				"int main()"+
@@ -45,7 +44,7 @@ public class CppEngineTest {
 		exec(text);
 	}
 
-	@Test @Ignore
+	@Test //@Ignore
 	public void test3(){
 		String text =
 				"int main()"+
@@ -64,7 +63,7 @@ public class CppEngineTest {
 		exec(text);
 	}
 
-	@Test @Ignore
+	@Test //@Ignore
 	public void test4(){
 		String text =
 //				"struct Str"+
@@ -96,7 +95,7 @@ public class CppEngineTest {
 		exec(text);
 	}
 
-	@Test @Ignore
+	@Test //@Ignore
 	public void test5() {
 		String text =
 				"int f1(){}"
@@ -117,7 +116,7 @@ public class CppEngineTest {
 		exec(text);
 	}
 
-	@Test @Ignore
+	@Test //@Ignore
 	public void test6() {
 		String text = ""
 				//+ "#include <stdio.h>"
@@ -133,7 +132,7 @@ public class CppEngineTest {
 				+ "}";
 		exec(text);
 	}
-	@Test @Ignore
+	@Test //@Ignore
 	public void test7() {
 		String text = ""
 				//+ "#include <stdio.h>"
@@ -149,7 +148,7 @@ public class CppEngineTest {
 				+ "}";
 		exec(text);
 	}
-	@Test @Ignore
+	@Test //@Ignore
 	public void fgetc() {
 		String text = ""
 				//+ "#include <stdio.h>"
@@ -164,7 +163,7 @@ public class CppEngineTest {
 		exec(text);
 	}
 
-	@Test
+	@Test //@Ignore
 	public void fgets() {
 		String text = ""
 				//+ "#include <stdio.h>"

@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import net.unicoen.node.UniCast;
@@ -32,23 +35,16 @@ public class CppEngine extends Engine {
 				if(args.length<1)
 					return 0;
 				String text = (String)args[0];
-				String s="";
-				if(args.length==1)
-					s = String.format(text);
-				else if(args.length==2)
-					s = String.format(text,args[1]);
-				else if(args.length==3)
-					s = String.format(text,args[1],args[2]);
-				else if(args.length==4)
-					s = String.format(text,args[1],args[2],args[3]);
-				else if(args.length==5)
-					s = String.format(text,args[1],args[2],args[3],args[4]);
-				else if(args.length==6)
-					s = String.format(text,args[1],args[2],args[3],args[4],args[5]);
-				else if(args.length==7)
-					s = String.format(text,args[1],args[2],args[3],args[4],args[5],args[6]);
-				else if(args.length==8)
-					s = String.format(text,args[1],args[2],args[3],args[4],args[5],args[6],args[7]);
+				text = text.replace("\\n", "\n");
+				for(int i=1;i<args.length;++i){
+					if(global.typeOnMemory.containsKey(args[i])){
+						final String type = global.typeOnMemory.get(args[i]);
+						if(type.contains("char")){
+							args[i] = charArrToStr(global.objectOnMemory,(int)args[i]);
+						}
+					}
+				}
+				final String s = String.format(text,Arrays.copyOfRange(args,1,args.length));
 				engine.out.print(s);
 				return s.length();
 			}
@@ -432,7 +428,19 @@ public class CppEngine extends Engine {
 			return (long)value;
 		}
 		else if(type.equals("char")){
-			return (byte)((int)value);
+			if(value instanceof Integer ){
+				return (byte)((int)value);
+			}
+			else if(value instanceof Character ){
+				return (byte)((char)value);
+			}
+			else if(value instanceof Long ){
+				return (byte)((long)value);
+			}
+			else if(value instanceof Character ){
+				return (byte)((char)value);
+			}
+
 		}
 		return value;
 	}
@@ -449,5 +457,23 @@ public class CppEngine extends Engine {
 			return 8;
 		}
 		return 4;*/
+	}
+
+	public static String BytesToStr(List<Byte> bytes){
+		byte[] data = new byte[bytes.indexOf((byte)0)];
+		for(int i=0;i<data.length;++i){
+			data[i] = bytes.get(i);
+		}
+		return new String(data);
+	}
+
+
+	public static String charArrToStr(HashMap<Integer, Object> objectOnMemory, int begin){
+		List<Byte> bytes = new ArrayList<Byte>();
+		for(byte v = (byte)objectOnMemory.get(begin); v != 0; v = (byte)objectOnMemory.get(++begin)){
+			bytes.add(v);
+		}
+		bytes.add((byte)0);
+		return BytesToStr(bytes);
 	}
 }
