@@ -402,7 +402,7 @@ public class Engine {
 					try {
 						if(isStepExecutionRunning.get())
 						{
-							state.setCurrentExpr(expr);
+							state.setCurrentExpr(uniWhile.statement);
 							isExecutionThreadWaiting.set(true);
 							notifyAllThread();
 							waitForWaitingFlagIs(true);
