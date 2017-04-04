@@ -214,7 +214,7 @@ public class CppEngine extends Engine {
             		}
                     int addr = (int)args[1];
                     BufferedWriter bw = (BufferedWriter)global.getValue(addr);
-                    bw.write('w');
+                    bw.write(ret);
                     bw.flush();
                 } catch (IOException e) {
                     // TODO 自動生成された catch ブロック
@@ -223,7 +223,37 @@ public class CppEngine extends Engine {
                 return ret;
             }
         },"FUNCTION");
-
+        global.setTop("fputs", new FunctionWithEngine() {
+            @Override
+            public Object invoke(Engine engine, Object[] args) {//args[0]:const char*, args[1]:FILE*
+            	int ret = -1;
+            	try { 		
+            		if(args[0] instanceof Number){
+            			ret = (int)args[0];
+            			if(global.typeOnMemory.containsKey(ret)){
+    						final String type = global.typeOnMemory.get(ret);
+    						if(type.contains("char")){
+    							args[0] = charArrToStr(global.objectOnMemory,ret);
+    						}
+    					}
+            		}
+            		int addr = (int)args[1];
+            		BufferedWriter bw = (BufferedWriter)global.getValue(addr);
+            		
+            		String s = (String) args[0];
+            		byte[] bytes = s.getBytes("US-ASCII");
+ 
+                    for(byte b : bytes){
+                    	bw.write(b);
+                    }
+                    bw.flush();
+                } catch (IOException e) {
+                    // TODO 自動生成された catch ブロック
+                    e.printStackTrace();
+                }
+                return ret;
+            }
+        },"FUNCTION");
 	}
 	protected void includeMath(Scope global){
 		//逆三角関数
