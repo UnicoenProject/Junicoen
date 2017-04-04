@@ -177,6 +177,21 @@ public class CppEngineTest {
 				+ "}";
 		exec(text);
 	}
+	
+	@Test //@Ignore
+	public void fputc() {
+		String text = ""
+				//+ "#include <stdio.h>"
+				+ "int main()"
+				+ "{"
+                + " FILE* fp;"
+                + " char buf[256]={0};"
+                + " fp = fopen(\"fputctest.txt\", \"w\");"//配列変数の例"
+                + " fputc('w',fp);"
+				+ "}";
+		exec(text);
+	}
+	
 	private List<UniNode> flatten(List<Object> list){
 		List<UniNode> nodes = new ArrayList<UniNode>();
 		for(Object element : list){

@@ -203,10 +203,19 @@ public class CppEngine extends Engine {
             public Object invoke(Engine engine, Object[] args) {//args[0]:int, args[1]:FILE*
             	int ret = -1;
             	try {
-            		ret = (int)args[0];
+            		if(args[0] instanceof Number){
+            			ret = (int)args[0];
+            		}
+            		else if(args[0] instanceof Character){
+            			char c = (char)args[0];
+            			String s = String.valueOf(c);
+            			byte[] b = s.getBytes("US-ASCII");
+            			ret = b[0];
+            		}
                     int addr = (int)args[1];
                     BufferedWriter bw = (BufferedWriter)global.getValue(addr);
-                    bw.write(ret);
+                    bw.write('w');
+                    bw.flush();
                 } catch (IOException e) {
                     // TODO 自動生成された catch ブロック
                     e.printStackTrace();
