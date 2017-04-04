@@ -32,7 +32,7 @@ public class ExecState {
 		if(!hasStack(scope.name)){
 			addStack(scope.name);
 			if(scope.name.equals("GLOBAL")){
-				for(int i=10000;i<20000;++i){
+				for(int i=50000;i<60000;++i){
 					if(scope.typeOnMemory.containsKey(i)){
 						String type = scope.typeOnMemory.get(i);
 						Object value = scope.objectOnMemory.get(i);

@@ -42,6 +42,7 @@ public class Scope {
 	public int depth;
 	public Int address;
 	public Int heapAddress;
+	public Int staticAddress;
 	public Int codeAddress;
 	public final Type type;
 	public final Scope parent;
@@ -68,9 +69,10 @@ public class Scope {
 			this.depth = 0;
 			this.name = "GLOBAL";
 			this.global = this;
-			address = new Int(0);
-			heapAddress= new Int(10000);
-			codeAddress = new Int(20000);
+			codeAddress = new Int(0);
+			staticAddress = new Int(10000);
+			heapAddress= new Int(20000);
+			address = new Int(50000);
 			mallocData = new LinkedHashMap<>();
 			objectOnMemory = new LinkedHashMap<>();
 			typeOnMemory = new LinkedHashMap<>();
@@ -82,6 +84,7 @@ public class Scope {
 			this.global = parent.global;
 			this.address = parent.address;
 			this.address.v++;
+			this.staticAddress = parent.staticAddress;
 			this.heapAddress = parent.heapAddress;
 			this.codeAddress = parent.codeAddress;
 			this.mallocData = parent.mallocData;
@@ -216,18 +219,23 @@ public class Scope {
 		return result;
 	}
 
-	public int setHeap(Object value,String type){
+	private int setAreaImple(Object value, String type, Int addr){
 		assertNotUnicoen(value);
-		objectOnMemory.put(heapAddress.v, value);
-		typeOnMemory.put(heapAddress.v, type);
-		return heapAddress.v++;
+		objectOnMemory.put(addr.v, value);
+		typeOnMemory.put(addr.v, type);
+		return addr.v++;
+	}
+	
+	public int setHeap(Object value,String type){
+		return setAreaImple(value, type, heapAddress);
+	}
+	
+	public int setStatic(Object value,String type){
+		return setAreaImple(value, type, staticAddress);
 	}
 
 	public int setCode(Object value,String type){
-		assertNotUnicoen(value);
-		objectOnMemory.put(codeAddress.v, value);
-		typeOnMemory.put(codeAddress.v, type);
-		return codeAddress.v++;
+		return setAreaImple(value, type, codeAddress);
 	}
 
 	public int setSystemVariable(String type, String name, Object value){
@@ -310,6 +318,10 @@ public class Scope {
 
 	private void setPrimitiveOnHeap(String key, Object value, String type){
 		setImple(key,value,type,heapAddress);
+	}
+	
+	private void setPrimitiveOnStatic(String key, Object value, String type){
+		setImple(key,value,type,staticAddress);
 	}
 
 	/** 指定したメモリアドレスに値を書き込みます */

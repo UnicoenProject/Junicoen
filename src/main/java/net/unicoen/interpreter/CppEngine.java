@@ -239,10 +239,8 @@ public class CppEngine extends Engine {
             		}
             		int addr = (int)args[1];
             		BufferedWriter bw = (BufferedWriter)global.getValue(addr);
-            		
             		String s = (String) args[0];
             		byte[] bytes = s.getBytes("US-ASCII");
- 
                     for(byte b : bytes){
                     	bw.write(b);
                     }
@@ -531,7 +529,11 @@ public class CppEngine extends Engine {
 
 	public static String charArrToStr(HashMap<Integer, Object> objectOnMemory, int begin){
 		List<Byte> bytes = new ArrayList<Byte>();
-		for(byte v = (byte)objectOnMemory.get(begin); v != 0; v = (byte)objectOnMemory.get(++begin)){
+		Object obj = objectOnMemory.get(begin);
+		if(obj instanceof String){
+			return (String)obj;
+		}
+		for(byte v = (byte)obj; v != 0; v = (byte)objectOnMemory.get(++begin)){
 			bytes.add(v);
 		}
 		bytes.add((byte)0);

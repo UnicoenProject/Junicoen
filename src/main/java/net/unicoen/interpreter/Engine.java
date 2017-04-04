@@ -482,11 +482,16 @@ public class Engine {
 			Object value = execExpr(decVar.value, scope);
 			value = _execCast(decVar.type,value);
 			if(decVar.type.endsWith("*") && !(value instanceof List)){
-				int address = (int)value;
-				if(scope.isMallocArea(address)){
-					int size = scope.getMallocSize(address);
-					for(int i=0;i<size;++i){
-						scope.typeOnMemory.put(address+i, decVar.type.substring(0,decVar.type.length()-1));
+				if(value instanceof String){
+					value = scope.setStatic(value, "char[]");
+				}
+				else{
+					int address = (int)value;
+					if(scope.isMallocArea(address)){
+						int size = scope.getMallocSize(address);
+						for(int i=0;i<size;++i){
+							scope.typeOnMemory.put(address+i, decVar.type.substring(0,decVar.type.length()-1));
+						}
 					}
 				}
 			}
