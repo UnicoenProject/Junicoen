@@ -178,7 +178,7 @@ public class CppEngineTest {
 				+ "}";
 		exec(text);
 	}
-	
+
 	@Test @Ignore
 	public void fputc() {
 		String text = ""
@@ -191,7 +191,7 @@ public class CppEngineTest {
 				+ "}";
 		exec(text);
 	}
-	
+
 	@Test
 	public void fput1() {
 		String text = ""
@@ -205,7 +205,7 @@ public class CppEngineTest {
 				+ "}";
 		exec(text);
 	}
-	
+
 	@Test
 	public void fput2() {
 		String text = ""
@@ -218,7 +218,21 @@ public class CppEngineTest {
 				+ "}";
 		exec(text);
 	}
-	
+
+	@Test
+	public void scanf() {
+		String text = ""
+				//+ "#include <stdio.h>"
+				+ "int main()"
+				+ "{"
+                + " char moji[1000];"
+                + " printf(\"文字列を入力してください。\\n\");"//配列変数の例"
+                + " scanf(\"%s\", moji);"
+                + "	printf(\"%s\\n\", moji);"
+				+ "}";
+		exec(text);
+	}
+
 	private List<UniNode> flatten(List<Object> list){
 		List<UniNode> nodes = new ArrayList<UniNode>();
 		for(Object element : list){

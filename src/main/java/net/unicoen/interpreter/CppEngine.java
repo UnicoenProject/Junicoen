@@ -6,10 +6,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import net.unicoen.node.UniCast;
 import net.unicoen.node.UniExpr;
@@ -227,7 +229,7 @@ public class CppEngine extends Engine {
             @Override
             public Object invoke(Engine engine, Object[] args) {//args[0]:const char*, args[1]:FILE*
             	int ret = -1;
-            	try { 		
+            	try {
             		if(args[0] instanceof Number){
             			ret = (int)args[0];
             			if(global.typeOnMemory.containsKey(ret)){
@@ -250,6 +252,27 @@ public class CppEngine extends Engine {
                     e.printStackTrace();
                 }
                 return ret;
+            }
+        },"FUNCTION");
+        global.setTop("scanf", new FunctionWithEngine() {
+            @Override
+            public Object invoke(Engine engine, Object[] args) {//args[0]:const char*, args[1]:FILE*
+            	BufferedReader d = new BufferedReader(new InputStreamReader(System.in));
+            	List<Number> vars = new ArrayList<Number>();
+            	try {
+					String str = d.readLine();
+					StringTokenizer aSt = new StringTokenizer(str," ");
+					if (aSt.countTokens() != 2) {
+						System.out.print("Input Error\n");
+						System.exit(1);
+					}
+					vars.add(Double.valueOf(aSt.nextToken()).doubleValue());
+					vars.add(Double.valueOf(aSt.nextToken()).doubleValue());
+				} catch (IOException e1) {
+					// TODO 自動生成された catch ブロック
+					e1.printStackTrace();
+				}
+                return vars.size();
             }
         },"FUNCTION");
 	}
