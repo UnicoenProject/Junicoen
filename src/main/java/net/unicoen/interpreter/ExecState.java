@@ -35,6 +35,8 @@ public class ExecState {
 				for(int i=10000;i<20000;++i){
 					if(scope.typeOnMemory.containsKey(i)){
 						String type = scope.typeOnMemory.get(i);
+						if(type.equals("FUNCTION"))
+							continue;
 						Object value = scope.objectOnMemory.get(i);
 						Variable variable = new Variable(type, "Static:"+i, value, i, scope.depth);
 						addVariable(scope.name, variable);
@@ -43,6 +45,8 @@ public class ExecState {
 				for(int i=20000;i<50000;++i){
 					if(scope.typeOnMemory.containsKey(i)){
 						String type = scope.typeOnMemory.get(i);
+						if(type.equals("FUNCTION"))
+							continue;
 						Object value = scope.objectOnMemory.get(i);
 						Variable variable = new Variable(type, "Heap:"+i, value, i, scope.depth);
 						addVariable(scope.name, variable);
