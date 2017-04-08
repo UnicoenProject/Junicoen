@@ -225,11 +225,11 @@ public class Scope {
 		typeOnMemory.put(addr.v, type);
 		return addr.v++;
 	}
-	
+
 	public int setHeap(Object value,String type){
 		return setAreaImple(value, type, heapAddress);
 	}
-	
+
 	public int setStatic(Object value,String type){
 		return setAreaImple(value, type, staticAddress);
 	}
@@ -282,6 +282,9 @@ public class Scope {
 			setPrimitiveOnCode(key, address.v, type+"["+arr.size()+"]");
 			setArray(arr,type);
 		}
+		else if(type.equals("FUNCTION")){
+			setPrimitiveOnCode(key,value,type);
+		}
 		else{//組み込み型の場合
 			setPrimitive(key,value,type);
 		}
@@ -319,7 +322,7 @@ public class Scope {
 	private void setPrimitiveOnHeap(String key, Object value, String type){
 		setImple(key,value,type,heapAddress);
 	}
-	
+
 	private void setPrimitiveOnStatic(String key, Object value, String type){
 		setImple(key,value,type,staticAddress);
 	}
