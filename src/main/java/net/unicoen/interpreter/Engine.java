@@ -80,14 +80,27 @@ public class Engine {
 
 	public List<ExecutionListener> listeners;
 
+	private AtomicBoolean isWaitingForStdin = new AtomicBoolean(false);
     private AtomicBoolean isStepExecutionRunning = new AtomicBoolean(false);
     private AtomicBoolean isExecutionThreadWaiting = new AtomicBoolean(false);
     protected String fileDir = System.getProperty("user.dir");
     protected ExecState state = new ExecState();
     protected Scope currentScope = null;
 
+    public UniNode getCurrentExpr(){
+    	return state.getCurrentExpr();
+    }
+
     public void setFileDir(String dir){
         fileDir = dir;
+    }
+
+    public void setWaitingForStdin(boolean enable) {
+        isWaitingForStdin.set(enable);
+    }
+
+    public boolean isWaitingForStdin() {
+        return isWaitingForStdin.get();
     }
 
     public boolean isStepExecutionRunning() {
@@ -98,6 +111,7 @@ public class Engine {
 	private synchronized void notifyAllThread(){
 		notifyAll();
 	}
+
 	private synchronized void waitForWaitingFlagIs(boolean is){
 		while(isExecutionThreadWaiting.get()==is)
 		{
@@ -560,7 +574,7 @@ public class Engine {
 		}
 	}
 
-	private Object execImple(UniExpr expr, Scope scope){
+	protected void waitUntilScanf(UniExpr expr){
 		if(isStepExecutionRunning.get())
 		{
 			state.setCurrentExpr(expr);
@@ -568,6 +582,11 @@ public class Engine {
 			notifyAllThread();
 			waitForWaitingFlagIs(true);
 		}
+	}
+
+	private Object execImple(UniExpr expr, Scope scope){
+
+		waitUntilScanf(expr);
 		return execExpr(expr, scope);
 	}
 

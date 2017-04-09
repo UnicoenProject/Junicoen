@@ -269,7 +269,6 @@ public class CppEngineTest {
 		engine.startStepExecution((ArrayList<UniNode>) nodes);
 		for(int i=0;engine.isStepExecutionRunning();++i)
 		{
-			engine.setIn("12345");
 			state = engine.stepExecute();
 		}
 		String output = baos.toString();

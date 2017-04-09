@@ -50,7 +50,7 @@ public class CppEngine extends Engine {
 					}
 				}
 				final String s = String.format(text,Arrays.copyOfRange(args,1,args.length));
-				engine.out.print(s);
+				out.print(s);
 				return s.length();
 			}
 		},"FUNCTION");
@@ -259,8 +259,11 @@ public class CppEngine extends Engine {
             @Override
             public Object invoke(Engine engine, Object[] args) {//args[0]:const char*, args[1]:FILE*
             	String argStr = BytesToStr((List<Byte>) args[0]);
-            	StringTokenizer tokens = new StringTokenizer(in," ");
             	StringTokenizer text = new StringTokenizer(argStr,"%");
+            	setWaitingForStdin(true);
+            	waitUntilScanf((UniExpr)getCurrentExpr());
+            	StringTokenizer tokens = new StringTokenizer(in," ");
+            	setWaitingForStdin(false);
             	int i=0;
             	while(tokens.hasMoreTokens() && text.hasMoreTokens()){
             		String format = text.nextToken();
