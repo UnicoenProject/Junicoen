@@ -299,6 +299,7 @@ public class CppEngine extends Engine {
             			currentScope.set(addr, value);
             		}
 				}
+            	out.print(in);
                 return i;
             }
         },"FUNCTION");
