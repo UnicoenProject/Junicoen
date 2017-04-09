@@ -5,14 +5,13 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import net.unicoen.mapper.CPP14Mapper;
 import net.unicoen.node.UniNode;
 
 public class CppEngineTest {
-	@Test @Ignore
+	@Test //@Ignore
 	public void test1() {
 		String text =
 				"int main()"+
@@ -33,7 +32,7 @@ public class CppEngineTest {
 		exec(text);
 	}
 
-	@Test @Ignore
+	@Test //@Ignore
 	public void test2() {
 		String text =
 				"int main()"+
@@ -45,7 +44,7 @@ public class CppEngineTest {
 		exec(text);
 	}
 
-	@Test @Ignore
+	@Test //@Ignore
 	public void test3(){
 		String text =
 				"int main()"+
@@ -64,7 +63,7 @@ public class CppEngineTest {
 		exec(text);
 	}
 
-	@Test @Ignore
+	@Test //@Ignore
 	public void test4(){
 		String text =
 //				"struct Str"+
@@ -96,7 +95,7 @@ public class CppEngineTest {
 		exec(text);
 	}
 
-	@Test @Ignore
+	@Test //@Ignore
 	public void test5() {
 		String text =
 				"int f1(){}"
@@ -117,7 +116,7 @@ public class CppEngineTest {
 		exec(text);
 	}
 
-	@Test @Ignore
+	@Test //@Ignore
 	public void test6() {
 		String text = ""
 				//+ "#include <stdio.h>"
@@ -133,14 +132,14 @@ public class CppEngineTest {
 				+ "}";
 		exec(text);
 	}
-	@Test @Ignore
+	@Test //@Ignore
 	public void test7() {
 		String text = ""
 				//+ "#include <stdio.h>"
 				+ "void Hanoi(int n,char from,char work,char dest)"
 				+ "{"
 				+ "	if(n>=2) Hanoi(n-1,from,dest,work);"
-				+ "	printf(\"%d を %c から %c へ\\n\",n,from,dest);"
+				+ "	printf(\"move %d from %c to %c\\n\",n,from,dest);"
 				+ "	if(n>=2) Hanoi(n-1,work,from,dest);"
 				+ "}"
 				+ "int main()"
@@ -149,7 +148,7 @@ public class CppEngineTest {
 				+ "}";
 		exec(text);
 	}
-	@Test @Ignore
+	@Test //@Ignore
 	public void fgetc() {
 		String text = ""
 				//+ "#include <stdio.h>"
@@ -164,7 +163,7 @@ public class CppEngineTest {
 		exec(text);
 	}
 
-	@Test @Ignore
+	@Test //@Ignore
 	public void fgets() {
 		String text = ""
 				//+ "#include <stdio.h>"
@@ -179,7 +178,7 @@ public class CppEngineTest {
 		exec(text);
 	}
 
-	@Test @Ignore
+	@Test //@Ignore
 	public void fputc() {
 		String text = ""
 				//+ "#include <stdio.h>"
@@ -225,8 +224,12 @@ public class CppEngineTest {
 				//+ "#include <stdio.h>"
 				+ "int main()"
 				+ "{"
+				+ " char* str = \"aiueo\";"
+				+ "	printf(\"%s\\n\", str);"
                 + " char moji[1000];"
-                + " printf(\"文字列を入力してください。\\n\");"//配列変数の例"
+                + " moji[3]='3';"
+                + "	printf(\"%s\\n\", moji);"
+                + " printf(\"Please Input Text.\\n\");"//配列変数の例"
                 + " scanf(\"%s\", moji);"
                 + "	printf(\"%s\\n\", moji);"
 				+ "}";
@@ -266,6 +269,7 @@ public class CppEngineTest {
 		engine.startStepExecution((ArrayList<UniNode>) nodes);
 		for(int i=0;engine.isStepExecutionRunning();++i)
 		{
+			engine.setIn("12345");
 			state = engine.stepExecute();
 		}
 		String output = baos.toString();

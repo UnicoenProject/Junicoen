@@ -6,7 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -15,6 +15,7 @@ import java.util.StringTokenizer;
 
 import net.unicoen.node.UniCast;
 import net.unicoen.node.UniExpr;
+import net.unicoen.node.UniStringLiteral;
 import net.unicoen.node.UniUnaryOp;
 
 public class CppEngine extends Engine {
@@ -27,7 +28,7 @@ public class CppEngine extends Engine {
 		global.setTop("sizeof", new FunctionWithEngine() {
 			@Override
 			public Object invoke(Engine engine, Object[] args) {
-				return CppEngine.sizeof((String) args[0]);
+				return CppEngine.sizeof(BytesToStr(args[0]) );
 			}
 		},"FUNCTION");
 	}
@@ -38,7 +39,7 @@ public class CppEngine extends Engine {
 			public Object invoke(Engine engine, Object[] args) {
 				if(args.length<1)
 					return 0;
-				String text = (String)args[0];
+				String text = BytesToStr((List<Byte>) args[0]);
 				text = text.replace("\\n", "\n");
 				for(int i=1;i<args.length;++i){
 					if(global.typeOnMemory.containsKey(args[i])){
@@ -98,9 +99,9 @@ public class CppEngine extends Engine {
         global.setTop("fopen", new FunctionWithEngine() {
             @Override
             public Object invoke(Engine engine, Object[] args) {//args[0]:ファイル名, args[1]:モード
-                String filename = (String) args[0];
+                String filename = BytesToStr(args[0]);
                 String filepath = new File(fileDir, filename).getPath();
-                String mode = (String) args[1];
+                String mode = BytesToStr(args[1]);
                 int ret = 0;
             	try {
             		switch(mode){
@@ -241,7 +242,7 @@ public class CppEngine extends Engine {
             		}
             		int addr = (int)args[1];
             		BufferedWriter bw = (BufferedWriter)global.getValue(addr);
-            		String s = (String) args[0];
+            		String s = (args[0] instanceof String) ? (String)args[0] : BytesToStr(args[0]);//文字列リテラルor変数
             		byte[] bytes = s.getBytes("US-ASCII");
                     for(byte b : bytes){
                     	bw.write(b);
@@ -257,22 +258,45 @@ public class CppEngine extends Engine {
         global.setTop("scanf", new FunctionWithEngine() {
             @Override
             public Object invoke(Engine engine, Object[] args) {//args[0]:const char*, args[1]:FILE*
-            	BufferedReader d = new BufferedReader(new InputStreamReader(System.in));
-            	List<Number> vars = new ArrayList<Number>();
-            	try {
-					String str = d.readLine();
-					StringTokenizer aSt = new StringTokenizer(str," ");
-					if (aSt.countTokens() != 2) {
-						System.out.print("Input Error\n");
-						System.exit(1);
-					}
-					vars.add(Double.valueOf(aSt.nextToken()).doubleValue());
-					vars.add(Double.valueOf(aSt.nextToken()).doubleValue());
-				} catch (IOException e1) {
-					// TODO 自動生成された catch ブロック
-					e1.printStackTrace();
+            	String argStr = BytesToStr((List<Byte>) args[0]);
+            	StringTokenizer tokens = new StringTokenizer(in," ");
+            	StringTokenizer text = new StringTokenizer(argStr,"%");
+            	int i=0;
+            	while(tokens.hasMoreTokens() && text.hasMoreTokens()){
+            		String format = text.nextToken();
+            		String str = tokens.nextToken();
+            		int addr = (int)args[++i];
+            		String type = currentScope.getType(addr);
+            		if(type.equals("double")){
+            			double value = Double.valueOf(str).doubleValue();
+            			currentScope.set(addr, value);
+            		}
+            		else if(type.equals("float")){
+            			float value = Float.valueOf(str).floatValue();
+            			currentScope.set(addr, value);
+            		}
+            		else if(type.equals("char")){
+            			if(format.equals("s")){
+            				try {
+    							byte[] bytes = str.getBytes("US-ASCII");
+    		          			for(int k=0; k<str.length(); ++k){
+    	                			currentScope.set(addr+k+1, bytes[k]);
+    	            			}
+    						} catch (UnsupportedEncodingException e) {
+    							// TODO 自動生成された catch ブロック
+    							e.printStackTrace();
+    						}
+            			}else{
+            				byte value = Byte.valueOf(str).byteValue();
+                			currentScope.set(addr, value);
+            			}
+            		}
+            		else{
+            			int value = Integer.valueOf(str).intValue();
+            			currentScope.set(addr, value);
+            		}
 				}
-                return vars.size();
+                return i;
             }
         },"FUNCTION");
 	}
@@ -493,6 +517,23 @@ public class CppEngine extends Engine {
 	}
 
 	@Override
+	protected Object execStringLiteral(UniStringLiteral expr, Scope scope){
+		String value = ((UniStringLiteral) expr).value;
+		try {
+			byte[] bytes = value.getBytes("US-ASCII");
+			List<Byte> list = new ArrayList<>();
+			for(byte b : bytes){
+				list.add(b);
+			}
+			return list;
+		} catch (UnsupportedEncodingException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
+		return value;
+	}
+
+	@Override
 	protected Object _execCast(String type, Object value){
 
 		if(value == null || value instanceof List){
@@ -541,8 +582,18 @@ public class CppEngine extends Engine {
 		return 4;*/
 	}
 
-	public static String BytesToStr(List<Byte> bytes){
-		byte[] data = new byte[bytes.indexOf((byte)0)];
+	@SuppressWarnings("unchecked")
+	public static String BytesToStr(Object obj){
+		List<Byte> bytes = (List<Byte>)obj;
+		int pos = bytes.indexOf((byte)0);
+		byte[] data;
+		if(pos == -1){
+			data = new byte[bytes.size()];
+		}
+		else{
+			data = new byte[pos];
+		}
+
 		for(int i=0;i<data.length;++i){
 			data[i] = bytes.get(i);
 		}
@@ -556,7 +607,7 @@ public class CppEngine extends Engine {
 		if(obj instanceof String){
 			return (String)obj;
 		}
-		for(byte v = (byte)obj; v != 0; v = (byte)objectOnMemory.get(++begin)){
+		for(byte v = (byte)obj; v != 0 && objectOnMemory.containsKey(begin); v = (byte)objectOnMemory.get(++begin)){
 			bytes.add(v);
 		}
 		bytes.add((byte)0);

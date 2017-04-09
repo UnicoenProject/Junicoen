@@ -278,9 +278,17 @@ public class Scope {
 			setArray(arr,type);
 		}
 		else if(value instanceof List){//配列の場合
-			List<Object> arr = (List<Object>) value;
-			setPrimitiveOnCode(key, address.v, type+"["+arr.size()+"]");
-			setArray(arr,type);
+			if(type.equals("char*")){//文字列の場合(char*の場合, char[], char[10]の場合は↓)
+				List<Object> arr = (List<Object>) value;
+				arr.add((byte)0);
+				setPrimitive(key,codeAddress.v,type);
+				setStringOnCode(arr);
+			}
+			else{
+				List<Object> arr = (List<Object>) value;
+				setPrimitiveOnCode(key, address.v, type+"["+arr.size()+"]");
+				setArray(arr,type);
+			}
 		}
 		else if(type.equals("FUNCTION")){
 			setPrimitiveOnCode(key,value,type);
@@ -299,6 +307,19 @@ public class Scope {
 			else{
 				typeOnMemory.put(address.v, type);
 				objectOnMemory.put(address.v++, var);
+			}
+		}
+	}
+
+	private void setStringOnCode(List<Object> value){
+		assertNotUnicoen(value);
+		for(Object var : value){
+			if(var instanceof List){
+				setStringOnCode((List<Object>)var);
+			}
+			else{
+				typeOnMemory.put(codeAddress.v, "char");
+				objectOnMemory.put(codeAddress.v++, var);
 			}
 		}
 	}
@@ -328,28 +349,28 @@ public class Scope {
 	}
 
 	/** 指定したメモリアドレスに値を書き込みます */
-	public void set(int key, Object value) {
+	public void set(int addr, Object value) {
 		assertNotUnicoen(value);
-		if (objectOnMemory.containsKey(key)) {
+		if (objectOnMemory.containsKey(addr)) {
 			try{
-				String type = getType(key);
+				String type = getType(addr);
 				Map<String, Integer> offsets = (Map<String, Integer>) get(type);
 				for(Map.Entry<String, Integer> offset : offsets.entrySet()) {
-				    int dst = (int)getValue(key) + offset.getValue();
+				    int dst = (int)getValue(addr) + offset.getValue();
 				    int src = (int)value + offset.getValue();
 				    Object v = this.getValue(src);
 				    objectOnMemory.put(dst, v);
 				}
 			}catch(RuntimeException e){
-				objectOnMemory.put(key, value);
+				objectOnMemory.put(addr, value);
 			}
 			return;
 		}
 		if (parent != null) {
-			parent.set(key, value);
+			parent.set(addr, value);
 			return;
 		}
-		throw new RuntimeException("address " + key + "is not declared.");
+		throw new RuntimeException("address " + addr + "is not declared.");
 	}
 
 	public static Scope createGlobal() {

@@ -68,12 +68,23 @@ public class Engine {
 	}
 
 	public PrintStream out = System.out;
+	protected String in = "";
+
+	public String getIn() {
+		return in;
+	}
+
+	public void setIn(String in) {
+		this.in = in;
+	}
+
 	public List<ExecutionListener> listeners;
 
     private AtomicBoolean isStepExecutionRunning = new AtomicBoolean(false);
     private AtomicBoolean isExecutionThreadWaiting = new AtomicBoolean(false);
     protected String fileDir = System.getProperty("user.dir");
     protected ExecState state = new ExecState();
+    protected Scope currentScope = null;
 
     public void setFileDir(String dir){
         fileDir = dir;
@@ -301,17 +312,23 @@ public class Engine {
 			for (int i = 0; i < args.length; i++) {
 				args[i] = execExpr(mc.args.get(i), scope);
 			}
+			currentScope = scope;
+			Object ret = null;
 			if (mc.receiver != null) {
 				Object receiver = execExpr(mc.receiver, scope);
-				return execMethodCall(receiver, mc.methodName, args);
+				ret = execMethodCall(receiver, mc.methodName, args);
 			}
 			else {
 				Object func = scope.get(mc.methodName);
 				if(func instanceof UniMethodDec){
-					return execFunc((UniMethodDec)func,scope,mc.args);
+					ret = execFunc((UniMethodDec)func,scope,mc.args);
 				}
-				return execFuncCall(func, args);
+				else{
+					ret = execFuncCall(func, args);
+				}
 			}
+			currentScope = null;
+			return ret;
 		}
 		if (expr instanceof UniIdent) {
 			return scope.get(((UniIdent) expr).name);
@@ -332,7 +349,7 @@ public class Engine {
 			return ((UniDoubleLiteral) expr).value;
 		}
 		if (expr instanceof UniStringLiteral) {
-			return ((UniStringLiteral) expr).value;
+			return execStringLiteral((UniStringLiteral)expr,scope);
 		}
 		if (expr instanceof UniUnaryOp) {
 			return execUnaryOp((UniUnaryOp) expr, scope);
@@ -398,24 +415,8 @@ public class Engine {
 			try {
 				Object lastEval = null;
 				Scope blockScope = Scope.createLocal(scope);
-				while (toBool(execExpr(uniWhile.cond, blockScope))) {
-					try {
-						if(isStepExecutionRunning.get())
-						{
-							state.setCurrentExpr(uniWhile.statement);
-							isExecutionThreadWaiting.set(true);
-							notifyAllThread();
-							waitForWaitingFlagIs(true);
-						}
-						try{
-							lastEval = execExpr(uniWhile.statement, blockScope);
-						}
-						catch (ControlException e){
-							scope.removeChild(blockScope);
-							throw e;
-						}
-					} catch (Continue e) { /* do nothing */
-					}
+				while (toBool(execImple(uniWhile.cond, blockScope))) {
+					lastEval = execImple(uniWhile.statement, blockScope);
 				}
 				return lastEval;
 			} catch (Break e) {
@@ -448,7 +449,7 @@ public class Engine {
 			List<Object> array = new ArrayList<Object>();
 			if(value.items==null){
 				for(int i=0;i<length;++i){
-					array.add(null);
+					array.add((byte)0);
 				}
 			}
 			else{
@@ -469,6 +470,10 @@ public class Engine {
 		return execExpr(expr.value, scope);
 	}
 
+	protected Object execStringLiteral(UniStringLiteral expr, Scope scope){
+		return ((UniStringLiteral) expr).value;
+	}
+
 	protected Object _execVariableDec(UniVariableDec decVar, Scope scope){
 		if(decVar.name.startsWith("*")){
 			decVar.name = decVar.name.substring(1);
@@ -481,7 +486,7 @@ public class Engine {
 		if(decVar.value!=null){
 			Object value = execExpr(decVar.value, scope);
 			value = _execCast(decVar.type,value);
-			if(decVar.type.endsWith("*") && !(value instanceof List)){
+			if(decVar.type.endsWith("*") && !(value instanceof List) && !value.getClass().isArray()){
 				if(value instanceof String){
 					value = scope.setStatic(value, "char[]");
 				}
@@ -555,25 +560,23 @@ public class Engine {
 		}
 	}
 
+	private Object execImple(UniExpr expr, Scope scope){
+		if(isStepExecutionRunning.get())
+		{
+			state.setCurrentExpr(expr);
+			isExecutionThreadWaiting.set(true);
+			notifyAllThread();
+			waitForWaitingFlagIs(true);
+		}
+		return execExpr(expr, scope);
+	}
+
 	private Object execBlock(UniBlock block, Scope scope) {
 		Scope blockScope = Scope.createLocal(scope);
 		Object lastValue = null;
 		blockScope.name = scope.name;
 		for (UniExpr expr : block.body) {
-			if(isStepExecutionRunning.get())
-			{
-				state.setCurrentExpr(expr);
-				isExecutionThreadWaiting.set(true);
-				notifyAllThread();
-				waitForWaitingFlagIs(true);
-			}
-			try{
-				lastValue = execExpr(expr, blockScope);
-			}
-			catch (ControlException e){
-				scope.removeChild(blockScope);
-				throw e;
-			}
+			lastValue = execImple(expr, blockScope);
 		}
 		return lastValue;
 	}
