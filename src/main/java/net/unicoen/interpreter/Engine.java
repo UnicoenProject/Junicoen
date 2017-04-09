@@ -95,11 +95,11 @@ public class Engine {
         fileDir = dir;
     }
 
-    public void setWaitingForStdin(boolean enable) {
+    public void setIsWaitingForStdin(boolean enable) {
         isWaitingForStdin.set(enable);
     }
 
-    public boolean isWaitingForStdin() {
+    public boolean getIsWaitingForStdin() {
         return isWaitingForStdin.get();
     }
 

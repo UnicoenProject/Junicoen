@@ -260,10 +260,10 @@ public class CppEngine extends Engine {
             public Object invoke(Engine engine, Object[] args) {//args[0]:const char*, args[1]:FILE*
             	String argStr = BytesToStr((List<Byte>) args[0]);
             	StringTokenizer text = new StringTokenizer(argStr,"%");
-            	setWaitingForStdin(true);
+            	setIsWaitingForStdin(true);
             	waitUntilScanf((UniExpr)getCurrentExpr());
             	StringTokenizer tokens = new StringTokenizer(in," ");
-            	setWaitingForStdin(false);
+            	setIsWaitingForStdin(false);
             	int i=0;
             	while(tokens.hasMoreTokens() && text.hasMoreTokens()){
             		String format = text.nextToken();
