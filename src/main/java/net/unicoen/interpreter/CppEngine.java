@@ -610,8 +610,15 @@ public class CppEngine extends Engine {
 		if(obj instanceof String){
 			return (String)obj;
 		}
-		for(byte v = (byte)obj; v != 0 && objectOnMemory.containsKey(begin); v = (byte)objectOnMemory.get(++begin)){
-			bytes.add(v);
+		for(byte v = (byte)obj; objectOnMemory.containsKey(begin); ++begin){
+			Object o = objectOnMemory.get(begin);
+			if(o instanceof Byte){
+				v = (byte)o;
+				bytes.add(v);
+			}
+			else{
+				break;
+			}
 		}
 		bytes.add((byte)0);
 		return BytesToStr(bytes);

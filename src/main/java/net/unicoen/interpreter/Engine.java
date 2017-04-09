@@ -469,7 +469,7 @@ public class Engine {
 			else{
 				array = execArray(value,scope);
 				for(int i=array.size();i<length;++i){
-					array.add(0);
+					array.add((byte)0);
 				}
 			}
 			return array;
