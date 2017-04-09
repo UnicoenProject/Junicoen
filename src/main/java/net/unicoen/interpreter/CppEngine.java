@@ -528,6 +528,7 @@ public class CppEngine extends Engine {
 			for(byte b : bytes){
 				list.add(b);
 			}
+			list.add((byte)0);
 			return list;
 		} catch (UnsupportedEncodingException e) {
 			// TODO 自動生成された catch ブロック
