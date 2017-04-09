@@ -263,6 +263,7 @@ public class CppEngine extends Engine {
             	setIsWaitingForStdin(true);
             	waitUntilScanf((UniExpr)getCurrentExpr());
             	StringTokenizer tokens = new StringTokenizer(in," ");
+            	out.println(in);
             	setIsWaitingForStdin(false);
             	int i=0;
             	while(tokens.hasMoreTokens() && text.hasMoreTokens()){
@@ -299,7 +300,6 @@ public class CppEngine extends Engine {
             			currentScope.set(addr, value);
             		}
 				}
-            	out.print(in);
                 return i;
             }
         },"FUNCTION");
