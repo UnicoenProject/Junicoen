@@ -284,7 +284,7 @@ public class CppEngine extends Engine {
             				try {
     							byte[] bytes = str.getBytes("US-ASCII");
     		          			for(int k=0; k<str.length(); ++k){
-    	                			currentScope.set(addr+k+1, bytes[k]);
+    	                			currentScope.set(addr+k, bytes[k]);
     	            			}
     						} catch (UnsupportedEncodingException e) {
     							// TODO 自動生成された catch ブロック
