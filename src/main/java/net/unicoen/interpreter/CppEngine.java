@@ -6,7 +6,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -259,16 +261,24 @@ public class CppEngine extends Engine {
             @Override
             public Object invoke(Engine engine, Object[] args) {//args[0]:const char*, args[1]:FILE*
             	String argStr = BytesToStr((List<Byte>) args[0]);
-            	StringTokenizer text = new StringTokenizer(argStr,"%");
             	setIsWaitingForStdin(true);
+            	
             	waitUntilScanf((UniExpr)getCurrentExpr());
-            	StringTokenizer tokens = new StringTokenizer(in," ");
+            	Object[] ret = null;
+				try {
+					ret = new FormatReader(new StringReader(in)).scanf(argStr);
+				} catch (IOException | ParseException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
             	out.println(in);
             	setIsWaitingForStdin(false);
+            	if(ret == null){
+            		return 0;
+            	}
             	int i=0;
-            	while(tokens.hasMoreTokens() && text.hasMoreTokens()){
-            		String format = text.nextToken();
-            		String str = tokens.nextToken();
+            	for(Object r: ret){
+            		String str = (String)r;
             		int addr = (int)args[++i];
             		String type = currentScope.getType(addr);
             		if(type.equals("double")){
@@ -280,7 +290,7 @@ public class CppEngine extends Engine {
             			currentScope.set(addr, value);
             		}
             		else if(type.equals("char")){
-            			if(format.equals("s")){
+            			if(1<str.length()){
             				try {
     							byte[] bytes = str.getBytes("US-ASCII");
     		          			for(int k=0; k<str.length(); ++k){
@@ -299,7 +309,7 @@ public class CppEngine extends Engine {
             			int value = Integer.valueOf(str).intValue();
             			currentScope.set(addr, value);
             		}
-				}
+            	}
                 return i;
             }
         },"FUNCTION");
